@@ -3,7 +3,7 @@ updating textures:
 go to your %appdata%\.minecraft\versions folder and open the version folder you want medieval survival to use. paste in MedievalSurvival/data/version/yourversionname.jar
 now delete the 'currentversion' folder and make it again by extracting the .jar file to it.
 copy the jar file to the 'other' folder.
-delete currentversion.zip and change file name of the jar file in data/version to currentversion.zip.
+change file name of the jar file in data/version to currentversion.zip.
 
 updating sounds:
 download the extractor from
