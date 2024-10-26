@@ -29,14 +29,17 @@
             "label": "populate",
             "type": "shell",
             "windows": {
-                "command": "cmake -B . -S ../.. -G Ninja -DCMAKE_BUILD_TYPE=${config:buildType}" // <-- ld returned 5 exit status
+                "command": "powershell",
+                "args": [
+                    "-NoProfile",
+                    "-Command",
+                    "if (-Not (Test-Path -Path 'build/${config:buildType}')) { New-Item -ItemType Directory -Path 'build/${config:buildType}' }; cmake -B build/${config:buildType} -S . -G Ninja -DCMAKE_BUILD_TYPE=${config:buildType}"
+                ]
             },
-            //"options": {
-            //    "cwd": "${workspaceFolder}/build/${config:buildType}",
-            //    "env": {
-            //        "buildType": "Release"
-            //    },
-            //},
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {}
+            },
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -46,6 +49,28 @@
                 "unzip jar"
             ]
         },
+        //{
+        //    "label": "populate",
+        //    "type": "shell",
+        //    "windows": {
+        //        "command": "mkdir build/${config:buildType} && cmake -B build/${config:buildType} -S . -G Ninja -DCMAKE_BUILD_TYPE=${config:buildType}"
+        //    },
+        //    //"options": {
+        //    //    "cwd": "${workspaceFolder}/build/${config:buildType}",
+        //    //    "env": {
+        //    //        "buildType": "Release"
+        //    //    },
+        //    //},
+        //    "options": {
+        //        "cwd": "${workspaceFolder}",
+        //        "env": {},
+        //    },
+        //    "problemMatcher": [],
+        //    "group": {
+        //        "kind": "build",
+        //        "isDefault": true
+        //    }
+        //},
         {
             "label": "clean",
             "type": "shell",

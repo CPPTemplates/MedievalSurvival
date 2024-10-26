@@ -68,20 +68,5 @@
                 }
             ]
         }
-        //,
-        //{
-        //    "type": "cmake",
-        //    "request": "launch",
-        //    "name": "CMake: Script debugging",
-        //    "cmakeDebugType": "script",
-        //    "scriptPath": "${workspaceFolder}/CMakeLists.txt"
-        //},
-        //{
-        //    "name": "CMake: CMake Script",
-        //    "type": "cmake",
-        //    "request": "launch",
-        //    "cmakeDebugType": "script",
-        //    "scriptPath": "${file}"
-        //}
     ]
 }
