@@ -21,5 +21,5 @@ struct ghast : public mob
 	ghast(dimension* dimensionIn, cvec2& position);
 	virtual void updateBodyParts() const override;
 	bodyPart2D* legs[ghastLegCount];
-	swingSynchronizer legSynchronizers[ghastLegCount];
+	waveShaper legSynchronizers[ghastLegCount];
 };

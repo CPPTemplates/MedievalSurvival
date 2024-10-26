@@ -6,7 +6,7 @@
 #include "enderDragonStrafingAI.h"
 #include "enderDragonCirclingAI.h"
 #include "dragonBeamBrush.h"
-#include "math/swingsynchronizer.h"
+#include "math/wave/waveShaper.h"
 #include "math/timemath.h"
 #include "idAnalysis.h"
 #include "soundCollection.h"
@@ -18,8 +18,8 @@
 #include "world.h"
 
 //convert seconds to relative arm angle
-const swingSynchronizer enderDragonInnerWingSynchronizer = swingSynchronizer(2, -10 * math::degreesToRadians, 40 * math::degreesToRadians);
-const swingSynchronizer enderDragonOuterWingSynchronizer = swingSynchronizer(2, -50 * math::degreesToRadians, 40 * math::degreesToRadians, 0.5);
+const waveShaper enderDragonInnerWingSynchronizer = waveShaper(2, -10 * math::degreesToRadians, 40 * math::degreesToRadians);
+const waveShaper enderDragonOuterWingSynchronizer = waveShaper(2, -50 * math::degreesToRadians, 40 * math::degreesToRadians, 0.5);
 
 enderDragon::enderDragon(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position, entityID::ender_dragon)
 {
@@ -226,7 +226,7 @@ void enderDragon::render(const gameRenderData& targetData) const
 void enderDragon::tick()
 {
 	mob::tick();
-	if (enderDragonInnerWingSynchronizer.maximumBetween(currentWorld->ticksSinceStart * secondsPerTick, (currentWorld->ticksSinceStart + 1) * secondsPerTick))
+	if (enderDragonInnerWingSynchronizer.maximumSineAmpBetween(currentWorld->ticksSinceStart * secondsPerTick, (currentWorld->ticksSinceStart + 1) * secondsPerTick))
 	{
 		enderDragonWingsSound->playRandomSound(dimensionIn, position);
 	}
@@ -347,8 +347,8 @@ void enderDragon::updateBodyParts() const
 
 	//0 = start, 1 = end
 
-	cfp innerWingAngle = enderDragonInnerWingSynchronizer.getSwingAngle(currentWorld->ticksSinceStart * secondsPerTick);
-	cfp outerWingAngle = enderDragonOuterWingSynchronizer.getSwingAngle(currentWorld->ticksSinceStart * secondsPerTick);
+	cfp innerWingAngle = enderDragonInnerWingSynchronizer.getSineAmpAt(currentWorld->ticksSinceStart * secondsPerTick);
+	cfp outerWingAngle = enderDragonOuterWingSynchronizer.getSineAmpAt(currentWorld->ticksSinceStart * secondsPerTick);
 
 	cfp innerWingTopSize = sin(innerWingAngle) * (enderDragonInnerWingTopSize.y);
 	fp outerWingTopSize = sin(outerWingAngle) * (enderDragonOuterWingTopSize.y);

@@ -1,7 +1,7 @@
 #pragma once
 #include "mob.h"
 #include "slotContainer.h"
-#include "math/swingsynchronizer.h"
+#include "math/wave/waveShaper.h"
 #include "constants/vectorConstants.h"
 
 //human
@@ -31,7 +31,7 @@ constexpr rectangle2 humanHitbox = crectangle2(-humanHitboxSize.getX() * 0.5, 0,
 constexpr int waitTime = 5;//the time in ticks to wait before you actually start breaking a block
 
 //convert seconds to relative arm angle
-constexpr swingSynchronizer armSwingSynchronizer = swingSynchronizer(1.0 / swingsPerSecond, -0.4 * math::PI, -0.2 * math::PI);
+constexpr waveShaper armSwingSynchronizer = waveShaper(1.0 / swingsPerSecond, -0.4 * math::PI, -0.2 * math::PI);
 
 struct humanoid : public mob, public slotContainer
 {
@@ -101,4 +101,4 @@ struct humanoid : public mob, public slotContainer
 };
 
 
-swingSynchronizer getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle = maxHumanLegAngle);
+waveShaper getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle = maxHumanLegAngle);

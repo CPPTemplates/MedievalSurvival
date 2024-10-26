@@ -103,7 +103,7 @@
 #include "math/mattnxn.h"
 #include "math/rectangle/rectangletn.h"
 #include "math/graphics/resolutiontexture.h"
-#include "math/swingsynchronizer.h"
+#include "math/wave/waveShaper.h"
 #include "math/graphics/texture.h"
 #include "math/vector/vectn.h"
 #include "levelID.h"
@@ -2989,7 +2989,7 @@ void loadEntityData()
 	currentEntityID++;
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ghast"), 10, ghastHitbox, ghastHitboxSize.volume() * ghastHitboxSize.x, 150), loadTextureFromResourcePack(entityTextureFolder / L"ghast" / L"ghast.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"moan"), std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"scream"), std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"death"), ghastFlyingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::white], rgbColorValues[(int)colorID::gray], 0, 0, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ender_dragon"), 200, enderDragonHitbox, enderDragonVolume, enderDragonWeight), loadTextureFromResourcePack(entityTextureFolder / L"enderdragon" / L"dragon.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"growl"), std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"hit"), nullptr, enderDragonFlyingSpeed, swingSynchronizer(0, 0, 0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::blue], INFINITY, enderDragonHeadAttackDamage));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ender_dragon"), 200, enderDragonHitbox, enderDragonVolume, enderDragonWeight), loadTextureFromResourcePack(entityTextureFolder / L"enderdragon" / L"dragon.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"growl"), std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"hit"), nullptr, enderDragonFlyingSpeed, waveShaper(0, 0, 0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::blue], INFINITY, enderDragonHeadAttackDamage));
 	currentEntityID++;
 	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"boat"), 4, crectangle2(boatHitboxSize.x * -0.5, 0, boatHitboxSize.x, boatHitboxSize.y), math::squared(boatHitboxSize.x) * boatHitboxSize.y));
 	currentEntityID++;

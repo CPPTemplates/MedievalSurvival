@@ -42,7 +42,8 @@ fp mobData::getSpawnWeight(dimension *dimensionIn, cveci2 &position)
 		}
 		else if (biomeIn == biomeID::swamp)
 		{
-			return 0x4;
+			if (identifier == entityID::bogged)
+				return 0x4;
 		}
 		else
 		{
@@ -170,11 +171,11 @@ mobData::~mobData()
 {
 	delete experienceWhenKilled;
 }
-mobData::mobData(const entityData &data, resolutionTexture *skin, std::shared_ptr<soundCollection> walkSound, std::shared_ptr<soundCollection> ambientSound, std::shared_ptr<soundCollection> hurtSound, std::shared_ptr<soundCollection> deathSound, cfp &walkingSpeed, const swingSynchronizer &legSwingSynchronizer, const color &spawnEggColor, const color &spawnEggOverlayColor, cfp &attackSpeed, cfp &attackDamage, experienceDrop *experienceWhenKilled, cfp &flyingSpeed) : entityData(data),
-																																																																																																																					  walkingSpeed(walkingSpeed), flyingSpeed(flyingSpeed ? flyingSpeed : walkingSpeed), attackSpeed(attackSpeed), attackDamage(attackDamage),
-																																																																																																																					  ambientSound(ambientSound), hurtSound(hurtSound), deathSound(deathSound), stepSound(walkSound),
-																																																																																																																					  skin(skin), legSwingSynchronizer(legSwingSynchronizer),
-																																																																																																																					  spawnEggColor(spawnEggColor), spawnEggOverlayColor(spawnEggOverlayColor),
-																																																																																																																					  experienceWhenKilled(experienceWhenKilled)
+mobData::mobData(const entityData &data, resolutionTexture *skin, std::shared_ptr<soundCollection> walkSound, std::shared_ptr<soundCollection> ambientSound, std::shared_ptr<soundCollection> hurtSound, std::shared_ptr<soundCollection> deathSound, cfp &walkingSpeed, const waveShaper &legSwingSynchronizer, const color &spawnEggColor, const color &spawnEggOverlayColor, cfp &attackSpeed, cfp &attackDamage, experienceDrop *experienceWhenKilled, cfp &flyingSpeed) : entityData(data),
+																																																																																																																			   walkingSpeed(walkingSpeed), flyingSpeed(flyingSpeed ? flyingSpeed : walkingSpeed), attackSpeed(attackSpeed), attackDamage(attackDamage),
+																																																																																																																			   ambientSound(ambientSound), hurtSound(hurtSound), deathSound(deathSound), stepSound(walkSound),
+																																																																																																																			   skin(skin), legSwingSynchronizer(legSwingSynchronizer),
+																																																																																																																			   spawnEggColor(spawnEggColor), spawnEggOverlayColor(spawnEggOverlayColor),
+																																																																																																																			   experienceWhenKilled(experienceWhenKilled)
 {
 }

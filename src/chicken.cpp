@@ -57,7 +57,7 @@ void chicken::updateBodyParts() const
 {
 	mainBodyPart->translate = position + cvec2(0, chickenLowerLegSize.y + chickenUpperLegSize.y);
 
-	cfp rightLegangle = ((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.getSwingAngle(totalLegDistance);
+	cfp rightLegangle = ((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.getSineAmpAt(totalLegDistance);
 
 	rightUpperLeg->angle = rightLegangle;
 	leftUpperLeg->angle = -rightLegangle;

@@ -370,7 +370,7 @@ void mob::tick()
 	// dont play sounds if sneaking or falling
 	if (!sneaking && onGround && moving)
 	{
-		if (((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.maximumBetween(lastLegDistance, totalLegDistance))
+		if (((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.maximumSineAmpBetween(lastLegDistance, totalLegDistance))
 		{
 			// check block
 			block *b = blockList[(int)dimensionIn->getBlockID(veci2((int)floor(position.x), (int)floor(position.y - 0.05)))];

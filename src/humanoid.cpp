@@ -54,7 +54,7 @@
 #include "math/random/random.h"
 #include "math/rectangle/rectangletn.h"
 #include "math/graphics/resolutiontexture.h"
-#include "math/swingsynchronizer.h"
+#include "math/wave/waveShaper.h"
 #include "math/timemath.h"
 #include "math/vector/vectn.h"
 #include "itemID.h"
@@ -129,15 +129,15 @@ void humanoid::updateBodyParts() const
 		constexpr fp wavingStrength = 20;//the angle in degrees of the maximum difference between the hands while waving
 		constexpr fp waveSpeed = 0.5;//the time in seconds until the hands have the same position and speed again
 		//arms waving in the air
-		constexpr swingSynchronizer armWavingSynchronizer = swingSynchronizer(waveSpeed, wavingStrength * -0.5 * math::degreesToRadians, wavingStrength * -0.5 * math::degreesToRadians);
-		cfp& armAngleOffset = armWavingSynchronizer.getSwingAngle(currentWorld->ticksSinceStart * secondsPerTick);
+		constexpr waveShaper armWavingSynchronizer = waveShaper(waveSpeed, wavingStrength * -0.5 * math::degreesToRadians, wavingStrength * -0.5 * math::degreesToRadians);
+		cfp& armAngleOffset = armWavingSynchronizer.getSineAmpAt(currentWorld->ticksSinceStart * secondsPerTick);
 		//cfp armAngleOffset = sin(microsectosec(getmicroseconds()) * math::PI2 / waveSpeed) * wavingStrength * 0.5 * math::degreesToRadians;
 		rightArmWalkingAngle = math::PI + legBrakeAngle + armAngleOffset;
 		leftArm->angle = math::PI + legBrakeAngle - armAngleOffset;
 	}
 	else
 	{
-		cfp rightLegAngle = ((mobData*)entityDataList[(int)entityType])->legSwingSynchronizer.getSwingAngle(totalLegDistance);
+		cfp rightLegAngle = ((mobData*)entityDataList[(int)entityType])->legSwingSynchronizer.getSineAmpAt(totalLegDistance);
 		rightLeg->angle = rightLegAngle;
 		leftLeg->angle = -rightLegAngle;
 		rightArmWalkingAngle = -rightLegAngle;
@@ -152,7 +152,7 @@ void humanoid::updateBodyParts() const
 
 	cfp angleIfHoldingItem = math::degreesToRadians * -30;
 
-	cfp& armAngleOffset = armSwingSynchronizer.getSwingAngle(currentWorld->ticksSinceStart * secondsPerTick);
+	cfp& armAngleOffset = armSwingSynchronizer.getSineAmpAt(currentWorld->ticksSinceStart * secondsPerTick);
 	rightArm->angle = digging ? armAngleOffset : (!walking && itemHolding && (int)itemHolding->stackItemID) ? angleIfHoldingItem : rightArmWalkingAngle;
 
 	if (sleeping)
@@ -679,7 +679,7 @@ void humanoid::tick()
 							//play digging sound if the arm is on its furthest point
 							//cfp furthestPoint = 0.5;
 							
-							if (armSwingSynchronizer.maximumBetween(currentWorld->ticksSinceStart * secondsPerTick, (currentWorld->ticksSinceStart + 1) * secondsPerTick))
+							if (armSwingSynchronizer.maximumSineAmpBetween(currentWorld->ticksSinceStart * secondsPerTick, (currentWorld->ticksSinceStart + 1) * secondsPerTick))
 							{
 								//start playing the sound just before 'hitting'
 								b->hitSound->playRandomSound(dimensionIn, exactBlockIntersection);
@@ -889,11 +889,11 @@ bool humanoid::placeBlock(blockID blockToPlace)
 	}
 	return false;
 }
-swingSynchronizer getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle)
+waveShaper getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle)
 {
 	cfp speedMultiplier = 2;
 	cfp distanceBetweenLegsSpread = sin(maxLegAngle) * legHeight * 2 * speedMultiplier;
-	return swingSynchronizer(distanceBetweenLegsSpread, -maxLegAngle, maxLegAngle);
+	return waveShaper(distanceBetweenLegsSpread, -maxLegAngle, maxLegAngle);
 }
 std::vector<vec3> humanoid::getFrictions() const
 {

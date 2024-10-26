@@ -26,7 +26,7 @@
             }
         },
         {
-            "label": "populate",
+            "label": "generate build folder",
             "type": "shell",
             "windows": {
                 "command": "powershell",
@@ -39,38 +39,8 @@
             "options": {
                 "cwd": "${workspaceFolder}",
                 "env": {}
-            },
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": [
-                "unzip jar"
-            ]
+            }
         },
-        //{
-        //    "label": "populate",
-        //    "type": "shell",
-        //    "windows": {
-        //        "command": "mkdir build/${config:buildType} && cmake -B build/${config:buildType} -S . -G Ninja -DCMAKE_BUILD_TYPE=${config:buildType}"
-        //    },
-        //    //"options": {
-        //    //    "cwd": "${workspaceFolder}/build/${config:buildType}",
-        //    //    "env": {
-        //    //        "buildType": "Release"
-        //    //    },
-        //    //},
-        //    "options": {
-        //        "cwd": "${workspaceFolder}",
-        //        "env": {},
-        //    },
-        //    "problemMatcher": [],
-        //    "group": {
-        //        "kind": "build",
-        //        "isDefault": true
-        //    }
-        //},
         {
             "label": "clean",
             "type": "shell",
@@ -115,10 +85,6 @@
                     "-c",
                     "if [ ! -d '${workspaceFolder}/data/version/currentversion' ]; then unzip '${workspaceFolder}/data/version/currentversion.zip' -d '${workspaceFolder}/data/version/currentversion'; fi"
                 ]
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
             },
             "problemMatcher": []
         }
