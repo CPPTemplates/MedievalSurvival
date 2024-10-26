@@ -12,6 +12,8 @@
 #include "math/LayerNoiseSimplex.h"
 #include "math/random/shufflerandom.h"
 #include "include/math/graphics/brush/brushes/alphaMask.h"
+#include "human.h"
+#include "gameTime.h"
 
 // https://www.researchgate.net/figure/Fitting-effect-of-wind-speed-probability-distribution_fig2_359780398
 const transition<fp> noiseValueToWindSpeed = transition<fp>(std::vector<keyFrame<fp>>({
@@ -276,6 +278,21 @@ void overWorld::initialize()
     caveNoise = new layerNoiseSimplex(worldRandom, caveOctaveWeights, 0x40,
                                       crectangle1::fromOppositeCorners(cvec1(-caveCornerSharpness),
                                                                        cvec1(caveCornerSharpness)));
+
+    backgroundCloudsNoise =
+        new layerNoiseSimplex(currentRandom,
+                              {
+                                  0b100, // weights
+                                  0b100,
+                                  0b1,
+                              },
+                              {
+
+                                  vec3(0x60, 0x10), // cloud formations
+                                  vec3(0x10, 0x10), // keeps clouds together
+                                  vec3(0x4, 0x4),   // details
+                              },
+                              crectangle1::fromOppositeCorners(cvec1(0), cvec1(1)));
 
     // generate cloud thickness noise
     std::vector<fp> cloudThicknessWeights{
@@ -644,6 +661,14 @@ void overWorld::renderSky(crectangle2 &blockRect, crectangle2 &drawRect,
     // cfp humidity = 0.5;                         // biomeHumidityNoise->evaluate(vec1(position.x));
     cfp cloudThickness = cloudThicknessNoise->evaluate(cvec1(currentWorld->currentTime));
 
+    cfp &timeOfDay = getTimeOfDay(currentWorld->currentTime);
+
+    cfp &sunAngle = ((timeOfDay - noon) / (fp)ticksPerDay) * math::PI2;
+    // 0, 1: the sun is on top
+    cvec2 &sunVector = vec2::getrotatedvector(sunAngle);
+    // value from 0 to 1 indicating how bright the sun is
+    cfp &brightness = math::maximum(sunVector.y, (fp)0.1);
+
     // color(40, 94, 181);
     const colorf &airColorHSV = colorf(
         // math::lerp((fp)215, (fp)230, math::clamp((fp)(2 - temperature * 3), (fp)0, (fp)1)),
@@ -653,7 +678,8 @@ void overWorld::renderSky(crectangle2 &blockRect, crectangle2 &drawRect,
             (fp)0, (fp)1),
         math::clamp(math::minimum(
                         math::mapValue(height, (fp)seaLevel, (fp)maximumHillHeight, (fp)1, (fp)0.4),
-                        math::lerp((fp)1, (fp)0.7, math::squared(cloudThickness))),
+                        math::lerp((fp)1, (fp)0.7, math::squared(cloudThickness))) *
+                        brightness,
                     (fp)0, (fp)1));
     const color airColor = color(hsv2rgb(airColorHSV));
 
@@ -661,39 +687,78 @@ void overWorld::renderSky(crectangle2 &blockRect, crectangle2 &drawRect,
     {
         // draw celestial bodies
         // render sun
-        cfp &timeOfDay = currentWorld->getTimeOfDay();
-        cfp &sunAngle = ((timeOfDay - noon) / (fp)ticksPerDay) * math::PI2;
 
         cvec2 &sunPosition = cvec2(targetData.renderTarget.size.x * 0.5, 0) +
-                             vec2::getrotatedvector(sunAngle) * targetData.renderTarget.size.x *
+                             sunVector * targetData.renderTarget.size.x *
                                  0.5;
         cfp &sunSize = targetData.renderTarget.size.x * 0.2;
         crectangle2 &sunRect = crectangle2(sunPosition, cvec2()).expanded(sunSize * 0.5);
 
-        rectangle2 croppedSunRect = sunRect;
-        if (drawRect.cropClientRect(croppedSunRect))
+        // render clouds
+
+        // the size of 1 pixel of a cloud in screen pixels
+        constexpr fp cloudPixels = 0x20;
+        // the size of a cloud in blocks
+        constexpr fp cloudBlocks = 0x10;
+
+        vec2 cloudOffset = (targetData.screen.cameraPosition / cloudBlocks) - (vec2(0.005, 0.0005) * currentWorld->ticksSinceStart);
+
+        // divide into tiles
+        rectanglei2 cloudRect = floorRectangle(crectangle2(drawRect.pos0 / cloudPixels, drawRect.size / cloudPixels));
+        cloudRect.size = cloudRect.size + 1;
+
+        for (cveci2 &cloudPos : cloudRect)
         {
-            const auto &backGroundToSun = transformBrush(
-                mat3x3::fromRectToRect(sunRect, crectangle2(0, 0, sunTexture->defaultSize.x,
-                                                            sunTexture->defaultSize.y)),
-                *sunTexture);
+            vec2 noisePos = cloudPos;
+            fp noiseValue = backgroundCloudsNoise->evaluate(noisePos + cloudOffset);
+            noiseValue = math::clamp(noiseValue * 3.2 - 2, (fp)0, (fp)1);
 
-            const auto& airBrush = solidColorBrush(airColor);
-            const auto &maximizer = colorMaximizer(
-                airBrush, backGroundToSun);
-            fillRectangle(targetData.renderTarget, ceilRectangle(croppedSunRect), colorMixer(targetData.renderTarget, maximizer));
+            // this will limit different colors. for example: 0.25 will round everything to either 0.25, 0.75, 0 etc.
+            constexpr fp cloudSteps = 0.2;
+            fp cloudThickness = math::floor(noiseValue, cloudSteps);
 
-            if (cloudThickness > 0.7) // raining
+            fp cloudBrightness = brightness;
+            const color darkCloudColor = color((colorChannel)0x20, (colorChannel)0x20, (colorChannel)0x40);
+            const color cloudColor = color(lerpColor(darkCloudColor, color((colorChannel)0xff), cloudBrightness), (colorChannel)math::ceil(0xff * cloudThickness));
+
+            rectangle2 cloudDrawRect = rectangle2(cloudPos * cloudPixels, vec2(cloudPixels));
+
+            rectangle2 croppedSunRect = sunRect;
+            if (cloudDrawRect.cropClientRect(croppedSunRect))
             {
-                /*cfp velocity = targetData.worldToRenderTargetTransform.multSizeMatrix(cvec1(TerminalGravityVelocityAirPerTick)).x;
+                const auto &backGroundToSun = transformBrush(
+                    mat3x3::fromRectToRect(sunRect, crectangle2(0, 0, sunTexture->defaultSize.x,
+                                                                sunTexture->defaultSize.y)),
+                    *sunTexture);
 
-                const auto& weatherBrush = repeatingBrush<resolutionTexture>(*rainTexture);
-                const auto& movingWeatherBrush = transformBrush<repeatingBrush<resolutionTexture>>(mat3x3::cross(mat3x3::translate(cvec2(0, currentWorld->ticksSinceStart * velocity)), mat3x3::scale(cvec2(0.25))), weatherBrush);
-                fillTransparentRectangle(rect, movingWeatherBrush, targetData.renderTarget);
-                */
+                // clouds should be in front of the sun; render the sky and clouds separately.
+                const solidColorBrush skyBrush = solidColorBrush(airColor);
+                const solidColorBrush cloudBrush = solidColorBrush(cloudColor);
+
+                const auto &maximizer = colorMaximizer(
+                    skyBrush, backGroundToSun);
+                fillRectangle(targetData.renderTarget, ceilRectangle(croppedSunRect), colorMixer(targetData.renderTarget, colorMixer(cloudBrush, maximizer)));
+
+                if (cloudThickness > 0.7) // raining
+                {
+                    /*cfp velocity = targetData.worldToRenderTargetTransform.multSizeMatrix(cvec1(TerminalGravityVelocityAirPerTick)).x;
+
+                    const auto& weatherBrush = repeatingBrush<resolutionTexture>(*rainTexture);
+                    const auto& movingWeatherBrush = transformBrush<repeatingBrush<resolutionTexture>>(mat3x3::cross(mat3x3::translate(cvec2(0, currentWorld->ticksSinceStart * velocity)), mat3x3::scale(cvec2(0.25))), weatherBrush);
+                    fillTransparentRectangle(rect, movingWeatherBrush, targetData.renderTarget);
+                    */
+                }
+                if (cloudDrawRect == croppedSunRect)
+                    continue;
             }
+            const solidColorBrush rectBrush = solidColorBrush(lerpColor(airColor, cloudColor, cloudThickness));
+
+            drawRect.cropClientRect(cloudDrawRect);
+
+            fillRectangle(targetData.renderTarget, cloudDrawRect, colorMixer(targetData.renderTarget, rectBrush));
         }
     }
+    else
 
-    fillRectangle(targetData.renderTarget, ceilRectangle(drawRect), colorMixer(targetData.renderTarget, solidColorBrush(airColor)));
+        fillRectangle(targetData.renderTarget, ceilRectangle(drawRect), colorMixer(targetData.renderTarget, solidColorBrush(airColor)));
 }

@@ -53,11 +53,12 @@
 #include "nbt/nbtSerializer.h"
 #include "include/filesystem/fileFunctions.h"
 #include "nbt/serializeColor.h"
+#include "gameTime.h"
 
 color dimension::getColorMultiplier(cfp& sunLight, cfp& blockLight) const
 {
 	const texture& lightMapTexture = *dimensionDataList[identifier]->lightMapTexture->scaledTextures[0];
-	cfp preciseSunlightLevel = (timeToLightLevel.getValue(currentWorld->getTimeOfDay()) / maxLightLevel) * (fp)(lightMapTexture.size.x - 2);//-2 for thunder
+	cfp preciseSunlightLevel = (timeToLightLevel.getValue(getTimeOfDay(currentWorld->currentTime)) / maxLightLevel) * (fp)(lightMapTexture.size.x - 2);//-2 for thunder
 
 	cfsize_t& quarter = lightMapTexture.size.y / 4;
 

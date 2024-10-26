@@ -1,4 +1,5 @@
 #pragma once
+//chunkloadlevel specifies which phase of loading this chunk is in. chunks loaded with higher levels of chunk loading can load other chunks to lower levels.
 enum class chunkLoadLevel : int
 {
 	notLoaded,//used to get data from chunks without loading them completely

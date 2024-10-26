@@ -6,7 +6,7 @@
 #include "math/direction.h"
 #include "math/mathFunctions.h"
 
-constexpr int currentFileVersionID = 122;
+constexpr int currentFileVersionID = 124;
 
 //forward declarations
 //typedefs

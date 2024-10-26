@@ -5,6 +5,7 @@ constexpr entityID mobList[]
 	entityID::human,
 	entityID::skeleton,
 	entityID::stray,
+	entityID::bogged,
 	entityID::husk,
 	entityID::drowned,
 	entityID::zombie_villager,

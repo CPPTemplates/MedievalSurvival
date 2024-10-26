@@ -24,7 +24,7 @@ void biomeGenerator::setLeave(blockContainer *containerIn, cveci2 &position, con
 }
 void biomeGenerator::setLeaves(blockContainer *containerIn, cveci2 &pos00, cveci2 &pos11, const blockID &leavesToUse)
 {
-	containerIn->replaceBlockRange(pos00, pos11, leavesToUse, {blockID::air, blockID::grass, blockID::tall_grass, blockID::snow});
+	containerIn->replaceBlockRange(pos00, pos11, leavesToUse, {blockID::air, blockID::short_grass, blockID::tall_grass, blockID::snow});
 }
 void biomeGenerator::placeRandomlyGrownCrop(blockContainer *containerIn, cveci2 &position, const blockID &cropID, std::mt19937 &randomToUse)
 {
@@ -91,7 +91,7 @@ bool biomeGenerator::placeTree(tickableBlockContainer *containerIn, cveci2 &pos,
 	{
 		return false;
 	}
-	if (!containerIn->blockRangeContainsOnly(pos, pos, {blockID::air, (blockID)((int)blockID::wood_sapling + (int)type), blockID::grass, blockID::tall_grass, blockID::dead_bush}))
+	if (!containerIn->blockRangeContainsOnly(pos, pos, {blockID::air, (blockID)((int)blockID::wood_sapling + (int)type), blockID::short_grass, blockID::tall_grass, blockID::dead_bush}))
 	{
 		return false;
 	}
@@ -247,7 +247,7 @@ void biomeGenerator::generateGrassTopping(blockContainer *containerIn, cveci2 &p
 
 void biomeGenerator::generateGrassTopping(blockContainer *containerIn, cveci2 &pos, std::mt19937 &randomToUse, const blockID &grassType)
 {
-	const blockID &shortVersion = (blockID)(((int)grassType - (int)blockID::grass_block) + (int)blockID::grass);
+	const blockID &shortVersion = (blockID)(((int)grassType - (int)blockID::grass_block) + (int)blockID::short_grass);
 	const blockID &tallVersion = (blockID)(((int)grassType - (int)blockID::grass_block) + (int)blockID::tall_grass);
 
 	generateTopping(containerIn, cveci2(pos.x, pos.y - 1), {blockID::stone}, blockID::dirt, 3);

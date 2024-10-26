@@ -33,12 +33,16 @@ fp mobData::getSpawnWeight(dimension *dimensionIn, cveci2 &position)
 			}
 		}
 
-		if ((biomeIn == biomeID::taiga) || (biomeIn == biomeID::ice_spikes) || (biomeIn == biomeID::snowy_tundra))
+		if (is_in(biomeIn, biomeID::taiga, biomeID::ice_spikes, biomeID::snowy_tundra))
 		{
 			if (identifier == entityID::stray)
 			{
 				return 0x4;
 			}
+		}
+		else if (biomeIn == biomeID::swamp)
+		{
+			return 0x4;
 		}
 		else
 		{

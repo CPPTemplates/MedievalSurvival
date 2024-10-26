@@ -6,3 +6,5 @@ models
 ndk
 old
 build
+data/version/currentversion
+data/version/other

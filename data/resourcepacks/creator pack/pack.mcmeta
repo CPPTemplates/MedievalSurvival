@@ -1,6 +1,23 @@
 {
   "pack": {
-    "pack_format": 6,
-    "description": "§4§lC§6§lr§e§le§2§la§3§lt§9§lo§5§lr§fPack\n   §f§l1.16 §r§eV1.2.0 §f§o©creatorLabs"
+    "pack_format": 18,
+    "supported_formats": [18,34],
+    "description": "§4§lC§6§lr§e§le§2§la§3§lt§9§lo§5§lr§fPack\n   §f§l1.21 §r§eV1.4.1 §f§o©CreatorLabs"
+  },
+  "overlays": {
+    "entries": [
+      {
+        "formats": [18,19],
+        "directory": "1_20_2"
+      },
+      {
+        "formats": [20,22],
+        "directory": "1_20_3"
+      },
+      {
+        "formats": [18,31],
+        "directory": "1_20_4"
+      }
+    ]
   }
 }

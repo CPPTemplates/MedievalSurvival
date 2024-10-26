@@ -75,30 +75,44 @@ inline void fillRowUnsafe(const array2d<t> &array, cfsize_t &rowY, cfsize_t &min
     }
 }
 
-template <typename t, typename brush0Type, typename brush1Type, typename = std::enable_if_t<std::is_base_of_v<array2d<t>, brush1Type>>>
+template <typename t, typename brush0Type, typename brush1Type>
 inline void fillRowUnsafe(const array2d<t> &array, cfsize_t &rowY, cfsize_t &minX, cfsize_t &maxX, const colorMixer<brush0Type, brush1Type> &b)
 {
-    if (&b.bottomBrush == &array)
+    t *const rowPtr = array.baseArray + rowY * array.size.x;
+    t *const endPtr = rowPtr + maxX;
+
+    typedef typename brush0Type::inputType vectorType;
+    typedef typename vectorType::axisType axisType;
+    vectorType pos = vectorType((axisType)minX, (axisType)rowY);
+    if constexpr (std::is_base_of_v<array2d<t>, brush0Type>)
     {
-        t *const rowPtr = array.baseArray + rowY * array.size.x;
-        t *const endPtr = rowPtr + maxX;
-
-        typedef typename brush0Type::inputType vectorType;
-        typedef typename vectorType::axisType axisType;
-
-        vectorType pos = vectorType((axisType)minX, (axisType)rowY);
-
-        for (t *ptr = rowPtr + minX; ptr < endPtr; ptr++, pos.x++)
+        if (&b.topBrush == &array)
         {
-            ccolor &topColor = b.topBrush.getValue(pos);
-            *ptr = topColor.a() == color::maxValue ? topColor : topColor.a() ? transitionColor(topColor, *ptr)
-                                                                             : *ptr;
+            for (t *ptr = rowPtr + minX; ptr < endPtr; ptr++, pos.x++)
+            {
+                if (ptr->a() != color::maxValue)
+                {
+                    ccolor &bottomColor = b.bottomBrush.getValue(pos);
+                    *ptr = ptr->a() ? transitionColor(*ptr, bottomColor) : bottomColor;
+                }
+            }
+            return;
         }
     }
-    else
+    else if constexpr (std::is_base_of_v<array2d<t>, brush1Type>)
     {
-        fillRowUnsafe(array, rowY, minX, maxX, b);
+        if (&b.bottomBrush == &array)
+        {
+            for (t *ptr = rowPtr + minX; ptr < endPtr; ptr++, pos.x++)
+            {
+                ccolor &topColor = b.topBrush.getValue(pos);
+                *ptr = topColor.a() == color::maxValue ? topColor : topColor.a() ? transitionColor(topColor, *ptr)
+                                                                                 : *ptr;
+            }
+            return;
+        }
     }
+    fillRowUnsafe<t, colorMixer<brush0Type, brush1Type>>(array, rowY, minX, maxX, b);
 }
 
 template <typename t, typename brush0Type>
@@ -188,17 +202,17 @@ inline void fillEllipse(const array2d<t> &array, crectangle2 &rect, const brush0
             cfp val = 1 - math::squared((midy - j) * multy);
             if (val > 0)
             {
-                cfp& dx = math::sqrt(val) / multx;
+                cfp &dx = math::sqrt(val) / multx;
 
-                //cfp &fromX = midx - dx;
-                //cfp &toX = midx + dx;
+                // cfp &fromX = midx - dx;
+                // cfp &toX = midx + dx;
 
                 // 0.5 to 1.5:
                 // only fill two pixels
                 cint &minX = math::maximum((int)ceil(midx - dx), croppedRect.x);
                 cint &maxX = math::minimum((int)floor(midx + dx) + 1, croppedPos1.x); //+1 for also filling the last pixel
 
-                //t *ptr = array.baseArray + j * array.size.x + minX;
+                // t *ptr = array.baseArray + j * array.size.x + minX;
 
                 fillRow(array, j, minX, maxX, b);
             }
@@ -207,7 +221,7 @@ inline void fillEllipse(const array2d<t> &array, crectangle2 &rect, const brush0
 }
 
 template <typename t, typename brush0Type>
-inline void fillEllipseCentered(const array2d<t> &array, crectangle2& rect, const brush0Type &b)
+inline void fillEllipseCentered(const array2d<t> &array, crectangle2 &rect, const brush0Type &b)
 {
     fillEllipse(array, crectangle2(rect.pos0 - rect.size * 0.5, rect.size), b);
 }
@@ -272,7 +286,7 @@ inline void fillPolygonShiftedUnsafe(const array2d<t> &array, const fastArray<ve
     cfsize_t sideCount = 0x2;
     fp currentX[2]{0, 0};
 
-    cfsize_t& maxYCropped = math::minimum(math::ceil<fsize_t>(maxY), array.size.y);
+    cfsize_t &maxYCropped = math::minimum(math::ceil<fsize_t>(maxY), array.size.y);
     // initialize the first two lines by default
     for (fsize_t currentY = (fsize_t)math::maximum(math::ceil(minY), 0); currentY < maxYCropped; currentY++)
     {
@@ -307,8 +321,8 @@ inline void fillPolygonShiftedUnsafe(const array2d<t> &array, const fastArray<ve
             }
         }
         // CAUTION WITH SLOPE
-        cint& minX = math::maximum((int)ceil(currentX[0]), 0);
-        cint& maxX = math::maximum((int)ceil(currentX[1]), 0);
+        cint &minX = math::maximum((int)ceil(currentX[0]), 0);
+        cint &maxX = math::maximum((int)ceil(currentX[1]), 0);
         // draw line
         fillRow(array, currentY, minX, maxX, b);
     }

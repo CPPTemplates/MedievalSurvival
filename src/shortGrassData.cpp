@@ -8,7 +8,7 @@ void shortGrassData::randomTick(tickableBlockContainer* containerIn, cveci2& pos
 	{
 		if (containerIn->getBlockID(position + cveci2(0, 1)) == blockID::air)
 		{
-			containerIn->setBlockID(position, (blockID)((int)blockID::tall_grass + ((int)containerIn->getBlockID(position) - (int)blockID::grass)));
+			containerIn->setBlockID(position, (blockID)((int)blockID::tall_grass + ((int)containerIn->getBlockID(position) - (int)blockID::short_grass)));
 		}
 	}
 }

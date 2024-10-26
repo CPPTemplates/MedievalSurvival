@@ -40,6 +40,9 @@ const stdPath itemTextureFolder = generalTextureFolder / L"item";
 const stdPath armorTextureFolder = generalTextureFolder / L"models" / L"armor";
 const stdPath miscellaneousTextureFolder = generalTextureFolder / L"misc";
 const stdPath particleTextureFolder = generalTextureFolder / L"particle";
+const stdPath spritesTextureFolder = guiTextureFolder / L"sprites";
+const stdPath hudTextureFolder = spritesTextureFolder / L"hud";
+const stdPath heartTextureFolder = hudTextureFolder / L"heart";
 
 //sounds
 const stdPath generalSoundFolder = assetsFolder / L"sounds";
@@ -86,6 +89,6 @@ const stdPath saveFolderChunks = stdPath(L"chunks");
 const stdPath saveFolderScreenShot = stdPath(L"screenshot.png");
 const stdPath saveFolderWorldData = stdPath(L"world data" + nbtFileExtension);
 
-const stdPath minecraftVersionFolder = dataFolder / L"version" / L"1.16.2";
+const stdPath minecraftVersionFolder = dataFolder / L"version" / L"currentversion";
 //const stdPath dataPackFolder = dataFolder / L"datapacks";
 extern stdPath workingDirectory;

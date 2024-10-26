@@ -117,6 +117,7 @@
 #include "include/math/graphics/brush/brushes/colorMultiplier.h"
 #include "include/math/graphics/brush/brushes/solidColorBrush.h"
 #include "include/math/graphics/graphicsFunctions.h"
+#include "resourceLoader.h"
 
 minecraftFont *currentMinecraftFont = nullptr;
 fontFamily *currentMinecraftFontFamily = nullptr;
@@ -2177,7 +2178,7 @@ void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dead_bush.png")), std::wstring(L"dead_bush"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, withSwordOrShears, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grass.png")), std::wstring(L"grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, withHand, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"short_grass.png")), std::wstring(L"short_grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, withHand, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"fern.png")), std::wstring(L"fern"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, withHand, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
 	identifier++;
@@ -2925,7 +2926,9 @@ void loadEntityData()
 	currentEntityID++;
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"skeleton"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"skeleton.png"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"stray"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"stray.png"), std::make_shared<soundCollection>(mobSoundFolder / L"pig" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::blue], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"stray"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"stray.png"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::blue], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
+	currentEntityID++;
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"bogged"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"bogged.png"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"ambient"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lime], rgbColorValues[(int)colorID::green], 1.5, 5, new experienceDrop(5, 5)));
 	currentEntityID++;
 
 	std::shared_ptr<soundCollection> zombieStep = std::make_shared<soundCollection>(mobSoundFolder / L"zombie" / L"step");
@@ -3055,6 +3058,7 @@ void loadEntityData()
 
 void loadResourcePacks()
 {
+	currentLoader = new resourceLoader(resourcePackPaths);
 	loadDataLists();
 	loadMusic();
 	// load textures
@@ -3072,9 +3076,7 @@ void loadResourcePacks()
 
 	mainMenuBackgroundTexture = loadTextureFromResourcePack(guiTextureFolder / L"title" / L"background" / L"2d.png");
 
-	widgetsTexture = loadTextureFromResourcePack(guiTextureFolder / std::wstring(L"widgets.png"));
-	iconsTexture = loadTextureFromResourcePack(guiTextureFolder / std::wstring(L"icons.png"));
-	barsTexture = loadTextureFromResourcePack(guiTextureFolder / std::wstring(L"bars.png"));
+	//barsTexture = loadTextureFromResourcePack(guiTextureFolder / std::wstring(L"bars.png"));
 
 	chatButtonTexture = loadTextureFromResourcePack(buttonTextureFolder / L"chat.png");
 	settingsButtonTexture = loadTextureFromResourcePack(buttonTextureFolder / L"settings.png");
@@ -3096,7 +3098,7 @@ void loadResourcePacks()
 	moonPhasesTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"moon_phases.png"));
 	brewingStandBaseTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brewing_stand_base.png"));
 	brewingStandTopTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brewing_stand.png"));
-	enchantedItemTexture = loadTextureFromResourcePack(miscellaneousTextureFolder / std::wstring(L"enchanted_item_glint.png"));
+	enchantedItemTexture = loadTextureFromResourcePack(miscellaneousTextureFolder / std::wstring(L"enchanted_glint_item.png"));
 	unLitRedstoneTorchTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_torch_off.png"));
 	redstoneLampOnTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_lamp_on.png"));
 

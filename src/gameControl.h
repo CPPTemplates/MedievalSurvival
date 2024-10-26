@@ -120,8 +120,17 @@ struct gameControl : form, clientInput {
 
 extern std::mt19937 currentRandom;
 
-void renderIcons(const std::vector<fp> &values, const std::vector<rectangle2> &iconFullTextureRects,
-                 const std::vector<rectangle2> &iconHalfTextureRects, crectangle2 &firstIconRect,
-                 cfp &xOffset, const texture &renderTarget);
+/// @brief 
+/// @param value 
+/// @param maxValue 
+/// @param fullIcon 
+/// @param halfIcon 
+/// @param emptyIcon 
+/// @param firstIconRect 
+/// @param xOffset 
+/// @param renderTarget 
+/// @return the new y-level (for rendering absorption hearts, for example)
+fp renderIcons(cfp &value, cfp& maxValue, const resolutionTexture &fullIcon, const resolutionTexture &halfIcon, const resolutionTexture &emptyIcon,
+                 crectangle2 &firstIconRect, cfp &xOffset, const texture &renderTarget);
 
 void renderOptionsBackGround(crectanglei2 &rect, const texture &renderTarget);

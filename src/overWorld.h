@@ -12,6 +12,7 @@ struct overWorld :dimension
 	struct shuffleRandom<uint>* biomeCoordinatesRandom[2]{};
 
 	layerNoiseSimplex* cloudThicknessNoise = nullptr;
+	layerNoiseSimplex* backgroundCloudsNoise = nullptr;
 
 	layerNoiseSimplex* windSpeedNoise = nullptr;
 	layerNoiseSimplex* windDirectionNoise[2]{};

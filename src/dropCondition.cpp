@@ -8,6 +8,7 @@
 #include "invertedCondition.h"
 #include "toolDrop.h"
 #include "itemData.h"
+#include "filesystem/jsonReader.h"
 dropCondition* readCondition(const jsonContainer& container)
 {
 	const std::wstring conditionName = container[std::wstring(L"condition")].children[0].value;

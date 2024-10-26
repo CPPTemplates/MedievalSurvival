@@ -47,9 +47,6 @@ constexpr rectangle2 arrowTextureRect = crectangle2(cvec2(0, 27), cvec2(0x10, 5)
 constexpr fp arrowPixelSize = arrowRenderSize.getX() / arrowTextureRect.size.getX();
 constexpr vec2 arrowSize = cvec2(arrowTextureRect.size) * arrowPixelSize;
 
-//hotbar
-constexpr rectangle2 hotbarTextureRect = crectangle2(1, 235, hotbarSpacing * StandardInventoryColumnCount, hotbarSpacing);
-constexpr rectangle2 selectorTextureRect = crectangle2(2, 212, hotbarSpacing, hotbarSpacing);
 
 //rails
 

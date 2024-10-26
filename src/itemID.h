@@ -345,7 +345,7 @@ enum class itemID : int
 	spawner,
 
 	dead_bush,
-	grass,
+	short_grass,
 	fern,
 	tall_grass,
 	large_fern,

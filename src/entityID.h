@@ -5,6 +5,7 @@ enum class entityID :int
 	human,
 	skeleton,
 	stray,
+	bogged,
 	husk,
 	drowned,
 	zombie_villager,

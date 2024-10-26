@@ -280,7 +280,7 @@ void client::processIncomingPackets(const texture &renderTarget)
         serializeNBTValue(*inSerializer, L"hearingRange2D", hearingRange2D);
         serializeNBTValue(*inSerializer, L"earPosition", earPosition);
         serializeNBTValue(*inSerializer, L"earSpeed", earSpeed);
-        
+
         if (inSerializer->push<nbtDataTag::tagList>(L"sounds"))
         {
             const std::vector<nbtData *> &serializedSoundList = inSerializer->getChildren();
@@ -337,13 +337,13 @@ void client::processIncomingPackets(const texture &renderTarget)
             }
         }
 
-        //std::vector<char> frameData;
-        //serializeNBTValue(*inSerializer, "frame", frameData);
-        //imemstream str(&*frameData.begin(), frameData.size());
-        //auto iFace = createStreamInterface(str);
-        //streamSerializer frameSerializer = streamSerializer(iFace, false, std::endian::little);
+        // std::vector<char> frameData;
+        // serializeNBTValue(*inSerializer, "frame", frameData);
+        // imemstream str(&*frameData.begin(), frameData.size());
+        // auto iFace = createStreamInterface(str);
+        // streamSerializer frameSerializer = streamSerializer(iFace, false, std::endian::little);
 
-        //read bytes directly from the stream
+        // read bytes directly from the stream
         decoder.addFrameDiff(streamS);
 
         if (decoder.totalTexture.size == renderTarget.size)
@@ -378,8 +378,8 @@ void client::processIncomingPackets(const texture &renderTarget)
     // while (selector.wait(sf::microseconds(1))); // pop off all packets on the chain and catch up
     if (status != sf::TcpSocket::Status::Done)
     {
-        //auto f = std::bind(&client::addEvent, this, std::placeholders::_1);
-        // std::function{f}.target_type();
+        // auto f = std::bind(&client::addEvent, this, std::placeholders::_1);
+        //  std::function{f}.target_type();
         currentApplication->listener.unhook(&client::addEvent, this);
         // VERY IMPORTANT: FIRST REMOVE THE SOCKET, THEN DISCONNECT!
         selector.remove(*s.socket);
@@ -410,12 +410,11 @@ void client::retrievePacketsAsync()
         packetWaiter->set_value();
         packetWaiter = std::make_shared<std::promise<void>>();
     };
-    while (selector.wait())
+    while (selector.wait(sf::seconds(10)))
     {
         std::shared_ptr<sf::Packet> newPacket = std::make_shared<sf::Packet>();
         if ((status = s.socket->receive(*newPacket)))
         {
-            resetPacketWaiter();
             break;
         }
         receivedPacketsMutex.lock();
@@ -423,4 +422,7 @@ void client::retrievePacketsAsync()
         receivedPacketsMutex.unlock();
         resetPacketWaiter();
     }
+    if (!status)
+        status = sf::Socket::Status::Disconnected;
+    packetWaiter->set_value();
 }

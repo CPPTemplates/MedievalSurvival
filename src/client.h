@@ -22,7 +22,9 @@ struct client : control, socketContainer {
 	videoEncoder decoder = videoEncoder();
     std::queue<std::shared_ptr<sf::Packet>> receivedPackets = std::queue<std::shared_ptr<sf::Packet>>();
     std::mutex receivedPacketsMutex;
+	//packetwaiter will be resolved each time a packet is received.
     std::shared_ptr<std::promise<void>> packetWaiter = std::make_shared<std::promise<void>>();
+	//when the server disconnects, the status is set to anything else than sf::Socket::Done
     sf::Socket::Status status = sf::Socket::Done;
     //std::promise<std::shared_ptr<sf::Packet>> receivePacket = std::promise<std::shared_ptr<sf::Packet>>();
     bool lagging = false;

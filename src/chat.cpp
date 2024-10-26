@@ -52,6 +52,7 @@
 #include "rectangularSlotContainer.h"
 #include <fstream>
 #include "folderList.h"
+#include "gameTime.h"
 
 constexpr int selectedPositionCount = 2;
 vec2 selectedPositions[selectedPositionCount]{};
@@ -618,27 +619,27 @@ void chat::say(human &sender, std::wstring line)
 						}
 						else if (timeString == std::wstring(L"day"))
 						{
-							currentWorld->currentTime = 1000;
+							currentWorld->currentTime = gameTime::day;
 						}
 						else if (timeString == std::wstring(L"noon"))
 						{
-							currentWorld->currentTime = 6000;
+							currentWorld->currentTime = gameTime::noon;
 						}
 						else if (timeString == std::wstring(L"night"))
 						{
-							currentWorld->currentTime = 13000;
+							currentWorld->currentTime = gameTime::night;
 						}
 						else if (timeString == std::wstring(L"midnight"))
 						{
-							currentWorld->currentTime = 18000;
+							currentWorld->currentTime = gameTime::midnight;
 						}
 						else if (timeString == std::wstring(L"sunrise"))
 						{
-							currentWorld->currentTime = 23000;
+							currentWorld->currentTime = gameTime::sunrise;
 						}
 						else if (timeString == std::wstring(L"sunset"))
 						{
-							currentWorld->currentTime = 12000;
+							currentWorld->currentTime = gameTime::sunset;
 						}
 					}
 					else if (getWord(lines, 0) == std::wstring(L"gamerule"))

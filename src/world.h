@@ -24,8 +24,6 @@ struct world :IDestructable, nbtSerializable
 	int lastAutoSaveTick = 0;
 	fp currentTime = 0;
 
-	fp getTimeOfDay()const;
-
 	//will be set in the 'resetWorldSettings' function
 	int randomTickSpeed = 0;
 	bool spawnMobs = false;

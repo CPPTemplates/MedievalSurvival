@@ -5,6 +5,7 @@
 #include "resourcePack.h"
 #include "include/math/random/random.h"
 #include "include/optimization/handleError.h"
+#include "filesystem/jsonReader.h"
 std::vector<jigsawPool *> jigsawPoolList = std::vector<jigsawPool *>();
 void reloadJigsawPools()
 {

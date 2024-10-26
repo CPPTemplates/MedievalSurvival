@@ -172,10 +172,6 @@ bool world::serialize(cbool& write)
 	return true;
 }
 
-fp world::getTimeOfDay() const
-{
-	return math::mod(currentTime, (fp)ticksPerDay);
-}
 world::~world()
 {
 	for (dimension* d : dimensions)

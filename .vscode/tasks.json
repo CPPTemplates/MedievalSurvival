@@ -2,8 +2,7 @@
     "version": "2.0.0",
     "options": {
         "cwd": "${workspaceFolder}/build/${config:buildType}",
-        "env": {
-        },
+        "env": {},
     },
     "tasks": [
         {
@@ -19,8 +18,7 @@
             "osx": {
                 "command": "make -j$((`sysctl -n hw.ncpu`))"
             },
-            "options": {
-            },
+            "options": {},
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -28,7 +26,6 @@
             }
         },
         {
-            
             "label": "populate",
             "type": "shell",
             "windows": {
@@ -44,7 +41,10 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "dependsOn": [
+                "unzip jar"
+            ]
         },
         {
             "label": "clean",
@@ -62,6 +62,38 @@
             },
             "options": {
                 "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "unzip jar",
+            "type": "shell",
+            "command": "",
+            "args": [],
+            "windows": {
+                "command": "powershell",
+                "args": [
+                    "-Command",
+                    "if (!(Test-Path '${workspaceFolder}/data/version/currentversion')) { Expand-Archive -Path '${workspaceFolder}/data/version/currentversion.zip' -DestinationPath '${workspaceFolder}/data/version/currentversion' }"
+                ]
+            },
+            "linux": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "if [ ! -d '${workspaceFolder}/data/version/currentversion' ]; then unzip '${workspaceFolder}/data/version/currentversion.zip' -d '${workspaceFolder}/data/version/currentversion'; fi"
+                ]
+            },
+            "osx": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "if [ ! -d '${workspaceFolder}/data/version/currentversion' ]; then unzip '${workspaceFolder}/data/version/currentversion.zip' -d '${workspaceFolder}/data/version/currentversion'; fi"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
             },
             "problemMatcher": []
         }

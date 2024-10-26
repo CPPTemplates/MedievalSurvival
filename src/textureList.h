@@ -8,8 +8,6 @@
 extern resolutionTexture* brewingStandBaseTexture;
 extern resolutionTexture* brewingStandTopTexture;
 extern resolutionTexture* mainMenuBackgroundTexture;
-extern resolutionTexture* widgetsTexture;
-extern resolutionTexture* iconsTexture;
 extern resolutionTexture* experienceTexture;
 extern resolutionTexture* grassOverlay;
 extern resolutionTexture* woolOverlay;

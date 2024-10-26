@@ -1,7 +1,6 @@
 #pragma once
 #include "rectangularSlotContainer.h"
 #include "interface/idestructable.h"
-#include "filesystem/jsonReader.h"
 struct recipe :IDestructable
 {
 	//returns substraction positions
@@ -24,4 +23,4 @@ recipeType* findRecipe(std::vector<recipeType*> recipeList, rectangularSlotConta
 	}
 	return nullptr;
 }
-void readRecipe(const jsonContainer& recipeDescription);
+void readRecipe(const struct jsonContainer& recipeDescription);

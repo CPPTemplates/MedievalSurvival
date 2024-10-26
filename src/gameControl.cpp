@@ -74,8 +74,16 @@
 #include "humanSlotContainerUI.h"
 #include "end.h"
 #include "application/control/eventTranslator.h"
+#include "resourceLoader.h"
 
-constexpr rectangle2 crosshairTextureRect = crectangle2(3, 244, 9, 9);
+constexpr rectangle2 crosshairTextureRect = crectangle2(0, 0, 15, 15);
+constexpr rectangle2 iconTextureRect = rectangle2(0, 0, 9, 9);
+
+constexpr int hotbarPadding = 1;
+constexpr int hotbarMargin = 2;
+constexpr int selectorMargin = 3;
+constexpr rectangle2 hotbarTextureRect = crectangle2(0, 0, hotbarSpacing *StandardInventoryColumnCount + hotbarPadding * 2, hotbarSpacing + hotbarPadding * 2);
+constexpr rectangle2 selectorTextureRect = crectangle2(0, 0, 24, 23);
 
 microseconds lastTickTimeMicroseconds;
 seconds lastTickTime;
@@ -121,23 +129,20 @@ void gameControl::render(cveci2 &position, const texture &renderTarget)
         text += std::wstring(L"speed:\tx:") + std::to_wstring(player->speed.x) +
                 std::wstring(L"\ty:") + std::to_wstring(player->speed.y) + std::wstring(L"\n");
 
-        if (player->entityType == entityID::human)
+        cint &selectedBlockID = (int)player->selectedBlockContainer->getBlockID(
+            player->selectedBlockPosition);
+        text += std::wstring(L"selected block:\t") + blockList[selectedBlockID]->name + L"(" +
+                std::to_wstring(selectedBlockID) + std::wstring(L")\n");
+        blockData *selectedBlockData = player->selectedBlockContainer->getBlockData(
+            player->selectedBlockPosition);
+        if (selectedBlockData)
         {
-            cint &selectedBlockID = (int)player->selectedBlockContainer->getBlockID(
-                player->selectedBlockPosition);
-            text += std::wstring(L"selected block:\t") + blockList[selectedBlockID]->name + L"(" +
-                    std::to_wstring(selectedBlockID) + std::wstring(L")\n");
-            blockData *selectedBlockData = player->selectedBlockContainer->getBlockData(
-                player->selectedBlockPosition);
-            if (selectedBlockData)
-            {
-                text += std::wstring(L"selected block data:\t") + selectedBlockData->toString() +
-                        L"\n";
-            }
-            text += std::wstring(L"selected light level:\tinternal sunlight:") + std::to_wstring(player->selectedBlockContainer->getInternalSunLightLevel(player->selectedBlockPosition)) +
-                    std::wstring(L"\tblock light:") + std::to_wstring(player->selectedBlockContainer->getBlockLightLevel(player->selectedBlockPosition)) +
-                    std::wstring(L"\tpower level:") + std::to_wstring(player->selectedBlockContainer->getPowerLevel(player->selectedBlockPosition)) + std::wstring(L"\n");
+            text += std::wstring(L"selected block data:\t") + selectedBlockData->toString() +
+                    L"\n";
         }
+        text += std::wstring(L"selected light level:\tinternal sunlight:") + std::to_wstring(player->selectedBlockContainer->getInternalSunLightLevel(player->selectedBlockPosition)) +
+                std::wstring(L"\tblock light:") + std::to_wstring(player->selectedBlockContainer->getBlockLightLevel(player->selectedBlockPosition)) +
+                std::wstring(L"\tpower level:") + std::to_wstring(player->selectedBlockContainer->getPowerLevel(player->selectedBlockPosition)) + std::wstring(L"\n");
 
         if (player->dimensionIn->identifier == dimensionID::overworld)
         {
@@ -207,7 +212,7 @@ void gameControl::render(cveci2 &position, const texture &renderTarget)
     if (focusedChild)
     {
         fillTransparentRectangle(crosshairTextureRect,
-                                 crectangle2(cvec2(mousePositionPixels), cvec2()).expanded((fp)crosshairTextureRect.size.x * settings::videoSettings::guiScale), *iconsTexture,
+                                 crectangle2(cvec2(mousePositionPixels), cvec2()).expanded((fp)crosshairTextureRect.size.x * settings::videoSettings::guiScale), currentLoader->getResource(hudTextureFolder / "crosshair.png"),
                                  renderTarget);
     }
 }
@@ -744,8 +749,11 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
     }
 
     if (renderHUD && ((player->entityType != entityID::human) ||
-                      (((human *)player)->currentGameMode != gameModeID::spectator)))
+                      (player->currentGameMode != gameModeID::spectator)))
     {
+
+        // hotbar
+
         constexpr int barOffset = 0x2;
 
         cfp &scaledBarOffset = barOffset * hudScale;
@@ -770,7 +778,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                         .expanded(
                                                             crosshairTextureRect.size.x * 0.5 * settings::videoSettings::guiScale);
 
-        auto mult = colorMultiplier<resolutionTexture, solidColorBrush>(*iconsTexture,
+        auto mult = colorMultiplier<resolutionTexture, solidColorBrush>(currentLoader->getResource(hudTextureFolder / "crosshair.png"),
                                                                         brushes::red);
 
         fillTransparentRectangle(crectangle2(crosshairTextureRect),
@@ -788,131 +796,116 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                  crosshairTextureRect.size.x * 0.5 * settings::videoSettings::guiScale);
 
         fillTransparentRectangle(crectangle2(crosshairTextureRect), crosshairDrawRect,
-                                 *iconsTexture, targetData.renderTarget);
+                                 currentLoader->getResource(hudTextureFolder / "crosshair.png"), targetData.renderTarget);
 
-        if (isHumanoid(player->entityType))
+        const resolutionTexture &hotbarTexture = currentLoader->getResource(hudTextureFolder / "hotbar.png");
+        // draw hotbar
+        fillTransparentRectangle(crectangle2(hotbarTextureRect), hotbarDrawRect,
+                                 hotbarTexture, targetData.renderTarget);
+
+        rectanglei2 selectorPixelRect = ceilRectangle(blockScreenRect);
+        fillRectangleBorders(targetData.renderTarget, selectorPixelRect, 1,
+                             solidColorBrush(
+                                 colorPalette::black));
+
+        // draw selector
+        crectangle2 selectorDrawRect = crectangle2(
+            hotbarDrawRect.pos0 + vec2((player->rightHandSlotIndex * hotbarSpacing + hotbarMargin - selectorMargin) * hudScale, 0),
+            selectorTextureRect.size * hudScale);
+        fillTransparentRectangle((crectangle2)selectorTextureRect, selectorDrawRect,
+                                 currentLoader->getResource(hudTextureFolder / "hotbar_selection.png"), targetData.renderTarget);
+
+        // the space between the hotbar and its elements
+        player->hotbarSlots->render(targetData, hotbarDrawRect.pos0 + (hotbarPadding + (hotbarSpacing - hotbarItemDisplaySize) / 2) * hudScale,
+                                    hotbarSpacing * hudScale,
+                                    hotbarItemDisplaySize * hudScale);
+
+        currentYrowOffset += (hotbarDrawRect.y + hotbarDrawRect.h);
+
+        attackIndicatorOffset = currentYrowOffset;
+
+        if (player->experience)
         {
+            // draw experience
+            constexpr rectangle2 expBarTextureRect = crectangle2(0, 0, 182,
+                                                                 5);
 
-            if (player->entityType == entityID::human)
-            {
-
-                // draw hotbar
-                fillTransparentRectangle(crectangle2(hotbarTextureRect), hotbarDrawRect,
-                                         *widgetsTexture, targetData.renderTarget);
-
-                rectanglei2 selectorPixelRect = ceilRectangle(blockScreenRect);
-                fillRectangleBorders(targetData.renderTarget, selectorPixelRect, 1,
-                                     solidColorBrush(
-                                         colorPalette::black));
-
-                // draw selector
-                crectangle2 selectorDrawRect = crectangle2(hotbarDrawRect.pos0 +
-                                                               vec2(player->rightHandSlotIndex *
-                                                                        hotbarSpacing * hudScale,
-                                                                    0),
-                                                           vec2(hotbarSpacing * hudScale));
-                fillTransparentRectangle((crectangle2)selectorTextureRect, selectorDrawRect,
-                                         *widgetsTexture, targetData.renderTarget);
-
-                player->hotbarSlots->render(targetData, hotbarDrawRect.pos0 + (hotbarSpacing - hotbarItemDisplaySize) / 2 * hudScale,
-                                            hotbarSpacing * hudScale,
-                                            hotbarItemDisplaySize * hudScale);
-
-                currentYrowOffset += (hotbarDrawRect.y + hotbarDrawRect.h);
-
-                attackIndicatorOffset = currentYrowOffset;
-
-                if (player->experience)
-                {
-                    // draw experience
-                    constexpr rectangle2 expBarbackGroundTextureRect = crectangle2(0, 167, 182,
-                                                                                   5);
-
-                    cvec2 &expBarSize = expBarbackGroundTextureRect.size * hudScale;
-                    crectangle2 &expBarBackGroundDrawRect = crectangle2(
-                        (rect.size.x - expBarSize.x) / 2, currentYrowOffset, expBarSize.x,
-                        expBarSize.y);
-                    fillTransparentRectangle((crectangle2)expBarbackGroundTextureRect,
-                                             expBarBackGroundDrawRect, *iconsTexture,
-                                             targetData.renderTarget);
-
-                    cfp &power = getExperienceLevel(player->experience);
-                    cint &currentLevel = math::floor(power);
-                    cfp &progressToNextLevel = power - currentLevel;
-                    crectangle2 &expBarforeGroundTextureRect = crectangle2(0, 162, 182 * progressToNextLevel,
-                                                                           5);
-                    crectangle2 &expBarforeGroundDrawRect = crectangle2(
-                        expBarBackGroundDrawRect.x, expBarBackGroundDrawRect.y,
-                        expBarBackGroundDrawRect.w * progressToNextLevel,
-                        expBarBackGroundDrawRect.h);
-                    fillTransparentRectangle((crectangle2)expBarforeGroundTextureRect,
-                                             expBarforeGroundDrawRect, *iconsTexture,
-                                             targetData.renderTarget);
-
-                    if (currentLevel)
-                    {
-                        const minecraftFont f = minecraftFont(iconSize * hudScale);
-                        // std::wstring() to make it concatenate the string and not do other stuff
-                        std::wstring str = std::wstring() + colorCodeChar + L"a" +
-                                           std::to_wstring(currentLevel);
-                        cvec2 &size = f.fontSize * vec2(1, (fp)str.length());
-                        f.DrawString(str, crectangle2((rect.w - size.x) * 0.5, currentYrowOffset + expBarSize.y - scaledBarOffset, size.x, size.y),
+            cvec2 &expBarSize = expBarTextureRect.size * hudScale;
+            crectangle2 &expBarBackGroundDrawRect = crectangle2(
+                (rect.size.x - expBarSize.x) / 2, currentYrowOffset, expBarSize.x,
+                expBarSize.y);
+            fillTransparentRectangle((crectangle2)expBarTextureRect,
+                                     expBarBackGroundDrawRect, currentLoader->getResource(hudTextureFolder / "experience_bar_background.png"),
                                      targetData.renderTarget);
-                        attackIndicatorOffset += iconSize * hudScale + scaledBarOffset;
-                    }
-                    currentYrowOffset += expBarSize.y + scaledBarOffset;
-                    attackIndicatorOffset += expBarSize.y + scaledBarOffset;
-                }
+
+            cfp &power = getExperienceLevel(player->experience);
+            cint &currentLevel = math::floor(power);
+            cfp &progressToNextLevel = power - currentLevel;
+            crectangle2 &expBarforeGroundTextureRect = crectangle2(0, 0, 182 * progressToNextLevel,
+                                                                   5);
+            crectangle2 &expBarforeGroundDrawRect = crectangle2(
+                expBarBackGroundDrawRect.x, expBarBackGroundDrawRect.y,
+                expBarBackGroundDrawRect.w * progressToNextLevel,
+                expBarBackGroundDrawRect.h);
+            fillTransparentRectangle((crectangle2)expBarforeGroundTextureRect,
+                                     expBarforeGroundDrawRect, currentLoader->getResource(hudTextureFolder / "experience_bar_progress.png"),
+                                     targetData.renderTarget);
+
+            if (currentLevel)
+            {
+                const minecraftFont f = minecraftFont(iconSize * hudScale);
+                // std::wstring() to make it concatenate the string and not do other stuff
+                std::wstring str = std::wstring() + colorCodeChar + L"a" +
+                                   std::to_wstring(currentLevel);
+                cvec2 &size = f.fontSize * vec2(1, (fp)str.length());
+                f.DrawString(str, crectangle2((rect.w - size.x) * 0.5, currentYrowOffset + expBarSize.y - scaledBarOffset, size.x, size.y),
+                             targetData.renderTarget);
+                attackIndicatorOffset += iconSize * hudScale + scaledBarOffset;
             }
+            currentYrowOffset += expBarSize.y + scaledBarOffset;
+            attackIndicatorOffset += expBarSize.y + scaledBarOffset;
         }
 
-        cbool &canTakeDamage = (player->entityType != entityID::human) ||
-                               (gameModeDataList[((human *)player)->currentGameMode]->canTakeDamage);
+        cbool &canTakeDamage = (gameModeDataList[player->currentGameMode]->canTakeDamage);
 
         if (canTakeDamage)
         {
-            std::vector<fp> healthAmounts = std::vector<fp>(
-                {math::maximum(player->health, (fp)1.0) * 0.5});
-            if (player->absorptionHealth > 0)
-            {
-                healthAmounts.push_back(
-                    math::maximum(player->absorptionHealth, (fp)1.0) * 0.5);
-            }
-
+            // minimal half a heart to display
+            cfp &healthToRender = math::maximum(player->health, (fp)1.0) * 0.5;
             // constexpr int iconTextureSize = 18;
-
-            constexpr rectangle2 fullHeartTextureRect = crectangle2(52, 247, 9, 9);
-            constexpr rectangle2 halfHeartTextureRect = crectangle2(61, 247, 9, 9);
-
-            constexpr rectangle2 fullAbsorptionHeartTextureRect = crectangle2(160, 247, 9, 9);
-            constexpr rectangle2 halfAbsorptionHeartTextureRect = crectangle2(169, 247, 9, 9);
 
             // draw hearts
             // draw background
             crectangle2 firstHeartDrawRect = crectangle2(hotbarDrawRect.x, currentYrowOffset,
                                                          iconSize * hudScale,
                                                          iconSize * hudScale);
-            renderIcons(
-                {math::maximum(player->getMaxHealth() * 0.5, getSum<fp>(healthAmounts))},
-                {crectangle2(52, 238, 8, 8)}, {crectangle2(52, 238, 8, 8)},
-                firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
-            // minimal half a heart to display
-            renderIcons(healthAmounts, {fullHeartTextureRect, fullAbsorptionHeartTextureRect},
-                        {halfHeartTextureRect, halfAbsorptionHeartTextureRect},
-                        firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
+            fp absorptionYLevel = renderIcons(healthToRender, player->getMaxHealth() / 2,
+                                              currentLoader->getResource(heartTextureFolder / "full.png"),
+                                              currentLoader->getResource(heartTextureFolder / "half.png"),
+                                              currentLoader->getResource(heartTextureFolder / "container.png"),
+                                              firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
 
-            if (player->entityType == entityID::human)
+            // render absorption hearts
+            if (player->absorptionHealth > 0)
             {
-                crectangle2 firstDrumstickDrawRect = crectangle2(
-                    hotbarDrawRect.x + hotbarDrawRect.w - iconSize * hudScale,
-                    currentYrowOffset, iconSize * hudScale, iconSize * hudScale);
-                renderIcons({maxhumanfoodlevel * 0.5}, {crectangle2(16, 220, 8, 8)},
-                            {crectangle2(16, 220, 8, 8)}, firstDrumstickDrawRect,
-                            -firstDrumstickDrawRect.w, targetData.renderTarget);
-                renderIcons({player->foodlevel * 0.5}, {crectangle2(52, 220, 8, 8)},
-                            {crectangle2(61, 220, 8, 8)}, firstDrumstickDrawRect,
-                            -firstDrumstickDrawRect.w, targetData.renderTarget);
+                crectangle2 firstAbsorptionHeartDrawRect = crectangle2(firstHeartDrawRect.x, absorptionYLevel,
+                                                                       iconSize * hudScale,
+                                                                       iconSize * hudScale);
+
+                renderIcons(player->absorptionHealth / 2, player->absorptionHealth / 2,
+                            currentLoader->getResource(heartTextureFolder / "absorbing_full.png"),
+                            currentLoader->getResource(heartTextureFolder / "absorbing_half.png"),
+                            currentLoader->getResource(heartTextureFolder / "container.png"),
+                            firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
             }
+
+            crectangle2 firstDrumstickDrawRect = crectangle2(
+                hotbarDrawRect.x + hotbarDrawRect.w - iconSize * hudScale,
+                currentYrowOffset, iconSize * hudScale, iconSize * hudScale);
+            renderIcons(player->foodlevel * 0.5, maxhumanfoodlevel * 0.5, currentLoader->getResource(hudTextureFolder / "food_full.png"),
+                        currentLoader->getResource(hudTextureFolder / "food_half.png"),
+                        currentLoader->getResource(hudTextureFolder / "food_empty.png"), firstDrumstickDrawRect,
+                        -firstDrumstickDrawRect.w, targetData.renderTarget);
             currentYrowOffset += iconSize * hudScale + scaledBarOffset;
         }
         // draw attack cooldown indicator
@@ -921,44 +914,38 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
         if (player->ticksSinceToolUsed < totalCoolDownTime)
         {
             cfp progress = player->ticksSinceToolUsed / totalCoolDownTime; // 0 to 1
+            cbool &reloaded = progress > cooldownTreshold;
 
-            constexpr rectangle2 fullCoolDownPixelRect = crectangle2(68, 154, 0x10, 0x8);
-            cvec2 scaledCoolDownIndicatorSize = cvec2(fullCoolDownPixelRect.size * hudScale);
+            constexpr rectangle2 fullCoolDownPixelRect = crectangle2(0, 0, 0x10, 0x10);
+            constexpr rectangle2 loadingCoolDownPixelRect = crectangle2(0, 0, 0x10, 0x4);
+            crectangle2 &coolDownPixelRect = reloaded ? fullCoolDownPixelRect : loadingCoolDownPixelRect;
+            cvec2 &scaledCoolDownIndicatorSize = cvec2(coolDownPixelRect.size * hudScale);
             crectangle2 coolDownDrawRect = crectangle2(
                 (rect.w - scaledCoolDownIndicatorSize.x) * 0.5, attackIndicatorOffset,
                 scaledCoolDownIndicatorSize.x, scaledCoolDownIndicatorSize.y);
-            if (progress > cooldownTreshold)
+            if (reloaded)
             {
-                fillTransparentRectangle((crectangle2)fullCoolDownPixelRect, coolDownDrawRect,
-                                         *iconsTexture, targetData.renderTarget);
+                fillTransparentRectangle((crectangle2)coolDownPixelRect, coolDownDrawRect,
+                                         currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_full.png"),
+                                         targetData.renderTarget);
             }
             else
             {
-                constexpr rectangle2 cooldownBackgroundPixelRect = crectangle2(36, 154, 0x10,
-                                                                               0x8);
-                fillTransparentRectangle((crectangle2)cooldownBackgroundPixelRect,
-                                         coolDownDrawRect, *iconsTexture,
+                fillTransparentRectangle((crectangle2)coolDownPixelRect, coolDownDrawRect,
+                                         currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_background.png"),
                                          targetData.renderTarget);
 
-                constexpr rectangle2 coolDownForeGroundPixelRect = crectangle2(52, 154, 0x10,
-                                                                               0x8);
-                cvec2 scaledCoolDownPartSize = cvec2(
-                    coolDownForeGroundPixelRect.w * hudScale * progress,
-                    coolDownForeGroundPixelRect.h * hudScale);
-
                 fillTransparentRectangle(
-                    crectangle2(coolDownForeGroundPixelRect.x,
-                                coolDownForeGroundPixelRect.y,
-                                coolDownForeGroundPixelRect.w * progress,
-                                coolDownForeGroundPixelRect.h),
-                    crectangle2(coolDownDrawRect.x, coolDownDrawRect.y,
-                                scaledCoolDownPartSize.x, scaledCoolDownPartSize.y),
-                    *iconsTexture, targetData.renderTarget);
+                    crectangle2(coolDownPixelRect.x, coolDownPixelRect.y, coolDownPixelRect.w * progress, coolDownPixelRect.h),
+                    crectangle2(coolDownDrawRect.x, coolDownDrawRect.y, coolDownDrawRect.w * progress, coolDownDrawRect.h),
+                    currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_progress.png"),
+                    targetData.renderTarget);
             }
         }
         if (canTakeDamage)
         {
 
+            // render defence points
             cfp defenceValue = player->getDefencePoints();
             if (defenceValue > 0)
             {
@@ -966,14 +953,11 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                                   currentYrowOffset,
                                                                   iconSize * hudScale,
                                                                   iconSize * hudScale);
-                renderIcons({maxArmor * 0.5}, {crectangle2(16, 238, 8, 8)},
-                            {crectangle2(16, 238, 8, 8)}, firstChestplateDrawRect,
+
+                renderIcons(defenceValue * 0.5, maxArmor * 0.5, currentLoader->getResource(hudTextureFolder / "armor_full.png"),
+                            currentLoader->getResource(hudTextureFolder / "armor_half.png"),
+                            currentLoader->getResource(hudTextureFolder / "armor_empty.png"), firstChestplateDrawRect,
                             firstChestplateDrawRect.w, targetData.renderTarget);
-                renderIcons({defenceValue * 0.5}, {crectangle2(34, 238, 8, 8)},
-                            {crectangle2(25, 238, 8, 8)}, firstChestplateDrawRect,
-                            firstChestplateDrawRect.w, targetData.renderTarget);
-                // renderIcons({ maxArmor * 0.5 }, { crectangle2(33, 477, 16, 16) }, { crectangle2(33, 477, 16, 16) }, firstChestplateDrawRect, firstChestplateDrawRect.w, targetData.renderTarget);
-                // renderIcons({ defenceValue * 0.5 }, { crectangle2(69, 477, 16, 16) }, { crectangle2(51, 477, 16, 16) }, firstChestplateDrawRect, firstChestplateDrawRect.w, targetData.renderTarget);
             }
         }
     }
@@ -985,7 +969,8 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
     {
         if (isBossMob(e->entityType))
         {
-            crectangle2 bossBarBackGroundTextureRect = crectangle2(0, 0x100 - (((bossBarIndex * 2) + 1) * barTextureSize.y),
+
+            crectangle2 bossBarBackGroundTextureRect = crectangle2(0, 0,
                                                                    barTextureSize.x,
                                                                    barTextureSize.y);
             crectangle2 bossBarBackGroundScreenRect = crectangle2(
@@ -993,11 +978,11 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                 rect.y + rect.h - (barTextureSize.y * (bossBarIndex + 1) * hudScale),
                 barTextureSize.x * hudScale, barTextureSize.y * hudScale);
             fillTransparentRectangle(bossBarBackGroundTextureRect, bossBarBackGroundScreenRect,
-                                     *barsTexture, targetData.renderTarget);
+                                     currentLoader->getResource(spritesTextureFolder / "boss_bar" / "pink_background.png"), targetData.renderTarget);
             if (e->health > 0)
             {
                 cfp barPart = e->health / (entityDataList[(int)e->entityType])->maxHealth;
-                crectangle2 bossBarForeGroundTextureRect = crectangle2(0, 0x100 - (((bossBarIndex * 2) + 2) * barTextureSize.y),
+                crectangle2 bossBarForeGroundTextureRect = crectangle2(0, 0,
                                                                        barTextureSize.x * barPart,
                                                                        barTextureSize.y);
                 crectangle2 bossBarForeGroundScreenRect = crectangle2(bossBarBackGroundScreenRect.x,
@@ -1006,7 +991,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                                           barPart,
                                                                       bossBarBackGroundScreenRect.h);
                 fillTransparentRectangle(bossBarForeGroundTextureRect, bossBarForeGroundScreenRect,
-                                         *barsTexture, targetData.renderTarget);
+                                         currentLoader->getResource(spritesTextureFolder / "boss_bar" / "pink_progress.png"), targetData.renderTarget);
             }
 
             if (++bossBarIndex >= maxBossBarCount)
@@ -1131,92 +1116,52 @@ bool gameControl::getWorldFocus() const
                : !(focusedChild);
 }
 
-void renderIcons(const std::vector<fp> &values, const std::vector<rectangle2> &iconFullTextureRects,
-                 const std::vector<rectangle2> &iconHalfTextureRects, crectangle2 &firstIconRect,
-                 cfp &xOffset, const texture &renderTarget)
+fp renderIcons(cfp &value, cfp &maxValue, const resolutionTexture &fullIcon, const resolutionTexture &halfIcon, const resolutionTexture &containerIcon,
+               crectangle2 &firstIconRect, cfp &xOffset, const texture &renderTarget)
 {
-    if (values.size())
+    vec2 position = firstIconRect.pos0;
+
+    // first render containers
+    for (int renderIndex = 0; renderIndex < maxValue; renderIndex++)
     {
-        vec2 position = firstIconRect.pos0;
-
-        size_t iconTypeIndex = 0;
-        int heartIndex = 0;
-
-        fp nextValue = values[0];
-
-        for (;;)
+        if (renderIndex)
         {
-            if (heartIndex)
+            if (renderIndex % 10 == 0)
             {
-                if (heartIndex % 10 == 0)
-                {
-                    position.x = firstIconRect.x;
-                    position.y += firstIconRect.h;
-                }
-                else
-                {
-                    position.x += xOffset;
-                }
-            }
-
-            while (nextValue < (heartIndex + 0.5))
-            {
-                iconTypeIndex++;
-                if (iconTypeIndex < values.size())
-                {
-                    nextValue += values[iconTypeIndex];
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            bool splitIcon = (heartIndex + 1) > nextValue;
-            if (splitIcon)
-            {
-
-                // draw left half icon
-                fillTransparentRectangle((rectangle2)iconHalfTextureRects[iconTypeIndex],
-                                         rectangle2(position, firstIconRect.size), *iconsTexture,
-                                         renderTarget);
-            }
-
-            heartIndex++; // so the last half heart is drawn correctly too
-            while (nextValue < heartIndex)
-            {
-                iconTypeIndex++;
-                if (iconTypeIndex < values.size())
-                {
-                    nextValue += values[iconTypeIndex];
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (splitIcon)
-            {
-                // draw right half icon
-                crectangle2 unMirroredDrawRect = rectangle2(position, firstIconRect.size);
-                crectangle2 unMirroredBrushRect = (rectangle2)iconHalfTextureRects[iconTypeIndex];
-                mat3x3 transform =
-                    mat3x3::cross(
-                        mat3x3::mirror(axisID::x,
-                                       unMirroredDrawRect.x + unMirroredDrawRect.w * 0.5),
-                        mat3x3::fromRectToRect(unMirroredBrushRect, unMirroredDrawRect));
-
-                fillTransparentRectangle(unMirroredBrushRect, transform, *iconsTexture,
-                                         renderTarget);
+                position.x = firstIconRect.x;
+                position.y += firstIconRect.h;
             }
             else
             {
-                fillTransparentRectangle((rectangle2)iconFullTextureRects[iconTypeIndex],
-                                         rectangle2(position, firstIconRect.size), *iconsTexture,
-                                         renderTarget);
+                position.x += xOffset;
             }
         }
+        fillTransparentRectangle((rectangle2)iconTextureRect,
+                                 rectangle2(position, firstIconRect.size), containerIcon,
+                                 renderTarget);
     }
+    // render icons
+    position = firstIconRect.pos0;
+    for (int renderIndex = 0; renderIndex < value; renderIndex++)
+    {
+        if (renderIndex)
+        {
+            if (renderIndex % 10 == 0)
+            {
+                position.x = firstIconRect.x;
+                position.y += firstIconRect.h;
+            }
+            else
+            {
+                position.x += xOffset;
+            }
+        }
+        const resolutionTexture &textureToUse = value < renderIndex + 0.5 ? halfIcon : fullIcon;
+        fillTransparentRectangle((rectangle2)iconTextureRect,
+                                 rectangle2(position, firstIconRect.size), textureToUse,
+                                 renderTarget);
+    }
+    return position.y;
 }
 
 gameControl::gameControl(playerSocket &socket) : form(),
@@ -1432,8 +1377,7 @@ void gameControl::serializeMusicPreference(nbtSerializer &serializer)
                 cbool inWater = (player->getFluidArea(player->calculateHitBox(), {blockID::water}) >
                                  0);
                 cbool inOcean = player->dimensionIn->getBiome(player->position) == biomeID::ocean;
-                cbool inCreative = (player->entityType == entityID::human) &&
-                                   ((human *)player)->currentGameMode == gameModeID::creative;
+                cbool inCreative = player->currentGameMode == gameModeID::creative;
                 prefer(inNether ? netherMusic : inEnd                               ? endMusic
                                             : ((boatInWater || inWater) && inOcean) ? waterMusic
                                             : inCreative                            ? creativeModeMusic

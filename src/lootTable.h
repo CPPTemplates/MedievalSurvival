@@ -5,7 +5,6 @@
 #include <random>
 #include "math/vector/vectn.h"
 #include "itemStack.h"
-#include "filesystem/jsonReader.h"
 #include <memory>
 #include <map>
 struct lootTable : IDestructable
@@ -19,6 +18,6 @@ struct lootTable : IDestructable
 };
 
 std::shared_ptr <lootTable> readLootTable(const stdPath& path);
-lootTable* readDrop(const jsonContainer& container);
+lootTable* readDrop(const struct jsonContainer& container);
 
 extern std::map<std::wstring, std::shared_ptr <lootTable>> chestLootTables;

@@ -440,7 +440,7 @@ constexpr bool isFungus(const blockID &identifier) noexcept
 
 constexpr bool isShortGrass(const blockID &identifier) noexcept
 {
-    return (identifier == blockID::grass) || (identifier == blockID::fern);
+    return (identifier == blockID::short_grass) || (identifier == blockID::fern);
 }
 
 constexpr bool isTallGrass(const blockID &identifier) noexcept
@@ -1020,7 +1020,7 @@ constexpr blockID getGrassToGrowOn(const blockID &identifier) noexcept
     switch (identifier)
     {
     case blockID::grass_block:
-        return blockID::grass;
+        return blockID::short_grass;
     case blockID::podzol:
         return blockID::fern;
     case blockID::crimson_nylium:
@@ -1055,7 +1055,7 @@ constexpr bool isPassiveMob(const entityID &entityType) noexcept
 
 constexpr bool isSkeleton(const entityID &entityType) noexcept
 {
-    return (entityType == entityID::skeleton) || (entityType == entityID::stray);
+    return is_in(entityType, entityID::skeleton, entityID::stray, entityID::bogged);
 }
 
 constexpr bool isZombie(const entityID &entityType) noexcept

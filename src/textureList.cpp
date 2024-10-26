@@ -8,8 +8,6 @@
 #include "minecraftFont.h"
 
 resolutionTexture* mainMenuBackgroundTexture = nullptr;
-resolutionTexture* widgetsTexture = nullptr;
-resolutionTexture* iconsTexture = nullptr;
 resolutionTexture* experienceTexture = nullptr;
 resolutionTexture* grassOverlay = nullptr;
 resolutionTexture* woolOverlay = nullptr;

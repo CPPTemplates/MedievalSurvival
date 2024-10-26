@@ -6,7 +6,7 @@ constexpr rectangle2 relativePollenHitbox = crectangle2(cvec2(pollenSize * -0.5)
 struct pollen : public entity
 {
 	int ticksToExist = 0x200;
-	blockID blockToSpread = blockID::grass;
+	blockID blockToSpread = blockID::short_grass;
 	virtual void render(const gameRenderData& targetData) const override;
 	pollen(dimension* dimensionIn, cvec2& position) : entity(dimensionIn, position, entityID::pollen) {}
 	virtual void tick() override;

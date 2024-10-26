@@ -114,6 +114,7 @@
 #include "math/graphics/brush/brushes/alphaMask.h"
 #include "nbt/nbtSerializer.h"
 #include "include/filesystem/fileFunctions.h"
+#include "gameTime.h"
 // std::shared_ptr<audio2d> currentWindSound;
 
 void human::tick()
@@ -716,7 +717,7 @@ vec2 human::getDropPosition()
 
 bool human::canSleep() const
 {
-	return timeToLightLevel.getValue(currentWorld->getTimeOfDay()) < maxLightLevel && immunityFrameCount == 0;
+	return timeToLightLevel.getValue(getTimeOfDay(currentWorld->currentTime)) < maxLightLevel && immunityFrameCount == 0;
 }
 human::human(dimension *dimensionIn, cvec2 &position, gameControl &screen, const std::wstring &name) : humanoid(dimensionIn, position, entityID::human), INamable(name),
 																									   screen(screen)
