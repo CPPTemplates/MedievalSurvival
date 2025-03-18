@@ -1,0 +1,18 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define addOperators(newExpression, structType, otherStructType, functionType) addOperator(+, newExpression, structType, wrap(otherStructType), functionType) addOperator(-, newExpression, structType, wrap(otherStructType), functionType) addOperator(*, newExpression, structType, wrap(otherStructType), functionType) addOperator(/, newExpression, structType, wrap(otherStructType), functionType)
+#define newMacro(type, copySize) arraynd<type COMMA n> result = arraynd<type COMMA n>((copySize).size);
+#define newMacro(type, copySize) fastArray<type> result = fastArray<type>((copySize).size);
+#define newMacro(type, copySize) vectn<type COMMA n> result = vectn<type COMMA n>();
+#define COMMA
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define rectConstructor(axisCount) constexpr baseRect(vectn<t, axisCount> pos0, vectn<t, axisCount> size) : pos0(pos0), size(size) {} constexpr ~baseRect() { pos0.~vectn<t, axisCount>(); size.~vectn<t, axisCount>(); }
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define baseVecConstructor(n) constexpr ~baseVec() requires std::is_trivially_destructible_v<t> = default; constexpr ~baseVec() { for (t & member : axis) member.~t(); } constexpr baseVec(const std::array<t, n> &axis) : axis(axis) { }
+#define addTemplateTypes(shortenedTemplateName) template <typename t, fsize_t axisCount> using c##shortenedTemplateName##tn = const shortenedTemplateName##tn<t, axisCount>; addTemplateSizes(shortenedTemplateName) addTemplateSizes(c##shortenedTemplateName) addTemplateType(shortenedTemplateName, , fp) addTemplateType(shortenedTemplateName, i, int) addTemplateType(shortenedTemplateName, l, long) addTemplateType(shortenedTemplateName, b, bool) addTemplateType(shortenedTemplateName, s, size_t)
+#define addMemberName(memberName, expression) constexpr t &memberName() { return expression; } constexpr const t &memberName() const { return expression; }

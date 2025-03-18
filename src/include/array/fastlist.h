@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <utility>
 #include "globalFunctions.h"
+#include "optimization/optimization.h"
 
 // super fast solution for iterating through a list while deleting certain items and adding items
 constexpr bool keepindicator = true;
@@ -52,7 +53,7 @@ struct fastList : IDestructable
 		std::copy(other.baseArray, other.baseArray + other.size, baseArray);
 	}
 
-	void swap(fastList<t> &with)
+	void swap(fastList<t> &with) noexcept
 	{
 		std::swap(addList, with.addList);
 		std::swap(baseArray, with.baseArray);
@@ -111,6 +112,7 @@ struct fastList : IDestructable
 			{
 				if ((!mask) || mask[oldindex])
 				{
+					assumeInRelease(newIndex < newSize);
 					newArray[newIndex] = baseArray[oldindex];
 					++newIndex;
 				} // else skip

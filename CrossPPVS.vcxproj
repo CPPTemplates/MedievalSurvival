@@ -532,7 +532,7 @@
     <ClCompile Include="src\tickableBlockContainer.cpp" />
     <ClCompile Include="src\tnt.cpp" />
     <ClCompile Include="src\tntData.cpp" />
-    <ClCompile Include="src\toolDrop.cpp" />
+    <ClCompile Include="src\toolDropCondition.cpp" />
     <ClCompile Include="src\trapDoorData.cpp" />
     <ClCompile Include="src\treeFeature.cpp" />
     <ClCompile Include="src\uiSlotContainer.cpp" />
@@ -1087,7 +1087,7 @@
     <ClInclude Include="src\tickableBlockContainer.h" />
     <ClInclude Include="src\tnt.h" />
     <ClInclude Include="src\tntData.h" />
-    <ClInclude Include="src\toolDrop.h" />
+    <ClInclude Include="src\toolDropCondition.h" />
     <ClInclude Include="src\toolTypeID.h" />
     <ClInclude Include="src\trapDoorData.h" />
     <ClInclude Include="src\treeFeature.h" />
@@ -1108,6 +1108,9 @@
     <ClInclude Include="src\worldSelector.h" />
     <ClInclude Include="src\zombie.h" />
     <ClInclude Include="src\zombifiedPiglin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

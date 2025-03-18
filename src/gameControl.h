@@ -66,7 +66,7 @@ struct gameControl : form, clientInput {
 
     clientInput mostRecentInput = clientInput();
 
-    bool clickedFocused[(byte) sf::Mouse::ButtonCount];
+    bool clickedFocused[(byte)sf::Mouse::ButtonCount]{};
 
     //creditsForm* currentCredits = nullptr;
 
@@ -112,9 +112,9 @@ struct gameControl : form, clientInput {
 
     void serializeMusicPreference(nbtSerializer& serializer);
 
-    gameRenderData getRenderData(const texture &renderTarget, cfp &secondsOffset = 0);
+    gameRenderData getRenderData(const texture &renderTarget, cfp &secondsOffset = 0) const;
 
-    mat3x3 getWorldToScreenTransform(cvec2 &middleWorldPosition, cfp &pixelsPerBlock);
+    mat3x3 getWorldToScreenTransform(cvec2 &middleWorldPosition, cfp &pixelsPerBlock) const;
     bool getWorldFocus() const;
 };
 

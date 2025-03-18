@@ -4,6 +4,7 @@
 #include "human.h"
 #include "dimension.h"
 #include "stackDivider.h"
+#include <resourceLoader.h>
 brewingStandSlotContainer::brewingStandSlotContainer()
 {
 	uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"brewing_stand.png"));
@@ -53,13 +54,13 @@ void brewingStandSlotContainer::drawExtraData(cmat3x3& transform, const texture&
 		cfp& brewProgress = selectedBrewingStandData->ticksBrewed / (fp)brewingBatchTime;
 		cint& brewTextureHeight = 27;
 		cint& brewTexturePart = (int)(brewTextureHeight * brewProgress);
-		inventory::drawExtraData(crectanglei2(176, (227 + brewTextureHeight) - brewTexturePart, 33, brewTexturePart), veci2(97, 121 + (brewTextureHeight - brewTexturePart)), transform, renderTarget);
+		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"brew_progress.png"], crectanglei2(0, brewTextureHeight - brewTexturePart, 33, brewTexturePart), veci2(97, 121 + (brewTextureHeight - brewTexturePart)), transform, renderTarget);
 	}
 	//draw progress bar
 	if (selectedBrewingStandData->fuelLeft)
 	{
 		cfp& partLeft = selectedBrewingStandData->fuelLeft / (fp)blazePowderBrewingBatchCount;
-		inventory::drawExtraData(crectanglei2(176, 223, (int)(18 * partLeft), 4), veci2(60, 118), transform, renderTarget);
+		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"fuel_length.png"], crectanglei2(0, 0, (int)(18 * partLeft), 4), veci2(60, 118), transform, renderTarget);
 	}
 }
 

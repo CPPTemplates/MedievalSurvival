@@ -6,6 +6,10 @@ when turning shadows off in the sky, sky rendering suddenly is way faster
 mouse input glitchy
 add trampling crops
 you pick a double stack, even when clicking once with right mouse button
-rename tooldrop to tooldropcondition
-furnace doesn't render burning process
 make textures load only when used
+
+add respawn screen with spectator mode after death
+
+done:
+furnace doesn't render burning process
+rename tooldrop to tooldropcondition

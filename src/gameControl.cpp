@@ -60,8 +60,6 @@
 #include "keyHistoryEvent.h"
 #include "minecraftFont.h"
 #include <SFML/Window.hpp>
-#include "globalFunctions.h"
-#include "constants.h"
 #include "type/types.h"
 #include "resourcePack.h"
 #include "folderList.h"
@@ -212,7 +210,7 @@ void gameControl::render(cveci2 &position, const texture &renderTarget)
     if (focusedChild)
     {
         fillTransparentRectangle(crosshairTextureRect,
-                                 crectangle2(cvec2(mousePositionPixels), cvec2()).expanded((fp)crosshairTextureRect.size.x * settings::videoSettings::guiScale), currentLoader->getResource(hudTextureFolder / "crosshair.png"),
+                                 crectangle2(cvec2(mousePositionPixels), cvec2()).expanded((fp)crosshairTextureRect.size.x * settings::videoSettings::guiScale), globalLoader[hudTextureFolder / "crosshair.png"],
                                  renderTarget);
     }
 }
@@ -776,7 +774,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                         .expanded(
                                                             crosshairTextureRect.size.x * 0.5 * settings::videoSettings::guiScale);
 
-        auto mult = colorMultiplier<resolutionTexture, solidColorBrush>(currentLoader->getResource(hudTextureFolder / "crosshair.png"),
+        auto mult = colorMultiplier<resolutionTexture, solidColorBrush>(globalLoader[hudTextureFolder / "crosshair.png"],
                                                                         brushes::red);
 
         fillTransparentRectangle(crectangle2(crosshairTextureRect),
@@ -794,9 +792,9 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                  crosshairTextureRect.size.x * 0.5 * settings::videoSettings::guiScale);
 
         fillTransparentRectangle(crectangle2(crosshairTextureRect), crosshairDrawRect,
-                                 currentLoader->getResource(hudTextureFolder / "crosshair.png"), targetData.renderTarget);
+                                 globalLoader[hudTextureFolder / "crosshair.png"], targetData.renderTarget);
 
-        const resolutionTexture &hotbarTexture = currentLoader->getResource(hudTextureFolder / "hotbar.png");
+        const resolutionTexture &hotbarTexture = globalLoader[hudTextureFolder / "hotbar.png"];
         // draw hotbar
         fillTransparentRectangle(crectangle2(hotbarTextureRect), hotbarDrawRect,
                                  hotbarTexture, targetData.renderTarget);
@@ -811,7 +809,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
             hotbarDrawRect.pos0 + vec2((player->rightHandSlotIndex * hotbarSpacing + hotbarMargin - selectorMargin) * hudScale, 0),
             selectorTextureRect.size * hudScale);
         fillTransparentRectangle((crectangle2)selectorTextureRect, selectorDrawRect,
-                                 currentLoader->getResource(hudTextureFolder / "hotbar_selection.png"), targetData.renderTarget);
+                                 globalLoader[hudTextureFolder / "hotbar_selection.png"], targetData.renderTarget);
 
         // the space between the hotbar and its elements
         player->hotbarSlots->render(targetData, hotbarDrawRect.pos0 + (hotbarPadding + (hotbarSpacing - hotbarItemDisplaySize) / 2) * hudScale,
@@ -833,7 +831,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                 (rect.size.x - expBarSize.x) / 2, currentYrowOffset, expBarSize.x,
                 expBarSize.y);
             fillTransparentRectangle((crectangle2)expBarTextureRect,
-                                     expBarBackGroundDrawRect, currentLoader->getResource(hudTextureFolder / "experience_bar_background.png"),
+                                     expBarBackGroundDrawRect, globalLoader[hudTextureFolder / "experience_bar_background.png"],
                                      targetData.renderTarget);
 
             cfp &power = getExperienceLevel(player->experience);
@@ -846,7 +844,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                 expBarBackGroundDrawRect.w * progressToNextLevel,
                 expBarBackGroundDrawRect.h);
             fillTransparentRectangle((crectangle2)expBarforeGroundTextureRect,
-                                     expBarforeGroundDrawRect, currentLoader->getResource(hudTextureFolder / "experience_bar_progress.png"),
+                                     expBarforeGroundDrawRect, globalLoader[hudTextureFolder / "experience_bar_progress.png"],
                                      targetData.renderTarget);
 
             if (currentLevel)
@@ -878,9 +876,9 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                          iconSize * hudScale,
                                                          iconSize * hudScale);
             fp absorptionYLevel = renderIcons(healthToRender, player->getMaxHealth() / 2,
-                                              currentLoader->getResource(heartTextureFolder / "full.png"),
-                                              currentLoader->getResource(heartTextureFolder / "half.png"),
-                                              currentLoader->getResource(heartTextureFolder / "container.png"),
+                                              globalLoader[heartTextureFolder / "full.png"],
+                                              globalLoader[heartTextureFolder / "half.png"],
+                                              globalLoader[heartTextureFolder / "container.png"],
                                               firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
 
             // render absorption hearts
@@ -891,18 +889,18 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                                        iconSize * hudScale);
 
                 renderIcons(player->absorptionHealth / 2, player->absorptionHealth / 2,
-                            currentLoader->getResource(heartTextureFolder / "absorbing_full.png"),
-                            currentLoader->getResource(heartTextureFolder / "absorbing_half.png"),
-                            currentLoader->getResource(heartTextureFolder / "container.png"),
+                            globalLoader[heartTextureFolder / "absorbing_full.png"],
+                            globalLoader[heartTextureFolder / "absorbing_half.png"],
+                            globalLoader[heartTextureFolder / "container.png"],
                             firstHeartDrawRect, firstHeartDrawRect.w, targetData.renderTarget);
             }
 
             crectangle2 firstDrumstickDrawRect = crectangle2(
                 hotbarDrawRect.x + hotbarDrawRect.w - iconSize * hudScale,
                 currentYrowOffset, iconSize * hudScale, iconSize * hudScale);
-            renderIcons(player->foodlevel * 0.5, maxhumanfoodlevel * 0.5, currentLoader->getResource(hudTextureFolder / "food_full.png"),
-                        currentLoader->getResource(hudTextureFolder / "food_half.png"),
-                        currentLoader->getResource(hudTextureFolder / "food_empty.png"), firstDrumstickDrawRect,
+            renderIcons(player->foodlevel * 0.5, maxhumanfoodlevel * 0.5, globalLoader[hudTextureFolder / "food_full.png"],
+                        globalLoader[hudTextureFolder / "food_half.png"],
+                        globalLoader[hudTextureFolder / "food_empty.png"], firstDrumstickDrawRect,
                         -firstDrumstickDrawRect.w, targetData.renderTarget);
             currentYrowOffset += iconSize * hudScale + scaledBarOffset;
         }
@@ -924,19 +922,19 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
             if (reloaded)
             {
                 fillTransparentRectangle((crectangle2)coolDownPixelRect, coolDownDrawRect,
-                                         currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_full.png"),
+                                         globalLoader[hudTextureFolder / "crosshair_attack_indicator_full.png"],
                                          targetData.renderTarget);
             }
             else
             {
                 fillTransparentRectangle((crectangle2)coolDownPixelRect, coolDownDrawRect,
-                                         currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_background.png"),
+                                         globalLoader[hudTextureFolder / "crosshair_attack_indicator_background.png"],
                                          targetData.renderTarget);
 
                 fillTransparentRectangle(
                     crectangle2(coolDownPixelRect.x, coolDownPixelRect.y, coolDownPixelRect.w * progress, coolDownPixelRect.h),
                     crectangle2(coolDownDrawRect.x, coolDownDrawRect.y, coolDownDrawRect.w * progress, coolDownDrawRect.h),
-                    currentLoader->getResource(hudTextureFolder / "crosshair_attack_indicator_progress.png"),
+                    globalLoader[hudTextureFolder / "crosshair_attack_indicator_progress.png"],
                     targetData.renderTarget);
             }
         }
@@ -952,9 +950,9 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                                   iconSize * hudScale,
                                                                   iconSize * hudScale);
 
-                renderIcons(defenceValue * 0.5, maxArmor * 0.5, currentLoader->getResource(hudTextureFolder / "armor_full.png"),
-                            currentLoader->getResource(hudTextureFolder / "armor_half.png"),
-                            currentLoader->getResource(hudTextureFolder / "armor_empty.png"), firstChestplateDrawRect,
+                renderIcons(defenceValue * 0.5, maxArmor * 0.5, globalLoader[hudTextureFolder / "armor_full.png"],
+                            globalLoader[hudTextureFolder / "armor_half.png"],
+                            globalLoader[hudTextureFolder / "armor_empty.png"], firstChestplateDrawRect,
                             firstChestplateDrawRect.w, targetData.renderTarget);
             }
         }
@@ -976,7 +974,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                 rect.y + rect.h - (barTextureSize.y * (bossBarIndex + 1) * hudScale),
                 barTextureSize.x * hudScale, barTextureSize.y * hudScale);
             fillTransparentRectangle(bossBarBackGroundTextureRect, bossBarBackGroundScreenRect,
-                                     currentLoader->getResource(spritesTextureFolder / "boss_bar" / "pink_background.png"), targetData.renderTarget);
+                                     globalLoader[spritesTextureFolder / "boss_bar" / "pink_background.png"], targetData.renderTarget);
             if (e->health > 0)
             {
                 cfp barPart = e->health / (entityDataList[(int)e->entityType])->maxHealth;
@@ -989,7 +987,7 @@ void gameControl::renderGame(crectanglei2 &rect, const texture &renderTarget, cb
                                                                           barPart,
                                                                       bossBarBackGroundScreenRect.h);
                 fillTransparentRectangle(bossBarForeGroundTextureRect, bossBarForeGroundScreenRect,
-                                         currentLoader->getResource(spritesTextureFolder / "boss_bar" / "pink_progress.png"), targetData.renderTarget);
+                                         globalLoader[spritesTextureFolder / "boss_bar" / "pink_progress.png"], targetData.renderTarget);
             }
 
             if (++bossBarIndex >= maxBossBarCount)
@@ -1090,12 +1088,12 @@ void gameControl::lostFocus()
     }
 }
 
-gameRenderData gameControl::getRenderData(const texture &renderTarget, cfp &secondsOffset)
+gameRenderData gameControl::getRenderData(const texture &renderTarget, cfp &secondsOffset) const
 {
     return gameRenderData(worldToRenderTargetTransform, renderTarget, *this, secondsOffset);
 }
 
-mat3x3 gameControl::getWorldToScreenTransform(cvec2 &middleWorldPosition, cfp &pixelsPerBlock)
+mat3x3 gameControl::getWorldToScreenTransform(cvec2 &middleWorldPosition, cfp &pixelsPerBlock) const
 {
     return mat3x3::cross(
         mat3x3::scale(vec2(pixelsPerBlock)),

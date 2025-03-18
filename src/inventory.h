@@ -21,6 +21,7 @@ struct inventory : slotContainer, IDestructable
 	virtual void clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot);
 	//void drawExtraData(crectanglei2& textureRect, cveci2& offset, cmat3x3& transform, const texture& renderTarget) const;
 	void drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const texture& renderTarget) const;
+	void drawExtraData(const resolutionTexture& sprite, crectangle2& textureRect, cvec2& position, cmat3x3& transform, const texture& renderTarget) const;
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget);
 	virtual ~inventory() override;
 	virtual void mouseDown(cveci2& pixelPosition, cmb& button, stackDivider& divider);

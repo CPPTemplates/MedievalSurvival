@@ -65,7 +65,7 @@ struct arraynd
 	}
 
 	// this operator is necessary!!!
-	inline arraynd &operator=(arraynd &&other)
+	inline arraynd &operator=(arraynd &&other) noexcept
 	{
 		// transfer ownership; other will probably be deleted after this
 		baseArray = other.baseArray;

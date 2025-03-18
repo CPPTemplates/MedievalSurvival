@@ -3,7 +3,6 @@
 #include "itemID.h"
 #include "armorTier.h"
 #include "dimensionID.h"
-#include "itemID.h"
 #include "textureList.h"
 #include "minecraftFont.h"
 

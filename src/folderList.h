@@ -41,7 +41,7 @@ const stdPath armorTextureFolder = generalTextureFolder / L"models" / L"armor";
 const stdPath miscellaneousTextureFolder = generalTextureFolder / L"misc";
 const stdPath particleTextureFolder = generalTextureFolder / L"particle";
 const stdPath spritesTextureFolder = guiTextureFolder / L"sprites";
-const stdPath containerSpritesTextureFolder = spritesTextureFolder / L"container";
+const stdPath containerSpritesFolder = spritesTextureFolder / L"container";
 const stdPath hudTextureFolder = spritesTextureFolder / L"hud";
 const stdPath heartTextureFolder = hudTextureFolder / L"heart";
 

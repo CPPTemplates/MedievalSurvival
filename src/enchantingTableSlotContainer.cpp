@@ -7,12 +7,12 @@
 #include "enchantingTableSlotContainer.h"
 #include "human.h"
 #include "folderList.h"
-#include "experienceOrb.h"
 #include "dimension.h"
 #include "soundList.h"
 #include "incompatibleEnchantments.h"
 #include "inventoryForm.h"
 #include "application/theme.h"
+#include <resourceLoader.h>
 
 constexpr veci2 enchantmentOptionSize = cveci2(108, 19);
 constexpr veci2 enchantmentBottomOptionPos = cveci2(60, 95);
@@ -102,12 +102,12 @@ void enchantingTableSlotContainer::drawExtraData(cmat3x3& transform, const textu
 		{
 			cbool available = isAvailable(i);
 			rectanglei2 textRect = rectanglei2(optionPosition, enchantmentOptionSize);
-			crectanglei2& textBackgroundBrushRect = crectanglei2(0, available ? 71 : 52, 108, 19);
-			inventory::drawExtraData(crectanglei2(0, available ? 71 : 52, 108, 19), textRect.pos0, transform, renderTarget);
+			const resolutionTexture& backgroundTexture = globalLoader[containerSpritesFolder / L"enchanting_table" / (available ? L"enchantment_slot.png" : L"enchantment_slot_disabled.png")];
+			inventory::drawExtraData(backgroundTexture, textRect.pos0, transform, renderTarget);
 			textRect.x += textRect.h;//substract the 'lapis square'
 			textRect.w -= textRect.h;
-			crectangle2& optionBrushRect = crectangle2(i * 0x10, available ? 0x10 : 0, 0x10, 0x10);
-			inventory::drawExtraData(crectanglei2(i * 0x10, available ? 0x10 : 0, 0x10, 0x10), optionPosition, transform, renderTarget);
+			const resolutionTexture& xpTexture = globalLoader[containerSpritesFolder / L"enchanting_table" / (L"level_" + std::to_wstring(i + 1) + (available ? L"" : L"_disabled") + L".png")];
+			inventory::drawExtraData(xpTexture, optionPosition, transform, renderTarget);
 
 			textRect.expand(-defaultTheme().borderSize);
 			std::wstring enchantmentName = enchantmentOptions[i][0].toWString();

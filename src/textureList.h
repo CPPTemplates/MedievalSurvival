@@ -4,7 +4,6 @@
 #include "itemID.h"
 #include "dimensionID.h"
 #include "armorTier.h"
-#include "itemID.h"
 extern resolutionTexture* brewingStandBaseTexture;
 extern resolutionTexture* brewingStandTopTexture;
 extern resolutionTexture* mainMenuBackgroundTexture;

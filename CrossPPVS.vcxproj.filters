@@ -1044,7 +1044,7 @@
     <ClCompile Include="src\tntData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\toolDrop.cpp">
+    <ClCompile Include="src\toolDropCondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\trapDoorData.cpp">
@@ -2678,7 +2678,7 @@
     <ClInclude Include="src\tntData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\toolDrop.h">
+    <ClInclude Include="src\toolDropCondition.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\toolTypeID.h">
@@ -2780,5 +2780,8 @@
     <ClInclude Include="src\nbt\serializeUUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

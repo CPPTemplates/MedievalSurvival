@@ -21,7 +21,7 @@ struct idList : public fastList<dataType>
 		deleteAllElements(*this);
 	}
 	//do not allow a copy constructor
-	inline idList& operator=(idList&& copy)
+	inline idList& operator=(idList&& copy) noexcept
 	{
 		this->swap(copy);
 		return *this;

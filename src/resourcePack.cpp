@@ -7,7 +7,6 @@
 #include "biomeID.h"
 #include "dimensionData.h"
 #include "itemID.h"
-#include "itemID.h"
 #include "idList.h"
 #include "enchantmentData.h"
 #include "resourcePack.h"
@@ -206,26 +205,7 @@ constexpr int toolEnchantability[toolTierCount]{
 	15,
 };
 
-// std::vector<stdPath> dataPackPaths = {
-//	minecraftVersionFolder,
-//	dataPackFolder / L"default",
-//	dataPackFolder / L"randomized loot",
-// };
-//  from lowest to highest priority: resource packs
-//  we don't need a separate folder for data packs. data and resource packs are the same, as they both modify server behavior.
-std::vector<stdPath> resourcePackPaths =
-	{
-		minecraftVersionFolder,
-		resourcePackFolder / L"default",
-		resourcePackFolder / L"sounds 1.16",
-		resourcePackFolder / L"qol",
-		resourcePackFolder / L"BDcraft Sound Pack",
-		// resourcePackFolder / L"happy-v1-3",
-		// resourcePackFolder / L"light levels 1.16",
-		resourcePackFolder / L"creator pack",
-		resourcePackFolder / L"randomized loot",
-		// resourcePackFolder / L"4thful",};
-};
+
 
 idList<block *, blockID>
 	blockList = idList<block *, blockID>();
@@ -255,7 +235,7 @@ resolutionTexture *loadRotatedTexture(const stdPath &path, cvec2 &defaultSize, c
 	return rotatedTex;
 }
 
-resolutionTexture *loadDragonEggTexture()
+static resolutionTexture *loadDragonEggTexture()
 {
 	resolutionTexture *dragonEggSurfaceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dragon_egg.png"));
 	// resolutionTexture *dragonEggGraphics = new resolutionTexture(texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size)), cvec2(blockTextureSize));
@@ -337,7 +317,7 @@ bool getLastResourceLocation(const stdPath &relativePath, stdPath &result)
 	// handleCrash(relativePath.wstring() + std::wstring(L" not found in any of the resource packs. working directory: ") + workingDirectory.wstring());
 	return locations.size();
 }
-void loadDataLists()
+static void loadDataLists()
 {
 	enchantmentDataList = idList<enchantmentData *, enchantmentID>(fastList<enchantmentData *>((int)enchantmentID::count));
 	int enchantmentId = 0;
@@ -698,7 +678,7 @@ void loadDataLists()
 	currentGameModeID++;
 }
 
-void setFoodValues()
+static void setFoodValues()
 {
 	// add food values
 	itemList[itemID::dried_kelp]->setEatingValues(1, 0.6);
@@ -753,7 +733,7 @@ void setFoodValues()
 	itemList[itemID::poisonous_potato]->setEatingValues(1, 0.6);
 }
 
-void loadMusic()
+static void loadMusic()
 {
 	mainMenuBackgroundMusic = std::make_shared<musicCollection>(menuMusicFolder / L"menu");
 	overWorldBackgroundMusic = std::make_shared<musicCollection>(gameMusicFolder / L"calm");
@@ -782,7 +762,7 @@ void loadMusic()
 	waterMusic->addAudioFileName(waterMusicFolder / std::wstring(L"dragon_fish"));
 	waterMusic->addAudioFileName(waterMusicFolder / L"shuniji");
 }
-void loadTags()
+static void loadTags()
 {
 	tagList = fastList<tag *>();
 	for (const auto &currentFolder : getResourceLocations(mainTagFolder))
@@ -821,7 +801,7 @@ void loadTags()
 	tagList.update();
 }
 
-void loadLootTables()
+static void loadLootTables()
 {
 	// load loot tables
 	// chest loot
@@ -917,7 +897,7 @@ static void loadRecipes()
 			readRecipe(content);
 		}
 }
-void loadStructures()
+static void loadStructures()
 {
 	structureList = std::vector<structure *>();
 	for (const auto &currentFolder : getResourceLocations(structureFolder) | std::views::reverse)
@@ -939,7 +919,7 @@ void loadStructures()
 		}
 }
 
-void loadBlockPowerProperties()
+static void loadBlockPowerProperties()
 {
 	blockList[blockID::redstone_block]->emittanceLevel[2] = maxPowerLevel;
 
@@ -980,7 +960,7 @@ void loadBlockPowerProperties()
 	blockList[blockID::gravel]->filterStrength[2] = maxPowerLevel / 0x8;
 }
 
-void loadBlocks()
+static void loadBlocks()
 {
 	std::shared_ptr<soundCollection> digGrass = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"grass");
 	std::shared_ptr<soundCollection> stepGrass = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"grass");
@@ -2511,7 +2491,7 @@ void loadBlocks()
 	loadBlockPowerProperties();
 }
 
-void loadItems()
+static void loadItems()
 {
 	// calculate possible enchantments, to use for loading the items
 	const std::vector<enchantmentID> &normalEnchantments = {enchantmentID::unBreaking, enchantmentID::mending, enchantmentID::curseOfVanishing};
@@ -2857,10 +2837,10 @@ void loadItems()
 	std::vector<fp> baseAttackDamageList = {4, 2, 0, 2.5, 0};
 	std::vector<fp> axeAttackDamageList = {7, 7, 9, 9, 9, 10};
 	std::vector<fp> tierAttackDamageList = {0, 0, 1, 2, 3, 4};
-	for (size_t toolTierIndex = 0; toolTierIndex < toolTierNames.size(); toolTierIndex++)
+	for (int toolTierIndex = 0; toolTierIndex < toolTierNames.size(); toolTierIndex++)
 	{
 		std::wstring toolTierName = toolTierNames[toolTierIndex];
-		for (size_t toolTypeIndex = 0; toolTypeIndex < toolTypeNames.size(); toolTypeIndex++)
+		for (int toolTypeIndex = 0; toolTypeIndex < toolTypeNames.size(); toolTypeIndex++)
 		{
 			std::wstring toolTypeName = toolTypeNames[toolTypeIndex];
 			cfp attackSpeed = toolTypeIndex == (withHoe - 1) ? hoeAttackSpeeds[toolTierIndex] : toolTypeIndex == (withAxe - 1) ? axeAttackSpeeds[toolTierIndex]
@@ -2868,7 +2848,7 @@ void loadItems()
 			cfp attackDamage = toolTypeIndex == (withHoe - 1) ? 1 : toolTypeIndex == (withAxe - 1) ? axeAttackDamageList[toolTierIndex]
 																								   : baseAttackDamageList[toolTypeIndex] + tierAttackDamageList[toolTierIndex];
 			std::wstring toolName = toolTierName + toolTypeName;
-			itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), toolTierIndex == (size_t)woodHarvestTier ? 200 : 50, (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
+			itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), toolTierIndex == woodHarvestTier ? 200 : 50, (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
 			identifier++;
 		}
 	}
@@ -2886,10 +2866,10 @@ void loadItems()
 
 	const color leatherColor = hexToColor(0xA06540);
 
-	for (size_t armorTierIndex = 0; armorTierIndex < armorTierNames.size(); armorTierIndex++)
+	for (int armorTierIndex = 0; armorTierIndex < armorTierNames.size(); armorTierIndex++)
 	{
 		std::wstring armorTierName = armorTierNames[armorTierIndex];
-		for (size_t armorTypeIndex = 0; armorTypeIndex < armorTypeNames.size(); armorTypeIndex++)
+		for (int armorTypeIndex = 0; armorTypeIndex < armorTypeNames.size(); armorTypeIndex++)
 		{
 			if (armorTierIndex > 0 || armorTypeIndex == helmetArmorType - bootsArmorType)
 			{
@@ -2921,7 +2901,7 @@ void loadItems()
 	itemList.update();
 }
 
-void loadEntityData()
+static void loadEntityData()
 {
 	// add mob data
 	entityDataList = idList<entityData *, entityID>(fastList<entityData *>());
@@ -3062,7 +3042,6 @@ void loadEntityData()
 
 void loadResourcePacks()
 {
-	currentLoader = new resourceLoader(resourcePackPaths);
 	loadDataLists();
 	loadMusic();
 	// load textures
