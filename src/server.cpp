@@ -26,13 +26,13 @@ void server::execute()
 		listener = listeners[defaultPort];
 		// it doesn't work like this:
 		// listener = listeners[defaultPort] = new sf::TcpListener();
-		while (!stopping && (portStatus = listener->listen(defaultPort)))
+		while (!stopping && (portStatus = listener->listen(defaultPort)) != sf::Socket::Status::Done)
 		{
 			// cannot listen at the moment
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 	}
-	if (portStatus == sf::Socket::Done)
+	if (portStatus == sf::Socket::Status::Done)
 	{
 		listenerSelector.add(*listener);
 
@@ -346,7 +346,7 @@ playerSocket *listenForIncomingConnections()
 		//{
 		// accept a new connection
 		sf::TcpSocket *clientSocket = new sf::TcpSocket();
-		if (currentServer->listener->accept(*clientSocket) != sf::Socket::Done)
+		if (currentServer->listener->accept(*clientSocket) != sf::Socket::Status::Done)
 		{
 			// error...
 		}

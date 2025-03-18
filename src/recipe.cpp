@@ -132,9 +132,7 @@ void readRecipe(const jsonContainer& recipeDescription)
 	const jsonContainer& resultContainer = recipeDescription.children[recipeDescription.getChildIndex(std::wstring(L"result"))];
 
 	//a layer deeper or not?
-	const std::wstring resultItemName = resultContainer.children[0].children.size() ?
-		resultContainer.children[0].children[0].value :
-		resultContainer.children[0].value;
+	const std::wstring resultItemName = resultContainer[L"id"].children[0].value;
 
 	const itemID& resultItemIndex = itemList.getIDByName(resultItemName);
 	if ((int)resultItemIndex == -1)
@@ -148,7 +146,7 @@ void readRecipe(const jsonContainer& recipeDescription)
 	if (resultContainer.children.size() > 1)
 	{
 		//count
-		resultingRecipe->result.count = std::stoi(resultContainer.children[1].children[0].value);
+		resultingRecipe->result.count = std::stoi(resultContainer[L"count"].children[0].value);
 	}
 	else
 	{

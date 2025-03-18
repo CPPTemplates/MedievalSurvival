@@ -224,10 +224,10 @@ void gameControl::processInput()
     for (const sf::Event &e : mostRecentInput.eventHistory)
     {
         // process keys
-        if (e.type == sf::Event::KeyPressed)
+        if (const auto key = e.getIf<sf::Event::KeyPressed>())
         {
             cbool &worldFocus = getWorldFocus();
-            if (e.key.code == (vk)keyID::escape)
+            if (key->code == (vk)keyID::escape)
             {
                 if (focusedChild == nullptr)
                 {
@@ -241,7 +241,7 @@ void gameControl::processInput()
                     focusChild(nullptr);
                 }
             }
-            else if (e.key.code == (vk)keyID::inventory)
+            else if (key->code == (vk)keyID::inventory)
             {
                 if (inventoryUI->visible ^ worldFocus)
                 {
@@ -250,28 +250,28 @@ void gameControl::processInput()
             }
             else if (worldFocus)
             {
-                if (((e.key.code == (vk)keyID::commandLine) || (e.key.code == (vk)keyID::text)) &&
+                if (((key->code == (vk)keyID::commandLine) || (key->code == (vk)keyID::text)) &&
                     focusedChild == nullptr)
                 {
                     commandLineTextbox->visible = true;
                     focusChild(commandLineTextbox);
 
-                    if (e.key.code == (vk)keyID::text)
+                    if (key->code == (vk)keyID::text)
                     {
                         // avoid typing the text keybind
                         return;
                     }
                 }
 
-                if (e.key.code == (vk)keyID::renderHitboxes && settings::renderDebugData)
+                if (key->code == (vk)keyID::renderHitboxes && settings::renderDebugData)
                 {
                     settings::renderHitboxes = !settings::renderHitboxes;
                 }
-                else if (e.key.code == (vk)keyID::debug)
+                else if (key->code == (vk)keyID::debug)
                 {
                     settings::renderDebugData = !settings::renderDebugData;
                 }
-                else if (e.key.code == (vk)keyID::headUpDisplay)
+                else if (key->code == (vk)keyID::headUpDisplay)
                 {
                     settings::renderHUD = !settings::renderHUD;
                 }
@@ -279,7 +279,7 @@ void gameControl::processInput()
                 {
                     for (int i = 0; i < 9; i++)
                     {
-                        if (e.key.code == hotbarSlotKeys[i])
+                        if (key->code == hotbarSlotKeys[i])
                         {
                             player->desiredRightHandSlotIndex = i;
                             break;
@@ -287,31 +287,29 @@ void gameControl::processInput()
                     }
                 }
             }
-        }
-        if (focusedChild == commandLineTextbox && e.type == sf::Event::KeyPressed &&
-            e.key.control && is_in(e.key.code, sf::Keyboard::C, sf::Keyboard::V))
-        {
-            if (e.key.code == sf::Keyboard::V)
+            if (focusedChild == commandLineTextbox &&
+                key->control && is_in(key->code, sf::Keyboard::Key::C, sf::Keyboard::Key::V))
             {
-                if (copyToClipboard.length())
+                if (key->code == sf::Keyboard::Key::V)
                 {
-                    // copied and pasted in the same frame
-                    paste(copyToClipboard);
+                    if (copyToClipboard.length())
+                    {
+                        // copied and pasted in the same frame
+                        paste(copyToClipboard);
+                    }
+                    else
+                    {
+                        wantsClipboardInput = true;
+                    }
                 }
                 else
                 {
-                    wantsClipboardInput = true;
+                    copyToClipboard = copy();
                 }
-            }
-            else
-            {
-                copyToClipboard = copy();
+                continue;
             }
         }
-        else
-        {
-            translator->processEvent(e);
-        }
+        translator->processEvent(e);
     }
     // process buttons
     // control *highestChild = getHighestChild(mousePositionPixels);
@@ -349,7 +347,7 @@ void gameControl::processInput()
             player->desiredRightHandSlotIndex = pos.x;
             fillAllElements(mostRecentInput.clicked, false);
         }
-        std::copy(clicked, clicked + mb::ButtonCount, clickedFocused);
+        std::copy(clicked, clicked + sf::Mouse::ButtonCount, clickedFocused);
     }
 }
 
@@ -1306,7 +1304,7 @@ void renderOptionsBackGround(crectanglei2 &rect, const texture &renderTarget)
 
 void gameControl::commandLineKeyPressed(const keyEventArgs &e)
 {
-    if (e.keyCode == sf::Keyboard::Enter)
+    if (e.keyCode == sf::Keyboard::Key::Enter)
     {
         // execute the commandline
         std::wstring line = commandLineTextbox->text;

@@ -21,12 +21,12 @@ constexpr vec2 codDorsalFinsSize = codDorsalFinsTextureRect.size * codTextureSca
 constexpr vec2 codCaudalFinSize = codCaudalFinTextureRect.size * codTextureScale;
 constexpr vec2 codFrontFinSize = codFrontFinTextureRect.size * codTextureScale;
 
-constexpr vec2 codBodyRotationCentre = codBodySize * 0.5;
-constexpr vec2 codHeadRotationCentre = cvec2(0, codHeadSize.getY() * 0.5);
-constexpr vec2 codNoseRotationCentre = cvec2(0, codNoseSize.getY() * 0.5);
-constexpr vec2 codDorsalFinsRotationCentre = cvec2(codDorsalFinsSize.getX() * 0.5, 0);
-constexpr vec2 codCaudalFinRotationCentre = cvec2(codCaudalFinSize.getX(), codCaudalFinSize.getY() * 0.5);
-constexpr vec2 codFrontFinRotationCentre = cvec2(codFrontFinSize.getX() * 0.5, codFrontFinSize.getY());
+constexpr vec2 codBodyRotationCenter = codBodySize * 0.5;
+constexpr vec2 codHeadRotationCenter = cvec2(0, codHeadSize.getY() * 0.5);
+constexpr vec2 codNoseRotationCenter = cvec2(0, codNoseSize.getY() * 0.5);
+constexpr vec2 codDorsalFinsRotationCenter = cvec2(codDorsalFinsSize.getX() * 0.5, 0);
+constexpr vec2 codCaudalFinRotationCenter = cvec2(codCaudalFinSize.getX(), codCaudalFinSize.getY() * 0.5);
+constexpr vec2 codFrontFinRotationCenter = cvec2(codFrontFinSize.getX() * 0.5, codFrontFinSize.getY());
 
 constexpr fp codFrontFinTextureOffset = 4;
 

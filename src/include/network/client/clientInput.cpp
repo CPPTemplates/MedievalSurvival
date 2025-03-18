@@ -5,7 +5,7 @@ void clientInput::addClientInput(const clientInput &newInput)
 {
 	mousePositionPixels = newInput.mousePositionPixels;
 	scrollDelta += newInput.scrollDelta;
-	for (size_t i = 0; i < mb::ButtonCount; i++)
+	for (size_t i = 0; i < sf::Mouse::ButtonCount; i++)
 	{
 		clicked[i] |= newInput.clicked[i];
 		clickReleased[i] |= newInput.clickReleased[i];
@@ -29,6 +29,7 @@ void clientInput::addClientInput(const clientInput &newInput)
 	}
 	keysHolding = newInput.keysHolding;
 	textEntered = newInput.textEntered;
+	eventHistory.insert(eventHistory.end(), newInput.eventHistory.begin(), newInput.eventHistory.end());
 }
 
 bool clientInput::holdingDownKey(cvk &key) const

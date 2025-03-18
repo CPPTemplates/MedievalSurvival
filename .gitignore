@@ -8,3 +8,5 @@ old
 build
 data/version/currentversion
 data/version/other
+.vs
+Debug

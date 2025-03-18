@@ -734,7 +734,7 @@ collisionDataCollection block::getCollisionData(blockContainer *containerIn, cve
 }
 
 template <typename brush0Type>
-void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectangle2 &blockRect, const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cbool &renderAnimation, const std::optional<vec2> &rotationCentre) const
+void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectangle2 &blockRect, const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cbool &renderAnimation, const std::optional<vec2> &rotationCenter) const
 {
 	mat3x3 transform;
 	if (renderAnimation)
@@ -748,7 +748,7 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 	transform = mat3x3::cross(targetData.worldToRenderTargetTransform, transform);
 
 	// rotation centre on screen because then all other transformations, like animation etc, are done already
-	cvec2 &rotationCentreOnScreen = targetData.worldToRenderTargetTransform.multPointMatrix(rotationCentre ? rotationCentre.value() : floorVector<fp>(blockRect.pos0) + cvec2(0.5));
+	cvec2 &rotationCenterOnScreen = targetData.worldToRenderTargetTransform.multPointMatrix(rotationCenter ? rotationCenter.value() : floorVector<fp>(blockRect.pos0) + cvec2(0.5));
 
 	if (settings::videoSettings::multiplyBiomeColors && multiplyByBiomeColor(identifier))
 	{
@@ -769,7 +769,7 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 					// modify transform and change brush
 					// rectangle2 mipmappedRect = brushRect;
 					return (const finalBrushType &)(((const resolutionTexture &)currentBrush).mipmap(transform, brushRect));
-					// renderBrush(mipmappedRect, transform, rotationCentreOnScreen, true, facingDirection, tex, targetData.renderTarget, renderAnimation);
+					// renderBrush(mipmappedRect, transform, rotationCenterOnScreen, true, facingDirection, tex, targetData.renderTarget, renderAnimation);
 				}
 				else
 				{
@@ -782,10 +782,10 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 			//	//modify transform and change brush
 			//	rectangle2 mipmappedRect = brushRect;
 			//	const texture& tex = ((const resolutionTexture&)currentBrush).mipmap(transform, mipmappedRect);
-			//	renderBrush(mipmappedRect, transform, rotationCentreOnScreen, true, facingDirection, tex, targetData.renderTarget, renderAnimation);
+			//	renderBrush(mipmappedRect, transform, rotationCenterOnScreen, true, facingDirection, tex, targetData.renderTarget, renderAnimation);
 			// }
 			// else {
-			//	renderBrush(brushRect, transform, rotationCentreOnScreen, true, facingDirection, currentBrush, targetData.renderTarget, renderAnimation);
+			//	renderBrush(brushRect, transform, rotationCenterOnScreen, true, facingDirection, currentBrush, targetData.renderTarget, renderAnimation);
 			// }
 
 			if (identifier == blockID::grass_block)
@@ -797,7 +797,7 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 				const finalBrushType &finalBrush = mipmapfunc();
 				// fill back texture
 				fillTransformedBrushRectangle(brushRect, transform, finalBrush, targetData.renderTarget);
-				// renderBrush(brushRect, transform, rotationCentreOnScreen, true, standardUpFacingBlockDirection, mult, targetData.renderTarget, true);
+				// renderBrush(brushRect, transform, rotationCenterOnScreen, true, standardUpFacingBlockDirection, mult, targetData.renderTarget, true);
 				const texture &overlayTex = grassOverlay->mipmap(overlayTransform, overlayBrushRect);
 				const auto &mult = colorMultiplier<texture, solidColorBrush>(overlayTex, biomeColorBrush);
 
@@ -809,7 +809,7 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 			{
 				const finalBrushType &finalBrush = mipmapfunc();
 				const auto &mult = colorMultiplier<finalBrushType, solidColorBrush>(finalBrush, biomeColorBrush);
-				renderBrush(brushRect, transform, rotationCentreOnScreen, true, standardUpFacingBlockDirection, mult, targetData.renderTarget, true);
+				renderBrush(brushRect, transform, rotationCenterOnScreen, true, standardUpFacingBlockDirection, mult, targetData.renderTarget, true);
 				return;
 			}
 		}
@@ -825,15 +825,15 @@ void block::render(const brush0Type &currentBrush, rectangle2 brushRect, crectan
 		}
 		else if (toFacingData->directionFacing != standardSideFacingBlockDirection)
 		{
-			transform = mat3x3::cross(mat3x3::mirror(axisID::x, rotationCentreOnScreen.x), transform);
+			transform = mat3x3::cross(mat3x3::mirror(axisID::x, rotationCenterOnScreen.x), transform);
 		}
 	}
-	renderBrush(brushRect, transform, rotationCentreOnScreen, true, facingDirection, currentBrush, targetData.renderTarget, renderAnimation);
+	renderBrush(brushRect, transform, rotationCenterOnScreen, true, facingDirection, currentBrush, targetData.renderTarget, renderAnimation);
 }
 
-void renderTorch(cveci2 &blockPosition, cvec2 &relativeRotationCentre, cfp &angle, const resolutionTexture &tex, const gameRenderData &targetData)
+void renderTorch(cveci2 &blockPosition, cvec2 &relativeRotationCenter, cfp &angle, const resolutionTexture &tex, const gameRenderData &targetData)
 {
-	mat3x3 transform = mat3x3::fromRectToRect(crectangle2(torchTextureRect), crectangle2(cvec2(blockPosition) + relativeRotationCentre + cvec2(torchSize.x * -0.5, 0), torchSize));
+	mat3x3 transform = mat3x3::fromRectToRect(crectangle2(torchTextureRect), crectangle2(cvec2(blockPosition) + relativeRotationCenter + cvec2(torchSize.x * -0.5, 0), torchSize));
 	if (angle != 0)
 	{
 		transform = mat3x3::cross(transform, mat3x3::rotate(cvec2(torchTextureRect.pos0) + cvec2(torchTextureRect.size.x * 0.5, 0), angle));

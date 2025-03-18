@@ -37,15 +37,15 @@ sheep::sheep(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position
 	}
 
 	//intialize body parts
-	mainBodyPart = new bodyPart2D(sheepBodyTextureRect, nullptr, vec2(position.x, position.y + sheepLegSize.y), sheepBodySize, sheepBodyRotationCentre, 0, 90);
+	mainBodyPart = new bodyPart2D(sheepBodyTextureRect, nullptr, vec2(position.x, position.y + sheepLegSize.y), sheepBodySize, sheepBodyRotationCenter, 0, 90);
 
-	frontRightLeg = new bodyPart2D(sheepFrontRightLegTextureRect, mainBodyPart, sheepFrontLegOffset, sheepLegSize, sheepLegRotationCentre);
-	frontLeftLeg = new bodyPart2D(sheepFrontLeftLegTextureRect, mainBodyPart, sheepFrontLegOffset, sheepLegSize, sheepLegRotationCentre);
+	frontRightLeg = new bodyPart2D(sheepFrontRightLegTextureRect, mainBodyPart, sheepFrontLegOffset, sheepLegSize, sheepLegRotationCenter);
+	frontLeftLeg = new bodyPart2D(sheepFrontLeftLegTextureRect, mainBodyPart, sheepFrontLegOffset, sheepLegSize, sheepLegRotationCenter);
 
-	backRightLeg = new bodyPart2D(sheepFrontRightLegTextureRect, mainBodyPart, sheepBackLegOffset, sheepLegSize, sheepLegRotationCentre);
-	backLeftLeg = new bodyPart2D(sheepFrontLeftLegTextureRect, mainBodyPart, sheepBackLegOffset, sheepLegSize, sheepLegRotationCentre);
+	backRightLeg = new bodyPart2D(sheepFrontRightLegTextureRect, mainBodyPart, sheepBackLegOffset, sheepLegSize, sheepLegRotationCenter);
+	backLeftLeg = new bodyPart2D(sheepFrontLeftLegTextureRect, mainBodyPart, sheepBackLegOffset, sheepLegSize, sheepLegRotationCenter);
 
-	head = new bodyPart2D(sheepHeadTextureRect, mainBodyPart, vec2(sheepBodySize.x - sheepBodyRotationCentre.x - sheepHeadOffset + sheepHeadRotationCentre.x, sheepBodySize.y + sheepHeadOffset - sheepHeadRotationCentre.y), sheepHeadSize, sheepHeadRotationCentre);
+	head = new bodyPart2D(sheepHeadTextureRect, mainBodyPart, vec2(sheepBodySize.x - sheepBodyRotationCenter.x - sheepHeadOffset + sheepHeadRotationCenter.x, sheepBodySize.y + sheepHeadOffset - sheepHeadRotationCenter.y), sheepHeadSize, sheepHeadRotationCenter);
 	connectBodyParts();
 }
 void sheep::serializeValue(nbtSerializer& s)
@@ -90,15 +90,15 @@ void sheep::render(const gameRenderData& targetData) const
 			crectanglei2(0, 20, 6, 6)
 		};
 
-		crectangle2 legRect = crectangle2(-backLeftLeg->rotationCentre + cvec2(0.0, backLeftLeg->size.y * 0.5), cvec2(backLeftLeg->size.x, backLeftLeg->size.y * 0.5));
+		crectangle2 legRect = crectangle2(-backLeftLeg->rotationCenter + cvec2(0.0, backLeftLeg->size.y * 0.5), cvec2(backLeftLeg->size.x, backLeftLeg->size.y * 0.5));
 		cfp thickness = 0.03;
 		crectangle2 bodyPartRects[bodyPartTypeCount]
 		{
 			legRect,
 			legRect,
-			crectangle2(-mainBodyPart->rotationCentre,mainBodyPart->size).expanded(thickness),
+			crectangle2(-mainBodyPart->rotationCenter,mainBodyPart->size).expanded(thickness),
 			//only fill the square part
-			crectangle2(-head->rotationCentre,cvec2(head->size.y,head->size.y)).expanded(thickness),
+			crectangle2(-head->rotationCenter,cvec2(head->size.y,head->size.y)).expanded(thickness),
 		};
 
 		const auto& woolColorBrush = solidColorBrush(rgbColorValues[(int)woolColor]);

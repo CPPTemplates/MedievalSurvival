@@ -31,8 +31,8 @@ amountDistribution* parseMinimumAndMaximum(const jsonContainer& container)
 			uniformAmountDistribution* distribution = new uniformAmountDistribution();
 
 			fp fpMinimum = 0, fpMaximum = 0;
-			if ((!convertToDouble(container.getChild(std::wstring(L"min")).children[0].value, fpMinimum))
-				|| (!convertToDouble(container.getChild(std::wstring(L"max")).children[0].value, fpMaximum)))
+			if ((!convertToDouble(container[L"min"].children[0].value, fpMinimum))
+				|| (!convertToDouble(container[L"max"].children[0].value, fpMaximum)))
 			{
 				handleError(std::wstring(L"could not parse"));
 			}
@@ -46,8 +46,8 @@ amountDistribution* parseMinimumAndMaximum(const jsonContainer& container)
 
 			fp fpN = 0;
 
-			if (convertToDouble(container[std::wstring(L"n")].children[0].value, fpN) &&
-				convertToDouble(container[std::wstring(L"p")].children[0].value, distribution->p))
+			if (convertToDouble(container[L"n"].children[0].value, fpN) &&
+				convertToDouble(container[L"p"].children[0].value, distribution->p))
 			{
 
 			}

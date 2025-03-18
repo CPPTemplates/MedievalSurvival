@@ -57,7 +57,7 @@ constexpr rectangle2 sleepersTextureRect = crectangle2(0, 0, 0x10, 2);
 constexpr fp railsHeight = railsTextureRect.size.getY() / (fp)blockTextureSize;
 constexpr fp sleepersHeight = sleepersTextureRect.size.getY() / (fp)blockTextureSize;
 
-constexpr vec2 humanJumpPower = vec2(9, 8.4);
+constexpr vec2 humanJumpPower = vec2(4, 8.4);
 constexpr vec2 humanHitboxSize = vec2(0.6, 1.8);
 constexpr vec2 legBrakeSpeed = vec2(humanWalkingSpeed, 15);
 
@@ -65,7 +65,7 @@ constexpr veci2 dropperSlotContainerSize = veci2(3);
 
 constexpr rectangle2 blockTextureRect = crectangle2(cvec2(), cvec2(blockTextureSize));
 constexpr vec2 boatHitboxSize = cvec2(1.375, 0.565);
-constexpr vec2 boatRotationCentre = cvec2(boatHitboxSize.getX() * 0.5, 0);
+constexpr vec2 boatRotationCenter = cvec2(boatHitboxSize.getX() * 0.5, 0);
 
 constexpr rectangle2 torchTextureRect = crectangle2(7, 0, 2, 10);
 

@@ -11,7 +11,7 @@ constexpr fp ghastPixelSize = ghastHitboxSize.getX() / ghastHeadTextureRect.size
 constexpr vec2 ghastHeadSize = cvec2(ghastHeadTextureRect.size) * ghastPixelSize;
 constexpr vec2 ghastMaxLegSize = cvec2(ghastLegTextureRect.size) * ghastPixelSize;
 
-constexpr vec2 ghastHeadRotationCentre = ghastHeadSize * 0.5;
+constexpr vec2 ghastHeadRotationCenter = ghastHeadSize * 0.5;
 
 constexpr fp ghastFlyingSpeed = 0x4;
 

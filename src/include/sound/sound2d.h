@@ -1,16 +1,7 @@
 #pragma once
 #include "audio2d.h"
 #include <SFML/Audio/Sound.hpp>
-class alSound : public sf::Sound
-{
-public:
-	using Sound::Sound;
-	uint getSource() const
-	{
-		return m_source;
-	}
-};
-struct sound2d : audio2dt<alSound>
+struct sound2d : audio2dt<sf::Sound>
 {
 	std::shared_ptr<sf::SoundBuffer> buffer;
 

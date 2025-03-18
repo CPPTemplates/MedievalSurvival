@@ -380,50 +380,49 @@ public:
 	{
 		for (size_t i = 0; i < axisCount; i++)
 		{
-			if ((pos[i] + 1) < pos1[i] || (i == (axisCount - 1)))
-			{
-				++pos[i];
+			const t& incrementedAxis = pos[i] + 1;
+			if (incrementedAxis < pos1[i]) {
+				pos[i] = incrementedAxis;
 				return *this;
 			}
-			else
-			{
+			else {
 				pos[i] = pos0[i];
 			}
 		}
-		throw "";
+		//reached the end
+		pos[axisCount - 1] = pos1[axisCount - 1];
+		return *this;
 	}
 	// --prefix operator
 	constexpr rectIteratortn &operator--()
 	{
 		for (size_t i = 0; i < axisCount; i++)
 		{
-			// If we haven't reached the end of this sub-vector.
-			if ((pos[i] > pos0[i]) || (i == (axisCount - 1)))
-			{
-				// Go to the next element.
-				--pos[i];
+			if (pos[i] > pos0[i]) {
+				pos[i]--;
 				return *this;
 			}
-			else
-			{
+			else {
 				pos[i] = pos1[i] - 1;
 			}
 		}
+		//got before the start
+		pos[axisCount - 1] = pos0[axisCount - 1] - 1;
 	}
 
 	// postfix++ operator
 	constexpr rectIteratortn operator++(int)
 	{
-		t retval = *this;
+		const rectIteratortn copy = *this;
 		++(*this);
-		return retval;
+		return copy;
 	}
 	// postfix-- operator
 	constexpr rectIteratortn operator--(int)
 	{
-		t retval = *this;
+		const rectIteratortn copy = *this;
 		--(*this);
-		return retval;
+		return copy;
 	}
 	constexpr bool operator==(const rectIteratortn &other) const
 	{
@@ -435,7 +434,7 @@ public:
 	{
 		return other.pos != pos;
 	}
-	constexpr const vectn<t, axisCount> &operator*() const
+	constexpr const vectn<t, axisCount> operator*() const
 	{
 		if constexpr (isDebugging)
 		{

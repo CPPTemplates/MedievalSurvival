@@ -8,7 +8,7 @@ bool collides1d(cfp& x0, cfp& w0, cfp& x1, cfp& w1)
 		((x1 + w1) > x0); //x
 }
 
-//returns whether a rectangle intersects with another rectangle
+//returns wether a rectangle intersects with another rectangle
 //doesn't collide when the edges touch each other exactly
 bool collides2d(crectangle2& r1, crectangle2& r2)
 {
@@ -16,7 +16,7 @@ bool collides2d(crectangle2& r1, crectangle2& r2)
 		r1.pos0.y + r1.size.y > r2.pos0.y && r1.pos0.y < r2.pos0.y + r2.size.y;//y
 }
 
-//returns whether a texture intersects with another texture on alpha
+//returns wether a texture intersects with another texture on alpha
 bool collides2d(texture* tex1, mat3x3 transform1, texture* img2, mat3x3 transform2)
 {
 	//inverse transform of img2
@@ -42,7 +42,7 @@ bool collides2d(texture* tex1, mat3x3 transform1, texture* img2, mat3x3 transfor
 	return false;
 }
 
-//returns whether a complex 2d shape intersects with another complex 2d shape
+//returns wether a complex 2d shape intersects with another complex 2d shape
 bool collides2d(const std::vector<vec2>& v1, const std::vector<vec2>& v2, cbool& checkinside)
 {
 	vec2 lastv1 = *(v1.end() - 1);
@@ -276,61 +276,4 @@ bool collides2d(cvec2& a0, cvec2& a1, cvec2& b0, cvec2& b1, vec2& intersection)
 	}
 
 	return false; // No collision
-}
-
-//http://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection/
-//center = vec3(0,0,0)
-bool collideraysphere(const vec3& rayorigin, const vec3& raydirection, cfp radius, fp& t0, fp& t1) {
-	const vec3 oc = rayorigin;// - center;
-	cfp a = raydirection.lengthSquared();
-	cfp b = 2.0 * vec3::dot(oc, raydirection);
-	cfp c = vec3::dot(oc, oc) - radius * radius;
-	cfp discriminant = b * b - 4 * a * c;
-	if (discriminant < 0) {
-		return false;
-	}
-	else
-	{
-		cfp division2a = (2.0 * a);
-		cfp middle = -b / division2a;
-		cfp radiusatintersection = sqrt(discriminant) / division2a;
-		t0 = middle - radiusatintersection;
-		t1 = middle + radiusatintersection;
-		return true;
-	}
-}
-bool collideraysphere(const vec3& rayorigin, const vec3& raydirection, const vec3& spherecentre, cfp radius, fp& t0, fp& t1)
-{
-	return collideraysphere(rayorigin - spherecentre, raydirection, radius, t0, t1);
-}
-
-//https://studiofreya.com/3d-math-and-physics/little-more-advanced-collision-detection-spheres/
-bool collidespheresSpeed(cvec2& spherePos1, cfp& sphereRadius1, cvec2& sphereVelocity1, cvec2& spherePos2, cfp& sphereRadius2, cvec2& sphereVelocity2, fp& timePoint)
-{
-
-	vec2 s = spherePos1 - spherePos2; // vector between the centers of each sphere
-	vec2 v = sphereVelocity1 - sphereVelocity2; // relative velocity between spheres
-	fp r = sphereRadius1 + sphereRadius2;
-
-	fp c = s.lengthSquared() - r * r; // if negative, they overlap
-	if (c < 0.0) // if true, they already overlap
-	{
-		timePoint = .0;
-		return true;
-	}
-
-	fp a = v.lengthSquared();
-
-	fp b = vec2::dot(v, s);
-	if (b >= 0.0)
-		return false; // does not move towards each other
-
-	fp d = b * b - a * c;
-	if (d < 0.0)
-		return false; // no real roots ... no collision
-
-	timePoint = (-b - sqrt(d)) / a;
-
-	return true;
-
 }

@@ -3,20 +3,10 @@
 #include <SFML/Audio/Music.hpp>
 #include "filesystem/filemanager.h"
 class sfmlInputStream;
-class alMusic : public sf::Music
-{
-public:
-	using Music::Music;
-
-	uint getSource() const
-	{
-		return m_source;
-	}
-};
-struct music2d : audio2dt<alMusic>
+struct music2d : audio2dt<sf::Music>
 {
 	stdPath path;
-	sfmlInputStream *stream;
+	sfmlInputStream *stream = nullptr;
 
 	inline music2d(const stdPath &path, cvec2 &pos, cfp &volume, cfp &pitch, cbool &isSpatial) : audio2dt(pos, volume, pitch, isSpatial), path(path)
 	{

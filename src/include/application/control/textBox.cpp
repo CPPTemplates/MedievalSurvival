@@ -43,7 +43,7 @@ void textBox::keyDown(cvk &keyCode)
 	{
 		text = text.erase(cursorIndex, 1);
 	}
-	if (keyCode == vk::BackSpace && cursorIndex > 0)
+	if (keyCode == vk::Backspace && cursorIndex > 0)
 	{
 		text = text.erase(cursorIndex - 1, 1);
 	}

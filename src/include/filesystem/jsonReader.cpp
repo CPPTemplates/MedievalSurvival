@@ -77,18 +77,3 @@ size_t jsonContainer::getChildIndex(const std::wstring& value) const
 	}
 	return std::wstring::npos;
 }
-
-jsonContainer jsonContainer::getChild(const std::wstring& value) const
-{
-	csize_t& index = getChildIndex(value);
-	if (index == std::wstring::npos)
-	{
-		throw "no child found with this value";
-	}
-	return children[index];
-}
-
-jsonContainer jsonContainer::operator[](const std::wstring& name) const
-{
-	return getChild(name);
-}

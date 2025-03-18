@@ -1,8 +1,8 @@
-#include "math/mathFunctions.h"
 #pragma once
+#include "math/mathFunctions.h"
 struct waveShaper
 {
-    constexpr waveShaper(cfp &waveLength = 0, cfp &minAmp = 0, cfp &maxAmp = 0, cfp &offset = 0) : waveLength(waveLength), minAmp(minAmp), maxAmp(maxAmp), offset(offset) {}
+    constexpr waveShaper(cfp &waveLength = 1, cfp &minAmp = -1, cfp &maxAmp = 1, cfp &offset = 0) : waveLength(waveLength), minAmp(minAmp), maxAmp(maxAmp), offset(offset) {}
     // the length of a single wave
     fp waveLength = 0;
 

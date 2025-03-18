@@ -13,414 +13,413 @@
 template<typename t, fsize_t n>
 struct baseVec {
 public:
-    union {
-        std::array<t, n> axis;
-        struct {
-            t x;
-            t y;
-            t z;
-        };
-    };
+	union {
+		std::array<t, n> axis;
+		struct {
+			t x;
+			t y;
+			t z;
+		};
+	};
 #define baseVecConstructor(n)                                    \
     constexpr ~baseVec()                                         \
         requires std::is_trivially_destructible_v<t>             \
     = default;                                                   \
     constexpr ~baseVec()                                         \
-                                                                 \
     {                                                            \
         for (t & member : axis)                                  \
             member.~t();                                         \
     }                                                            \
-    constexpr baseVec(const std::array<t, n> &axis) : axis(axis)  \
+    constexpr baseVec(const std::array<t, n> &axis) : axis(axis) \
     {                                                            \
     }
 
-    baseVecConstructor(n)
+	baseVecConstructor(n)
 };
 
 template<typename t>
 struct baseVec<t, 0> {
 public:
-    union {
-        std::array<t, 0> axis;
-        // no need to declare the empty struct, it'd just issue a warning
-    };
+	union {
+		std::array<t, 0> axis;
+		// no need to declare the empty struct, it'd just issue a warning
+	};
 
-    baseVecConstructor(0)
+	baseVecConstructor(0)
 };
 
 template<typename t>
 struct baseVec<t, 1> {
 public:
-    union {
-        std::array<t, 1> axis;
-        struct {
-            t x;
-        };
-    };
+	union {
+		std::array<t, 1> axis;
+		struct {
+			t x;
+		};
+	};
 
-    baseVecConstructor(1)
+	baseVecConstructor(1)
 };
 
 template<typename t>
 struct baseVec<t, 2> {
 public:
-    union {
-        std::array<t, 2> axis;
-        struct {
-            t x;
-            t y;
-        };
-    };
+	union {
+		std::array<t, 2> axis;
+		struct {
+			t x;
+			t y;
+		};
+	};
 
-    baseVecConstructor(2)
+	baseVecConstructor(2)
 };
 template<typename t>
 struct baseVec<t, 4> {
 public:
-    union {
-        std::array<t, 4> axis;
-        struct {
-            t x;
-            t y;
-        };
-        //for bitwise comparisons etc
-        uint uintValue;
-    };
+	union {
+		std::array<t, 4> axis;
+		struct {
+			t x;
+			t y;
+			t z;
+			t w;
+		};
+		//for bitwise comparisons etc
+		uint uintValue;
+	};
 
-    baseVecConstructor(4)
+	baseVecConstructor(4)
 };
 
 template<typename t, fsize_t n>
 // alignment is already a power of two
 struct vectn
-        : public baseVec<t, n> // alignas(((n == 3 || n == 4) && (alignof(t) <= 0x4)) ? (alignof(t) * 0x4) : math::getNextPowerOf2Multiplied(sizeof(t) * n)) vectn
+	: public baseVec<t, n> // alignas(((n == 3 || n == 4) && (alignof(t) <= 0x4)) ? (alignof(t) * 0x4) : math::getNextPowerOf2Multiplied(sizeof(t) * n)) vectn
 {
-    static constexpr fsize_t axisCount = n;
-    typedef t axisType;
-    using baseVec<t, n>::axis;
-    using baseVec<t, n>::baseVec;
-    // template <typename = std::enable_if_t<n>>
-    // using x = baseVec<t, n>::x;
-    //  using baseVec<t, n>::y;
+	static constexpr fsize_t axisCount = n;
+	typedef t axisType;
+	using baseVec<t, n>::axis;
+	using baseVec<t, n>::baseVec;
+	// template <typename = std::enable_if_t<n>>
+	// using x = baseVec<t, n>::x;
+	//  using baseVec<t, n>::y;
 
-    constexpr const t *begin() const noexcept {
-        return axis.begin();
-    }
+	constexpr const auto begin() const noexcept {
+		return axis.begin();
+	}
 
-    constexpr const t *end() const noexcept {
-        return axis.end();
-    }
+	constexpr const auto end() const noexcept {
+		return axis.end();
+	}
 
 
-    constexpr t *begin() noexcept {
-        return axis.begin();
-    }
+	constexpr auto begin() noexcept {
+		return axis.begin();
+	}
 
-    constexpr t *end() noexcept {
-        return axis.end();
-    }
+	constexpr auto end() noexcept {
+		return axis.end();
+	}
 
-    constexpr vectn() noexcept: baseVec<t, n>({}) {
-    }
+	constexpr vectn() noexcept : baseVec<t, n>({}) {
+	}
 
-    // fill with this value
-    constexpr explicit vectn(const t &initializerValue) : baseVec<t, n>(std::array<t, n>()) {
-        //no faster way to do it yet
-        for (t& value : axis)
-        {
-            value = initializerValue;
-        }
-        // references don't work in constexpr functions apparently
+	// fill with this value
+	constexpr explicit vectn(const t& initializerValue) : baseVec<t, n>(std::array<t, n>()) {
+		//no faster way to do it yet
+		for (t& value : axis)
+		{
+			value = initializerValue;
+		}
+		// references don't work in constexpr functions apparently
 
-        // both of these don't initialize them really.
-        // for (auto it = this->begin(); it != this->end(); it++)
-        //{
-        //	const auto& v = *it;
-        //	v = value;
-        // }
-        // for (auto& val : (*this))
-        //{
-        //	val = value;
-        // }
+		// both of these don't initialize them really.
+		// for (auto it = this->begin(); it != this->end(); it++)
+		//{
+		//	const auto& v = *it;
+		//	v = value;
+		// }
+		// for (auto& val : (*this))
+		//{
+		//	val = value;
+		// }
 
-        // for (auto it = this->begin(); it != this->end(); it++)
-        //{
-        //	*it = value;
-        // }
-    }
+		// for (auto it = this->begin(); it != this->end(); it++)
+		//{
+		//	*it = value;
+		// }
+	}
 
-    constexpr vectn(const t &x, const t &y) : baseVec<t, n>(std::array<t, n>({x, y})) {
-        static_assert(axisCount >= 2, "too few axes for this constructor");
-        //(*this)[0] = x;
-        //(*this)[1] = y;
-    }
+	constexpr vectn(const t& x, const t& y) requires(axisCount >= 2) : baseVec<t, n>(std::array<t, n>({ x, y })) {}
 
-    constexpr vectn(const t &x, const t &y, const t &z) : baseVec<t, n>(std::array<t, n>({x, y, z})) {
-        static_assert(axisCount >= 3, "too few axes for this constructor");
-    }
 
-    constexpr vectn(const t &x, const t &y, const t &z, const t &w) : baseVec<t, n>(std::array<t, n>({x, y, z, w})) {
-        static_assert(axisCount >= 4, "too few axes for this constructor");
-    }
+	constexpr vectn(const t& x, const t& y, const t& z) requires(axisCount >= 3) : baseVec<t, n>({ x, y, z }) {}
 
-    constexpr vectn(std::array<t, axisCount> values) : baseVec<t, n>(values) {
-    }
 
-    constexpr vectn switchAxes() const {
-        vectn result = vectn(axis[1], axis[0]);
-        if constexpr (axisCount > 2) {
-            for (fsize_t i = 2; i < axisCount; i++) {
-                result.axis[i] = axis[i];
-            }
-        }
-        return result;
-    }
+	constexpr vectn(const t& x, const t& y, const t& z, const t& w) requires(axisCount >= 4) : baseVec<t, n>({ x, y, z, w }) {}
 
-    template<typename t2, fsize_t axisCount2>
-    //the input is convertible without loss of data, so make the conversion implicit
-    requires non_narrowing<t2, t>
-    constexpr vectn(const vectn<t2, axisCount2> &in) : baseVec<t, n>(std::array<t, n>()) {
-        constexpr fsize_t minimum = math::minimum(axisCount, axisCount2);
+	constexpr vectn(std::array<t, axisCount> values) : baseVec<t, n>(values) {
+	}
 
-        for (fsize_t i = 0; i < minimum; i++)
-        {
-            //implicit conversion
-        	axis[i] = in.axis[i];
-        }
-    }
+	constexpr vectn switchAxes() const {
+		vectn result = vectn(axis[1], axis[0]);
+		if constexpr (axisCount > 2) {
+			for (fsize_t i = 2; i < axisCount; i++) {
+				result.axis[i] = axis[i];
+			}
+		}
+		return result;
+	}
 
-    template<typename t2, fsize_t axisCount2>
-    requires narrowing_conversion<t2, t>
-    explicit constexpr vectn(const vectn<t2, axisCount2> &in) : baseVec<t, n>(std::array<t, n>()) {
-        constexpr fsize_t minimum = math::minimum(axisCount, axisCount2);
+	template<typename t2, fsize_t axisCount2>
+	//the input is convertible without loss of data, so make the conversion implicit
+		requires non_narrowing<t2, t>
+	constexpr vectn(const vectn<t2, axisCount2>& in) : baseVec<t, n>(std::array<t, n>()) {
+		constexpr fsize_t minimum = math::minimum(axisCount, axisCount2);
 
-        for (fsize_t i = 0; i < minimum; i++)
-        {
-            //explicit conversion
-        	axis[i] = (t)in.axis[i];
-        }
-    }
+		for (fsize_t i = 0; i < minimum; i++)
+		{
+			//implicit conversion
+			axis[i] = in.axis[i];
+		}
+	}
 
-    constexpr vectn(
-            const typename std::enable_if<(axisCount > 0), vectn<t, math::maximum(axisCount - 1,
-                                                                                  (fsize_t) 1)>>::type &in,
-            const t &valueToAdd) : vectn(in) {
-        axis[axisCount - 1] = valueToAdd;
-    }
+	template<typename t2, fsize_t axisCount2>
+		requires narrowing_conversion<t2, t>
+	explicit constexpr vectn(const vectn<t2, axisCount2>& in) : baseVec<t, n>(std::array<t, n>()) {
+		constexpr fsize_t minimum = math::minimum(axisCount, axisCount2);
 
-    template<typename indexType, typename = std::enable_if_t<std::is_integral_v<indexType>>>
-    constexpr t &operator[](const indexType &axisIndex) {
-        assumeInRelease((axisIndex < (indexType) axisCount) && (axisIndex >= 0));
-        return this->axis[axisIndex];
-    }
+		for (fsize_t i = 0; i < minimum; i++)
+		{
+			//explicit conversion
+			axis[i] = (t)in.axis[i];
+		}
+	}
 
-    template<typename indexType, typename = std::enable_if_t<std::is_integral_v<indexType>>>
-    constexpr const t &operator[](const indexType &axisIndex) const {
-        assumeInRelease((axisIndex < (indexType) axisCount) && (axisIndex >= 0));
-        return this->axis[axisIndex];
-    }
+	constexpr vectn(
+		const typename std::enable_if<(axisCount > 0), vectn<t, math::maximum(axisCount - 1,
+			(fsize_t)1)>>::type& in,
+		const t& valueToAdd) : vectn(in) {
+		axis[axisCount - 1] = valueToAdd;
+	}
 
-    constexpr t &operator[](caxisID &axisIndex) {
-        return operator[]((fsize_t) axisIndex);
-    }
+	template<std::integral indexType>
+	constexpr t& operator[](const indexType& axisIndex) {
+		assumeInRelease((axisIndex < (indexType)axisCount) && (axisIndex >= 0));
+		return this->axis[axisIndex];
+	}
 
-    constexpr const t &operator[](caxisID &axisIndex) const {
-        return operator[]((fsize_t) axisIndex);
-    }
+	template<std::integral indexType>
+	constexpr const t& operator[](const indexType& axisIndex) const {
+		assumeInRelease((axisIndex < (indexType)axisCount) && (axisIndex >= 0));
+		return this->axis[axisIndex];
+	}
 
-    addMemberName(getX, (*this)[0])
+	constexpr t& operator[](caxisID& axisIndex) {
+		return operator[]((fsize_t)axisIndex);
+	}
 
-    addMemberName(getY, (*this)[1])
+	constexpr const t& operator[](caxisID& axisIndex) const {
+		return operator[]((fsize_t)axisIndex);
+	}
 
-    addMemberName(getZ, (*this)[2])
-    // addMemberName(w, (*this)[3])
+	addMemberName(getX, (*this)[0])
 
-    constexpr t sum() const {
-        t result = axis[0];
-        for (fsize_t i = 1; i < axisCount; i++) {
-            result += axis[i];
-        }
-        return result;
-    }
+		addMemberName(getY, (*this)[1])
 
-    constexpr t volume() const {
-        t result = axis[0];
-        for (fsize_t i = 1; i < axisCount; i++) {
-            result *= axis[i];
-        }
-        return result;
-    }
+		addMemberName(getZ, (*this)[2])
+		// addMemberName(w, (*this)[3])
 
-    constexpr t lengthSquared() const {
-        t result = math::squared(axis[0]);
-        for (fsize_t i = 1; i < axisCount; i++) {
-            result += math::squared(axis[i]);
-        }
-        return result;
-    }
+		constexpr t sum() const {
+		t result = axis[0];
+		for (fsize_t i = 1; i < axisCount; i++) {
+			result += axis[i];
+		}
+		return result;
+	}
 
-    inline t length() const {
-        return (t) math::fastSqrt((float) lengthSquared());
-    }
+	constexpr t volume() const {
+		t result = axis[0];
+		for (fsize_t i = 1; i < axisCount; i++) {
+			result *= axis[i];
+		}
+		return result;
+	}
 
-    inline vectn normalized() const {
-        vectn result = *this;
-        result.normalize();
-        return result;
-    }
+	constexpr t lengthSquared() const {
+		t result = math::squared(axis[0]);
+		for (fsize_t i = 1; i < axisCount; i++) {
+			result += math::squared(axis[i]);
+		}
+		return result;
+	}
 
-    inline void normalize() {
-        *this *= (t) math::fastInverseSqrt((float) lengthSquared());
+	inline t length() const {
+		return (t)std::sqrt(lengthSquared());
+	}
 
-        // to stop getrotation() from returning nan
-        for (auto &axisIt: *this) {
-            axisIt = math::clamp(axisIt, (t) -1, (t) 1);
-        }
-    }
+	inline vectn normalized() const {
+		vectn result = *this;
+		result.normalize();
+		return result;
+	}
 
-    // can be 0, 90,180, 270
-    constexpr vectn rotateXY(cfsize_t &angle) const {
+	inline void normalize() {
+		const auto& squaredLength = lengthSquared();
+		if (squaredLength == 0)return;
+		else {
+			*this /= std::sqrt(squaredLength);
+		}
+		//*this *= (t)math::fastInverseSqrt((float)lengthSquared());
+		//
+		//// to stop getrotation() from returning nan
+		//for (auto& axisIt : *this) {
+		//	axisIt = math::clamp(axisIt, (t)-1, (t)1);
+		//}
+	}
 
-        cint& sina = math::sinDegrees(angle);
-        cint& cosa = math::cosDegrees(angle);
-        using baseVec<t, n>::x;
-        using baseVec<t, n>::y;
+	// can be 0, 90,180, 270
+	constexpr vectn rotateXY(cfsize_t& angle) const {
 
-        return vectn(
-                x * cosa + y * sina,
-                x * -sina + y * cosa);
-    }
+		cint& sina = math::sinDegrees(angle);
+		cint& cosa = math::cosDegrees(angle);
+		using baseVec<t, n>::x;
+		using baseVec<t, n>::y;
 
-    // 0 -> 0, 1
-    // pi / 2 -> 1,0
-    // pi -> 0, -1
-    // pi * 1.5 -> -1,0
-    inline static vectn getrotatedvector(const fp &yaw) {
-        // rotate vector over y axis(pitch)
-        return vectn(sin(yaw), cos(yaw));
-    }
+		return vectn(
+			x * cosa + y * sina,
+			x * -sina + y * cosa);
+	}
 
-    inline static vectn getrotatedvector(const t &yaw, const t &pitch) {
-        // rotate vector over y axis(pitch)
-        const t &cosp = cos(pitch), sinp = sin(pitch), siny = sin(yaw), cosy = cos(yaw);
-        return vectn(siny * cosp, cosy * cosp, sinp);
-    }
+	// 0 -> 0, 1
+	// pi / 2 -> 1,0
+	// pi -> 0, -1
+	// pi * 1.5 -> -1,0
+	inline static vectn getrotatedvector(const fp& yaw) {
+		// rotate vector over y axis(pitch)
+		return vectn(sin(yaw), cos(yaw));
+	}
 
-    // this vector has to be normalized!
-    // clockwise
-    //+y = up
-    // x 0, y 1 : 0
-    inline fp getRotation() const {
-        fp angle = asin(getX());
-        if (getY() < 0) {
-            angle = math::PI - angle;
-        }
-        if (angle < 0) {
-            angle += math::PI2;
-        }
-        // x 0, y 1 : 0
-        return angle;
-    }
+	inline static vectn getrotatedvector(const t& yaw, const t& pitch) {
+		// rotate vector over y axis(pitch)
+		const t& cosp = cos(pitch), sinp = sin(pitch), siny = sin(yaw), cosy = cos(yaw);
+		return vectn(siny * cosp, cosy * cosp, sinp);
+	}
 
-    constexpr vectn absolute() const {
-        vectn result = vectn();
-        for (fsize_t i = 0; i < axisCount; i++) {
-            result[i] = abs(axis[i]);
-        }
-        return result;
-    }
+	// this vector has to be normalized!
+	// clockwise
+	//+y = up
+	// x 0, y 1 : 0
+	inline fp getRotation() const {
+		fp angle = asin(getX());
+		if (getY() < 0) {
+			angle = math::PI - angle;
+		}
+		if (angle < 0) {
+			angle += math::PI2;
+		}
+		// x 0, y 1 : 0
+		return angle;
+	}
 
-    // axis has to be normalized!
-    inline static vectn rotate(const vectn &vec, const vectn &axis, const t &angle) {
-        return (cos(angle) * vec) + (sin(angle) * cross(axis, vec));
-    }
+	constexpr vectn absolute() const {
+		vectn result = vectn();
+		for (fsize_t i = 0; i < axisCount; i++) {
+			result[i] = abs(axis[i]);
+		}
+		return result;
+	}
 
-    inline static constexpr t dot(const vectn &lhs, const vectn &rhs) {
-        t result = t();
-        for (fsize_t i = 0; i < axisCount; i++) {
-            result += lhs[i] * rhs[i];
-        }
-        return result;
-    }
+	// axis has to be normalized!
+	inline static vectn rotate(const vectn& vec, const vectn& axis, const t& angle) {
+		return (cos(angle) * vec) + (sin(angle) * cross(axis, vec));
+	}
 
-    inline static vectn cross(const vectn &lhs, const vectn &rhs) {
-        using baseVec<t, n>::x;
-        using baseVec<t, n>::y;
-        using baseVec<t, n>::z;
-        return vectn(
-                lhs.y * rhs.z - lhs.z * rhs.y,
-                lhs.z * rhs.x - lhs.x * rhs.z,
-                lhs.x * rhs.y - lhs.y * rhs.x);
-    }
+	inline static constexpr t dot(const vectn& lhs, const vectn& rhs) {
+		t result = t();
+		for (fsize_t i = 0; i < axisCount; i++) {
+			result += lhs[i] * rhs[i];
+		}
+		return result;
+	}
 
-    constexpr t maximum() const {
-        return axis[minimumIndex([](auto &&lhs, auto &&rhs) { return lhs > rhs; })];
-    }
+	inline static vectn cross(const vectn& lhs, const vectn& rhs) {
+		return vectn(
+			lhs.y * rhs.z - lhs.z * rhs.y,
+			lhs.z * rhs.x - lhs.x * rhs.z,
+			lhs.x * rhs.y - lhs.y * rhs.x);
+	}
 
-    constexpr t minimum() const {
-        return axis[minimumIndex([](auto &&lhs, auto &&rhs) { return lhs < rhs; })];
-    }
+	constexpr t maximum() const {
+		return axis[minimumIndex([](auto&& lhs, auto&& rhs) { return lhs > rhs; })];
+	}
 
-    // comparefunction should return true if left < right
-    template<typename compareFunction>
-    constexpr fsize_t minimumIndex(compareFunction &&function) const {
-        fsize_t result = 0;
-        for (fsize_t i = 1; i < axisCount; i++) {
-            if (function(axis[i], axis[result])) {
-                result = i;
-            }
-        }
-        return result;
-    }
+	constexpr t minimum() const {
+		return axis[minimumIndex([](auto&& lhs, auto&& rhs) { return lhs < rhs; })];
+	}
 
-    // operators
+	// comparefunction should return true if left < right
+	template<typename compareFunction>
+	constexpr fsize_t minimumIndex(compareFunction&& function) const {
+		fsize_t result = 0;
+		for (fsize_t i = 1; i < axisCount; i++) {
+			if (function(axis[i], axis[result])) {
+				result = i;
+			}
+		}
+		return result;
+	}
 
-    constexpr bool operator==(const vectn &other) const {
-        for (fsize_t i = 0; i < axisCount; i++) {
-            if (axis[i] != other[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+	// operators
 
-    constexpr bool operator!=(const vectn &other) const {
-        return !operator==(other);
-    }
+	constexpr bool operator==(const vectn& other) const {
+		for (fsize_t i = 0; i < axisCount; i++) {
+			if (axis[i] != other[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    constexpr vectn operator-() const {
-        vectn result = vectn();
-        for (fsize_t i = 0; i < axisCount; i++) {
-            result[i] = -axis[i];
-        }
-        return result;
-    }
+	constexpr bool operator!=(const vectn& other) const {
+		return !operator==(other);
+	}
 
-    // used for sorting
-    // returns true if pos0 is 'lower' than pos1
-    // orders: 0,0 1,0 0,1 1,1
-    constexpr bool operator<(const vectn &other) const noexcept {
-        for (fsize_t i = axisCount - 1;; i--) {
-            if (axis[i] < other[i]) {
-                return true;
-            } else if (axis[i] > other[i]) {
-                return false;
-            } else if (i == 0) {
-                break;
-            }
-        }
-        return false;
-    }
+	constexpr vectn operator-() const {
+		vectn result = vectn();
+		for (fsize_t i = 0; i < axisCount; i++) {
+			result[i] = -axis[i];
+		}
+		return result;
+	}
 
-#pragma optimize ("", on)
+	// used for sorting
+	// returns true if pos0 is 'lower' than pos1
+	// orders: 0,0 1,0 0,1 1,1
+	constexpr bool operator<(const vectn& other) const noexcept {
+		for (fsize_t i = axisCount - 1;; i--) {
+			if (axis[i] < other[i]) {
+				return true;
+			}
+			else if (axis[i] > other[i]) {
+				return false;
+			}
+			else if (i == 0) {
+				break;
+			}
+		}
+		return false;
+	}
+
+	//#pragma optimize ("", on)
 
 #define newMacro(type, copySize) vectn<type COMMA n> result = vectn<type COMMA n>();
 
-    addOperators(newMacro, vectn, wrap(vectn<t2, n>), constexpr)
+	addOperators(newMacro, vectn, wrap(vectn<t2, n>), constexpr)
 
 #undef newMacro
-#pragma optimize ("", off)
+		//#pragma optimize ("", off)
 };
 
 addTemplateTypes(vec)
@@ -432,8 +431,8 @@ addTemplateTypes(vec)
 // inline constexpr static cvect3<fp> vectest = { 0, 1 };
 
 constexpr veci2 directionVectors2D[directionCount<2>()]{
-        cveci2(-1, 0),
-        cveci2(1, 0),
-        cveci2(0, -1),
-        cveci2(0, 1),
+		cveci2(-1, 0),
+		cveci2(1, 0),
+		cveci2(0, -1),
+		cveci2(0, 1),
 };

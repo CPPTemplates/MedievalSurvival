@@ -24,64 +24,62 @@ void eventTranslator::processEvent(const sf::Event &event)
         receiver.drop(dragStartPositions[button], mousePos, button);
         dragStartPositions.erase(button);
     };
-    if (event.type == sf::Event::KeyPressed)
+    if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
     {
-        receiver.keyDown(event.key.code);
+        receiver.keyDown(keyPressed->code);
     }
-    else if (event.type == sf::Event::KeyReleased)
+    else if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>())
     {
-        receiver.keyUp(event.key.code);
+        receiver.keyUp(keyReleased->code);
     }
-    else if (event.type == sf::Event::TextEntered)
+    else if (const auto* textEntered = event.getIf<sf::Event::TextEntered>())
     {
-        receiver.enterText(event.text.unicode);
+        receiver.enterText(textEntered->unicode);
     }
-    else if (event.type == sf::Event::TouchBegan)
+    else if (const auto* touchBegan = event.getIf<sf::Event::TouchBegan>())
     {
-        processMouseDown(veci2(event.touch.x, event.touch.y), (mb)event.touch.finger);
+        processMouseDown(veci2(touchBegan->position.x, touchBegan->position.y), (mb)touchBegan->finger);
     }
-    else if (event.type == sf::Event::MouseButtonPressed)
+    else if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {
-        processMouseDown(veci2(event.mouseButton.x, event.mouseButton.y), (mb)event.mouseButton.button);
+        processMouseDown(veci2(mouseButtonPressed->position.x, mouseButtonPressed->position.y), (mb)mouseButtonPressed->button);
     }
-    else if (event.type == sf::Event::TouchMoved)
+    else if (const auto* touchMoved = event.getIf<sf::Event::TouchMoved>())
     {
-        processMouseMove(
-            cveci2(event.touch.x, event.touch.y), (mb)event.touch.finger);
+        processMouseMove(veci2(touchMoved->position.x, touchMoved->position.y), (mb)touchMoved->finger);
     }
-    else if (event.type == sf::Event::TouchEnded)
+    else if (const auto* MouseMoved = event.getIf<sf::Event::MouseMoved>())
+    {
+        processMouseMove(cveci2(MouseMoved->position.x, MouseMoved->position.y), noButton);
+    }
+    else if (const auto* touchEnded = event.getIf<sf::Event::TouchEnded>())
     {
         processMouseUp(
-            cveci2(event.touch.x, event.touch.y),
-            (mb)event.touch.finger);
+            cveci2(touchEnded->position.x, touchEnded->position.y),
+            (mb)touchEnded->finger);
     }
 
-    else if (event.type == sf::Event::MouseButtonReleased)
+    else if (const auto* mouseButtonReleased = event.getIf<sf::Event::MouseButtonReleased>())
     {
         processMouseUp(
-            cveci2(event.mouseButton.x, event.mouseButton.y),
-            (mb)event.mouseButton.button);
+            cveci2(mouseButtonReleased->position.x, mouseButtonReleased->position.y),
+            (mb)mouseButtonReleased->button);
     }
-    else if (event.type == sf::Event::MouseWheelScrolled)
+    else if (const auto* MouseWheelScrolled = event.getIf<sf::Event::MouseWheelScrolled>())
     {
-        receiver.scroll(cveci2(event.mouseWheelScroll.x, event.mouseWheelScroll.y),
-                        (int)event.mouseWheelScroll.delta);
+        receiver.scroll(cveci2(MouseWheelScrolled->position.x, MouseWheelScrolled->position.y),
+                        (int)MouseWheelScrolled->delta);
     }
-    else if (event.type == sf::Event::Resized)
+    else if (const auto* Resized = event.getIf<sf::Event::Resized>())
     {
-        receiver.layout(rectanglei2(cveci2(), cveci2(event.size.width,
-                                                     event.size.height)));
+        receiver.layout(rectanglei2(veci2(), veci2(Resized->size.x, Resized->size.y)));
     }
-    else if (event.type == sf::Event::LostFocus)
+    else if (event.is<sf::Event::FocusLost>())
     {
         receiver.lostFocus();
     }
-    else if (event.type == sf::Event::GainedFocus)
+    else if (event.is<sf::Event::FocusGained>())
     {
         receiver.focus();
-    }
-    else if (event.type == sf::Event::MouseMoved)
-    {
-        processMouseMove(cveci2(event.mouseMove.x, event.mouseMove.y), noButton);
     }
 }

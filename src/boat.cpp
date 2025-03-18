@@ -29,17 +29,17 @@ boat::boat(dimension* dimensionIn, cvec2& position) : hollowRidableEntity(dimens
 	mainBodyPart = new bodyPart2D(boatTextureRect, nullptr, vec2(position.x, position.y), vec2(boatHitboxSize.x, boatScale * boatTextureRect.h), vec2(boatHitboxSize.x * 0.5, 0), 0, 180);
 
 	cvec2 paddleHandleSize = cvec2(rightPaddleHandleTextureRect.h * boatScale, rightPaddleHandleTextureRect.w * boatScale);
-	cvec2 paddleHandleRotationCentre = cvec2(paddleHandleSize.x * 0.5, paddleHandleSize.y - paddleHandleSize.x * 0.5);
+	cvec2 paddleHandleRotationCenter = cvec2(paddleHandleSize.x * 0.5, paddleHandleSize.y - paddleHandleSize.x * 0.5);
 
-	rightPaddleHandle = new bodyPart2D(rightPaddleHandleTextureRect, mainBodyPart, handleOffset, paddleHandleSize, paddleHandleRotationCentre, 0, 90);
-	leftPaddleHandle = new bodyPart2D(leftPaddleHandleTextureRect, mainBodyPart, handleOffset, paddleHandleSize, paddleHandleRotationCentre, 0, 90);
+	rightPaddleHandle = new bodyPart2D(rightPaddleHandleTextureRect, mainBodyPart, handleOffset, paddleHandleSize, paddleHandleRotationCenter, 0, 90);
+	leftPaddleHandle = new bodyPart2D(leftPaddleHandleTextureRect, mainBodyPart, handleOffset, paddleHandleSize, paddleHandleRotationCenter, 0, 90);
 
 	cvec2 paddleSize = (cvec2)rightPaddleTextureRect.size * boatScale;
-	cvec2 paddleRotationCentre = cvec2(paddleSize.x * 0.5, paddleSize.y);
-	cvec2 paddleOffset = cvec2(0, -paddleHandleRotationCentre.y);
+	cvec2 paddleRotationCenter = cvec2(paddleSize.x * 0.5, paddleSize.y);
+	cvec2 paddleOffset = cvec2(0, -paddleHandleRotationCenter.y);
 
-	bodyPart2D* rightPaddle = new bodyPart2D(rightPaddleTextureRect, rightPaddleHandle, paddleOffset, paddleSize, paddleRotationCentre);
-	bodyPart2D* leftPaddle = new bodyPart2D(leftPaddleTextureRect, leftPaddleHandle, paddleOffset, paddleSize, paddleRotationCentre);
+	bodyPart2D* rightPaddle = new bodyPart2D(rightPaddleTextureRect, rightPaddleHandle, paddleOffset, paddleSize, paddleRotationCenter);
+	bodyPart2D* leftPaddle = new bodyPart2D(leftPaddleTextureRect, leftPaddleHandle, paddleOffset, paddleSize, paddleRotationCenter);
 
 	//add bodyparts
 	//ordered by draw order

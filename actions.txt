@@ -1,0 +1,69 @@
+following https://www.sfml-dev.org/tutorials/3.0/getting-started/visual-studio/#creating-and-configuring-an-sfml-project
+
+actions taken:
+
+sfml sdk downloaded from https://www.sfml-dev.org/download/sfml/3.0.0/#windows and extracted. moved folder to c:/libs/sfml-3.0.0
+
+made a new project called crossppvs and set its language standard to 17. added SFML_STATIC to all configurations, and added these to linker->input (for both debug configs):
+freetyped.lib
+flacd.lib
+vorbisencd.lib
+vorbisfiled.lib
+vorbisd.lib
+oggd.lib
+opengl32.lib
+winmm.lib
+gdi32.lib
+ws2_32.lib
+sfml-graphics-s-d.lib
+sfml-audio-s-d.lib
+sfml-network-s-d.lib
+sfml-system-s-d.lib
+sfml-window-s-d.lib
+
+zlib is installed as gnuwin32 to C:\Program Files (x86)\GnuWin32
+but HAVE_UNISTD_H in zconf.h was replaced by 1 while we're on windows. i replaced it back to HAVE_UNISTD_H
+i included the /include and added /lib to additional library directories and added zlib.lib to additional dependencies
+
+i added the src folder by copying it to the project directory and in vs, clicking on the 'show all files' icon (3 rectangles) at the top of the solution explorer and then right clicking on the 'src' folder and 'include in project'
+and i added src/include and src to additional include directories
+i removed the original main.cpp
+
+removed zlib.h and zlib.lib from library dependencies and installed zlib via vcpkg. i got a warning about a double VCPKG_ROOT:
+
+PS C:\Users\realj\Documents\CrossPPVS> vcpkg list
+warning: The vcpkg C:\vcpkg\vcpkg.exe is using detected vcpkg root C:\vcpkg and ignoring mismatched VCPKG_ROOT environment value C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg. To suppress this message, unset the environment variable or use the --vcpkg-root command line switch.
+vcpkg-cmake:x64-windows                           2024-04-23
+zlib:x64-windows                                  1.3.1               A compression library
+PS C:\Users\realj\Documents\CrossPPVS> vcpkg integrate install
+warning: The vcpkg C:\vcpkg\vcpkg.exe is using detected vcpkg root C:\vcpkg and ignoring mismatched VCPKG_ROOT environment value C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg. To suppress this message, unset the environment variable or use the --vcpkg-root command line switch.
+Applied user-wide integration for this vcpkg root.
+CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
+All MSBuild C++ projects can now #include any installed libraries. Linking will be handled automatically. Installing new libraries will make them instantly available.
+
+i removed VCPKG_ROOT from path.
+
+i commented out some sound source commands like AL_ROLLOFF_FACTOR and alDopplerVelocity
+
+migrated to sfml 3.0.0 using https://www.sfml-dev.org/tutorials/3.0/getting-started/migrate/
+
+everything seems to be working now.
+
+duplicated crossppvs folder and pasted code of medievalsurvival in it
+included constants and nbt folder in project and batch-added all files in src
+
+changed language from 23 to 20
+
+when setting this:
+$env:VCPKG_ROOT = "C:\vcpkg"
+vcpkg integrate install
+then vcpkg include works
+
+somehow, the visual studio exe compiled with msvc is like 30x slower than the mingw compiled version.
+i tried putting all compiler flags for optimization to max, but it didn't work.
+also, i managed to make the program link fully static.
+
+i just fixed a major bug which made the mouse click extra times randomly, the keyboard press keys more times randomly, etc.
+it turned out that when serializing events, some events (mousemoveraw) weren't added to the serialization function. the event list was resized to the new size, but wasn't completely filled.
+this allowed for old events to keep being in the event list, or even for 'default' events to appear. when moving the mouse, the other events got copied.

@@ -6,7 +6,7 @@
 #include "dimension.h"
 minecart::minecart(dimension* dimensionIn, cvec2& position) :hollowRidableEntity(dimensionIn, position, entityID::minecart)
 {
-	mainBodyPart = new bodyPart2D(minecartEditedTextureRect, nullptr, position, minecartRenderSize, minecartRotationCentre);
+	mainBodyPart = new bodyPart2D(minecartEditedTextureRect, nullptr, position, minecartRenderSize, minecartRotationCenter);
 }
 
 void minecart::render(const gameRenderData& targetData) const

@@ -1,5 +1,5 @@
 #include "touchJoystick.h"
-#include "math/graphics/brush/brushes/colorMixer.h"
+#include "math/graphics/brush/colorMixer.h"
 #include "math/graphics/brush/brushes/solidColorBrush.h"
 #include "math/graphics/graphicsFunctions.h"
 
@@ -15,7 +15,7 @@ void touchJoystick::mouseDown(cveci2 &position, cmb &button)
                            range.pos0, range.pos1());
     fingerDown = true;
     control::mouseDown(position, button);
-    const joystickEventArgs &args = joystickEventArgs(*this, button);
+    const joystickEventArgs &args = joystickEventArgs(*this, (uint)button);
     onJoystickTouch.invoke(args);
 }
 
@@ -25,7 +25,7 @@ void touchJoystick::drag(cveci2 &originalPosition, cveci2 &position, cmb &button
                            vec2(), (vec2)rect.size,
                            range.pos0, range.pos1());
     control::drag(originalPosition, position, button);
-    const joystickEventArgs &args = joystickEventArgs(*this, button);
+    const joystickEventArgs &args = joystickEventArgs(*this, (uint)button);
     onJoystickTouch.invoke(args);
 }
 
@@ -36,7 +36,7 @@ void touchJoystick::drop(cveci2 &originalPosition, cveci2 &position, cmb &button
                            vec2(), (vec2)rect.size,
                            range.pos0, range.pos1());
     control::drop(originalPosition, position, button);
-    const joystickEventArgs &args = joystickEventArgs(*this, button);
+    const joystickEventArgs &args = joystickEventArgs(*this, (uint)button);
     onJoystickTouchEnd.invoke(args);
 }
 

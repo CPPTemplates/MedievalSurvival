@@ -1,0 +1,11 @@
+convert futures and waiting to std::latch and std::atomic_bool
+make sure textures are loaded only once
+json recipe reading should use name for output slot, not index
+when turning shadows off in the sky, sky rendering suddenly is way faster
+
+mouse input glitchy
+add trampling crops
+you pick a double stack, even when clicking once with right mouse button
+rename tooldrop to tooldropcondition
+furnace doesn't render burning process
+make textures load only when used

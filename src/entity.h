@@ -12,9 +12,9 @@ struct dimension;
 
 struct entityAI;
 struct decisions;
-constexpr fp airFrictionMultiplier = 0.98;
+constexpr fp airFrictionMultiplier = 0.95;
 constexpr fp airTerminalVelocityMultiplier = getTerminalVelocityMultiplier(airFrictionMultiplier);
-constexpr fp groundFrictionMultiplier = 0.95;
+constexpr fp groundFrictionMultiplier = 0.9;
 constexpr fp groundTerminalVelocityMultiplier = getTerminalVelocityMultiplier(groundFrictionMultiplier);
 constexpr fp fluidFrictionMultiplier = 0.8;
 constexpr fp ladderFrictionMultiplier = 0.5;

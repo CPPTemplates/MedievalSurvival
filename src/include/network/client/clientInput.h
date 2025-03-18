@@ -22,6 +22,7 @@ struct clientInput {
 
     std::vector<sf::Event> eventHistory = std::vector<sf::Event>();
 
+	//add new client input to existing client input
 	void addClientInput(const clientInput& newInput);
 	bool holdingDownKey(cvk& key) const;
 	bool pressedKey(cvk& key) const;

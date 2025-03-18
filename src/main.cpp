@@ -23,6 +23,7 @@
 #include "application/initialize.h"
 #include "world.h"
 #include "include/optimization/handleError.h"
+#include <math/random/randomBytes.h>
 
 bool loadingFinished = false;
 sf::RenderWindow *window = nullptr;
@@ -33,15 +34,14 @@ struct balloon
     sf::Vector2f speed;
 };
 
-void showLoadingScreen()
+static void showLoadingScreen()
 {
     // Create the main rendering window
     window = application::createWindow(gameName);
 
-    sf::Font font;
     // this will also work on android when the data folder has not been copied yet,
     // as it will look for data/font.otf in the assets folder.
-    font.loadFromFile("data/font.otf");
+    sf::Font font("data/font.otf");
 
     stableLoop loop = stableLoop(1000000 / 60);
 
@@ -52,17 +52,15 @@ void showLoadingScreen()
     {
         loop.waitTillNextLoopTime();
         // Process events
-        sf::Event Event;
-        while (window->pollEvent(Event))
+        while (const std::optional event = window->pollEvent())
         {
             // Close window : exit
-            if (Event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
                 window->close();
-            else if (Event.type == sf::Event::Resized)
+            else if (const auto resized = event->getIf<sf::Event::Resized>())
             {
                 // update the view to the new size of the window
-                sf::FloatRect visibleArea(0.0f, 0.0f, (float)Event.size.width, (float)Event.size.height);
-                window->setView(sf::View(visibleArea));
+                window->setView(sf::View({ 0.0f, 0.0f }, { (float)resized->size.x, (float)resized->size.y }));
                 // Clear the screen (fill it with black color)
                 shapes = std::list<balloon>();
             }
@@ -81,7 +79,7 @@ void showLoadingScreen()
             balloon newBalloon;
             auto pos = getrandomPosition(currentRandom, rectangle2(vec2(size.x, size.y)));
             newBalloon.shape.setPosition(sf::Vector2f((float)pos.x, (float)pos.y));
-            newBalloon.shape.setFillColor(sf::Color(rand(currentRandom, bytemax), rand(currentRandom, bytemax), rand(currentRandom, bytemax)));
+            newBalloon.shape.setFillColor(sf::Color(currentRandom() | 0x000000ff));
             newBalloon.shape.setRadius(1); // it should start as a single pixel
             shapes.push_front(newBalloon);
         }
@@ -107,16 +105,15 @@ void showLoadingScreen()
             }
         }
 
-        sf::Text loadingText(
-            "Loading medieval survival\nwhen you updated this app,\nthis might take several minutes.\nDO NOT CLOSE",
-            font);
+        sf::Text loadingText(font,
+            "Loading medieval survival\nwhen you updated this app,\nthis might take several minutes.\nDO NOT CLOSE"
+            );
         loadingText.setFillColor(sf::Color::White);
         loadingText.setCharacterSize((int)(minSize / 20.0f));
 
         // center text
         sf::FloatRect textRect = loadingText.getLocalBounds();
-        loadingText.setOrigin(textRect.left + textRect.width / 2.0f,
-                              textRect.top + textRect.height / 2.0f);
+        loadingText.setOrigin(textRect.getCenter());
         loadingText.setPosition(window->getView().getCenter());
 
         window->draw(loadingText);
@@ -126,7 +123,7 @@ void showLoadingScreen()
     }
 }
 
-void loadResources()
+static void loadResources()
 {
 
     setCurrentThreadName(L"resource loader");

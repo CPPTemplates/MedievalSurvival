@@ -14,15 +14,15 @@ constexpr fp sheepHeadOffset = sheepTextureScale * sheepHeadTextureOffset;
 constexpr fp sheepLegOffset = sheepTextureScale;
 
 constexpr vec2 sheepBodySize = cvec2(sheepBodyTextureRect.size.getY() * sheepTextureScale, sheepBodyTextureRect.size.getX() * sheepTextureScale);
-constexpr vec2 sheepBodyRotationCentre = cvec2(sheepBodySize.getX() * 0.5, 0);
+constexpr vec2 sheepBodyRotationCenter = cvec2(sheepBodySize.getX() * 0.5, 0);
 
 constexpr vec2 sheepLegSize = cvec2(sheepFrontRightLegTextureRect.size.getX() * sheepTextureScale, sheepFrontRightLegTextureRect.size.getY() * sheepTextureScale);
-constexpr vec2 sheepLegRotationCentre = cvec2(sheepLegSize.getX() * 0.5, sheepLegSize.getY());
+constexpr vec2 sheepLegRotationCenter = cvec2(sheepLegSize.getX() * 0.5, sheepLegSize.getY());
 
-constexpr vec2 sheepFrontLegOffset = cvec2(sheepBodySize.getX() * 0.5 - sheepLegSize.getX() + sheepLegRotationCentre.getX() - sheepLegOffset, 0);
-constexpr vec2 sheepBackLegOffset = cvec2(-sheepBodySize.getX() * 0.5 + sheepLegRotationCentre.getX() - sheepLegOffset, 0);
+constexpr vec2 sheepFrontLegOffset = cvec2(sheepBodySize.getX() * 0.5 - sheepLegSize.getX() + sheepLegRotationCenter.getX() - sheepLegOffset, 0);
+constexpr vec2 sheepBackLegOffset = cvec2(-sheepBodySize.getX() * 0.5 + sheepLegRotationCenter.getX() - sheepLegOffset, 0);
 constexpr vec2 sheepHeadSize = cvec2(sheepHeadTextureRect.size.getX(), sheepHeadTextureRect.size.getY()) * sheepTextureScale;
-constexpr vec2 sheepHeadRotationCentre = cvec2(0, sheepHeadSize.getY() * 0.5);
+constexpr vec2 sheepHeadRotationCenter = cvec2(0, sheepHeadSize.getY() * 0.5);
 struct sheep : public fourLeggedPassiveMob
 {
 	colorID woolColor = (colorID)0;

@@ -100,7 +100,7 @@ struct block : INamable, IDestructable
 	/// <param name="blockPosition"></param>
 	virtual void render(const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cveci2 &blockPosition) const;
 	template <typename brush0Type>
-	void render(const brush0Type &b, rectangle2 brushRect, crectangle2 &blockRect, const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cbool &renderAnimation = false, const std::optional<vec2> &rotationCentreWorld = std::nullopt) const;
+	void render(const brush0Type &b, rectangle2 brushRect, crectangle2 &blockRect, const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cbool &renderAnimation = false, const std::optional<vec2> &rotationCenterWorld = std::nullopt) const;
 
 	static mat3x3 getTextureToWorldTransform(cvec2 &textureSize, cmat3x3 &blockToRenderTargetTransform, cvec2 &blockPosition);
 	static mat3x3 getBrushRectToWorldTransform(crectangle2 &brushRect, cmat3x3 &blockToRenderTargetTransform, cvec2 &blockPosition);
@@ -108,7 +108,7 @@ struct block : INamable, IDestructable
 	virtual collisionDataCollection getCollisionData(blockContainer *containerIn, cveci2 &position) const;
 };
 
-void renderTorch(cveci2 &blockPosition, cvec2 &relativeRotationCentre, cfp &angle, const resolutionTexture &tex, const gameRenderData &targetData);
+void renderTorch(cveci2 &blockPosition, cvec2 &relativeRotationCenter, cfp &angle, const resolutionTexture &tex, const gameRenderData &targetData);
 void renderTexture(crectangle2 &rectangleToTransform, cmat3x3 &transform, cbool &hasTransparency, const directionID &directionFacing, const resolutionTexture &tex, const texture &renderTarget, cbool &renderAnimation);
 void renderTexture(crectangle2 &drawRect, cbool &hasTransparency, const directionID &directionFacing, const resolutionTexture &tex, const texture &renderTarget, cbool &renderAnimation);
 void renderBlockRect(crectangle2 &blockRect, const gameRenderData &targetData);

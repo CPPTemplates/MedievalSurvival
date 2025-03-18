@@ -483,11 +483,11 @@ void overWorld::generateStructures(chunk &generateIn)
             if (caveSquareIndex.x < (int)chunkSize.x && caveSquareIndex.y < (int)chunkSize.y &&
                 (randFp(generateIn.chunkRandom) < caveChance))
             {
-                vec2 caveCentre = caveSquareIndex + generateIn.worldPos;
+                vec2 caveCenter = caveSquareIndex + generateIn.worldPos;
                 std::vector<vec2> caveSegments = std::vector<vec2>();
                 cfp caveHeightMultiplier = sqrt(
                     randFp(generateIn.chunkRandom)); // deeper are more caves
-                if (caveCentre.y < (data->heights[(int)caveCentre.x - generateIn.worldPos.x] *
+                if (caveCenter.y < (data->heights[(int)caveCenter.x - generateIn.worldPos.x] *
                                     caveHeightMultiplier))
                 {
                     fp size = caveSizeDistribution.getValue(randFp(generateIn.chunkRandom));
@@ -506,20 +506,20 @@ void overWorld::generateStructures(chunk &generateIn)
                                 cvec2 caveOldStart = caveSegments[index];
                                 cvec2 caveOldEnd = caveSegments[index + 1];
                                 if (collides2d(caveOldStart, caveOldEnd, caveNewStart,
-                                               caveCentre))
+                                               caveCenter))
                                 {
                                     // this cave intersects with itself
                                     goto nextCave;
                                 }
                             }
                         }
-                        caveSegments.push_back(caveCentre);
+                        caveSegments.push_back(caveCenter);
                         // check rotation
-                        replaceCircleCentered(caveCentre, vec2(size), blockID::air,
+                        replaceCircleCentered(caveCenter, vec2(size), blockID::air,
                                               caveReplaceList);
-                        fp rotationPlus = caveNoise->evaluate(caveCentre);
+                        fp rotationPlus = caveNoise->evaluate(caveCenter);
                         rot += rotationPlus;
-                        caveCentre += vec2::getrotatedvector(rot) * speed * vec2(1, caveSteepness);
+                        caveCenter += vec2::getrotatedvector(rot) * speed * vec2(1, caveSteepness);
                     }
                 }
             }

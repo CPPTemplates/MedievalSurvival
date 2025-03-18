@@ -13,7 +13,12 @@ void serverData::serializeValue(nbtSerializer& s)
 	else {
 		std::wstring ipAdressString;
 		s.serializeValue(L"ip adress", ipAdressString);
-		serverIPAddress = sf::IpAddress(WStringToString( ipAdressString));
+		if (const auto validAdress = sf::IpAddress::resolve(WStringToString(ipAdressString))) {
+			serverIPAddress = *validAdress;
+		}
+		else {
+			serverIPAddress = sf::IpAddress(0);
+		}
 	}
 
 }

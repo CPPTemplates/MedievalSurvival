@@ -23,21 +23,21 @@ chicken::chicken(dimension *dimensionIn, cvec2 &position) : mob(dimensionIn, pos
 	resetEggLayTime();
 
 	// intialize body parts
-	mainBodyPart = new bodyPart2D(chickenBodyTextureRect, nullptr, vec2(position.x, position.y + chickenUpperLegSize.y), chickenBodySize, chickenBodyRotationCentre, 0, 90);
+	mainBodyPart = new bodyPart2D(chickenBodyTextureRect, nullptr, vec2(position.x, position.y + chickenUpperLegSize.y), chickenBodySize, chickenBodyRotationCenter, 0, 90);
 
-	rightUpperLeg = new bodyPart2D(chickenUpperLegTextureRect, mainBodyPart, cvec2(), chickenUpperLegSize, chickenUpperLegRotationCentre);
-	rightLowerLeg = new bodyPart2D(chickenLowerLegTextureRect, rightUpperLeg, cvec2(chickenUpperLegSize.x * 0.5, 0) - chickenUpperLegRotationCentre, chickenLowerLegSize, chickenLowerLegRotationCentre, 0, 90);
+	rightUpperLeg = new bodyPart2D(chickenUpperLegTextureRect, mainBodyPart, cvec2(), chickenUpperLegSize, chickenUpperLegRotationCenter);
+	rightLowerLeg = new bodyPart2D(chickenLowerLegTextureRect, rightUpperLeg, cvec2(chickenUpperLegSize.x * 0.5, 0) - chickenUpperLegRotationCenter, chickenLowerLegSize, chickenLowerLegRotationCenter, 0, 90);
 
-	leftUpperLeg = new bodyPart2D(chickenUpperLegTextureRect, mainBodyPart, cvec2(), chickenUpperLegSize, chickenUpperLegRotationCentre, 0, 90);
-	leftLowerLeg = new bodyPart2D(chickenLowerLegTextureRect, leftUpperLeg, cvec2(chickenUpperLegSize.x * 0.5, 0) - chickenUpperLegRotationCentre, chickenLowerLegSize, chickenLowerLegRotationCentre, 0, 90);
+	leftUpperLeg = new bodyPart2D(chickenUpperLegTextureRect, mainBodyPart, cvec2(), chickenUpperLegSize, chickenUpperLegRotationCenter, 0, 90);
+	leftLowerLeg = new bodyPart2D(chickenLowerLegTextureRect, leftUpperLeg, cvec2(chickenUpperLegSize.x * 0.5, 0) - chickenUpperLegRotationCenter, chickenLowerLegSize, chickenLowerLegRotationCenter, 0, 90);
 
-	rightWing = new bodyPart2D(chickenWingTextureRect, mainBodyPart, cvec2(chickenBodySize.x * 0.5, chickenBodySize.y) - chickenBodyRotationCentre, chickenWingSize, chickenWingRotationCentre);
-	leftWing = new bodyPart2D(chickenWingTextureRect, mainBodyPart, cvec2(chickenBodySize.x * 0.5, chickenBodySize.y) - chickenBodyRotationCentre, chickenWingSize, chickenWingRotationCentre);
+	rightWing = new bodyPart2D(chickenWingTextureRect, mainBodyPart, cvec2(chickenBodySize.x * 0.5, chickenBodySize.y) - chickenBodyRotationCenter, chickenWingSize, chickenWingRotationCenter);
+	leftWing = new bodyPart2D(chickenWingTextureRect, mainBodyPart, cvec2(chickenBodySize.x * 0.5, chickenBodySize.y) - chickenBodyRotationCenter, chickenWingSize, chickenWingRotationCenter);
 
-	head = new bodyPart2D(chickenHeadTextureRect, mainBodyPart, vec2(chickenBodySize.x, chickenBodySize.y) - chickenBodyRotationCentre, chickenHeadSize, chickenHeadRotationCentre);
+	head = new bodyPart2D(chickenHeadTextureRect, mainBodyPart, vec2(chickenBodySize.x, chickenBodySize.y) - chickenBodyRotationCenter, chickenHeadSize, chickenHeadRotationCenter);
 
-	bodyPart2D *wattles = new bodyPart2D(chickenWattlesTextureRect, head, cvec2(chickenHeadSize.x, chickenWattlesSize.y) - chickenHeadRotationCentre, chickenWattlesSize, chickenWattlesRotationCentre);
-	bodyPart2D *beak = new bodyPart2D(chickenBeakTextureRect, head, cvec2(chickenHeadSize.x, chickenWattlesSize.y + chickenBeakSize.y * 0.5) - chickenHeadRotationCentre, chickenWattlesSize, chickenBeakRotationCentre);
+	bodyPart2D *wattles = new bodyPart2D(chickenWattlesTextureRect, head, cvec2(chickenHeadSize.x, chickenWattlesSize.y) - chickenHeadRotationCenter, chickenWattlesSize, chickenWattlesRotationCenter);
+	bodyPart2D *beak = new bodyPart2D(chickenBeakTextureRect, head, cvec2(chickenHeadSize.x, chickenWattlesSize.y + chickenBeakSize.y * 0.5) - chickenHeadRotationCenter, chickenWattlesSize, chickenBeakRotationCenter);
 
 	head->children.push_back(wattles);
 	head->children.push_back(beak);

@@ -95,13 +95,16 @@ inline std::time_t getEpochTime(const std::wstring& dateTime, const std::wstring
 	// Convert the tm structure to time_t value and return.
 	return std::mktime(&dt);
 }
-inline std::wstring timeToString(const std::wstring& format = L"%A, %B %d, %Y %I:%M:%S %p") {
-	const auto& t = std::time(nullptr);
-	const auto& tm = *std::localtime(&t);
-
-	std::wostringstream oss;
-	oss << std::put_time(&tm, format.c_str());
-	return oss.str();
+inline std::string timeToString(const std::string& format = "%A, %B %d, %Y %I:%M:%S %p") {
+	using namespace std::chrono;
+	auto now = system_clock::now();
+	return std::vformat(format, std::make_format_args(now));
+	//const auto& t = std::time(nullptr);
+	//const auto& tm = *std::localtime(&t);
+	//
+	//std::wostringstream oss;
+	//oss << std::put_time(&tm, format.c_str());
+	//return oss.str();
 	//https://stackoverflow.com/questions/24750855/c-how-to-get-timestamp-string-both-on-linux-and-windows
 
 

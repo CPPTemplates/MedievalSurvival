@@ -74,7 +74,7 @@ enum mb : uint {
 typedef sf::Mouse::Button mb;
 
 #endif
-constexpr mb noButton = mb::ButtonCount;
+constexpr mb noButton = (sf::Mouse::Button)sf::Mouse::ButtonCount;
 
 typedef uint fsize_t;//fast size type, will result in sse instructions and loop unrolling
 typedef const fsize_t cfsize_t;//fast size type, will result in sse instructions and loop unrolling
@@ -101,5 +101,5 @@ constexpr fp bytemult0to1 = 1.0 / 0xff;
 constexpr byte bytemax = (byte)0xff;
 constexpr bool isNormalClick(cmb& button)
 {
-    return onAndroid || button == (mb)sf::Mouse::Left;
+    return onAndroid || button == (mb)sf::Mouse::Button::Left;
 }

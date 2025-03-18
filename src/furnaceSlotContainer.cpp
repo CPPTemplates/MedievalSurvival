@@ -10,6 +10,8 @@
 
 furnaceSlotContainer::furnaceSlotContainer() {
     uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"furnace.png"));
+    burnProgressTexture = loadTextureFromResourcePack(containerSpritesTextureFolder / L"furnace" / L"burn_progress.png");
+    litProgressTexture = loadTextureFromResourcePack(containerSpritesTextureFolder / L"furnace" / L"lit_progress.png");
     containers.push_back(furnaceInputSlot = new uiSlotContainer(cveci2(56, 133), nullptr));
     containers.push_back(furnaceOutputSlot = new uiSlotContainer(cveci2(116, 116), nullptr));
     containers.push_back(furnaceFuelSlot = new uiSlotContainer(cveci2(56, 97), nullptr));
@@ -28,6 +30,7 @@ void furnaceSlotContainer::drawExtraData(cmat3x3 &transform, const texture &rend
     if (selectedFurnaceData->ticksFuelBurned) {
         fp burnProgress =
                 selectedFurnaceData->ticksFuelBurned / (fp) selectedFurnaceData->ticksFuelToBurn;
+        fillTransparentRectangle(burnProgressTexture->getClientRect(), transform, *burnProgressTexture, renderTarget);
         inventory::drawExtraData(crectanglei2(176, 242, 15, (int) (14 * (1.0 - burnProgress))),
                                  veci2(56, 116), transform, renderTarget);
     }

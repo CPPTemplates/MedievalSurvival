@@ -13,15 +13,15 @@ constexpr fp cowTextureScale = cowHitboxSize.getY() / (fp)(cowBodyTextureRect.si
 constexpr fp cowHeadOffset = cowTextureScale * cowHeadTextureOffset;
 
 constexpr vec2 cowBodySize = cvec2(cowBodyTextureRect.size.getY() * cowTextureScale, cowBodyTextureRect.size.getX() * cowTextureScale);
-constexpr vec2 cowBodyRotationCentre = cvec2(cowBodySize.getX() * 0.5, 0);
+constexpr vec2 cowBodyRotationCenter = cvec2(cowBodySize.getX() * 0.5, 0);
 
 constexpr vec2 cowLegSize = cvec2(cowFrontRightLegTextureRect.size.getX() * cowTextureScale, cowFrontRightLegTextureRect.size.getY() * cowTextureScale);
-constexpr vec2 cowLegRotationCentre = cvec2(cowLegSize.getX() * 0.5, cowLegSize.getY());
+constexpr vec2 cowLegRotationCenter = cvec2(cowLegSize.getX() * 0.5, cowLegSize.getY());
 
-constexpr vec2 cowFrontLegOffset = cvec2(cowBodySize.getX() * 0.5 - cowLegSize.getX() + cowLegRotationCentre.getX(), 0);
-constexpr vec2 cowBackLegOffset = cvec2(-cowBodySize.getX() * 0.5 + cowLegRotationCentre.getX() - cowTextureScale * 0x2, 0);
+constexpr vec2 cowFrontLegOffset = cvec2(cowBodySize.getX() * 0.5 - cowLegSize.getX() + cowLegRotationCenter.getX(), 0);
+constexpr vec2 cowBackLegOffset = cvec2(-cowBodySize.getX() * 0.5 + cowLegRotationCenter.getX() - cowTextureScale * 0x2, 0);
 constexpr vec2 cowHeadSize = cvec2(cowHeadTextureRect.size.getX(), cowHeadTextureRect.size.getY()) * cowTextureScale;
-constexpr vec2 cowHeadRotationCentre = cvec2(0, cowHeadSize.getY() * 0.5);
+constexpr vec2 cowHeadRotationCenter = cvec2(0, cowHeadSize.getY() * 0.5);
 
 struct cow : public fourLeggedPassiveMob
 {

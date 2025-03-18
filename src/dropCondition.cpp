@@ -4,14 +4,14 @@
 #include "chanceCondition.h"
 #include "tableBonusCondition.h"
 #include "enchantmentData.h"
-#include "alternativeDropCondition.h"
+#include "anyOfDropCondition.h"
 #include "invertedCondition.h"
-#include "toolDrop.h"
+#include "toolDropCondition.h"
 #include "itemData.h"
 #include "filesystem/jsonReader.h"
 dropCondition* readCondition(const jsonContainer& container)
 {
-	const std::wstring conditionName = container[std::wstring(L"condition")].children[0].value;
+	const std::wstring conditionName = container[L"condition"].children[0].value;
 	dropCondition* conditionToReturn = nullptr;
 	if (conditionName == std::wstring(L"minecraft:survives_explosion"))
 	{
@@ -21,7 +21,7 @@ dropCondition* readCondition(const jsonContainer& container)
 	{
 		blockStateCondition* condition = new blockStateCondition();
 
-		const jsonContainer& conditionContainer = container[std::wstring(L"properties")];
+		const jsonContainer& conditionContainer = container[L"properties"];
 
 		for (const jsonContainer& blockStateContainer : conditionContainer.children)
 		{
@@ -34,16 +34,16 @@ dropCondition* readCondition(const jsonContainer& container)
 	else if (conditionName == std::wstring(L"minecraft:random_chance"))
 	{
 		chanceCondition* condition = new chanceCondition();
-		convertToDouble(container[std::wstring(L"chance")].children[0].value, condition->chance);
+		convertToDouble(container[L"chance"].children[0].value, condition->chance);
 		conditionToReturn = condition;
 	}
 	else if (conditionName == std::wstring(L"minecraft:table_bonus"))
 	{
 		tableBonusCondition* bonusCondition = new tableBonusCondition();
-		const std::vector<jsonContainer> chanceTableContainers = container[std::wstring(L"chances")].children;
+		const std::vector<jsonContainer> chanceTableContainers = container[L"chances"].children;
 		bonusCondition->chanceTable.resize(chanceTableContainers.size());
 
-		const enchantmentID& requiredEnchantmentID = enchantmentDataList.getIDByName(container[std::wstring(L"enchantment")].children[0].value);
+		const enchantmentID& requiredEnchantmentID = enchantmentDataList.getIDByName(container[L"enchantment"].children[0].value);
 
 		bonusCondition->enchantmentRequired = requiredEnchantmentID;
 		for (size_t i = 0; i < chanceTableContainers.size(); i++)
@@ -52,10 +52,10 @@ dropCondition* readCondition(const jsonContainer& container)
 		}
 		conditionToReturn = bonusCondition;
 	}
-	else if (conditionName == std::wstring(L"minecraft:alternative"))
+	else if (conditionName == std::wstring(L"minecraft:any_of"))
 	{
-		alternativeDropCondition* currentAlternativeDrop = new alternativeDropCondition();
-		const std::vector<jsonContainer> termsContainer = container[std::wstring(L"terms")].children;
+		anyOfDropCondition* currentAlternativeDrop = new anyOfDropCondition();
+		const std::vector<jsonContainer> termsContainer = container[L"terms"].children;
 		for (const jsonContainer& termContainer : termsContainer)
 		{
 			currentAlternativeDrop->conditionsToCheck.push_back(readCondition(termContainer));
@@ -66,40 +66,39 @@ dropCondition* readCondition(const jsonContainer& container)
 	{
 		invertedCondition* currentInvertedCondition = new invertedCondition();
 
-		currentInvertedCondition->conditionToInvert = readCondition(container[std::wstring(L"term")]);
+		currentInvertedCondition->conditionToInvert = readCondition(container[L"term"]);
 		conditionToReturn = currentInvertedCondition;
 	}
 	else if (conditionName == std::wstring(L"minecraft:match_tool"))
 	{
-		toolDrop* currentToolDrop = new toolDrop();
+		toolDropCondition* currentToolDrop = new toolDropCondition();
 
-		const jsonContainer& predicateContainer = container[std::wstring(L"predicate")];
+		const jsonContainer& predicateContainer = container[L"predicate"];
+		if (const jsonContainer* predicatesContainer = predicateContainer.getChild(L"predicates")) {
 
-		csize_t& enchantmentsIndex = predicateContainer.getChildIndex(std::wstring(L"enchantments"));
-
-		if (enchantmentsIndex != std::wstring::npos)
-		{
-			const std::vector<jsonContainer> enchantmentContainers = predicateContainer.children[enchantmentsIndex].children;
-			for (const jsonContainer& enchantmentContainer : enchantmentContainers)
+			if (auto enchantmentsContainer = predicatesContainer->getChild(L"minecraft:enchantments"))
 			{
-				const std::wstring enchantmentName = enchantmentContainer[std::wstring(L"enchantment")].children[0].value;
-				const std::wstring requiredLevelString = enchantmentContainer[std::wstring(L"levels")][std::wstring(L"min")].children[0].value;
-
-				const enchantmentID& enchantmentType = enchantmentDataList.getIDByName(enchantmentName);
-				int requiredLevel;
-				if (!convertToInt(requiredLevelString, requiredLevel))
+				const std::vector<jsonContainer> enchantmentContainers = enchantmentsContainer->children;
+				for (const jsonContainer& enchantmentContainer : enchantmentContainers)
 				{
-					requiredLevel = 1;
+					const std::wstring enchantmentName = enchantmentContainer[L"enchantments"].children[0].value;
+					const std::wstring requiredLevelString = enchantmentContainer[L"levels"][L"min"].children[0].value;
+
+					const enchantmentID& enchantmentType = enchantmentDataList.getIDByName(enchantmentName);
+					int requiredLevel;
+					if (!convertToInt(requiredLevelString, requiredLevel))
+					{
+						requiredLevel = 1;
+					}
+
+					currentToolDrop->requiredEnchantments.push_back(enchantment(enchantmentType, requiredLevel));
 				}
-
-				currentToolDrop->requiredEnchantments.push_back(enchantment(enchantmentType, requiredLevel));
 			}
-		}
 
-		csize_t& itemIndex = predicateContainer.getChildIndex(std::wstring(L"item"));
-		if (itemIndex != std::wstring::npos)
+		}
+		if (auto itemContainer = predicateContainer.getChild(L"items"))
 		{
-			const std::wstring requiredItemName = predicateContainer.children[itemIndex].children[0].value;
+			const std::wstring requiredItemName = itemContainer->children[0].value;
 			const itemID& requiredItemID = itemList.getIDByName(requiredItemName);
 			if ((int)requiredItemID != -1)
 			{

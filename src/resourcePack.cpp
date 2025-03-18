@@ -903,7 +903,7 @@ void loadLootTables()
 	//	}
 	//}
 }
-void loadRecipes()
+static void loadRecipes()
 {
 	craftingRecipes = std::vector<recipe *>();
 	furnaceRecipes = std::vector<furnaceRecipe *>();
@@ -2795,7 +2795,7 @@ void loadItems()
 		std::wstring oreItemName = oreBlockNames[i];
 		if (smeltable[i])
 		{
-			oreItemName += std::wstring(L"_ingot");
+			oreItemName = L"raw_" + oreItemName;
 		}
 		if (oreItemName == std::wstring(L"lapis"))
 		{
@@ -2804,11 +2804,15 @@ void loadItems()
 		itemList[identifier] = new itemData((itemID)identifier, oreItemName, loadTextureFromResourcePack(itemTextureFolder / (oreItemName + std::wstring(L".png"))));
 		identifier++;
 	}
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"quartz"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"quartz.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"quartz", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"quartz.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"gold_nugget"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"gold_nugget.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"gold_ingot", loadTextureFromResourcePack(itemTextureFolder / L"gold_ingot.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"iron_nugget"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_nugget.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"iron_ingot", loadTextureFromResourcePack(itemTextureFolder / L"iron_ingot.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, L"gold_nugget", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"gold_nugget.png")));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, L"iron_nugget", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_nugget.png")));
 	identifier++;
 
 	// spawn eggs will be added after the entity list is added

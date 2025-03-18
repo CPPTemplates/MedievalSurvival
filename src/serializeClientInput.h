@@ -1,81 +1,123 @@
 #pragma once
 #include "network/client/clientInput.h"
 #include "nbt/nbtSerializer.h"
-inline bool serializeClientInput(clientInput& input, nbtSerializer &s)
-{
-    if(s.push(L"events")){
-        size_t size = input.eventHistory.size();
-        s.serializeValue(L"size", size);
-        if (!s.write)
-        {
-            input.eventHistory.resize(size);
-        }
-        for (size_t i = 0; i < size; i++)
-        {
-            if (s.push(std::to_wstring(i)))
-            {
-                //typedef std::underlying_type_t<sf::Event::EventType> ut;
-                //ut &k = (ut &)eventHistory[i].type;
-                s.serializeValue(L"type", input.eventHistory[i].type);
-                switch (input.eventHistory[i].type) {
-                    case sf::Event::TouchMoved:
-                    case sf::Event::TouchBegan:
-                    case sf::Event::TouchEnded:
-                        s.serializeValue(L"x", input.eventHistory[i].touch.x);
-                        s.serializeValue(L"y", input.eventHistory[i].touch.y);
-                        s.serializeValue(L"finger", input.eventHistory[i].touch.finger);
 
-                        break;
-                    case sf::Event::MouseButtonPressed:
-                    case sf::Event::MouseButtonReleased:
-                        s.serializeValue(L"x", input.eventHistory[i].mouseButton.x);
-                        s.serializeValue(L"y", input.eventHistory[i].mouseButton.y);
-                        s.serializeValue(L"button", input.eventHistory[i].mouseButton.button);
-                        break;
-                    case sf::Event::MouseMoved:
-                        s.serializeValue(L"x", input.eventHistory[i].mouseMove.x);
-                        s.serializeValue(L"y", input.eventHistory[i].mouseMove.y);
-                        break;
-                    case sf::Event::KeyPressed:
-                    case sf::Event::KeyReleased:
-                        //we don't need to serialize the scan code, that is the local key code.
-                        //when reading this data on another device, the result would be completely different.
-                        s.serializeValue(L"alt", input.eventHistory[i].key.alt);
-                        s.serializeValue(L"control", input.eventHistory[i].key.control);
-                        s.serializeValue(L"shift", input.eventHistory[i].key.shift);
-                        s.serializeValue(L"code", input.eventHistory[i].key.code);
-                        break;
-                    case sf::Event::SensorChanged:
-                        s.serializeValue(L"x", input.eventHistory[i].sensor.x);
-                        s.serializeValue(L"y", input.eventHistory[i].sensor.y);
-                        s.serializeValue(L"z", input.eventHistory[i].sensor.z);
-                        break;
-                    case sf::Event::MouseWheelScrolled:
-                        s.serializeValue(L"x", input.eventHistory[i].mouseWheelScroll.x);
-                        s.serializeValue(L"y", input.eventHistory[i].mouseWheelScroll.y);
-                        s.serializeValue(L"delta", input.eventHistory[i].mouseWheelScroll.delta);
-                        s.serializeValue(L"wheel", input.eventHistory[i].mouseWheelScroll.wheel);
-                        break;
-                    case sf::Event::TextEntered:
-                        s.serializeValue(L"unicode", input.eventHistory[i].text.unicode);
-                        break;
-                    case sf::Event::Resized:
-                        s.serializeValue(L"width", input.eventHistory[i].size.width);
-                        s.serializeValue(L"height", input.eventHistory[i].size.height);
-                        break;
-                    case sf::Event::MouseEntered://no data associated with these
-                    case sf::Event::MouseLeft:
-                    case sf::Event::Closed:
-                    case sf::Event::LostFocus:
-                    case sf::Event::GainedFocus:
-                    default:
-                    break;
-                }
-                s.pop();
-            }
-        }
-        s.pop();
-    }
+
+template <typename eventType>
+constexpr void serializeEventData(sf::Event& event, nbtSerializer& s) {
+	//copy event data to content
+	eventType content = s.write ? *event.getIf<eventType>() : eventType();
+	if constexpr (std::is_same_v<eventType, sf::Event::TouchBegan>) {
+		s.serializeValue(L"x", content.position.x);
+		s.serializeValue(L"y", content.position.y);
+		s.serializeValue(L"finger", content.finger);
+	}
+	else if constexpr (std::is_same_v<eventType, sf::Event::MouseButtonPressed> || std::is_same_v<eventType, sf::Event::MouseButtonReleased>) {
+		s.serializeValue(L"x", content.position.x);
+		s.serializeValue(L"y", content.position.y);
+		s.serializeValue(L"button", content.button);
+	}
+	else if constexpr (std::is_same_v<eventType, sf::Event::MouseMoved>) {
+		s.serializeValue(L"x", content.position.x);
+		s.serializeValue(L"y", content.position.y);
+	}
+
+	else if constexpr (std::is_same_v<eventType, sf::Event::KeyPressed> || std::is_same_v<eventType, sf::Event::KeyReleased>) {
+		//we don't need to serialize the scan code, that is the local key code.
+		//when reading this data on another device, the result would be completely different.
+		s.serializeValue(L"alt", content.alt);
+		s.serializeValue(L"control", content.control);
+		s.serializeValue(L"shift", content.shift);
+		s.serializeValue(L"code", content.code);
+	}
+
+	else if constexpr (std::is_same_v<eventType, sf::Event::SensorChanged>) {
+		s.serializeValue(L"x", content.value.x);
+		s.serializeValue(L"y", content.value.y);
+		s.serializeValue(L"z", content.value.z);
+	}
+	else if constexpr (std::is_same_v<eventType, sf::Event::MouseWheelScrolled>) {
+		s.serializeValue(L"x", content.position.x);
+		s.serializeValue(L"y", content.position.y);
+		s.serializeValue(L"delta", content.delta);
+		s.serializeValue(L"wheel", content.wheel);
+	}
+	else if constexpr (std::is_same_v<eventType, sf::Event::TextEntered>) {
+
+		s.serializeValue(L"unicode", content.unicode);
+	}
+	else if constexpr (std::is_same_v<eventType, sf::Event::Resized>) {
+		s.serializeValue(L"width", content.size.x);
+		s.serializeValue(L"height", content.size.y);
+	}
+	if (!s.write) {
+		//copy content to event data
+		event = sf::Event(content);
+	}
+}
+
+inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
+{
+	if (s.push(L"events")) {
+		size_t size = input.eventHistory.size();
+		s.serializeValue(L"size", size);
+		if (!s.write)
+		{
+			//don't resize to target size, because we might not be able to serialize all events
+			input.eventHistory.clear();
+		}
+		for (size_t i = 0; i < size; i++)
+		{
+			sf::Event currentEvent = s.write ? input.eventHistory[i] : sf::Event(sf::Event::Closed());
+			std::wstring typeName = s.write ? std::wstring(
+				currentEvent.is<sf::Event::TouchMoved>() ? L"TouchMoved" :
+				currentEvent.is<sf::Event::TouchBegan>() ? L"TouchBegan" :
+				currentEvent.is<sf::Event::TouchEnded>() ? L"TouchEnded" :
+				currentEvent.is<sf::Event::MouseButtonPressed>() ? L"MouseButtonPressed" :
+				currentEvent.is<sf::Event::MouseButtonReleased>() ? L"MouseButtonReleased" :
+				currentEvent.is<sf::Event::MouseMoved>() ? L"MouseMoved" :
+				currentEvent.is<sf::Event::KeyPressed>() ? L"KeyPressed" :
+				currentEvent.is<sf::Event::KeyReleased>() ? L"KeyReleased" :
+				currentEvent.is<sf::Event::SensorChanged>() ? L"SensorChanged" :
+				currentEvent.is<sf::Event::MouseWheelScrolled>() ? L"MouseWheelScrolled" :
+				currentEvent.is<sf::Event::TextEntered>() ? L"TextEntered" :
+				currentEvent.is<sf::Event::Resized>() ? L"Resized" :
+				currentEvent.is<sf::Event::MouseEntered>() ? L"MouseEntered" :
+				currentEvent.is<sf::Event::MouseLeft>() ? L"MouseLeft" :
+				currentEvent.is<sf::Event::Resized>() ? L"Resized" :
+				currentEvent.is<sf::Event::Closed>() ? L"Closed" :
+				currentEvent.is<sf::Event::FocusLost>() ? L"FocusLost" :
+				currentEvent.is<sf::Event::FocusGained>() ? L"FocusGained" :
+				L"Unknown") : L"";
+			if (typeName != L"Unknown" && s.push(std::to_wstring(i)))
+			{
+
+				s.serializeValue(std::wstring(L"type"), typeName);
+
+				if (typeName == L"TouchMoved")				serializeEventData<sf::Event::TouchMoved>(currentEvent, s);
+				else if (typeName == L"TouchBegan")			serializeEventData<sf::Event::TouchBegan>(currentEvent, s);
+				else if (typeName == L"TouchEnded")			serializeEventData<sf::Event::TouchEnded>(currentEvent, s);
+				else if (typeName == L"MouseButtonPressed") serializeEventData<sf::Event::MouseButtonPressed>(currentEvent, s);
+				else if (typeName == L"MouseButtonReleased")serializeEventData<sf::Event::MouseButtonReleased>(currentEvent, s);
+				else if (typeName == L"MouseMoved")			serializeEventData<sf::Event::MouseMoved>(currentEvent, s);
+				else if (typeName == L"KeyPressed")			serializeEventData<sf::Event::KeyPressed>(currentEvent, s);
+				else if (typeName == L"KeyReleased")		serializeEventData<sf::Event::KeyReleased>(currentEvent, s);
+				else if (typeName == L"SensorChanged")		serializeEventData<sf::Event::SensorChanged>(currentEvent, s);
+				else if (typeName == L"MouseWheelScrolled") serializeEventData<sf::Event::MouseWheelScrolled>(currentEvent, s);
+				else if (typeName == L"TextEntered")		serializeEventData<sf::Event::TextEntered>(currentEvent, s);
+				else if (typeName == L"Resized")			serializeEventData<sf::Event::Resized>(currentEvent, s);
+				else if (typeName == L"MouseEntered")		serializeEventData<sf::Event::MouseEntered>(currentEvent, s);
+				else if (typeName == L"MouseLeft")			serializeEventData<sf::Event::MouseLeft>(currentEvent, s);
+				else if (typeName == L"Resized")			serializeEventData<sf::Event::Resized>(currentEvent, s);
+				else if (typeName == L"Closed")				serializeEventData<sf::Event::Closed>(currentEvent, s);
+				else if (typeName == L"FocusLost")			serializeEventData<sf::Event::FocusLost>(currentEvent, s);
+				else if (typeName == L"FocusGained")		serializeEventData<sf::Event::FocusGained>(currentEvent, s);
+				if (!s.write)input.eventHistory.push_back(currentEvent);
+				s.pop();
+			}
+		}
+		s.pop();
+	}
 	serializeNBTValue(s, L"mouse position", input.mousePositionPixels);
 	if (s.push(L"mouse buttons"))
 	{

@@ -6,6 +6,8 @@ resourceLoader* currentLoader = nullptr;
 
 const resolutionTexture& resourceLoader::getResource(const stdPath& relativePath)
 {
+	if (loadedTextures.contains(relativePath))
+		return *loadedTextures[relativePath];
 	const auto &locations = getResourceLocations(relativePath);
 	if (locations.size() == 0)
 	{

@@ -2,7 +2,7 @@
 #include "filesystem/sfmlInputStream.h"
 #include "filesystem/fileio.h"
 void music2d::loadAudio() {
-    playingAudio = new alMusic();
+    playingAudio = new sf::Music();
     // this way, even on android we can read from an actual file instead of the internal APK storage
     stream = new sfmlInputStream(std::make_shared<std::ifstream>(path, getOpenMode(false)));
     if (!playingAudio->openFromStream(*stream)) {

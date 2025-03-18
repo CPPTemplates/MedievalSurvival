@@ -40,19 +40,19 @@ constexpr color correctionColor = color(0x79, 0x79, 0x80);
 
 int marginPerColor = 0x10; // the full colors may differ more than
 
-constexpr color motionToColor(const compressedSourceMotionVector &vector)
+static constexpr color motionToColor(const compressedSourceMotionVector &vector)
 {
     // return vector.axis[0] > 0 ? vector.axis[1] > 0 ? colorPalette::red : colorPalette::yellow : vector.axis[1] > 0 ? colorPalette::
     return color((colorChannel)(vector.axis[0] + 0x80), (colorChannel)(vector.axis[1] + 0x80), 0);
 }
 
-inline constexpr int getByteDifference(cbyte &b1, cbyte &b2)
+inline static constexpr int getByteDifference(cbyte &b1, cbyte &b2)
 {
     return b1 > b2 ? b1 - b2 : b2 - b1;
 }
 
 constexpr byte channelCompareValue = 0b11111000;
-inline constexpr bool isRoughlyTheSameColorValue(cbyte &currentByte, cbyte &targetByte)
+inline static constexpr bool isRoughlyTheSameColorValue(cbyte &currentByte, cbyte &targetByte)
 {
     // exponential: the higher the byte value, the less one will notice a tad bit difference.
     // our brains measure impulses exponentially
@@ -60,7 +60,7 @@ inline constexpr bool isRoughlyTheSameColorValue(cbyte &currentByte, cbyte &targ
     // return getByteDifference(currentByte, targetByte) <= 0x8;
 }
 
-constexpr bool isRoughlyTheSameColor(const color &currentColor, const color &targetColor)
+static constexpr bool isRoughlyTheSameColor(const color &currentColor, const color &targetColor)
 {
     // nice for the future: bit comparison for speedup
     constexpr uint colorCompareValue = getUint(color(channelCompareValue, channelCompareValue, channelCompareValue, 0)); // channelCompareValue + channelCompareValue * 0x100 + channelCompareValue * 0x10000;
@@ -71,14 +71,14 @@ constexpr bool isRoughlyTheSameColor(const color &currentColor, const color &tar
     //        isRoughlyTheSameColorValue(currentColor[2], targetColor[2]);
 }
 
-inline constexpr int getColorDifference(const color &c1, const color &c2)
+inline static constexpr int getColorDifference(const color &c1, const color &c2)
 {
     return getByteDifference(c1[0], c2[0]) +
            getByteDifference(c1[1], c2[1]) +
            getByteDifference(c1[2], c2[2]);
 }
 
-inline constexpr int compareColors(const color &c1, const color &c2)
+inline static constexpr int compareColors(const color &c1, const color &c2)
 {
     return math::maximum(getByteDifference(c1[0], c2[0]) - 0x4, 0) +
            math::maximum(getByteDifference(c1[1], c2[1]) - 0x4, 0) +
@@ -87,7 +87,7 @@ inline constexpr int compareColors(const color &c1, const color &c2)
 
 // crop a rectangle based on direction and the image
 // the rect should be inside of the bounds, but the rect + movementvector should also be inside of the bounds
-inline bool cropCheckRect(rectanglei2 bounds, rectanglei2 &rect, cveci2 &movementVector)
+inline static bool cropCheckRect(rectanglei2 bounds, rectanglei2 &rect, cveci2 &movementVector)
 {
     // bounds.pos0 -= movementVector;
     return crectanglei2(bounds.pos0 - movementVector, bounds.size).cropClientRect(bounds) &&
@@ -97,7 +97,7 @@ inline bool cropCheckRect(rectanglei2 bounds, rectanglei2 &rect, cveci2 &movemen
 // compares the pixels of the moved location in the old frame to
 // the pixels of the current location in the new frame
 // (moves the old frame 'over' the new frame)
-inline fp getMovementCostUnsafe(const texture &oldFrame, const texture &newFrame, rectanglei2 rectToCheck, cveci2 &sourceMovementVector, cint &checkInterval, cfp &maxError)
+inline static fp getMovementCostUnsafe(const texture &oldFrame, const texture &newFrame, rectanglei2 rectToCheck, cveci2 &sourceMovementVector, cint &checkInterval, cfp &maxError)
 {
     cfp &originalRectPixelCount = rectToCheck.size.volume();
     // check one pixel of every #x# where # = checkInterval
@@ -129,7 +129,7 @@ inline fp getMovementCostUnsafe(const texture &oldFrame, const texture &newFrame
     return INFINITY;
 }
 
-inline void moveArrayPart(const texture &tex, rectanglei2 rect, cveci2 &direction)
+inline static void moveArrayPart(const texture &tex, rectanglei2 rect, cveci2 &direction)
 {
     if (direction != veci2())
     {
@@ -340,7 +340,7 @@ void videoEncoder::addFrame(const texture &frame, streamSerializer& serializer)
                     //     break;
                     // }
                 }
-            found:
+            found:;
                 // old: // finally, check 00 if it hasn't been checked yet
                 //      if (leastError && !blockMotionWeight.contains(veci2()))
                 //      {
@@ -626,7 +626,7 @@ void videoEncoder::addMotionVectors() const
         if (vector != compressedSourceMotionVector())
         {
             csize_t &pixelIndex = (&vector - sourceMotionVectors.begin());
-            totalTexture.baseArray[pixelIndex] = oldTexture.baseArray[pixelIndex + (vector.x + (vector.y * oldTexture.size.x))];
+            totalTexture.baseArray[pixelIndex] = oldTexture.baseArray[pixelIndex + ((int)vector.x + ((int)vector.y * (int)oldTexture.size.x))];
         }
     }
 }

@@ -561,15 +561,17 @@ enum class itemID : int
 
 	//ore drops respectively
 	coal,
-	iron_ingot,
+	raw_iron,
 	emerald,
 	lapis_lazuli,
 	redstone,
-	gold_ingot,
+	raw_gold,
 	diamond,
 	quartz,
-	goldnugget,
-	ironnugget,
+	gold_ingot,
+	iron_ingot,
+	gold_nugget,
+	iron_nugget,
 
 	spawn_egg,
 

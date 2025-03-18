@@ -47,7 +47,7 @@ struct gameControl : form, clientInput {
 
     //connections
     playerSocket &socket;
-    human *player;//for less code
+    human *player = nullptr;//for less code
 
     bool wantsClipboardInput = false;
     std::wstring copyToClipboard = std::wstring();

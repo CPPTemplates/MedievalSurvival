@@ -204,7 +204,7 @@ void humanoid::render(const gameRenderData& targetData) const
 
 		fp handHoldingPart = 0.6;//the part of the texture the hand 'holds'
 		fp handFingerThickness = humanArmSize.x * 0.2;//the thickness of the finger that blocks a part of the item
-		mat3x3 moveToHand = mat3x3::translate(-rightArm->rotationCentre + vec2(handFingerThickness, itemHandSize * (-1 + handHoldingPart)));
+		mat3x3 moveToHand = mat3x3::translate(-rightArm->rotationCenter + vec2(handFingerThickness, itemHandSize * (-1 + handHoldingPart)));
 		//get right arm transform
 		mat3x3 rightArmTransform = mat3x3::cross(mainBodyPart->applied, rightArm->applied);
 
@@ -272,7 +272,7 @@ void humanoid::render(const gameRenderData& targetData) const
 
 					renderBodyPart(b, armTransform, targetData);
 				}
-				cmat3x3 armorTransform = mat3x3::combine({ mat3x3::fromRectToRect((crectangle2)textureRect, crectangle2(-b->rotationCentre, b->size).expanded(armorExpansion)),b->getCumulativeTransform() ,targetData.worldToRenderTargetTransform });
+				cmat3x3 armorTransform = mat3x3::combine({ mat3x3::fromRectToRect((crectangle2)textureRect, crectangle2(-b->rotationCenter, b->size).expanded(armorExpansion)),b->getCumulativeTransform() ,targetData.worldToRenderTargetTransform });
 				//expand 0.1f
 				//const mat3x3 armorTransform = mat
 				fillTransparentRectangle((crectangle2)textureRect, armorTransform, tex, targetData.renderTarget);
@@ -518,7 +518,7 @@ void humanoid::launchItem(const itemID& itemType)
 }
 vec2 humanoid::getHandPosition() const
 {
-	return rightArm->getCumulativeTransform().multPointMatrix(cvec2(humanArmSize.x * 0.5, humanArmSize.y - humanArmSize.x * 0.5) - rightArm->rotationCentre);
+	return rightArm->getCumulativeTransform().multPointMatrix(cvec2(humanArmSize.x * 0.5, humanArmSize.y - humanArmSize.x * 0.5) - rightArm->rotationCenter);
 }
 void humanoid::decreaseDurability(itemStack& stack, cfp& amount)
 {

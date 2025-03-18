@@ -14,7 +14,7 @@ constexpr fp minecartWeight = minecartVolume * ironWeightPerCubicMeter;
 constexpr fp minecartPixelSize = minecartHitboxSize.getX() / minecartEditedTextureRect.size.getX();
 
 constexpr vec2 minecartRenderSize = cvec2(minecartEditedTextureRect.size) * minecartPixelSize;
-constexpr vec2 minecartRotationCentre = cvec2(minecartRenderSize.getX() * 0.5, 0);
+constexpr vec2 minecartRotationCenter = cvec2(minecartRenderSize.getX() * 0.5, 0);
 
 constexpr fp minecartWheelSize = minecartWheelPixelSize * minecartPixelSize;
 struct minecart : public hollowRidableEntity

@@ -25,7 +25,9 @@ std::map<std::wstring, std::shared_ptr <lootTable>> chestLootTables = std::map<s
 std::shared_ptr <lootTable> readLootTable(const stdPath& path)
 {
 	const jsonContainer& container = readJson(stringToWString(readAllText(path)));
-
+	if (path.wstring().contains(L"iron_ore")) {
+		stdPath copy = path;
+	}
 	std::shared_ptr<lootTable> table = std::shared_ptr <lootTable>(readDrop(container));
 	return table;
 }
@@ -34,14 +36,14 @@ std::shared_ptr <lootTable> readLootTable(const stdPath& path)
 //https://gist.github.com/misode/66456e57372ce62cd9b65d1052521069
 lootTable* readDrop(const jsonContainer& container)
 {
-	csize_t& typeIndex = container.getChildIndex(std::wstring(L"type"));
 	lootTable* dropToReturn = nullptr;
-	if (typeIndex != std::wstring::npos)
+	if (auto typeContainer = container.getChild(L"type"))
 	{
-		if (container.children[typeIndex].children[0].value == std::wstring(L"minecraft:item"))
+		const std::wstring& typeName = typeContainer->children[0].value;
+		//can be minecraft:block, minecraft:item, minecraft:gift etc. it doesn't really matter.
+		if (typeName == L"minecraft:item")
 		{
-			csize_t& nameIndex = container.getChildIndex(std::wstring(L"name"));
-			const itemID& itemIndex = itemList.getIDByName(container.children[nameIndex].children[0].value);
+			const itemID& itemIndex = itemList.getIDByName(container[L"name"].children[0].value);
 			if ((int)itemIndex != -1)
 			{
 				dropToReturn = new itemDrop(itemIndex);
@@ -52,10 +54,10 @@ lootTable* readDrop(const jsonContainer& container)
 					for (size_t i = 0; i < functionContainers.size(); i++)
 					{
 						const jsonContainer& functionContainer = functionContainers[i];
-						const std::wstring functionName = functionContainer[std::wstring(L"function")].children[0].value;
+						const std::wstring functionName = functionContainer[L"function"].children[0].value;
 						if (functionName == std::wstring(L"minecraft:set_count"))
 						{
-							const jsonContainer& countContainer = functionContainer[std::wstring(L"count")];
+							const jsonContainer& countContainer = functionContainer[L"count"];
 							dropToReturn = new amountDrop(dropToReturn, parseMinimumAndMaximum(countContainer));
 						}
 						else if (functionName == std::wstring(L"minecraft:explosion_decay"))
@@ -64,7 +66,7 @@ lootTable* readDrop(const jsonContainer& container)
 						}
 						else if (functionName == std::wstring(L"minecraft:apply_bonus"))
 						{
-							const std::wstring formulaName = functionContainer[std::wstring(L"formula")].children[0].value;
+							const std::wstring formulaName = functionContainer[L"formula"].children[0].value;
 
 							bonusAmountDistribution* bonus = nullptr;
 
@@ -74,26 +76,26 @@ lootTable* readDrop(const jsonContainer& container)
 							}
 							else
 							{
-								const jsonContainer& parameterContainer = functionContainer[std::wstring(L"parameters")];
+								const jsonContainer& parameterContainer = functionContainer[L"parameters"];
 
 								if (formulaName == std::wstring(L"minecraft:binomial_with_bonus_count"))
 								{
 									binomialWithBonusCountDistribution* distribution = new binomialWithBonusCountDistribution();
-									convertTo<int>(parameterContainer[std::wstring(L"extra")].children[0].value, distribution->extra);
-									convertTo<fp>(parameterContainer[std::wstring(L"probability")].children[0].value, distribution->probability);
+									convertTo<int>(parameterContainer[L"extra"].children[0].value, distribution->extra);
+									convertTo<fp>(parameterContainer[L"probability"].children[0].value, distribution->probability);
 									bonus = distribution;
 								}
 								else if (formulaName == std::wstring(L"minecraft:uniform_bonus_count"))
 								{
 									uniformBonusAmountDistribution* distribution = new uniformBonusAmountDistribution();
-									convertTo<fp>(parameterContainer[std::wstring(L"bonusMultiplier")].children[0].value, distribution->bonusMultiplier);
+									convertTo<fp>(parameterContainer[L"bonusMultiplier"].children[0].value, distribution->bonusMultiplier);
 									bonus = distribution;
 								}
 							}
 
 							if (bonus)
 							{
-								std::wstring enchantmentName = functionContainer[std::wstring(L"enchantment")].children[0].value;
+								std::wstring enchantmentName = functionContainer[L"enchantment"].children[0].value;
 								bonus->enchantmentToUse = enchantmentDataList.getIDByName(enchantmentName);
 							}
 							dropToReturn = new amountDrop(dropToReturn, bonus);
@@ -107,27 +109,26 @@ lootTable* readDrop(const jsonContainer& container)
 				dropToReturn = new lootTable();
 			}
 		}
-		else if (container.children[typeIndex].children[0].value == std::wstring(L"minecraft:alternatives"))
+		else if (typeContainer->children[0].value == L"minecraft:alternatives")
 		{
 			alternativesDrop* drop = new alternativesDrop();
-			const std::vector<jsonContainer> alternativeContainers = container[std::wstring(L"children")].children;
+			const std::vector<jsonContainer> alternativeContainers = container[L"children"].children;
 			for (const jsonContainer& alternative : alternativeContainers)
 			{
 				drop->alternatives.push_back(readDrop(alternative));
 			}
 			dropToReturn = drop;
 		}
-		else if (container.children[typeIndex].children[0].value == std::wstring(L"minecraft:empty"))
+		else if (typeContainer->children[0].value == L"minecraft:empty")
 		{
 			dropToReturn = new lootTable();
 		}
 	}
 
-	csize_t& poolsIndex = container.getChildIndex(std::wstring(L"pools"));
-	if (poolsIndex != std::wstring::npos)
+	if (auto poolsContainer = container.getChild(L"pools"))
 	{
 		additiveDrop* drop = new additiveDrop();
-		for (const jsonContainer& child : container.children[poolsIndex].children)
+		for (const jsonContainer& child : poolsContainer->children)
 		{
 			drop->drops.push_back(readDrop(child));
 		}

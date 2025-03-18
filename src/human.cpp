@@ -7,7 +7,6 @@
 #include "ridableEntity.h"
 #include "endCrystal.h"
 #include "gameControl.h"
-#include "rectangularSlotContainer.h"
 
 #include "gameForm.h"
 #include "furnaceData.h"
@@ -57,7 +56,6 @@
 #include "armorType.h"
 #include "block.h"
 #include "blockData.h"
-#include "itemID.h"
 #include "brewingStandData.h"
 #include "brewingStandSlotContainer.h"
 #include "chestSlotContainer.h"
@@ -103,7 +101,6 @@
 #include "lootTable.h"
 #include "mob.h"
 #include "nbt/nbtSerializable.h"
-#include "nbt/nbtSerializer.h"
 #include "gameRenderData.h"
 #include "smithingTableSlotContainer.h"
 #include "soundCollection.h"

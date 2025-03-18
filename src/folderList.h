@@ -41,6 +41,7 @@ const stdPath armorTextureFolder = generalTextureFolder / L"models" / L"armor";
 const stdPath miscellaneousTextureFolder = generalTextureFolder / L"misc";
 const stdPath particleTextureFolder = generalTextureFolder / L"particle";
 const stdPath spritesTextureFolder = guiTextureFolder / L"sprites";
+const stdPath containerSpritesTextureFolder = spritesTextureFolder / L"container";
 const stdPath hudTextureFolder = spritesTextureFolder / L"hud";
 const stdPath heartTextureFolder = hudTextureFolder / L"heart";
 
@@ -70,14 +71,14 @@ const stdPath resourcePackDataFolder = stdPath(L"data");
 //minecraft namespace datapack folders
 const stdPath minecraftDataFolder = resourcePackDataFolder / L"minecraft";
 const stdPath mainTagFolder = minecraftDataFolder / L"tags";
-const stdPath recipeFolder = minecraftDataFolder / L"recipes";
+const stdPath recipeFolder = minecraftDataFolder / L"recipe";
 
 //medieval survival namespace datapack folders
 const stdPath msNameSpaceDataFolder = resourcePackDataFolder / L"medieval survival";
-const stdPath structureFolder = msNameSpaceDataFolder / L"structures";
+const stdPath structureFolder = msNameSpaceDataFolder / L"structure";
 const stdPath overworldDataFolder = msNameSpaceDataFolder / L"overworld";
 
-const stdPath lootTablesFolder = minecraftDataFolder / L"loot_tables";
+const stdPath lootTablesFolder = minecraftDataFolder / L"loot_table";
 const stdPath blockLootTablesFolder = lootTablesFolder / L"blocks";
 const stdPath chestLootTablesFolder = lootTablesFolder / L"chests";
 const stdPath entityLootTablesFolder = lootTablesFolder / L"entities";

@@ -43,6 +43,11 @@ void inventory::drawExtraData(crectanglei2 &textureRect, cveci2 &offset, cmat3x3
     fillTransparentRectangle(crectangle2(textureRect), mat3x3::cross(transform, mat3x3::translate(cvec2(offset - textureRect.pos0))), *uiTexture, renderTarget);
 }
 
+void inventory::drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const texture& renderTarget) const
+{
+    fillTransparentRectangle(crectangle2(sprite.getClientRect()), mat3x3::cross(transform, mat3x3::translate(cvec2(position))), sprite, renderTarget);
+}
+
 void inventory::drawExtraData(cmat3x3 &transform, const texture &renderTarget)
 {
 }

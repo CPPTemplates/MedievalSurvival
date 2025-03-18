@@ -817,7 +817,7 @@ fp mob::CalculateFallDamage(cfp &vertspeed)
 
 vec2 mob::getHeadPosition() const
 {
-	return head->getRotationCentrePosition();
+	return head->getRotationCenterPosition();
 }
 mob::~mob()
 {

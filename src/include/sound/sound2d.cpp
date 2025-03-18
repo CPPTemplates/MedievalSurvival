@@ -1,8 +1,7 @@
 #include "sound2d.h"
 #include <SFML/Audio/SoundBuffer.hpp>
-#include <AL/al.h>
 void sound2d::loadAudio() {
-    playingAudio = new alSound(*buffer);
+    playingAudio = new sf::Sound(*buffer);
 }
 
 microseconds sound2d::getDuration() {

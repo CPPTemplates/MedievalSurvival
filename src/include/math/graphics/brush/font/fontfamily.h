@@ -41,25 +41,22 @@ public:
 	}
 	//transform: from 
 	template<typename textBrush>
-	void DrawLetter(cletter& l, cmat3x3& transformFrom1x1, const texture& renderTarget, const textBrush& b) const;
+	inline void DrawLetter(cletter& l, cmat3x3& transformFrom1x1, const texture& renderTarget, const textBrush& b) const
+	{
+		//cint& letterIndex = l & 0xff;
+		cveci2& asciiOffset = getAsciiOffset((byte)l);
+
+		cveci2& texLetterSize = cveci2((int)(tex->defaultSize.x / asciiRowWidth));
+
+		crectanglei2& texMaskRect = crectanglei2(asciiOffset * texLetterSize, texLetterSize);
+
+		cmat3x3& multipliedTransform = mat3x3::cross(transformFrom1x1, mat3x3::fromRectToRect(crectangle2(texMaskRect), crectangle2(cvec2(1))));
+
+		//auto drawer = transformBrush<texture>(multipliedTransform, *tex);
+		fillTransparentRectangle(croppedLetterRects[(byte)l], multipliedTransform, b, renderTarget);
+	}
 
 private:
 
 };
 
-
-template<typename textBrush>
-inline void fontFamily::DrawLetter(cletter& l, cmat3x3& transformFrom1x1, const texture& renderTarget, const textBrush& b) const
-{
-	//cint& letterIndex = l & 0xff;
-	cveci2& asciiOffset = getAsciiOffset((byte)l);
-
-	cveci2& texLetterSize = cveci2((int)(tex->defaultSize.x / asciiRowWidth));
-
-	crectanglei2& texMaskRect = crectanglei2(asciiOffset * texLetterSize, texLetterSize);
-
-	cmat3x3& multipliedTransform = mat3x3::cross(transformFrom1x1, mat3x3::fromRectToRect(crectangle2(texMaskRect), crectangle2(cvec2(1))));
-
-	//auto drawer = transformBrush<texture>(multipliedTransform, *tex);
-	fillTransparentRectangle(croppedLetterRects[(byte)l], multipliedTransform, b, renderTarget);
-}

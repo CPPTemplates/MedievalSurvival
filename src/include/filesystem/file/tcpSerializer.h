@@ -47,11 +47,10 @@ struct tcpSerializer : streamBaseInterface
 					{
 						throw "sending empty packet!!";
 					}
-					//const sf::Socket::Status &status = 
-					socket->send(*packetCopy);
+					const sf::Socket::Status &status = socket->send(*packetCopy);
 					delete packetCopy; });
 
-		return sf::Socket::Done;
+		return sf::Socket::Status::Done;
 	}
 
 	inline void setReceivingPacket(sf::Packet *p)

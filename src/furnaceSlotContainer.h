@@ -6,6 +6,8 @@ struct furnaceSlotContainer : inventory
 	uiSlotContainer* furnaceOutputSlot = nullptr;
 	uiSlotContainer* furnaceInputSlot = nullptr;
 	uiSlotContainer* furnaceFuelSlot = nullptr;
+	resolutionTexture* burnProgressTexture = nullptr;
+	resolutionTexture* litProgressTexture = nullptr;
 	furnaceSlotContainer();
 	virtual bool addStack(itemStack& stack) override;
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;

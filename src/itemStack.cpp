@@ -203,7 +203,7 @@ void itemStack::render(crectangle2 &rect, const gameRenderData &targetData) cons
     }
 }
 
-#pragma optimize("", off)
+//#pragma optimize("", off)
 
 void itemStack::renderSingleItem(const gameRenderData &targetData) const
 {
@@ -296,7 +296,7 @@ void itemStack::renderSingleItem(const gameRenderData &targetData) const
     }
 }
 
-#pragma optimize("", on)
+//#pragma optimize("", on)
 
 int itemStack::getEnchantmentLevel(const enchantmentID &identifier) const
 {
