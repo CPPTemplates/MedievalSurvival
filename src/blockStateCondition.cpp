@@ -30,7 +30,7 @@ bool blockStateCondition::checkCondition(const dropData& data, std::mt19937& ran
 			}
 			else
 			{
-				//can't find block state property, so just return true
+				//can'T find block state property, so just return true
 				return true;
 			}
 		}

@@ -39,7 +39,7 @@ constexpr fp blazeRodSpeed[blazeRingCount]
 };
 struct blaze : public mob
 {
-	blaze(dimension* dimensionIn, cvec2& position);
+	blaze();
 	bodyPart2D* rods[blazeRingCount * blazeRingRodCount]{};
 	virtual void updateBodyParts() const override;
 };

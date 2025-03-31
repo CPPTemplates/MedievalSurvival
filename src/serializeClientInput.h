@@ -23,7 +23,7 @@ constexpr void serializeEventData(sf::Event& event, nbtSerializer& s) {
 	}
 
 	else if constexpr (std::is_same_v<eventType, sf::Event::KeyPressed> || std::is_same_v<eventType, sf::Event::KeyReleased>) {
-		//we don't need to serialize the scan code, that is the local key code.
+		//we don'T need to serialize the scan code, that is the local key code.
 		//when reading this data on another device, the result would be completely different.
 		s.serializeValue(L"alt", content.alt);
 		s.serializeValue(L"control", content.control);
@@ -63,7 +63,7 @@ inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
 		s.serializeValue(L"size", size);
 		if (!s.write)
 		{
-			//don't resize to target size, because we might not be able to serialize all events
+			//don'T resize to target size, because we might not be able to serialize all events
 			input.eventHistory.clear();
 		}
 		for (size_t i = 0; i < size; i++)

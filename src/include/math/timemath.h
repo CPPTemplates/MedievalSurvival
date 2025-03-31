@@ -95,12 +95,13 @@ inline std::time_t getEpochTime(const std::wstring& dateTime, const std::wstring
 	// Convert the tm structure to time_t value and return.
 	return std::mktime(&dt);
 }
-inline std::string timeToString(const std::string& format = "%A, %B %d, %Y %I:%M:%S %p") {
+inline std::string timeToString(const std::string& format = "{:%A, %B %d, %Y %I:%M:%S %p}") {
 	using namespace std::chrono;
-	auto now = system_clock::now();
+	//convert to seconds
+	auto now = time_point_cast<std::chrono::seconds>(system_clock::now());
 	return std::vformat(format, std::make_format_args(now));
-	//const auto& t = std::time(nullptr);
-	//const auto& tm = *std::localtime(&t);
+	//const auto& T = std::time(nullptr);
+	//const auto& tm = *std::localtime(&T);
 	//
 	//std::wostringstream oss;
 	//oss << std::put_time(&tm, format.c_str());

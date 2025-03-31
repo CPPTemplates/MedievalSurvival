@@ -228,7 +228,7 @@ int enchantingTableSlotContainer::countBookShelves(blockContainer* containerIn, 
 	//bookshelves required:
 
 	//b   b
-	//b t b
+	//b T b
 	int bookshelfCount = 0;
 	std::vector<veci2> checkPositions = { veci2(-2,0),veci2(-2,1),veci2(2,0),veci2(2,1) };
 	for (veci2 relativePosition : checkPositions)

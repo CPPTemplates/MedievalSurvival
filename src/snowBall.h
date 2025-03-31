@@ -2,6 +2,6 @@
 #include "throwable.h"
 struct snowBall : public throwable
 {
-	snowBall(dimension* dimensionIn, cvec2& position);
+	snowBall();
 	virtual void onCollision(const std::vector<entity*>& collidingEntities) override;
 };

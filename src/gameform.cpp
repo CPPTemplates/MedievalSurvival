@@ -97,7 +97,7 @@ bool gameForm::close()
 		currentServer->stop();
 	}
 	return true;
-	// can't close if you're not on the main menu
+	// can'T close if you're not on the main menu
 	// return currentMainMenu->visible;
 }
 
@@ -129,11 +129,11 @@ gameForm::gameForm() : form()
 	currentAccountEditor = new accountEditor(); // initialize accounteditor after the client, as the account editor edits data which the client has to retrieve first
 
 	currentWorldSelector = new worldSelector();
-	currentWorldSelector->refresh(); // can't put refresh() in base constructor because refresh() calls a virtual function
+	currentWorldSelector->refresh(); // can'T put refresh() in base constructor because refresh() calls a virtual function
 	currentWorldCreator = new worldCreator();
 
 	currentServerSelector = new serverSelector();
-	currentServerSelector->refresh(); // can't put refresh() in base constructor because refresh() calls a virtual function
+	currentServerSelector->refresh(); // can'T put refresh() in base constructor because refresh() calls a virtual function
 	currentServerEditor = new serverEditor();
 
 	addChildren({currentMainMenu, currentAccountEditor,
@@ -165,7 +165,7 @@ void gameForm::render(cveci2 &position, const texture &renderTarget)
 
 	// draw all controls
 	renderChildren(position, renderTarget);
-	// don't draw self
+	// don'T draw self
 	// form::render(position, renderTarget);
 	//handler.visualize(renderTarget);
 }

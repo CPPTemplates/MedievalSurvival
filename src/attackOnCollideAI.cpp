@@ -16,7 +16,7 @@ entity* attackOnCollideAI::findNearestAttackableTarget() const
 			cfp& currentDistanceSquared = (e->position - connectedEntity->position).lengthSquared();
 			if (currentDistanceSquared < nearestDistanceSquared)
 			{
-				if (targetNear(e))
+				if (canSeeTarget(e))
 				{
 					nearestDistanceSquared = currentDistanceSquared;
 					nearestEntity = e;

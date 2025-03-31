@@ -120,7 +120,7 @@ bool itemStack::addStack(itemStack &s, int amount)
             }
             else
             {
-                return false; // can't add, as they're not the same items
+                return false; // can'T add, as they're not the same items
             }
         }
         else

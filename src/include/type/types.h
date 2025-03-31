@@ -82,8 +82,8 @@ inline std::wstring demangle(const char* abiName)
 
 }
 
-template<typename t>
-inline std::wstring getClassName(const t& instance)
+template<typename T>
+inline std::wstring getClassName(const T& instance)
 {
 	std::wstring name = demangle(typeid(instance).name());
 	csize_t& spacePos = name.rfind(L' ');

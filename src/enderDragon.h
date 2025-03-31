@@ -114,8 +114,8 @@ constexpr fp enderDragonMaxAdditionalUpwardsKnockbackForce = 0x20;
 
 struct enderDragon : public mob
 {
-	enderDragon(dimension* dimensionIn, cvec2& position);
-	bodyPart2D* createDragonLeg(cvec2& attachmentPoint, crectangle2& upperLegTextureRect, cfp& upperLegAngle, crectangle2& lowerLegTextureRect, cfp& lowerLegAngle, crectangle2& footTextureRect, cfp& footAngle);
+	enderDragon();
+	bodyPart2D* createDragonLeg(cvec2& attachmentPoint, crectangle2& upperLegTextureRect, cfp& upperLegAngle, crectangle2& lowerLegTextureRect, cfp& lowerLegAngle, crectangle2& footTextureRect, cfp& footAngle) const;
 	static void createSpine(bodyPart2D* attachTo, bodyPart2D** spinePtr, cint spineCount);
 
 	virtual void render(const gameRenderData& targetData) const override;

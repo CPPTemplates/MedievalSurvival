@@ -1,5 +1,5 @@
 #include "magmaCube.h"
-magmaCube::magmaCube(dimension* dimensionIn, cvec2& position) :slime(dimensionIn, position, entityID::magma_cube)
+magmaCube::magmaCube() :slime(entityID::magma_cube)
 {
 	//call the derived function
 	resize();

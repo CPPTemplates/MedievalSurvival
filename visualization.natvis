@@ -22,11 +22,11 @@
 		</Expand>
 	</Type>
 	<Type Name="vectn&lt;*&gt;">
-		<DisplayString>{{ {($T1*)axis,$T2na} }}</DisplayString>
+		<DisplayString>{($T1*)axis._Elems,$T2na}</DisplayString>
 		<Expand>
 			<ArrayItems>
 				<Size>$T2</Size>
-				<ValuePointer>axis</ValuePointer>
+				<ValuePointer>axis._Elems</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>

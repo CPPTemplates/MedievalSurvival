@@ -3,10 +3,10 @@
 
 constexpr int fastestOctreenodeSize = 4;
 
-template<typename t, fsize_t axisCount>
+template<typename T, fsize_t axisCount>
 struct octreeNode
 {
-	t uniformValue = t();
+	T uniformValue = T();
 
 	static constexpr vectn<size_t, axisCount> size = vectn<size_t, axisCount>(fastestOctreenodeSize);
 
@@ -45,7 +45,7 @@ struct octreeNode
 	}
 
 	//recursiondepth = 1-> no child nodes
-	constexpr octreeNode(cfsize_t& recursionDepth, cvecin<axisCount>& position, const arraynd<t, axisCount>& values)
+	constexpr octreeNode(cfsize_t& recursionDepth, cvecin<axisCount>& position, const arraynd<T, axisCount>& values)
 	{
 		if (recursionDepth > 1)
 		{
@@ -94,5 +94,5 @@ struct octreeNode
 	}
 };
 
-template<typename t>
-using octreeNode3 = octreeNode<t, 3>;
+template<typename T>
+using octreeNode3 = octreeNode<T, 3>;

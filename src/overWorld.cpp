@@ -263,7 +263,7 @@ vec2 overWorld::getBiomeTextureCoords(cfp &x) const
 
 overWorld::~overWorld()
 {
-    // we can safely delete null pointers. it won't do anything
+    // we can safely delete null pointers. it won'T do anything
     delete biomeCoordinatesRandom[0];
     delete biomeCoordinatesRandom[1];
 

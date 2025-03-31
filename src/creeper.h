@@ -31,7 +31,7 @@ struct creeper : public fourLeggedMob
 	int explosionStrength = 3;
 	int ticksUntilFuse = creeperFuseLength;
 	bool ignited = false;
-	creeper(dimension* dimensionIn, cvec2& position);
+	creeper();
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void serializeValue(nbtSerializer& s) override;
 };

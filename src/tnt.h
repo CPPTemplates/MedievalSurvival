@@ -2,7 +2,7 @@
 #include "entity.h"
 struct tnt : public entity
 {
-	tnt(dimension* dimensionIn, cvec2& position);
+	tnt();
 	int ticksUntilFuse = 0;
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;

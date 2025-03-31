@@ -1,10 +1,10 @@
 #pragma once
 #include "octreenode.h"
 #include "raycastIterator.h"
-template<typename t, fsize_t axisCount>
+template<typename T, fsize_t axisCount>
 struct treeNodeIterator
 {
-	typedef octreeNode<t, axisCount> octreeNodeType;
+	typedef octreeNode<T, axisCount> octreeNodeType;
 
 	const octreeNodeType& currentNode;
 
@@ -61,7 +61,7 @@ struct treeNodeIterator
 		}
 	}
 
-	iteratorInline t getCurrentValue() const
+	iteratorInline T getCurrentValue() const
 	{
 		return childIt ? childIt->getCurrentValue() : currentNode.uniformValue;
 	}

@@ -37,5 +37,5 @@ constexpr fp wolfFrontLegOffset = ((wolfBodySize.getX() * 0.5) + wolfNeckSize.ge
 
 struct wolf : public fourLeggedMob
 {
-	wolf(dimension* dimensionIn, cvec2& position);
+	wolf();
 };

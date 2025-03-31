@@ -2,6 +2,7 @@
 #include "array/arraynd/arraynd.h"
 #include "math/rectangle/rectanglefunctions.h"
 #include "math/graphics/resolutiontexture.h"
+#include "math/graphics/fillRow.h"
 
 // the rect should be relative to the default size.
 template <typename brush0Type>
@@ -42,82 +43,8 @@ inline void fillTransformedRectangle(const resolutionTexture& tex, crectangle2& 
 	tex.recalculateScaledTextures();
 }
 
-// fill a row of pixels with a brush
-template <typename t, typename brush0Type>
-inline void fillRowUnsafe(const array2d<t>& array, cfsize_t& rowY, cfsize_t& minX, cfsize_t& maxX, const brush0Type& b)
-{
-	t* const rowPtr = array.baseArray + rowY * array.size.x;
-	t* const endPtr = rowPtr + maxX;
-
-	typedef typename brush0Type::inputType vectorType;
-	typedef typename vectorType::axisType axisType;
-
-	vectorType pos = vectorType((axisType)minX, (axisType)rowY);
-
-	for (t* ptr = rowPtr + minX; ptr < endPtr; ptr++, pos.x++)
-	{
-		*ptr = b.getValue((typename brush0Type::inputType)pos);
-	}
-}
-template <typename t, typename brush0Type>
-inline void fillRowUnsafe(const array2d<t>& array, cfsize_t& rowY, cfsize_t& minX, cfsize_t& maxX, const transformBrush<brush0Type>& b)
-{
-	t* const rowPtr = array.baseArray + rowY * array.size.x;
-	t* const endPtr = rowPtr + maxX;
-
-	vec2 pos = b.modifiedTransform.multPointMatrix(vec2((fp)minX, (fp)rowY));
-	vec2 step = b.modifiedTransform.getStep(axisID::x);
-
-	for (t* ptr = rowPtr + minX; ptr < endPtr; ptr++, pos += step)
-	{
-		*ptr = b.baseBrush.getValue((typename brush0Type::inputType)pos);
-	}
-}
-
-template <typename t, typename brush0Type, typename brush1Type>
-inline void fillRowUnsafe(const array2d<t>& array, cfsize_t& rowY, cfsize_t& minX, cfsize_t& maxX, const colorMixer<brush0Type, brush1Type>& b)
-	requires(std::is_base_of_v<array2d<t>, brush1Type >)
-{
-	if (&b.bottomBrush == &array)
-	{
-		t* const rowPtr = array.baseArray + rowY * array.size.x;
-		t* const endPtr = rowPtr + maxX;
-
-		typedef typename brush0Type::inputType vectorType;
-		typedef typename vectorType::axisType axisType;
-
-		vectorType pos = vectorType((axisType)minX, (axisType)rowY);
-
-		for (t* ptr = rowPtr + minX; ptr < endPtr; ptr++, pos.x++)
-		{
-			ccolor& topColor = b.topBrush.getValue(pos);
-			*ptr = topColor.a() == color::maxValue ? topColor : topColor.a() ? transitionColor(topColor, *ptr)
-				: *ptr;
-		}
-	}
-	else
-	{
-		fillRowUnsafe(array, rowY, minX, maxX, b);
-	}
-}
-
-template <typename t, typename brush0Type>
-inline void fillRow(const array2d<t>& array, cint& rowY, cint& minX, cint& maxX, const brush0Type& b)
-{
-	if ((rowY >= 0) && (rowY < (int)array.size.y) && (maxX > 0))
-	{
-		fillRowUnsafe(array, rowY, (fsize_t)math::maximum(minX, 0), math::minimum((fsize_t)maxX, array.size.x), b);
-	}
-}
-
-template <typename t, typename brush0Type>
-inline void fillRow(const array2d<t>& array, cint& rowY, cfp& minX, cfp& maxX, const brush0Type& b)
-{
-	// ceil rule
-	fillRow(array, rowY, math::maximum((int)math::ceil(minX), 0), math::minimum((int)math::ceil(maxX), (int)array.size.x), b);
-}
-template <typename t, typename brush0Type>
-inline void fillRectangleUnsafe(const array2d<t>& array, crectanglet2<fsize_t>& rect, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillRectangleUnsafe(const array2d<T>& array, crectanglet2<fsize_t>& rect, const brush0Type& b)
 {
 	cvect2<fsize_t>& pos11 = rect.pos1();
 	for (fsize_t currentY = rect.y; currentY < pos11.y; currentY++)
@@ -126,8 +53,8 @@ inline void fillRectangleUnsafe(const array2d<t>& array, crectanglet2<fsize_t>& 
 	}
 }
 
-template <typename t, typename brush0Type>
-inline void fillRectangle(const array2d<t>& array, rectanglei2 rect, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillRectangle(const array2d<T>& array, rectanglei2 rect, const brush0Type& b)
 {
 	if (array.getClientRect().cropClientRect(rect))
 	{
@@ -135,14 +62,14 @@ inline void fillRectangle(const array2d<t>& array, rectanglei2 rect, const brush
 	}
 }
 
-template <typename t, typename brush0Type>
-inline void fillRectangle(const array2d<t>& array, crectangle2& rect, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillRectangle(const array2d<T>& array, crectangle2& rect, const brush0Type& b)
 {
 	fillRectangle(array, ceilRectangle(rect), b);
 }
 
-template <typename t, typename brush0Type>
-inline void fillRectangleBorders(const array2d<t>& array, crectanglei2& rect, cint& borderThickness, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillRectangleBorders(const array2d<T>& array, crectanglei2& rect, cint& borderThickness, const brush0Type& b)
 {
 	fillRectangle(array, crectanglei2(rect.x, rect.y, rect.size.x, borderThickness), b);
 	fillRectangle(array, crectanglei2(rect.x, rect.y + rect.size.y - borderThickness, rect.size.x, borderThickness), b);
@@ -150,15 +77,15 @@ inline void fillRectangleBorders(const array2d<t>& array, crectanglei2& rect, ci
 	fillRectangle(array, crectanglei2(rect.x + rect.size.x - borderThickness, rect.y, borderThickness, rect.size.y), b);
 }
 // expands inward
-template <typename t, fsize_t n, typename brush0Type>
-inline void fillRectangleBorders(const array2d<t>& array, cveci2& pos00, cveci2& pos11, cint& borderThickness, const brush0Type& b)
+template <typename T, fsize_t n, typename brush0Type>
+inline void fillRectangleBorders(const array2d<T>& array, cveci2& pos00, cveci2& pos11, cint& borderThickness, const brush0Type& b)
 {
 	fillRectangleBorders(array, crectanglei2(pos00, pos11 - pos00 + 1), borderThickness, b);
 }
 // x, y: pos00 position
 // w, h: width, height
-template <typename t, typename brush0Type>
-inline void fillEllipse(const array2d<t>& array, crectangle2& rect, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillEllipse(const array2d<T>& array, crectangle2& rect, const brush0Type& b)
 {
 	rectanglei2 croppedRect = ceilRectangle(rect);
 
@@ -198,7 +125,7 @@ inline void fillEllipse(const array2d<t>& array, crectangle2& rect, const brush0
 				cint& minX = math::maximum((int)ceil(midx - dx), croppedRect.x);
 				cint& maxX = math::minimum((int)floor(midx + dx) + 1, croppedPos1.x); //+1 for also filling the last pixel
 
-				// t *ptr = array.baseArray + j * array.size.x + minX;
+				// T *ptr = array.baseArray + j * array.size.x + minX;
 
 				fillRow(array, j, minX, maxX, b);
 			}
@@ -206,8 +133,8 @@ inline void fillEllipse(const array2d<t>& array, crectangle2& rect, const brush0
 	}
 }
 
-template <typename t, typename brush0Type>
-inline void fillEllipseCentered(const array2d<t>& array, crectangle2& rect, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillEllipseCentered(const array2d<T>& array, crectangle2& rect, const brush0Type& b)
 {
 	fillEllipse(array, crectangle2(rect.pos0 - rect.size * 0.5, rect.size), b);
 }
@@ -218,8 +145,8 @@ inline void fillEllipseCentered(const array2d<t>& array, crectangle2& rect, cons
 // also worth checking out:
 // https://www.redblobgames.com/grids/line-drawing.html
 // https://www.geeksforgeeks.org/bresenhams-line-generation-algorithm/
-template <typename t, typename brush0Type>
-inline void fillLine(const array2d<t>& array, vec2 p0, vec2 p1, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillLine(const array2d<T>& array, vec2 p0, vec2 p1, const brush0Type& b)
 {
 	if (cropLine(p0, p1, crectangle2(vec2(), vec2(array.size - 1))))
 	{
@@ -227,8 +154,8 @@ inline void fillLine(const array2d<t>& array, vec2 p0, vec2 p1, const brush0Type
 	}
 }
 
-template <typename t, typename brush0Type>
-inline void fillLineUnsafe(const array2d<t>& array, cvec2& p0, cvec2& p1, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillLineUnsafe(const array2d<T>& array, cvec2& p0, cvec2& p1, const brush0Type& b)
 {
 	veci2 currentPosition = veci2((int)p0.x, (int)p0.y);
 	veci2 endPosition = veci2((int)p1.x, (int)p1.y);
@@ -255,20 +182,20 @@ inline void fillLineUnsafe(const array2d<t>& array, cvec2& p0, cvec2& p1, const 
 	}
 }
 
-template <typename t>
-inline constexpr int getStartY(cfp& minY, const array2d<t>& array)
+template <typename T>
+inline constexpr int getStartY(cfp& minY, const array2d<T>& array)
 {
 	return math::maximum(math::ceil(minY), 0);
 }
-template <typename t>
-inline constexpr int getEndY(cfp& maxY, const array2d<t>& array)
+template <typename T>
+inline constexpr int getEndY(cfp& maxY, const array2d<T>& array)
 {
 	return math::minimum(math::ceil(maxY), (int)array.size.y);
 }
 
 // this function fills a line expanded by a certain radius.
-template <typename t, typename brush0Type>
-inline void fillLine(const array2d<t>& array, cvec2& p0, cvec2& p1, cfp& radius, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillLine(const array2d<T>& array, cvec2& p0, cvec2& p1, cfp& radius, const brush0Type& b)
 {
 	cfp& radiusSquared = radius * radius;
 	auto fillRadiusRow = [&radiusSquared, &array, &b](cvec2& leftCenter, cvec2& rightCenter, cint& y)
@@ -337,8 +264,8 @@ inline void fillLine(const array2d<t>& array, cvec2& p0, cvec2& p1, cfp& radius,
 
 // shifted so the first point is the lowest point
 // clockwise!
-template <typename t, typename brush0Type>
-inline void fillPolygonShiftedUnsafe(const array2d<t>& array, const fastArray<vec2>& shiftedPositions, cfp& minY, cfp& maxY, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillPolygonShiftedUnsafe(const array2d<T>& array, const fastArray<vec2>& shiftedPositions, cfp& minY, cfp& maxY, const brush0Type& b)
 {
 	// 0 = left, 1 = right
 	fsize_t nextPointIndex[2]{ 0, 0 };
@@ -389,9 +316,9 @@ inline void fillPolygonShiftedUnsafe(const array2d<t>& array, const fastArray<ve
 	}
 }
 
-// positions can't overlap each other in the x axis
-template <typename t, typename brush0Type>
-inline void fillPolygon(const array2d<t>& array, const fastArray<vec2>& positions, const brush0Type& b)
+// positions can'T overlap each other in the x axis
+template <typename T, typename brush0Type>
+inline void fillPolygon(const array2d<T>& array, const fastArray<vec2>& positions, const brush0Type& b)
 {
 	// find highest y pos
 	fp highestY = 0;
@@ -437,8 +364,8 @@ inline void fillPolygon(const array2d<t>& array, const fastArray<vec2>& position
 	}
 }
 
-template <typename t, typename brush0Type>
-inline void fillTransformedRectangle(const array2d<t>& array, rectangle2 brushRect, cmat3x3& transform, const brush0Type& b)
+template <typename T, typename brush0Type>
+inline void fillTransformedRectangle(const array2d<T>& array, rectangle2 brushRect, cmat3x3& transform, const brush0Type& b)
 {
 	if (transform.isStraight()) // simple check which can save a lot of time
 	{

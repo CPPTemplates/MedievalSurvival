@@ -8,8 +8,8 @@
 //    {
 //        numbers[0] += 
 //    }
-//    template <typename t>
-//    operator t(){
-//        return (t)numbers[0] + ((t)numbers[1]) * (t)0x100000000;
+//    template <typename T>
+//    operator T(){
+//        return (T)numbers[0] + ((T)numbers[1]) * (T)0x100000000;
 //    }
 //};

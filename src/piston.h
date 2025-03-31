@@ -6,7 +6,7 @@ struct piston : public entity
 	veci2 connectedPistonPosition = cveci2();
 	movableBlockContainer* movingBlocks = nullptr;
 
-	piston(dimension* dimensionIn, cvec2& position);
+	piston();
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
 

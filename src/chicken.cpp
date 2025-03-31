@@ -18,7 +18,7 @@
 #include "soundList.h"
 
 constexpr fp chickenAirGravityForce = 0.4;
-chicken::chicken(dimension *dimensionIn, cvec2 &position) : mob(dimensionIn, position, entityID::chicken), passiveMob(dimensionIn, position, entityID::chicken)
+chicken::chicken() : mob(entityID::chicken), passiveMob(entityID::chicken)
 {
 	resetEggLayTime();
 
@@ -55,7 +55,7 @@ chicken::chicken(dimension *dimensionIn, cvec2 &position) : mob(dimensionIn, pos
 
 void chicken::updateBodyParts() const
 {
-	mainBodyPart->translate = position + cvec2(0, chickenLowerLegSize.y + chickenUpperLegSize.y);
+	mainBodyPart->translate = position + cvec2(0, leftLowerLeg->size.y + leftUpperLeg->size.y);
 
 	cfp rightLegangle = ((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.getSineAmpAt(totalLegDistance);
 

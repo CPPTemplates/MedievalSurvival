@@ -6,12 +6,12 @@ fastList<tag *> tagList = fastList<tag *>();
 
 tag *readTag(const std::wstring &tagName, const stdPath &tagDirectory)
 {
-	tag *t = new tag(tagName);
+	tag *T = new tag(tagName);
 
 	const jsonContainer &content = readJson(stringToWString(readAllText(tagDirectory / (tagName + jsonFileExtension))));
 	const size_t valuesIndex = content.getChildIndex(L"values");
 	if (valuesIndex == std::wstring::npos)
-		return t;
+		return T;
 
 	const std::vector<jsonContainer> &taggedItemsContainer = content.children[valuesIndex].children;
 	for (const jsonContainer &taggedItem : taggedItemsContainer)
@@ -35,7 +35,7 @@ tag *readTag(const std::wstring &tagName, const stdPath &tagDirectory)
 			tag *taggedTag = tagList[currentTagID];
 			if (taggedTag->taggedComparables->size) // useless if it does not have tagged items
 			{
-				t->taggedComparables->push_back(taggedTag);
+				T->taggedComparables->push_back(taggedTag);
 			}
 		}
 		else
@@ -44,16 +44,16 @@ tag *readTag(const std::wstring &tagName, const stdPath &tagDirectory)
 			if ((int)identifier != -1)
 			{
 				itemData *taggedItem = itemList[identifier];
-				t->taggedComparables->push_back(taggedItem);
+				T->taggedComparables->push_back(taggedItem);
 			}
 		}
 	}
-	t->taggedComparables->update();
+	T->taggedComparables->update();
 
 	// add to the tag list either way to stop constantly loading from happening
-	tagList.push_back(t);
+	tagList.push_back(T);
 	tagList.update();
-	return t;
+	return T;
 }
 bool tag::hasTaggedItems()
 {

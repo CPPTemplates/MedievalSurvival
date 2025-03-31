@@ -83,7 +83,7 @@ void collisionEdgeData::addEdge(fp edgeStart, fp edgeLength)
 				//not touching
 				mergeIndex = i + 1;
 			}
-			//don't increment nextindex, because all merging edges will be removed
+			//don'T increment nextindex, because all merging edges will be removed
 			while (mergeIndex < edges.size() && (edgeStart + edgeLength) >= edges[mergeIndex].x)
 			{
 				//merge forwards

@@ -10,7 +10,6 @@
 #include "mushroomColorID.h"
 #include "constants.h"
 #include "entityID.h"
-#include "constants.h"
 #include "harvestTier.h"
 #include "toolTypeID.h"
 #include "armorTier.h"

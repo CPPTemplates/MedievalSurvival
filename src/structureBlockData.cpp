@@ -1,6 +1,6 @@
 #include "structureBlockData.h"
 #include "nbt/nbtSerializer.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 void structureBlockData::serializeValue(nbtSerializer& s)
 {
 	s.serializeValue(std::wstring(L"structure name"), structureName);

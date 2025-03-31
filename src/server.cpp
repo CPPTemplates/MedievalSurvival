@@ -24,7 +24,7 @@ void server::execute()
 	{
 		listeners[defaultPort] = new sf::TcpListener();
 		listener = listeners[defaultPort];
-		// it doesn't work like this:
+		// it doesn'T work like this:
 		// listener = listeners[defaultPort] = new sf::TcpListener();
 		while (!stopping && (portStatus = listener->listen(defaultPort)) != sf::Socket::Status::Done)
 		{
@@ -137,16 +137,16 @@ void server::renderClients()
 		{
 			if (!c->encoder.shouldCompress || currentWorld->ticksSinceStart > lastRenderTick)
 			{
-				// mobile device, don't send that many frames to avoid overloading it
+				// mobile device, don'T send that many frames to avoid overloading it
 				threads.push_back(new std::thread(renderAsync, c));
 			}
 		}
 	}
 	// wait until all screens have rendered
-	for (auto t : threads)
+	for (auto T : threads)
 	{
-		t->join();
-		delete t;
+		T->join();
+		delete T;
 	}
 	lastRenderTick = currentWorld->ticksSinceStart;
 	currentBenchmark->removeOldBenchmarks(); // the rendering time will be displayed in the next render session
@@ -167,7 +167,7 @@ void server::tick()
 	constexpr fp playerLoadDistance = 0x20; // the distance which should always be loaded in around the player, with or without a camera looking at it
 
 	// visiblerange * 2 because the camera can load in 2x further
-	// keep chunks around the player loaded. the visible range will only update every frame, but that doesn't matter much
+	// keep chunks around the player loaded. the visible range will only update every frame, but that doesn'T matter much
 	bool inEnd = false;
 	everyoneSleeping = true;
 	for (const auto *client : clients)
@@ -360,7 +360,7 @@ playerSocket *listenForIncomingConnections()
 		}
 		else
 		{
-			// this client didn't authenticate
+			// this client didn'T authenticate
 			delete socket;
 		}
 		//}

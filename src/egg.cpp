@@ -1,5 +1,5 @@
 #include "egg.h"
-egg::egg(dimension* dimensionIn, cvec2& position) : throwable(dimensionIn, position, entityID::egg)
+egg::egg() : throwable(entityID::egg)
 {
 }
 void egg::onCollision(const std::vector<entity*>& collidingEntities)

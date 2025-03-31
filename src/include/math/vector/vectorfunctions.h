@@ -24,20 +24,20 @@ constexpr vectn<outputType, axisCount> ceilVector(const vectn<inputType, axisCou
 
 // https://www.omnicalculator.com/math/angle-between-two-vectors
 // a and b have to be NORMALIZED
-template <typename t>
-inline fp angleBetween(const vect2<t> &a, const vect2<t> &b)
+template <typename T>
+inline fp angleBetween(const vect2<T> &a, const vect2<T> &b)
 {
 	return acos(vec2::dot(a, b));
 }
 
 // y is greater at the top
-template <typename t>
-constexpr bool woundClockwise(const vect2<t> &a, const vect2<t> &b, const vect2<t> &c)
+template <typename T>
+constexpr bool woundClockwise(const vect2<T> &a, const vect2<T> &b, const vect2<T> &c)
 {
 	// counter-clockwise
-	const vect2<t> &dab = b - a;
-	const vect2<t> &dac = c - a;
-	const t &winding = dab.x * dac.y - dab.y * dac.x;
+	const vect2<T> &dab = b - a;
+	const vect2<T> &dac = c - a;
+	const T &winding = dab.x * dac.y - dab.y * dac.x;
 	return winding < 0;
 }
 
@@ -64,13 +64,13 @@ constexpr returnIndexType singleDimensionalIndex(const vectn<indexT, n> &index, 
 				return sdIndex;
 			}
 		}
-		// can't come here
+		// can'T come here
 		// assumeInRelease(false);
 	}
 }
 
-template <typename t, fsize_t n>
-constexpr bool inBounds(const vectn<t, n> &index, const vectn<t, n> &size)
+template <typename T, fsize_t n>
+constexpr bool inBounds(const vectn<T, n> &index, const vectn<T, n> &size)
 {
 	for (auto it : std::views::zip(index, size))
 	{
@@ -82,10 +82,10 @@ constexpr bool inBounds(const vectn<t, n> &index, const vectn<t, n> &size)
 	return true;
 }
 
-template <typename t, fsize_t n>
-constexpr vectn<t, n> reflect(const vectn<t, n> &vector, const vectn<t, n> &normal)
+template <typename T, fsize_t n>
+constexpr vectn<T, n> reflect(const vectn<T, n> &vector, const vectn<T, n> &normal)
 {
-	return vector - (2 * vectn<t, n>::dot(vector, normal)) * normal;
+	return vector - (2 * vectn<T, n>::dot(vector, normal)) * normal;
 }
 
 //https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
@@ -95,11 +95,11 @@ constexpr fp distanceToLineSegment(cvec2 &lineStart, cvec2 &lineEnd, cvec2 &p)
 	cfp &l2 = (lineStart - lineEnd).lengthSquared(); // i.e. |lineEnd-lineStart|^2 -  avoid a sqrt
 	if (l2 == 0.0)
 		return (p - lineStart).length(); // lineStart == lineEnd case
-	// Consider the line extending the segment, parameterized as lineStart + t (lineEnd - lineStart).
+	// Consider the line extending the segment, parameterized as lineStart + T (lineEnd - lineStart).
 	// We find projection of point p onto the line.
-	// It falls where t = [(p-lineStart) . (lineEnd-lineStart)] / |lineEnd-lineStart|^2
-	// We clamp t from [0,1] to handle points outside the segment vw.
-	cfp &t = math::clamp(vec2::dot(p - lineStart, lineEnd - lineStart) / l2, (fp)0, (fp)1);
-	const cvec2 &projection = math::lerp(lineStart, lineEnd, t); // Projection falls on the segment
+	// It falls where T = [(p-lineStart) . (lineEnd-lineStart)] / |lineEnd-lineStart|^2
+	// We clamp T from [0,1] to handle points outside the segment vw.
+	cfp &T = math::clamp(vec2::dot(p - lineStart, lineEnd - lineStart) / l2, (fp)0, (fp)1);
+	const cvec2 &projection = math::lerp(lineStart, lineEnd, T); // Projection falls on the segment
 	return (p - projection).length();
 }

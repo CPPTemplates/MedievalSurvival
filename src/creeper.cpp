@@ -5,7 +5,7 @@
 #include "wanderAI.h"
 #include "attackOnCollideAI.h"
 #include "nbt/nbtSerializer.h"
-creeper::creeper(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position, entityID::creeper), fourLeggedMob(dimensionIn, position, entityID::creeper)
+creeper::creeper() :mob(entityID::creeper), fourLeggedMob(entityID::creeper)
 {
 	tasks = new taskList(this, {
 	new explodeAI(this, entityID::human),

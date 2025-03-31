@@ -1,5 +1,5 @@
 #include "fireBall.h"
-fireBall::fireBall(dimension *dimensionIn, cvec2 &position, const entityID &entityType) : throwable(dimensionIn, position, entityType)
+fireBall::fireBall(const entityID &entityType) : throwable(entityType)
 {
 }
 

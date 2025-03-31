@@ -58,7 +58,7 @@ struct dimension : nbtSerializable, tickableBlockContainer
 	virtual void serializeValue(nbtSerializer& s) override;
 	virtual void generateStructures(chunk& generateIn);
 	virtual biomeID getBiome(cvec2& position) const = 0;
-	virtual void renderSky(crectangle2& blockRect, crectangle2 & drawRect, const gameRenderData& targetData) const = 0;
+	virtual void renderSky(crectangle2& blockRect, crectangle2& drawRect, const gameRenderData& targetData) const = 0;
 
 	chunk* getChunk(cveci2& chunkCoordinates) const;
 	chunk* loadChunkIfNotLoaded(cveci2& chunkCoordinates, const chunkLoadLevel& loadLevel);
@@ -78,7 +78,7 @@ struct dimension : nbtSerializable, tickableBlockContainer
 
 	//returns the position of the nearest biome with this id
 	bool locateBiomes(const std::vector<biomeID>& biomesToLocate, cvec2& initialPosition, vec2& resultingPosition) const;
-	
+
 	//returns the chunk coordinates of the nearest structure with this id
 	bool locateStructureChunkCoordinates(const structureID& id, cveci2& initialChunkCoordinates, veci2& resultingChunkCoordinates);
 	//returns the position of the nearest structure with this id
@@ -88,23 +88,24 @@ struct dimension : nbtSerializable, tickableBlockContainer
 
 	virtual bool inBounds(cveci2& position) const final;
 
-	template<typename t>
-	array2d<t> getArrayValues(crectanglei2& rect, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
+	template<typename T>
+	array2d<T> getArrayValues(crectanglei2& rect, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
 
 	virtual void* getArrayValuePointerUnsafe(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel) override;
 
-	virtual bool canAddUpdates(cveci2& position) final;
 
 	collisionDataCollection getRecursiveHitboxCollisionData(crectangle2& box, cvec2& hitboxSpeed);
 
 	virtual std::vector<entity*> findNearEntities(cvec2& position, cfp& radius) final;
 	virtual std::vector<entity*> findNearEntities(crectangle2& searchBox) final;
+
+	chunkLoadLevel getLoadLevel(cveci2& position) const override;
 };
 
-template<typename t>
-inline array2d<t> dimension::getArrayValues(crectanglei2& rect, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
+template<typename T>
+inline array2d<T> dimension::getArrayValues(crectanglei2& rect, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
 {
-	array2d<t> values(rect.size);
+	array2d<T> values(rect.size);
 
 	//array elements that are out of bounds
 
@@ -139,9 +140,9 @@ inline array2d<t> dimension::getArrayValues(crectanglei2& rect, const arrayDataT
 
 			cveci2& chunkArraySize = to - from;
 
-			t* chunkYPtr = (t*)getArrayValuePointerUnsafe(from, dataType, minimalLoadLevel);
-			const t* const& chunkYEndPtr = chunkYPtr + chunkArraySize.y * chunkSize.x;
-			t* arrayYPtr = values.baseArray + ((from.x - rect.x) + ((from.y - rect.y) * rect.w));
+			T* chunkYPtr = (T*)getArrayValuePointerUnsafe(from, dataType, minimalLoadLevel);
+			const T* const& chunkYEndPtr = chunkYPtr + chunkArraySize.y * chunkSize.x;
+			T* arrayYPtr = values.baseArray + ((from.x - rect.x) + ((from.y - rect.y) * rect.w));
 			while (chunkYPtr != chunkYEndPtr)
 			{
 				std::copy(chunkYPtr, chunkYPtr + chunkArraySize.x, arrayYPtr);

@@ -20,7 +20,7 @@ constexpr vec2 endermanArmSize = vec2(endermanRightArmTextureRect.size) * enderm
 constexpr rectangle2 endermanHitbox = crectangle2(-endermanHitboxSize.getX() * 0.5, 0, endermanHitboxSize.getX(), endermanHitboxSize.getY());
 struct enderman : public humanoid
 {
-	enderman(dimension* dimensionIn, cvec2& position);
+	enderman();
 	virtual void serializeValue(nbtSerializer& s) override;
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source) override;
 };

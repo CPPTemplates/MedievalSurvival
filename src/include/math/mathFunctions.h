@@ -16,34 +16,34 @@ namespace math
 	constexpr fp fpepsilon = 0.0001;
 	constexpr fp averageSinusHillValue = 2.0 / PI;
 
-	template <typename t>
-	constexpr t sqrt(const t& x, const t& curr, const t& prev)
+	template <typename T>
+	constexpr T sqrt(const T& x, const T& curr, const T& prev)
 	{
-		return curr == prev ? curr : sqrt(x, (t)0.5 * (curr + x / curr), curr);
+		return curr == prev ? curr : sqrt(x, (T)0.5 * (curr + x / curr), curr);
 	}
 
-	template <typename t>
-	constexpr t sqrt(const t& x)
+	template <typename T>
+	constexpr T sqrt(const T& x)
 	{
-		return x >= (t)0 && x < std::numeric_limits<t>::infinity()
-				   ? sqrt(x, x, (t)0)
-				   : std::numeric_limits<t>::quiet_NaN();
+		return x >= (T)0 && x < std::numeric_limits<T>::infinity()
+				   ? sqrt(x, x, (T)0)
+				   : std::numeric_limits<T>::quiet_NaN();
 	}
 	constexpr fp sqrt2 = sqrt(2.0);
 
-	template <typename t = fsize_t>
-	constexpr t getNextPowerOf2Multiplied(const t &n)
+	template <typename T = fsize_t>
+	constexpr T getNextPowerOf2Multiplied(const T &n)
 	{
-		t i = 1;
+		T i = 1;
 		for (; i < n; i *= 2)
 			;
 		return i;
 	}
-	template <typename t = fsize_t>
-	constexpr t getNextPowerOf2(const t &n)
+	template <typename T = fsize_t>
+	constexpr T getNextPowerOf2(const T &n)
 	{
-		t power = 1;
-		for (t i = 1; i < n; i *= 2)
+		T power = 1;
+		for (T i = 1; i < n; i *= 2)
 		{
 			power++;
 		}
@@ -90,14 +90,14 @@ namespace math
 	{
 		return std::log(value) / std::log(base);
 	}
-	template <typename t>
-	constexpr t squared(const t &value)
+	template <typename T>
+	constexpr T squared(const T &value)
 	{
 		return value * value;
 	}
 
-	template <typename t>
-	constexpr t absolute(const t &value)
+	template <typename T>
+	constexpr T absolute(const T &value)
 	{
 		return value < 0 ? -value : value;
 	}
@@ -134,54 +134,54 @@ namespace math
 	}
 
 	// floors a value to a unit (floor(5,2) will return 4)
-	template <typename t>
-	constexpr t floor(const t value, const t unit)
+	template <typename T>
+	constexpr T floor(const T value, const T unit)
 	{
 		cfp divided = (fp)value / (fp)unit;			// divide by the value
 		cfp flooredValue = std::floor(divided); // round towards zero
-		return (t)(flooredValue * (fp)unit);		// multiply back, so we basically rounded it down in units of [unit]
+		return (T)(flooredValue * (fp)unit);		// multiply back, so we basically rounded it down in units of [unit]
 	}
 	// floors a value to a unit and substracts the input from the result (mod(5,2) will return 1)
-	template <typename t>
-	constexpr t mod(const t value, const t unit)
+	template <typename T>
+	constexpr T mod(const T value, const T unit)
 	{
 		return value - floor(value, unit); // return difference
 	}
 
 	// returns a when w = 0
 	// returns b when w = 1
-	template <typename t>
-	constexpr t lerp(const t &a, const t &b, cfp &w)
+	template <typename T>
+	constexpr T lerp(const T &a, const T &b, cfp &w)
 	{
-		return (t)(a + (b - a) * w);
+		return (T)(a + (b - a) * w);
 	}
 
 	// 1 0 1 2 4
 
-	template <typename t>
-	constexpr t mapValue(const t &in, const t &imin, const t &imax, const t &omin, const t &omax)
+	template <typename T>
+	constexpr T mapValue(const T &in, const T &imin, const T &imax, const T &omin, const T &omax)
 	{
-		const t &mult = (omax - omin) / (imax - imin);
-		const t &plus = omin - (imin * mult);
+		const T &mult = (omax - omin) / (imax - imin);
+		const T &plus = omin - (imin * mult);
 		return in * mult + plus;
 	}
 
 	// creates an exponential curve, steeper at the min side.
 
 	// steepness: 0 =
-	template <typename t>
-	constexpr t mapValueExponentiallyMinCurve(const t &in, const t &imin, const t &imax, const t &omin, const t &omax, const t &steepness)
+	template <typename T>
+	constexpr T mapValueExponentiallyMinCurve(const T &in, const T &imin, const T &imax, const T &omin, const T &omax, const T &steepness)
 	{
 		// imin: 1
 		// imax: 0
-		const t &inRange0To1Inverted = (imax - in) / (imax - imin);
+		const T &inRange0To1Inverted = (imax - in) / (imax - imin);
 
-		const t &maxPow = 1;
-		const t &minPow = pow(0.5, steepness);
+		const T &maxPow = 1;
+		const T &minPow = pow(0.5, steepness);
 
-		const t &outputInverted = pow(0.5, inRange0To1Inverted * steepness);
+		const T &outputInverted = pow(0.5, inRange0To1Inverted * steepness);
 
-		const t &outputInRange0To1Inverted = (outputInverted - minPow) / (maxPow - minPow);
+		const T &outputInRange0To1Inverted = (outputInverted - minPow) / (maxPow - minPow);
 
 		// invert
 		return omin + (omax - omin) * outputInRange0To1Inverted;
@@ -189,32 +189,32 @@ namespace math
 
 	// creates an exponential curve, steeper at the max side.
 	// swapped order
-	template <typename t>
-	constexpr t mapValueExponentiallyMaxCurve(const t &in, const t &imin, const t &imax, const t &omin, const t &omax, const t &steepness)
+	template <typename T>
+	constexpr T mapValueExponentiallyMaxCurve(const T &in, const T &imin, const T &imax, const T &omin, const T &omax, const T &steepness)
 	{
 		return mapValueExponentiallyMinCurve(in, imax, imin, omax, omin, steepness);
 	}
 
 	// to limit a value between bounds
-	template <typename t>
-	constexpr t clamp(const t &value, const t &min, const t &max)
+	template <typename T>
+	constexpr T clamp(const T &value, const T &min, const T &max)
 	{
 		return value < min ? min : value > max ? max
 											   : value;
 	}
-	template <typename t>
-	constexpr int GetSign(const t &value)
+	template <typename T>
+	constexpr int GetSign(const T &value)
 	{
 		return value > 0 ? 1 : value < 0 ? -1
 										 : 0;
 	}
 
-	template <typename t>
-	constexpr t powSizeTSimple(const t &value, cfsize_t &power)
+	template <typename T>
+	constexpr T powSizeTSimple(const T &value, cfsize_t &power)
 	{
 		if (power)
 		{
-			t result = value;
+			T result = value;
 			fsize_t raisedPower = 1;
 
 			while (raisedPower < power)
@@ -230,7 +230,7 @@ namespace math
 		}
 		else
 		{
-			return (t)1;
+			return (T)1;
 		}
 	}
 
@@ -281,18 +281,18 @@ namespace math
 	// a + (b - a) * w = c
 	//(b - a) * w = c - a
 	// w = (c - a)/(b - a)
-	template <typename t>
-	inline fp getw(const t a, const t b, const t c)
+	template <typename T>
+	inline fp getw(const T a, const T b, const T c)
 	{
 		return (c - a) / (b - a);
 	}
-	template <typename t>
-	constexpr t maximum(const t &left, const t &right)
+	template <typename T>
+	constexpr T maximum(const T &left, const T &right)
 	{
 		return left > right ? left : right;
 	}
-	template <typename t>
-	constexpr t minimum(const t &left, const t &right)
+	template <typename T>
+	constexpr T minimum(const T &left, const T &right)
 	{
 		return left < right ? left : right;
 	}
@@ -306,8 +306,8 @@ namespace math
 	{
 		return value - floor(value);
 	}
-	template <typename t>
-	inline int sign(const t &value)
+	template <typename T>
+	inline int sign(const T &value)
 	{
 		return value > 0 ? 1 : value < 0 ? -1
 										 : 0;

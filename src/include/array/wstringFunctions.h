@@ -277,8 +277,8 @@ inline size_t FindLine(wstringContainer lines, size_t offset, std::wstring seekf
 }
 
 //rounds a number to a specified amount of digits and converts it to a string
-template<typename t>
-inline std::wstring toWstringDigits(const t& input, cfsize_t& digits)
+template<typename T>
+inline std::wstring toWstringDigits(const T& input, cfsize_t& digits)
 {
 	std::wstringstream stream;
 	stream << std::fixed << std::setprecision(digits) << input;

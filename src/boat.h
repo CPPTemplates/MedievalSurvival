@@ -8,7 +8,7 @@ struct boat :public hollowRidableEntity
 	fp paddleRotations = 0;
 	woodTypeID boatType = (woodTypeID)0;
 	static fp getPaddleAngle(cfp& paddleRotations);
-	boat(dimension* dimensionIn, cvec2& position);
+	boat();
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void tick() override;
 	virtual void onDeath() override;

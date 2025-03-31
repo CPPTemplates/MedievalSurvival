@@ -118,10 +118,10 @@
 #include "include/math/graphics/graphicsFunctions.h"
 #include "resourceLoader.h"
 
-minecraftFont *currentMinecraftFont = nullptr;
-fontFamily *currentMinecraftFontFamily = nullptr;
+minecraftFont* currentMinecraftFont = nullptr;
+fontFamily* currentMinecraftFontFamily = nullptr;
 
-std::vector<resolutionTexture *> loadedTextures = std::vector<resolutionTexture *>();
+std::vector<resolutionTexture*> loadedTextures = std::vector<resolutionTexture*>();
 std::wstring creditsText = std::wstring();
 
 const std::wstring musicDiscNames[musicDiscTypeCount]{
@@ -137,7 +137,7 @@ const std::wstring musicDiscNames[musicDiscTypeCount]{
 	std::wstring(L"ward"),
 	std::wstring(L"11"),
 	std::wstring(L"wait"),
-	std::wstring(L"pigstep")};
+	std::wstring(L"pigstep") };
 
 const std::wstring oreBlockNames[oreBlockTypeCount]{
 	std::wstring(L"coal"),
@@ -148,7 +148,7 @@ const std::wstring oreBlockNames[oreBlockTypeCount]{
 	std::wstring(L"gold"),
 	std::wstring(L"diamond"),
 	std::wstring(L"nether_quartz"),
-	std::wstring(L"nether_gold")};
+	std::wstring(L"nether_gold") };
 
 constexpr bool smeltable[oreBlockTypeCount]{
 	false,
@@ -159,14 +159,14 @@ constexpr bool smeltable[oreBlockTypeCount]{
 	true,
 	false,
 	false,
-	false};
+	false };
 
 // PER ARMOR TYPE
 constexpr fp leatherArmorWeakness[armorTypeCount]{
 	1.0 / 65,
 	1.0 / 75,
 	1.0 / 80,
-	1.0 / 55};
+	1.0 / 55 };
 
 constexpr fp armorTierWeaknessMultiplier[armorTierCount]{
 	1.0 / 5,
@@ -185,7 +185,7 @@ constexpr fp toolWeakness[toolTierCount]{
 	1.0 / 0x80,
 	1.0 / 0x100,
 	1.0 / 0x600,
-	1.0 / 0x800};
+	1.0 / 0x800 };
 
 constexpr int armorEnchantability[armorTierCount]{
 	15,
@@ -207,42 +207,42 @@ constexpr int toolEnchantability[toolTierCount]{
 
 
 
-idList<block *, blockID>
-	blockList = idList<block *, blockID>();
-idList<itemData *, itemID> itemList = idList<itemData *, itemID>();
-idList<dimensionData *, dimensionID> dimensionDataList = idList<dimensionData *, dimensionID>();
-idList<biomeData *, biomeID> biomeDataList = idList<biomeData *, biomeID>();
-idList<enchantmentData *, enchantmentID> enchantmentDataList = idList<enchantmentData *, enchantmentID>();
-idList<statusEffectData *, statusEffectID> statusEffectDataList = idList<statusEffectData *, statusEffectID>();
-idList<gameModeData *, gameModeID> gameModeDataList = idList<gameModeData *, gameModeID>();
-idList<noteData *, noteTypeID> noteDataList = idList<noteData *, noteTypeID>();
-idList<structureData *, structureID> structureDataList = idList<structureData *, structureID>();
-idList<mushroomColorData *, mushroomColorID> mushroomColorDataList = idList<mushroomColorData *, mushroomColorID>();
-idList<netherVineTypeData *, netherVineTypeID> netherVineTypeDataList = idList<netherVineTypeData *, netherVineTypeID>();
-idList<woodTypeData *, woodTypeID> woodTypeDataList = idList<woodTypeData *, woodTypeID>();
-idList<particleTypeData *, particleID> particleTypeDataList = idList<particleTypeData *, particleID>();
-idList<fireworkShapeData *, fireworkShapeID> fireworkShapeDataList = idList<fireworkShapeData *, fireworkShapeID>();
+idList<block*, blockID>
+blockList = idList<block*, blockID>();
+idList<itemData*, itemID> itemList = idList<itemData*, itemID>();
+idList<dimensionData*, dimensionID> dimensionDataList = idList<dimensionData*, dimensionID>();
+idList<biomeData*, biomeID> biomeDataList = idList<biomeData*, biomeID>();
+idList<enchantmentData*, enchantmentID> enchantmentDataList = idList<enchantmentData*, enchantmentID>();
+idList<statusEffectData*, statusEffectID> statusEffectDataList = idList<statusEffectData*, statusEffectID>();
+idList<gameModeData*, gameModeID> gameModeDataList = idList<gameModeData*, gameModeID>();
+idList<noteData*, noteTypeID> noteDataList = idList<noteData*, noteTypeID>();
+idList<structureData*, structureID> structureDataList = idList<structureData*, structureID>();
+idList<mushroomColorData*, mushroomColorID> mushroomColorDataList = idList<mushroomColorData*, mushroomColorID>();
+idList<netherVineTypeData*, netherVineTypeID> netherVineTypeDataList = idList<netherVineTypeData*, netherVineTypeID>();
+idList<woodTypeData*, woodTypeID> woodTypeDataList = idList<woodTypeData*, woodTypeID>();
+idList<particleTypeData*, particleID> particleTypeDataList = idList<particleTypeData*, particleID>();
+idList<fireworkShapeData*, fireworkShapeID> fireworkShapeDataList = idList<fireworkShapeData*, fireworkShapeID>();
 
-resolutionTexture *loadRotatedTexture(const stdPath &path, cvec2 &defaultSize, cint &angle)
+resolutionTexture* loadRotatedTexture(const stdPath& path, cvec2& defaultSize, cint& angle)
 {
-	resolutionTexture *originalImage = loadTextureFromResourcePack(path, false);
+	resolutionTexture* originalImage = loadTextureFromResourcePack(path, false);
 	texture rotatedImage(cveci2(blockTextureSize), false);
 	fillTransformedTexture(mat3x3::rotate(cvec2(blockTextureSize * 0.5), angle), *originalImage, rotatedImage);
 
 	delete originalImage;
-	resolutionTexture *rotatedTex = new resolutionTexture(rotatedImage);
+	resolutionTexture* rotatedTex = new resolutionTexture(rotatedImage);
 	loadedTextures.push_back(rotatedTex);
 	return rotatedTex;
 }
 
-static resolutionTexture *loadDragonEggTexture()
+static resolutionTexture* loadDragonEggTexture()
 {
-	resolutionTexture *dragonEggSurfaceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dragon_egg.png"));
+	resolutionTexture* dragonEggSurfaceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dragon_egg.png"));
 	// resolutionTexture *dragonEggGraphics = new resolutionTexture(texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size)), cvec2(blockTextureSize));
 	//  fill oval which is cut off at the bottom
 
 	cfp cutOffPart = 0.2;
-	const texture &dragonEggGraphics = texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size));
+	const texture& dragonEggGraphics = texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size));
 	rectangle2 dragonEggTextureRect = crectangle2(0, dragonEggGraphics.size.x * -cutOffPart, dragonEggGraphics.size.x, dragonEggGraphics.size.y * (1 + cutOffPart));
 
 	fillEllipse(dragonEggGraphics, dragonEggTextureRect, *dragonEggSurfaceTexture);
@@ -251,9 +251,9 @@ static resolutionTexture *loadDragonEggTexture()
 	return dragonEggTex;
 }
 
-resolutionTexture *loadRailsTexture(const stdPath &path)
+resolutionTexture* loadRailsTexture(const stdPath& path)
 {
-	resolutionTexture *tex = loadTextureFromResourcePack(path, false);
+	resolutionTexture* tex = loadTextureFromResourcePack(path, false);
 	texture renderTarget(cvect2<fsize_t>((fsize_t)blockTextureSize), false);
 
 	constexpr rectangle2 unTransformedMiddleTextureRect = crectangle2(7, 0, 1, 0x10);
@@ -267,36 +267,36 @@ resolutionTexture *loadRailsTexture(const stdPath &path)
 	fillTransparentRectangle(crectangle2(unTransformedRailsTextureRect), railsTransform, *tex, renderTarget);
 	fillTransparentRectangle(crectangle2(unTransformedSleepersTextureRect), sleepersTransform, *tex, renderTarget);
 	delete tex;
-	resolutionTexture *railsTex = new resolutionTexture(renderTarget, cvec2(blockTextureSize));
+	resolutionTexture* railsTex = new resolutionTexture(renderTarget, cvec2(blockTextureSize));
 	loadedTextures.push_back(railsTex);
 	return railsTex;
 }
-resolutionTexture *loadTextureFromResourcePack(const stdPath &relativePath, cbool &addToTextureList)
+resolutionTexture* loadTextureFromResourcePack(const stdPath& relativePath, cbool& addToTextureList)
 {
-	const auto &locations = getResourceLocations(relativePath);
+	const auto& locations = getResourceLocations(relativePath);
 	if (locations.size() == 0)
 	{
 		handleError(relativePath.wstring() + std::wstring(L" not found in any of the resource packs. working directory: ") + workingDirectory.wstring());
 	}
-	csize_t &lastLocation = locations.size() - 1;
+	csize_t& lastLocation = locations.size() - 1;
 	veci2 size = getImageSize(locations[0]); // the base size of the image will be the one of the lowest resource pack: the minecraft texture folder or the "default" resource pack.
 
 	return loadTexture(locations[lastLocation], size, addToTextureList);
 }
 
-resolutionTexture *loadTexture(stdPath path, cvec2 &defaultSize, cbool &addToTextureList)
+resolutionTexture* loadTexture(stdPath path, cvec2& defaultSize, cbool& addToTextureList)
 {
-	resolutionTexture *const &result = new resolutionTexture(texture(path, true), defaultSize);
+	resolutionTexture* const& result = new resolutionTexture(texture(path, true), defaultSize);
 	if (addToTextureList)
 	{
 		loadedTextures.push_back(result);
 	}
 	return result;
 }
-std::vector<stdPath> getResourceLocations(const stdPath &relativePath)
+std::vector<stdPath> getResourceLocations(const stdPath& relativePath)
 {
 	std::vector<stdPath> foundLocations = std::vector<stdPath>();
-	for (const stdPath &resourcePackPath : resourcePackPaths)
+	for (const stdPath& resourcePackPath : resourcePackPaths)
 	{
 		const stdPath currentPath = resourcePackPath / relativePath;
 		if (std::filesystem::exists(currentPath))
@@ -306,9 +306,9 @@ std::vector<stdPath> getResourceLocations(const stdPath &relativePath)
 	}
 	return foundLocations;
 }
-bool getLastResourceLocation(const stdPath &relativePath, stdPath &result)
+bool getLastResourceLocation(const stdPath& relativePath, stdPath& result)
 {
-	const auto &locations = getResourceLocations(relativePath);
+	const auto& locations = getResourceLocations(relativePath);
 
 	if (locations.size())
 	{
@@ -319,235 +319,235 @@ bool getLastResourceLocation(const stdPath &relativePath, stdPath &result)
 }
 static void loadDataLists()
 {
-	enchantmentDataList = idList<enchantmentData *, enchantmentID>(fastList<enchantmentData *>((int)enchantmentID::count));
+	enchantmentDataList = idList<enchantmentData*, enchantmentID>(fastList<enchantmentData*>((int)enchantmentID::count));
 	int enchantmentId = 0;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"aqua_affinity"), (enchantmentID)enchantmentId, 1, {{1, 41}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"aqua_affinity"), (enchantmentID)enchantmentId, 1, { {1, 41} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"bane_of_arthropods"), (enchantmentID)enchantmentId, 5, {{5, 25}, {13, 33}, {21, 41}, {29, 49}, {37, 57}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"bane_of_arthropods"), (enchantmentID)enchantmentId, 5, { {5, 25}, {13, 33}, {21, 41}, {29, 49}, {37, 57} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"blast_protection"), (enchantmentID)enchantmentId, 4, {{5, 13}, {13, 21}, {21, 29}, {29, 37}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"blast_protection"), (enchantmentID)enchantmentId, 4, { {5, 13}, {13, 21}, {21, 29}, {29, 37} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"channeling"), (enchantmentID)enchantmentId, 1, {{25, 50}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"channeling"), (enchantmentID)enchantmentId, 1, { {25, 50} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"curse_of_binding"), (enchantmentID)enchantmentId, 1, {{25, 50}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"curse_of_binding"), (enchantmentID)enchantmentId, 1, { {25, 50} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"curse_of_vanishing"), (enchantmentID)enchantmentId, 1, {{25, 50}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"curse_of_vanishing"), (enchantmentID)enchantmentId, 1, { {25, 50} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"depth_strider"), (enchantmentID)enchantmentId, 3, {{10, 25}, {20, 35}, {30, 45}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"depth_strider"), (enchantmentID)enchantmentId, 3, { {10, 25}, {20, 35}, {30, 45} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"efficiency"), (enchantmentID)enchantmentId, 5, {{1, 61}, {11, 71}, {21, 81}, {31, 91}, {41, 101}}, 10);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"efficiency"), (enchantmentID)enchantmentId, 5, { {1, 61}, {11, 71}, {21, 81}, {31, 91}, {41, 101} }, 10);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"feather_falling"), (enchantmentID)enchantmentId, 4, {{5, 11}, {11, 17}, {17, 23}, {23, 29}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"feather_falling"), (enchantmentID)enchantmentId, 4, { {5, 11}, {11, 17}, {17, 23}, {23, 29} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fire_aspect"), (enchantmentID)enchantmentId, 2, {{10, 61}, {30, 71}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fire_aspect"), (enchantmentID)enchantmentId, 2, { {10, 61}, {30, 71} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fire_protection"), (enchantmentID)enchantmentId, 4, {{10, 18}, {18, 26}, {26, 34}, {34, 42}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fire_protection"), (enchantmentID)enchantmentId, 4, { {10, 18}, {18, 26}, {26, 34}, {34, 42} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"flame"), (enchantmentID)enchantmentId, 1, {{20, 50}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"flame"), (enchantmentID)enchantmentId, 1, { {20, 50} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fortune"), (enchantmentID)enchantmentId, 3, {{15, 61}, {24, 71}, {33, 81}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"fortune"), (enchantmentID)enchantmentId, 3, { {15, 61}, {24, 71}, {33, 81} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"frost_walker"), (enchantmentID)enchantmentId, 2, {{10, 25}, {20, 35}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"frost_walker"), (enchantmentID)enchantmentId, 2, { {10, 25}, {20, 35} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"impaling"), (enchantmentID)enchantmentId, 5, {{1, 21}, {9, 29}, {17, 37}, {25, 45}, {33, 53}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"impaling"), (enchantmentID)enchantmentId, 5, { {1, 21}, {9, 29}, {17, 37}, {25, 45}, {33, 53} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"infinity"), (enchantmentID)enchantmentId, 1, {{20, 50}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"infinity"), (enchantmentID)enchantmentId, 1, { {20, 50} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"knockback"), (enchantmentID)enchantmentId, 2, {{5, 61}, {25, 71}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"knockback"), (enchantmentID)enchantmentId, 2, { {5, 61}, {25, 71} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"looting"), (enchantmentID)enchantmentId, 3, {{15, 61}, {24, 71}, {33, 81}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"looting"), (enchantmentID)enchantmentId, 3, { {15, 61}, {24, 71}, {33, 81} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"loyalty"), (enchantmentID)enchantmentId, 3, {{12, 50}, {19, 50}, {26, 50}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"loyalty"), (enchantmentID)enchantmentId, 3, { {12, 50}, {19, 50}, {26, 50} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"luck_of_the_sea"), (enchantmentID)enchantmentId, 3, {{15, 61}, {24, 71}, {33, 81}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"luck_of_the_sea"), (enchantmentID)enchantmentId, 3, { {15, 61}, {24, 71}, {33, 81} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"lure"), (enchantmentID)enchantmentId, 3, {{15, 61}, {24, 71}, {33, 81}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"lure"), (enchantmentID)enchantmentId, 3, { {15, 61}, {24, 71}, {33, 81} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"mending"), (enchantmentID)enchantmentId, 1, {{25, 75}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"mending"), (enchantmentID)enchantmentId, 1, { {25, 75} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"multishot"), (enchantmentID)enchantmentId, 1, {{20, 50}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"multishot"), (enchantmentID)enchantmentId, 1, { {20, 50} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"piercing"), (enchantmentID)enchantmentId, 4, {{1, 50}, {11, 50}, {21, 50}, {31, 50}}, 10);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"piercing"), (enchantmentID)enchantmentId, 4, { {1, 50}, {11, 50}, {21, 50}, {31, 50} }, 10);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"power"), (enchantmentID)enchantmentId, 5, {{1, 16}, {11, 26}, {21, 36}, {31, 46}, {41, 56}}, 10);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"power"), (enchantmentID)enchantmentId, 5, { {1, 16}, {11, 26}, {21, 36}, {31, 46}, {41, 56} }, 10);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"projectile_protection"), (enchantmentID)enchantmentId, 4, {{3, 9}, {9, 15}, {15, 21}, {21, 27}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"projectile_protection"), (enchantmentID)enchantmentId, 4, { {3, 9}, {9, 15}, {15, 21}, {21, 27} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"protection"), (enchantmentID)enchantmentId, 4, {{1, 12}, {12, 23}, {23, 34}, {34, 45}}, 10);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"protection"), (enchantmentID)enchantmentId, 4, { {1, 12}, {12, 23}, {23, 34}, {34, 45} }, 10);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"punch"), (enchantmentID)enchantmentId, 2, {{12, 37}, {32, 57}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"punch"), (enchantmentID)enchantmentId, 2, { {12, 37}, {32, 57} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"quick_charge"), (enchantmentID)enchantmentId, 3, {{12, 50}, {32, 50}, {52, 50}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"quick_charge"), (enchantmentID)enchantmentId, 3, { {12, 50}, {32, 50}, {52, 50} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"respiration"), (enchantmentID)enchantmentId, 3, {{10, 40}, {20, 50}, {30, 60}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"respiration"), (enchantmentID)enchantmentId, 3, { {10, 40}, {20, 50}, {30, 60} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"riptide"), (enchantmentID)enchantmentId, 3, {{17, 50}, {24, 50}, {31, 50}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"riptide"), (enchantmentID)enchantmentId, 3, { {17, 50}, {24, 50}, {31, 50} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"sharpness"), (enchantmentID)enchantmentId, 5, {{1, 21}, {12, 32}, {23, 43}, {34, 54}, {45, 65}}, 10);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"sharpness"), (enchantmentID)enchantmentId, 5, { {1, 21}, {12, 32}, {23, 43}, {34, 54}, {45, 65} }, 10);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"silk_touch"), (enchantmentID)enchantmentId, 1, {{15, 61}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"silk_touch"), (enchantmentID)enchantmentId, 1, { {15, 61} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"smite"), (enchantmentID)enchantmentId, 5, {{5, 25}, {13, 33}, {21, 41}, {29, 49}, {37, 57}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"smite"), (enchantmentID)enchantmentId, 5, { {5, 25}, {13, 33}, {21, 41}, {29, 49}, {37, 57} }, 5);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"soul_speed"), (enchantmentID)enchantmentId, 3, {{10, 25}, {20, 35}, {30, 45}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"soul_speed"), (enchantmentID)enchantmentId, 3, { {10, 25}, {20, 35}, {30, 45} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"sweeping_edge"), (enchantmentID)enchantmentId, 3, {{5, 20}, {14, 29}, {23, 38}}, 2);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"sweeping_edge"), (enchantmentID)enchantmentId, 3, { {5, 20}, {14, 29}, {23, 38} }, 2);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"thorns"), (enchantmentID)enchantmentId, 3, {{10, 61}, {30, 71}, {50, 81}}, 1);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"thorns"), (enchantmentID)enchantmentId, 3, { {10, 61}, {30, 71}, {50, 81} }, 1);
 	enchantmentId++;
-	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"unbreaking"), (enchantmentID)enchantmentId, 3, {{5, 61}, {13, 71}, {21, 81}}, 5);
+	enchantmentDataList[enchantmentId] = new enchantmentData(std::wstring(L"unbreaking"), (enchantmentID)enchantmentId, 3, { {5, 61}, {13, 71}, {21, 81} }, 5);
 	enchantmentId++;
 
 	// enchantmentDataList.update();
 
-	noteDataList = idList<noteData *, noteTypeID>(
+	noteDataList = idList<noteData*, noteTypeID>(
 		{
-			new noteData(std::wstring(L"banjo")),
-			new noteData(std::wstring(L"bass")),
-			new noteData(std::wstring(L"bassattack")),
-			new noteData(std::wstring(L"bd")),
-			new noteData(std::wstring(L"bell")),
-			new noteData(std::wstring(L"bit")),
-			new noteData(std::wstring(L"cow_bell")),
-			new noteData(std::wstring(L"didgeridoo")),
-			new noteData(std::wstring(L"flute")),
-			new noteData(std::wstring(L"guitar")),
-			new noteData(std::wstring(L"harp")),
-			new noteData(std::wstring(L"harp2")),
-			new noteData(std::wstring(L"hat")),
-			new noteData(std::wstring(L"icechime")),
-			new noteData(std::wstring(L"iron_xylophone")),
-			new noteData(std::wstring(L"pling")),
-			new noteData(std::wstring(L"snare")),
-			new noteData(std::wstring(L"xylobone")),
+			new noteData(L"banjo"),
+			new noteData(L"bass"),
+			new noteData(L"bassattack"),
+			new noteData(L"bd"),
+			new noteData(L"bell"),
+			new noteData(L"bit"),
+			new noteData(L"cow_bell"),
+			new noteData(L"didgeridoo"),
+			new noteData(L"flute"),
+			new noteData(L"guitar"),
+			new noteData(L"harp"),
+			new noteData(L"harp2"),
+			new noteData(L"hat"),
+			new noteData(L"icechime"),
+			new noteData(L"iron_xylophone"),
+			new noteData(L"pling"),
+			new noteData(L"snare"),
+			new noteData(L"xylobone"),
 		});
 
-	mushroomColorDataList = idList<mushroomColorData *, mushroomColorID>(
-		{new mushroomColorData(std::wstring(L"red")),
-		 new mushroomColorData(std::wstring(L"brown"))});
+	mushroomColorDataList = idList<mushroomColorData*, mushroomColorID>(
+		{ new mushroomColorData(L"red"),
+		 new mushroomColorData(L"brown") });
 
-	netherVineTypeDataList = idList<netherVineTypeData *, netherVineTypeID>(
-		{new netherVineTypeData(std::wstring(L"weeping")),
-		 new netherVineTypeData(std::wstring(L"twisting"))});
+	netherVineTypeDataList = idList<netherVineTypeData*, netherVineTypeID>(
+		{ new netherVineTypeData(L"weeping"),
+		 new netherVineTypeData(L"twisting") });
 
-	woodTypeDataList = idList<woodTypeData *, woodTypeID>(
-		{new woodTypeData(std::wstring(L"oak")),
-		 new woodTypeData(std::wstring(L"spruce")),
-		 new woodTypeData(std::wstring(L"birch")),
-		 new woodTypeData(std::wstring(L"jungle")),
-		 new woodTypeData(std::wstring(L"acacia")),
-		 new woodTypeData(std::wstring(L"dark_oak")),
-		 new woodTypeData(std::wstring(L"crimson")),
-		 new woodTypeData(std::wstring(L"warped"))});
+	woodTypeDataList = idList<woodTypeData*, woodTypeID>(
+		{ new woodTypeData(L"oak"),
+		 new woodTypeData(L"spruce"),
+		 new woodTypeData(L"birch"),
+		 new woodTypeData(L"jungle"),
+		 new woodTypeData(L"acacia"),
+		 new woodTypeData(L"dark_oak"),
+		 new woodTypeData(L"crimson"),
+		 new woodTypeData(L"warped") });
 
-	fireworkShapeDataList = idList<fireworkShapeData *, fireworkShapeID>(
-		{new fireworkShapeData(std::wstring(L"small_ball")),
-		 new fireworkShapeData(std::wstring(L"large_ball")),
-		 new fireworkShapeData(std::wstring(L"star_shaped")),
-		 new fireworkShapeData(std::wstring(L"creeper_shaped")),
-		 new fireworkShapeData(std::wstring(L"burst"))});
+	fireworkShapeDataList = idList<fireworkShapeData*, fireworkShapeID>(
+		{ new fireworkShapeData(L"small_ball"),
+		 new fireworkShapeData(L"large_ball"),
+		 new fireworkShapeData(L"star_shaped"),
+		 new fireworkShapeData(L"creeper_shaped"),
+		 new fireworkShapeData(L"burst") });
 
-	particleTypeDataList = idList<particleTypeData *, particleID>(
-		{new particleTypeData(std::wstring(L"ambient_entity_effect")),
-		 new particleTypeData(std::wstring(L"angry_villager")),
-		 new particleTypeData(std::wstring(L"ash")),
-		 new particleTypeData(std::wstring(L"barrier")),
-		 new particleTypeData(std::wstring(L"block")),
-		 new particleTypeData(std::wstring(L"bubble")),
-		 new particleTypeData(std::wstring(L"bubble_pop")),
-		 new particleTypeData(std::wstring(L"bubble_column_up")),
-		 new particleTypeData(std::wstring(L"campfire_cosy_smoke")),
-		 new particleTypeData(std::wstring(L"campfire_signal_smoke")),
-		 new particleTypeData(std::wstring(L"cloud")),
-		 new particleTypeData(std::wstring(L"composter")),
-		 new particleTypeData(std::wstring(L"crimson_spore")),
-		 new particleTypeData(std::wstring(L"crit")),
-		 new particleTypeData(std::wstring(L"current_down")),
-		 new particleTypeData(std::wstring(L"damage_indicator")),
-		 new particleTypeData(std::wstring(L"dolphin")),
-		 new particleTypeData(std::wstring(L"dragon_breath")),
-		 new particleTypeData(std::wstring(L"dripping_lava")),
-		 new particleTypeData(std::wstring(L"dripping_obsidian_tear")),
-		 new particleTypeData(std::wstring(L"dripping_water")),
-		 new particleTypeData(std::wstring(L"dust")),
-		 new particleTypeData(std::wstring(L"dust_color_transition")),
-		 new particleTypeData(std::wstring(L"effect")),
-		 new particleTypeData(std::wstring(L"elder_guardian")),
-		 new particleTypeData(std::wstring(L"enchant")),
-		 new particleTypeData(std::wstring(L"enchanted_hit")),
-		 new particleTypeData(std::wstring(L"end_rod")),
-		 new particleTypeData(std::wstring(L"entity_effect")),
-		 new particleTypeData(std::wstring(L"explosion_emitter")),
-		 new particleTypeData(std::wstring(L"explosion")),
-		 new particleTypeData(std::wstring(L"falling_dust")),
-		 new particleTypeData(std::wstring(L"falling_lava")),
-		 new particleTypeData(std::wstring(L"falling_obsidian_tear")),
-		 new particleTypeData(std::wstring(L"falling_water")),
-		 new particleTypeData(std::wstring(L"firework")),
-		 new particleTypeData(std::wstring(L"fishing")),
-		 new particleTypeData(std::wstring(L"flame")),
-		 new particleTypeData(std::wstring(L"flash")),
-		 new particleTypeData(std::wstring(L"happy_villager")),
-		 new particleTypeData(std::wstring(L"heart")),
-		 new particleTypeData(std::wstring(L"instant_effect")),
-		 new particleTypeData(std::wstring(L"item")),
-		 new particleTypeData(std::wstring(L"item_slime")),
-		 new particleTypeData(std::wstring(L"item_snowball")),
-		 new particleTypeData(std::wstring(L"landing_lava")),
-		 new particleTypeData(std::wstring(L"landing_obsidian_tear")),
-		 new particleTypeData(std::wstring(L"large_smoke")),
-		 new particleTypeData(std::wstring(L"lava")),
-		 new particleTypeData(std::wstring(L"mycelium")),
-		 new particleTypeData(std::wstring(L"nautilus")),
-		 new particleTypeData(std::wstring(L"note")),
-		 new particleTypeData(std::wstring(L"poof")),
-		 new particleTypeData(std::wstring(L"portal")),
-		 new particleTypeData(std::wstring(L"rain")),
-		 new particleTypeData(std::wstring(L"smoke")),
-		 new particleTypeData(std::wstring(L"sneeze")),
-		 new particleTypeData(std::wstring(L"soul")),
-		 new particleTypeData(std::wstring(L"soul_fire_flame")),
-		 new particleTypeData(std::wstring(L"spit")),
-		 new particleTypeData(std::wstring(L"splash")),
-		 new particleTypeData(std::wstring(L"squid_ink")),
-		 new particleTypeData(std::wstring(L"sweep_attack")),
-		 new particleTypeData(std::wstring(L"totem_of_undying")),
-		 new particleTypeData(std::wstring(L"underwater")),
-		 new particleTypeData(std::wstring(L"vibration")),
-		 new particleTypeData(std::wstring(L"warped_spore")),
-		 new particleTypeData(std::wstring(L"witch"))});
+	particleTypeDataList = idList<particleTypeData*, particleID>({
+		new particleTypeData(L"ambient_entity_effect"),
+		new particleTypeData(L"angry_villager"),
+		new particleTypeData(L"ash"),
+		new particleTypeData(L"barrier"),
+		new particleTypeData(L"block"),
+		new particleTypeData(L"bubble"),
+		new particleTypeData(L"bubble_pop"),
+		new particleTypeData(L"bubble_column_up"),
+		new particleTypeData(L"campfire_cosy_smoke"),
+		new particleTypeData(L"campfire_signal_smoke"),
+		new particleTypeData(L"cloud"),
+		new particleTypeData(L"composter"),
+		new particleTypeData(L"crimson_spore"),
+		new particleTypeData(L"crit"),
+		new particleTypeData(L"current_down"),
+		new particleTypeData(L"damage_indicator"),
+		new particleTypeData(L"dolphin"),
+		new particleTypeData(L"dragon_breath"),
+		new particleTypeData(L"dripping_lava"),
+		new particleTypeData(L"dripping_obsidian_tear"),
+		new particleTypeData(L"dripping_water"),
+		new particleTypeData(L"dust"),
+		new particleTypeData(L"dust_color_transition"),
+		new particleTypeData(L"effect"),
+		new particleTypeData(L"elder_guardian"),
+		new particleTypeData(L"enchant"),
+		new particleTypeData(L"enchanted_hit"),
+		new particleTypeData(L"end_rod"),
+		new particleTypeData(L"entity_effect"),
+		new particleTypeData(L"explosion_emitter"),
+		new particleTypeData(L"explosion"),
+		new particleTypeData(L"falling_dust"),
+		new particleTypeData(L"falling_lava"),
+		new particleTypeData(L"falling_obsidian_tear"),
+		new particleTypeData(L"falling_water"),
+		new particleTypeData(L"firework"),
+		new particleTypeData(L"fishing"),
+		new particleTypeData(L"flame"),
+		new particleTypeData(L"flash"),
+		new particleTypeData(L"happy_villager"),
+		new particleTypeData(L"heart"),
+		new particleTypeData(L"instant_effect"),
+		new particleTypeData(L"item"),
+		new particleTypeData(L"item_slime"),
+		new particleTypeData(L"item_snowball"),
+		new particleTypeData(L"landing_lava"),
+		new particleTypeData(L"landing_obsidian_tear"),
+		new particleTypeData(L"large_smoke"),
+		new particleTypeData(L"lava"),
+		new particleTypeData(L"mycelium"),
+		new particleTypeData(L"nautilus"),
+		new particleTypeData(L"note"),
+		new particleTypeData(L"poof"),
+		new particleTypeData(L"portal"),
+		new particleTypeData(L"rain"),
+		new particleTypeData(L"smoke"),
+		new particleTypeData(L"sneeze"),
+		new particleTypeData(L"soul"),
+		new particleTypeData(L"soul_fire_flame"),
+		new particleTypeData(L"spit"),
+		new particleTypeData(L"splash"),
+		new particleTypeData(L"squid_ink"),
+		new particleTypeData(L"sweep_attack"),
+		new particleTypeData(L"totem_of_undying"),
+		new particleTypeData(L"underwater"),
+		new particleTypeData(L"vibration"),
+		new particleTypeData(L"warped_spore"),
+		new particleTypeData(L"witch") });
 
-	structureDataList = idList<structureData *, structureID>(
+	structureDataList = idList<structureData*, structureID>(
 		{
-			new structureData(std::wstring(L"mine_shaft")),
-			new structureData(std::wstring(L"stronghold")),
-			new structureData(std::wstring(L"fossil")),
-			new structureData(std::wstring(L"buried_treasure")),
-			new structureData(std::wstring(L"ruined_portal")),
-			new structureData(std::wstring(L"ocean_ruins")),
-			new structureData(std::wstring(L"shipwreck")),
-			new structureData(std::wstring(L"ocean_monument")),
-			new structureData(std::wstring(L"desert_pyramid")),
-			new structureData(std::wstring(L"igloo")),
-			new structureData(std::wstring(L"jungle_pyramid")),
-			new structureData(std::wstring(L"pillager_outpost")),
-			new structureData(std::wstring(L"swamp_hut")),
-			new structureData(std::wstring(L"village")),
-			new structureData(std::wstring(L"woodland_mansion")),
-			new structureData(std::wstring(L"nether_fortress")),
-			new structureData(std::wstring(L"bastion_remnant")),
-			new structureData(std::wstring(L"nether_fossil")),
-			new structureData(std::wstring(L"end_city")),
-			new structureData(std::wstring(L"dungeon")),
-			new structureData(std::wstring(L"hot_air_balloon")),
-			new structureData(std::wstring(L"wind_mill")),
-			new structureData(std::wstring(L"floating_ship")),
+			new structureData(L"mine_shaft"),
+			new structureData(L"stronghold"),
+			new structureData(L"fossil"),
+			new structureData(L"buried_treasure"),
+			new structureData(L"ruined_portal"),
+			new structureData(L"ocean_ruins"),
+			new structureData(L"shipwreck"),
+			new structureData(L"ocean_monument"),
+			new structureData(L"desert_pyramid"),
+			new structureData(L"igloo"),
+			new structureData(L"jungle_pyramid"),
+			new structureData(L"pillager_outpost"),
+			new structureData(L"swamp_hut"),
+			new structureData(L"village"),
+			new structureData(L"woodland_mansion"),
+			new structureData(L"nether_fortress"),
+			new structureData(L"bastion_remnant"),
+			new structureData(L"nether_fossil"),
+			new structureData(L"end_city"),
+			new structureData(L"dungeon"),
+			new structureData(L"hot_air_balloon"),
+			new structureData(L"wind_mill"),
+			new structureData(L"floating_ship"),
 		});
 
 	constexpr color hotBiomeColor = hexToColor(0xbfb755);
 	constexpr color oceanBiomeColor = hexToColor(0x8eb971);
 	int currentBiomeID = 0;
-	biomeDataList = idList<biomeData *, biomeID>(fastList<biomeData *>((int)biomeID::biomeCount));
+	biomeDataList = idList<biomeData*, biomeID>(fastList<biomeData*>((int)biomeID::biomeCount));
 	biomeDataList[currentBiomeID] = new biomeData(std::wstring(L"ocean"), hexToColor(0x0000FF), oceanBiomeColor);
 	currentBiomeID++;
 	biomeDataList[currentBiomeID] = new biomeData(std::wstring(L"swamp"), hexToColor(0x808000), hexToColor(0x6a7039));
@@ -597,7 +597,7 @@ static void loadDataLists()
 
 	int currentStatusEffectID = 0;
 
-	statusEffectDataList = idList<statusEffectData *, statusEffectID>(fastList<statusEffectData *>((int)statusEffectID::count));
+	statusEffectDataList = idList<statusEffectData*, statusEffectID>(fastList<statusEffectData*>((int)statusEffectID::count));
 
 	statusEffectDataList[currentStatusEffectID] = new statusEffectData(std::wstring(L"luck"), (statusEffectID)currentStatusEffectID, hexToColor(0x339900));
 	currentStatusEffectID++;
@@ -665,7 +665,7 @@ static void loadDataLists()
 	statusEffectDataList[currentStatusEffectID] = new statusEffectData(std::wstring(L"glowing"), (statusEffectID)currentStatusEffectID, hexToColor(0x94A061));
 	currentStatusEffectID++;
 
-	gameModeDataList = idList<gameModeData *, gameModeID>(fastList<gameModeData *>((int)gameModeID::gameModesCount));
+	gameModeDataList = idList<gameModeData*, gameModeID>(fastList<gameModeData*>((int)gameModeID::gameModesCount));
 
 	int currentGameModeID = 0;
 	gameModeDataList[currentGameModeID] = new gameModeData(std::wstring(L"survival"), false, true);
@@ -733,6 +733,46 @@ static void setFoodValues()
 	itemList[itemID::poisonous_potato]->setEatingValues(1, 0.6);
 }
 
+static void addFuelProperties() {
+	// add fuel properties
+	itemList[(int)blockID::crafting_table]->fuelTicks = 300;
+	itemList[(int)itemID::coal]->fuelTicks = 1600;
+	itemList[(int)blockID::torch]->fuelTicks = 1700 / 4; // coal + stick = 4 torches
+	itemList[(int)blockID::ladder]->fuelTicks = 300;
+	itemList[(int)itemID::lava_bucket]->fuelTicks = 20000;
+	itemList[(int)blockID::note_block]->fuelTicks = 300;
+	itemList[(int)blockID::jukebox]->fuelTicks = 300;
+	itemList[(int)itemID::stick]->fuelTicks = 100;
+	itemList[(int)itemID::charcoal]->fuelTicks = 1600;
+	itemList[(int)itemID::bowl]->fuelTicks = 100;
+
+	for (int i = 0; i < woodTypeCount; i++)
+	{
+		if (i < normalTreeTypeCount) {
+			itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::log)]->fuelTicks = 300;
+			itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::strippedLog)]->fuelTicks = 300;
+			itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->fuelTicks = 300;
+			itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::leaves)]->fuelTicks = 25;
+			itemList[(int)blockID::wood_stairs + i]->fuelTicks = 300;
+			itemList[(int)blockID::wood_fence + i]->fuelTicks = 300;
+			itemList[(int)blockID::wood_fence_gate + i]->fuelTicks = 300;
+			itemList[(int)blockID::wood_trapdoor + i]->fuelTicks = 300;
+			itemList[(int)blockID::wood_door + i]->fuelTicks = 300;
+			itemList[(int)blockID::wood_slab + i]->fuelTicks = 150;
+			itemList[(int)blockID::wood_button + i]->fuelTicks = 150;
+			itemList[(int)blockID::wood_sapling + i]->fuelTicks = 100;
+			itemList[(int)blockID::wood_door + i]->fuelTicks = 200;
+			itemList[(int)blockID::wood_boat + i]->fuelTicks = 1200;
+		}
+		itemList[(int)blockID::wood_door + i]->maxStackSize = 0x10;
+	}
+	for (int toolTierIndex = 0; toolTierIndex < toolTierCount; toolTierIndex++) {
+		for (int toolTypeIndex = 0; toolTypeIndex < materialToolTypeCount; toolTypeIndex++) {
+			itemList[getMaterialTool((toolTypeID)toolTypeIndex, (harvestTierID)toolTierIndex)]->fuelTicks = toolTierIndex == harvestTierID::woodHarvestTier ? 200 : 50;
+		}
+	}
+}
+
 static void loadMusic()
 {
 	mainMenuBackgroundMusic = std::make_shared<musicCollection>(menuMusicFolder / L"menu");
@@ -764,17 +804,17 @@ static void loadMusic()
 }
 static void loadTags()
 {
-	tagList = fastList<tag *>();
-	for (const auto &currentFolder : getResourceLocations(mainTagFolder))
+	tagList = fastList<tag*>();
+	for (const auto& currentFolder : getResourceLocations(mainTagFolder))
 	{
 		// load tags
-		for (const auto &folderIterator : stdFileSystem::directory_iterator(currentFolder))
+		for (const auto& folderIterator : stdFileSystem::directory_iterator(currentFolder))
 		{
 			const stdPath tagFolder = folderIterator.path();
-			for (const auto &fileIterator : stdFileSystem::directory_iterator(tagFolder))
+			for (const auto& fileIterator : stdFileSystem::directory_iterator(tagFolder))
 			{
-				const std::wstring &fileNameWithoutExtension = fileIterator.path().stem().wstring();
-				const std::wstring &extension = fileIterator.path().extension().wstring();
+				const std::wstring& fileNameWithoutExtension = fileIterator.path().stem().wstring();
+				const std::wstring& extension = fileIterator.path().extension().wstring();
 				if (extension == jsonFileExtension)
 				{
 					if (getTagListIndexByName(fileNameWithoutExtension) == std::wstring::npos)
@@ -805,16 +845,16 @@ static void loadLootTables()
 {
 	// load loot tables
 	// chest loot
-	// we don't know what chest loot tables we're going to use, as they can be defined in a chest as nbtdatavalue
+	// we don'T know what chest loot tables we're going to use, as they can be defined in a chest as nbtdatavalue
 	// for each chest loot table, we need to only read the 'highest' one
-	// so we iterate from highest to lowest and read all tables which aren't in the map yet
-	for (const auto &currentFolder : getResourceLocations(chestLootTablesFolder) | std::views::reverse)
+	// so we iterate from highest to lowest and read all tables which aren'T in the map yet
+	for (const auto& currentFolder : getResourceLocations(chestLootTablesFolder) | std::views::reverse)
 	{
-		for (const auto &fileIterator : stdFileSystem::directory_iterator(currentFolder))
+		for (const auto& fileIterator : stdFileSystem::directory_iterator(currentFolder))
 		{
-			const stdPath &path = fileIterator.path().wstring();
-			const std::wstring &fileNameWithoutExtension = fileIterator.path().stem().wstring();
-			const std::wstring &extension = fileIterator.path().extension().wstring();
+			const stdPath& path = fileIterator.path().wstring();
+			const std::wstring& fileNameWithoutExtension = fileIterator.path().stem().wstring();
+			const std::wstring& extension = fileIterator.path().extension().wstring();
 			if (extension == jsonFileExtension)
 			{
 				if (!chestLootTables.contains(fileNameWithoutExtension))
@@ -828,7 +868,7 @@ static void loadLootTables()
 
 	// block loot
 	// iterate over blocks instead of files, because we can assume that there are more block loot tables than blocks
-	for (block *const &b : blockList)
+	for (block* const& b : blockList)
 	{
 		stdPath location;
 		if (getLastResourceLocation(blockLootTablesFolder / (b->name + L".json"), location))
@@ -839,7 +879,7 @@ static void loadLootTables()
 	}
 	// entity loot
 	// same story here
-	for (entityData *const &e : entityDataList)
+	for (entityData* const& e : entityDataList)
 	{
 		if (isMob(e->identifier))
 		{
@@ -847,7 +887,7 @@ static void loadLootTables()
 			if (getLastResourceLocation(entityLootTablesFolder / (e->name + L".json"), location))
 			{
 				// loot table found for this block
-				((mobData *)e)->dropsWhenKilled = readLootTable(location);
+				((mobData*)e)->dropsWhenKilled = readLootTable(location);
 			}
 		}
 	}
@@ -885,13 +925,13 @@ static void loadLootTables()
 }
 static void loadRecipes()
 {
-	craftingRecipes = std::vector<recipe *>();
-	furnaceRecipes = std::vector<furnaceRecipe *>();
-	for (const auto &currentFolder : getResourceLocations(recipeFolder) | std::views::reverse)
-		for (const auto &fileIterator : stdFileSystem::directory_iterator(currentFolder))
+	craftingRecipes = std::vector<recipe*>();
+	furnaceRecipes = std::vector<furnaceRecipe*>();
+	for (const auto& currentFolder : getResourceLocations(recipeFolder) | std::views::reverse)
+		for (const auto& fileIterator : stdFileSystem::directory_iterator(currentFolder))
 		{
 			std::wstring path = fileIterator.path().wstring();
-			const jsonContainer &content = readJson(stringToWString(readAllText(path)));
+			const jsonContainer& content = readJson(stringToWString(readAllText(path)));
 			// this might cause double recipes, but the recipes which matter the most will be on top, so it'll match correctly
 			// todo: implement algorithm that eliminates duplicate recipes to save memory
 			readRecipe(content);
@@ -899,19 +939,19 @@ static void loadRecipes()
 }
 static void loadStructures()
 {
-	structureList = std::vector<structure *>();
-	for (const auto &currentFolder : getResourceLocations(structureFolder) | std::views::reverse)
-		for (const auto &fileIterator : stdFileSystem::recursive_directory_iterator(currentFolder))
+	structureList = std::vector<structure*>();
+	for (const auto& currentFolder : getResourceLocations(structureFolder) | std::views::reverse)
+		for (const auto& fileIterator : stdFileSystem::recursive_directory_iterator(currentFolder))
 		{
-			const stdPath &path = fileIterator.path().wstring();
-			const std::wstring &extension = fileIterator.path().extension().wstring();
+			const stdPath& path = fileIterator.path().wstring();
+			const std::wstring& extension = fileIterator.path().extension().wstring();
 			if (extension == nbtFileExtension)
 			{
 				const stdPath pathWithoutExtension = stdFileSystem::relative(path, currentFolder).replace_extension();
 				if (!getStructureByPath(pathWithoutExtension))
 				{
-					// this structure isn't replaced by some structure of a resourcepack higher in order
-					structure *s = new structure(pathWithoutExtension);
+					// this structure isn'T replaced by some structure of a resourcepack higher in order
+					structure* s = new structure(pathWithoutExtension);
 					s->serialize(path, false);
 					structureList.push_back(s);
 				}
@@ -926,7 +966,7 @@ static void loadBlockPowerProperties()
 	blockList[blockID::redstone_wire]->filterStrength[2] = 1;
 
 	// for blocks that use power to do something
-	cint &deviceFilterStrength = maxPowerLevel / 0x20;
+	cint& deviceFilterStrength = maxPowerLevel / 0x20;
 
 	blockList[blockID::powered_rail]->filterStrength[2] = maxPowerLevel / 0x40;
 	blockList[blockID::redstone_lamp]->filterStrength[2] = deviceFilterStrength;
@@ -1128,22 +1168,22 @@ static void loadBlocks()
 	bottleFillDragonBreathSound = std::make_shared<soundCollection>(itemSoundFolder / L"bottle" / L"fill_dragonbreath");
 
 	// load blocks
-	blockList = idList<block *, blockID>(fastList<block *>(blockIDCount));
+	blockList = idList<block*, blockID>(fastList<block*>(blockIDCount));
 
 	// edit some textures
 
 	// beware that we are now creating a texture, and not an texture!
 
-	resolutionTexture *snowTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"snow.png"));
-	resolutionTexture *farmlandTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"farmland.png"));
+	resolutionTexture* snowTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"snow.png"));
+	resolutionTexture* farmlandTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"farmland.png"));
 	cfp farmlandPart = 0.75; // the part of the farmland that is not 'rotated' to the player
 
 	crectangle2 relativeDirtFarmlandRect = crectangle2(0, 0, 1, farmlandPart);
 
 	fillTransformedBrushRectangle(getAbsoluteRect(dirtTexture->getClientRect(), relativeDirtFarmlandRect), getAbsoluteRect(crectangle2(farmlandTexture->getClientRect()), relativeDirtFarmlandRect), *dirtTexture, *farmlandTexture);
 
-	resolutionTexture *unCroppedLanternTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lantern.png"));
-	resolutionTexture *lanternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * unCroppedLanternTexture->getScaleModifier()))), cvec2(blockTextureSize));
+	resolutionTexture* unCroppedLanternTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lantern.png"));
+	resolutionTexture* lanternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * unCroppedLanternTexture->getScaleModifier()))), cvec2(blockTextureSize));
 	crectangle2 lanternTextureRect = crectangle2(0, 39, 6, 9);
 	cvec2 lanternDrawOffset = cvec2((blockTextureSize - lanternTextureRect.w) * 0.5, 0);
 	fillTransformedBrushRectangle(lanternTextureRect, lanternDrawOffset, *unCroppedLanternTexture, *lanternGraphics);
@@ -1160,9 +1200,9 @@ static void loadBlocks()
 	// };
 	// renderBrewingStand(crectangle2(blockTextureRect), hasBottle, *brewingStandItemTexture);
 
-	resolutionTexture *redStoneWireTopView = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_dust_line0.png"));
+	resolutionTexture* redStoneWireTopView = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_dust_line0.png"));
 
-	resolutionTexture *redStoneWireTexture = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)blockTextureSize)), cvec2(blockTextureSize));
+	resolutionTexture* redStoneWireTexture = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)blockTextureSize)), cvec2(blockTextureSize));
 
 	fillTransparentRectangle(crectangle2(blockTextureSize * (0.5 - (redstoneWireHeight * 0.5)), 0, blockTextureSize * redstoneWireHeight, blockTextureSize), 90, crectangle2(0, 0, blockTextureSize, blockTextureSize * redstoneWireHeight), *redStoneWireTopView, *redStoneWireTexture);
 
@@ -1171,42 +1211,42 @@ static void loadBlocks()
 	constexpr int noLightFilter[(int)levelID::count]{
 		0,
 		0,
-		maxPowerLevel};
+		maxPowerLevel };
 
 	constexpr int lightBlocking[(int)levelID::count]{
 		maxLightLevel,
 		maxLightLevel,
-		maxPowerLevel};
+		maxPowerLevel };
 
 	constexpr int lightFiltering[(int)levelID::count]{
 		maxLightLevel / 0x10,
 		maxLightLevel / 0x10,
-		maxPowerLevel};
+		maxPowerLevel };
 
 	constexpr int doubleFiltering[(int)levelID::count]{
 		maxLightLevel / 0x8,
 		maxLightLevel / 0x8,
-		maxPowerLevel};
+		maxPowerLevel };
 
 	constexpr int sunlightPermeable[(int)levelID::count]{
 		0x40,
 		maxLightLevel,
-		maxPowerLevel};
+		maxPowerLevel };
 
 	constexpr int glowingLightSource[(int)levelID::count]{
 		0,
 		glowInTheDarkLightLevel,
-		0};
+		0 };
 
 	constexpr int moodyLightSource[(int)levelID::count]{
 		0,
 		moodyLightLevel,
-		0};
+		0 };
 
 	constexpr int brightLightSource[(int)levelID::count]{
 		0,
 		brightLightLevel,
-		0};
+		0 };
 
 	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, nullptr, std::wstring(L"air"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, withHand, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true);
 	identifier++;
@@ -1216,7 +1256,7 @@ static void loadBlocks()
 	identifier++;
 	cint waterLightRange = 0x20;
 
-	lightLevel waterDecreaseSpeed[(int)levelID::count] = {maxLightLevel / waterLightRange, maxLightLevel / waterLightRange, 0};
+	lightLevel waterDecreaseSpeed[(int)levelID::count] = { maxLightLevel / waterLightRange, maxLightLevel / waterLightRange, 0 };
 
 	blockList[identifier] = new block((blockID)identifier, -1, -1, 1000, nullptr, std::wstring(L"water"), stepStone, stepStone, stepStone, digStone, digStone, waterDecreaseSpeed, withHand, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true);
 	identifier++;
@@ -1238,18 +1278,18 @@ static void loadBlocks()
 	for (int i = 0; i < normalTreeTypeCount; i++)
 	{
 		// trees are at the background, so the light filters are turned down
-		const std::wstring &logName = woodTypeDataList[i]->name + (i < normalTreeTypeCount ? std::wstring(L"_log") : std::wstring(L"_stem"));
+		const std::wstring& logName = woodTypeDataList[i]->name + (i < normalTreeTypeCount ? std::wstring(L"_log") : std::wstring(L"_stem"));
 		blockList[identifier] = new block((blockID)identifier, 2, 2, woodWeight[i], loadTextureFromResourcePack(blockTextureFolder / (logName + std::wstring(L".png"))), logName, stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, 5, 5, true);
 		identifier++;
-		const std::wstring &strippedLogName = std::wstring(L"stripped_") + logName;
+		const std::wstring& strippedLogName = std::wstring(L"stripped_") + logName;
 		blockList[identifier] = new block((blockID)identifier, 2, 2, woodWeight[i], loadTextureFromResourcePack(blockTextureFolder / (strippedLogName + std::wstring(L".png"))), strippedLogName, stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, 5, 5, true);
 		identifier++;
-		const std::wstring &planksName = woodTypeDataList[i]->name + std::wstring(L"_planks");
+		const std::wstring& planksName = woodTypeDataList[i]->name + std::wstring(L"_planks");
 		blockList[identifier] = new block((blockID)identifier, 2, 3, woodWeight[i], loadTextureFromResourcePack(blockTextureFolder / (planksName + std::wstring(L".png"))), planksName, stepWood, stepWood, stepWood, digWood, digWood, lightBlocking, withAxe, noHarvestTier, collisionTypeID::willCollide, 5, 20, true);
 		identifier++;
 
-		const std::wstring &leavesName = i == 6 ? std::wstring(L"nether_wart_block") : i == 7 ? std::wstring(L"warped_wart_block")
-																							  : woodTypeDataList[i]->name + std::wstring(L"_leaves");
+		const std::wstring& leavesName = i == 6 ? std::wstring(L"nether_wart_block") : i == 7 ? std::wstring(L"warped_wart_block")
+			: woodTypeDataList[i]->name + std::wstring(L"_leaves");
 
 		blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (leavesName + std::wstring(L".png"))), leavesName, stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, withSwordOrShears, noHarvestTier, collisionTypeID::willCollideTop, 30, 60, true);
 		identifier++;
@@ -1258,24 +1298,24 @@ static void loadBlocks()
 	for (int i = normalTreeTypeCount; i < woodTypeCount; i++)
 	{
 		// trees are at the background, so the light filters are turned down
-		const std::wstring &logName = woodTypeDataList[i]->name + std::wstring(L"_stem");
+		const std::wstring& logName = woodTypeDataList[i]->name + std::wstring(L"_stem");
 		blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (logName + std::wstring(L".png"))), logName, stepStem, stepStem, stepStem, breakStem, breakStem, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false);
 		identifier++;
-		const std::wstring &strippedLogName = std::wstring(L"stripped_") + logName;
+		const std::wstring& strippedLogName = std::wstring(L"stripped_") + logName;
 		blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (strippedLogName + std::wstring(L".png"))), strippedLogName, stepStem, stepStem, stepStem, breakStem, breakStem, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false);
 		identifier++;
-		const std::wstring &planksName = woodTypeDataList[i]->name + std::wstring(L"_planks");
+		const std::wstring& planksName = woodTypeDataList[i]->name + std::wstring(L"_planks");
 		blockList[identifier] = new block((blockID)identifier, 2, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (planksName + std::wstring(L".png"))), planksName, stepWood, stepWood, stepWood, digWood, digWood, lightBlocking, withAxe, noHarvestTier, collisionTypeID::willCollide);
 		identifier++;
 
 		std::wstring leavesName = i == 6 ? std::wstring(L"nether_wart_block") : i == 7 ? std::wstring(L"warped_wart_block")
-																					   : woodTypeDataList[i]->name + std::wstring(L"_leaves");
+			: woodTypeDataList[i]->name + std::wstring(L"_leaves");
 
 		blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (leavesName + std::wstring(L".png"))), leavesName, stepNetherWart, stepNetherWart, stepNetherWart, breakNetherWart, breakNetherWart, lightFiltering, withSwordOrShears, noHarvestTier, collisionTypeID::willCollideTop);
 		identifier++;
 	}
 
-	constexpr harvestTierID oreBlockTiers[oreBlockTypeCount]{woodHarvestTier, stoneHarvestTier, ironHarvestTier, stoneHarvestTier, ironHarvestTier, ironHarvestTier, ironHarvestTier, woodHarvestTier, woodHarvestTier};
+	constexpr harvestTierID oreBlockTiers[oreBlockTypeCount]{ woodHarvestTier, stoneHarvestTier, ironHarvestTier, stoneHarvestTier, ironHarvestTier, ironHarvestTier, ironHarvestTier, woodHarvestTier, woodHarvestTier };
 
 	constexpr int minimalOreExperience[oreBlockTypeCount]{
 		0,
@@ -1297,7 +1337,7 @@ static void loadBlocks()
 		0,
 		7,
 		5,
-		1};
+		1 };
 	constexpr bool hasBlockForm[oreBlockTypeCount]{
 		true,
 		true,
@@ -1484,7 +1524,7 @@ static void loadBlocks()
 		std::wstring(L"mossy_stone_brick_wall"),
 		std::wstring(L"sandstone_wall"),
 		std::wstring(L"red_sandstone_wall"),
-	});
+		});
 
 	const wstringContainer wallBlockNames = wstringContainer({
 		std::wstring(L"end_stone_bricks"),
@@ -1504,7 +1544,7 @@ static void loadBlocks()
 		std::wstring(L"mossy_stone_bricks"),
 		std::wstring(L"sandstone"),
 		std::wstring(L"red_sandstone"),
-	});
+		});
 
 	for (size_t i = 0; i < wallBlockNames.size(); i++)
 	{
@@ -1519,7 +1559,7 @@ static void loadBlocks()
 	// stairs
 
 	wstringContainer stairNames =
-		wstringContainer({std::wstring(L"stone_stairs"),
+		wstringContainer({ std::wstring(L"stone_stairs"),
 						  std::wstring(L"granite_stairs"),
 						  std::wstring(L"polished_granite_stairs"),
 						  std::wstring(L"diorite_stairs"),
@@ -1546,7 +1586,7 @@ static void loadBlocks()
 						  std::wstring(L"dark_prismarine_stairs"),
 						  std::wstring(L"blackstone_stairs"),
 						  std::wstring(L"polished_blackstone_stairs"),
-						  std::wstring(L"polished_blackstone_brick_stairs")});
+						  std::wstring(L"polished_blackstone_brick_stairs") });
 
 	wstringContainer stairTextureNames =
 		wstringContainer({
@@ -1578,21 +1618,21 @@ static void loadBlocks()
 			std::wstring(L"blackstone"),
 			std::wstring(L"polished_blackstone"),
 			std::wstring(L"polished_blackstone_bricks"),
-		});
+			});
 
 	// to get the planks textures
 	blockList.update();
 
 	for (int i = 0; i < woodTypeCount; i++)
 	{
-		resolutionTexture *tex = blockList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
+		resolutionTexture* tex = blockList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
 
 		blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, tex, woodTypeDataList[i]->name + std::wstring(L"_stairs"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount);
 		identifier++;
 	}
 	for (size_t i = 0; i < stairTextureNames.size(); i++)
 	{
-		resolutionTexture *blockTexture = loadTextureFromResourcePack(blockTextureFolder / (stairTextureNames[i] + std::wstring(L".png")));
+		resolutionTexture* blockTexture = loadTextureFromResourcePack(blockTextureFolder / (stairTextureNames[i] + std::wstring(L".png")));
 
 		blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, blockTexture, stairNames[i], stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollideTop);
 		identifier++;
@@ -1632,7 +1672,7 @@ static void loadBlocks()
 			std::wstring(L"blackstone_slab"),
 			std::wstring(L"polished_blackstone_slab"),
 			std::wstring(L"polished_blackstone_brick_slab"),
-		});
+			});
 
 	wstringContainer slabBlockNames =
 		wstringContainer({
@@ -1667,20 +1707,20 @@ static void loadBlocks()
 			std::wstring(L"blackstone"),
 			std::wstring(L"polished_blackstone"),
 			std::wstring(L"polished_blackstone_bricks"),
-		});
+			});
 
 	// to get the planks textures
 	blockList.update();
 	for (int i = 0; i < woodTypeCount; i++)
 	{
-		resolutionTexture *tex = blockList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
+		resolutionTexture* tex = blockList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
 
 		blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, tex, woodTypeDataList[i]->name + std::wstring(L"_slab"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount);
 		identifier++;
 	}
 	for (size_t i = 0; i < slabBlockNames.size(); i++)
 	{
-		resolutionTexture *tex = loadTextureFromResourcePack(blockTextureFolder / (slabBlockNames[i] + std::wstring(L".png")));
+		resolutionTexture* tex = loadTextureFromResourcePack(blockTextureFolder / (slabBlockNames[i] + std::wstring(L".png")));
 
 		blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, tex, slabNames[i], stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollideTop);
 		identifier++;
@@ -1729,7 +1769,7 @@ static void loadBlocks()
 		{
 			for (int coralTypeIndex = 0; coralTypeIndex < (int)coralTypeID::count; coralTypeIndex++)
 			{
-				const std::wstring &name = coralStateNames[coralStateIndex] + coralColorNames[coralColorIndex] + coralTypeNames[coralTypeIndex];
+				const std::wstring& name = coralStateNames[coralStateIndex] + coralColorNames[coralColorIndex] + coralTypeNames[coralTypeIndex];
 
 				if (coralTypeIndex == (int)coralTypeID::coralBlock)
 				{
@@ -1843,17 +1883,17 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 22.5, 22.5, standardBlockWeightPerCubicMeter, loadChestTexture(entityTextureFolder / L"chest" / L"ender.png"), std::wstring(L"ender_chest"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, moodyLightSource);
 	identifier++;
 
-	resolutionTexture *furnaceSideImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_side.png"));
-	resolutionTexture *furnaceTopImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_top.png"));
+	resolutionTexture* furnaceSideImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_side.png"));
+	resolutionTexture* furnaceTopImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_top.png"));
 
-	const wstringContainer &dispenserNames = {std::wstring(L"dispenser"), std::wstring(L"dropper")};
+	const wstringContainer& dispenserNames = { std::wstring(L"dispenser"), std::wstring(L"dropper") };
 	for (size_t i = 0; i < dispenserNames.size(); i++)
 	{
-		resolutionTexture *frontHorizontalImage = loadTextureFromResourcePack(blockTextureFolder / (dispenserNames[i] + std::wstring(L"_front.png")));
-		resolutionTexture *frontVerticalImage = loadTextureFromResourcePack(blockTextureFolder / (dispenserNames[i] + std::wstring(L"_front_vertical.png")));
+		resolutionTexture* frontHorizontalImage = loadTextureFromResourcePack(blockTextureFolder / (dispenserNames[i] + std::wstring(L"_front.png")));
+		resolutionTexture* frontVerticalImage = loadTextureFromResourcePack(blockTextureFolder / (dispenserNames[i] + std::wstring(L"_front_vertical.png")));
 
-		resolutionTexture *horizontalTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
-		resolutionTexture *verticalTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
+		resolutionTexture* horizontalTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
+		resolutionTexture* verticalTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
 		cfp dispenserFrontPart = 0.25;
 
@@ -1872,33 +1912,33 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"enchanting_table_side.png")), std::wstring(L"enchanting_table"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, diamondHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	resolutionTexture *basicAnvilTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"anvil.png"));
+	resolutionTexture* basicAnvilTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"anvil.png"));
 
 	std::vector<rectangle2> relativeAnvilRects{
 		crectangle2(0.1, 0, 0.8, 0.2),
 		crectangle2(0.2, 0.2, 0.6, 0.1),
 		crectangle2(0.25, 0.3, 0.5, 0.3),
-		crectangle2(0, 0.6, 1, 0.4)};
+		crectangle2(0, 0.6, 1, 0.4) };
 
-	const wstringContainer &anvilTextureNames = {std::wstring(L"anvil_top"), std::wstring(L"chipped_anvil_top"), std::wstring(L"damaged_anvil_top")};
+	const wstringContainer& anvilTextureNames = { std::wstring(L"anvil_top"), std::wstring(L"chipped_anvil_top"), std::wstring(L"damaged_anvil_top") };
 
 	for (int i = 0; i < anvilDamageLevelCount; i++)
 	{
-		cfsize_t &anvilTextureSize = basicAnvilTexture->scaledTextures[0]->size.x;
-		crectangle2 &anvilTextureRect = basicAnvilTexture->getClientRect();
-		resolutionTexture *anvilGraphics = new resolutionTexture(texture(cvect2<fsize_t>(anvilTextureSize)), cvec2(blockTextureSize));
+		cfsize_t& anvilTextureSize = basicAnvilTexture->scaledTextures[0]->size.x;
+		crectangle2& anvilTextureRect = basicAnvilTexture->getClientRect();
+		resolutionTexture* anvilGraphics = new resolutionTexture(texture(cvect2<fsize_t>(anvilTextureSize)), cvec2(blockTextureSize));
 
-		csize_t &lastRectIndex = relativeAnvilRects.size() - 1;
+		csize_t& lastRectIndex = relativeAnvilRects.size() - 1;
 		for (size_t anvilRectIndex = 0; anvilRectIndex < lastRectIndex; anvilRectIndex++)
 		{
-			crectangle2 &blockRect = getAbsoluteRect(anvilTextureRect, relativeAnvilRects[anvilRectIndex]);
+			crectangle2& blockRect = getAbsoluteRect(anvilTextureRect, relativeAnvilRects[anvilRectIndex]);
 
 			fillTransformedBrushRectangle(blockRect, blockRect, *basicAnvilTexture, *anvilGraphics);
 		}
 
-		crectangle2 &damageablePartRect = getAbsoluteRect(anvilTextureRect, relativeAnvilRects[lastRectIndex]);
+		crectangle2& damageablePartRect = getAbsoluteRect(anvilTextureRect, relativeAnvilRects[lastRectIndex]);
 
-		resolutionTexture *damageablePartTexture = loadTextureFromResourcePack(blockTextureFolder / (anvilTextureNames[i] + std::wstring(L".png")), false);
+		resolutionTexture* damageablePartTexture = loadTextureFromResourcePack(blockTextureFolder / (anvilTextureNames[i] + std::wstring(L".png")), false);
 
 		fillTransparentRectangle(crectangle2(3, 0, 10, 0x10), 90, damageablePartRect, *damageablePartTexture, *anvilGraphics);
 
@@ -1914,16 +1954,16 @@ static void loadBlocks()
 
 	auto grindStoneTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
-	resolutionTexture *grindStoneSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_side.png"), false);
-	resolutionTexture *grindStonePivotTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_pivot.png"), false);
+	resolutionTexture* grindStoneSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_side.png"), false);
+	resolutionTexture* grindStonePivotTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_pivot.png"), false);
 
 	crectangle2 grindStoneSideTextureRect = crectangle2(0, 4, 12, 12);
 	crectangle2 grindStonePivotTopTextureRect = crectangle2(0, 10, 6, 6);
 	crectangle2 grindStonePivotBottomTextureRect = crectangle2(6, 10, 4, 6);
 
-	cvec2 &grindStoneSidePosition = (cveci2(blockTextureSize) - cveci2(grindStoneSideTextureRect.size)) / 2;
-	cvec2 &grindStonePivotTopPosition = cveci2((blockTextureSize - (int)grindStonePivotTopTextureRect.size.x) / 2, (int)grindStonePivotBottomTextureRect.h) / 2;
-	cvec2 &grindStonePivotBottomPosition = cveci2((blockTextureSize - (int)grindStonePivotBottomTextureRect.size.x) / 2, 0);
+	cvec2& grindStoneSidePosition = (cveci2(blockTextureSize) - cveci2(grindStoneSideTextureRect.size)) / 2;
+	cvec2& grindStonePivotTopPosition = cveci2((blockTextureSize - (int)grindStonePivotTopTextureRect.size.x) / 2, (int)grindStonePivotBottomTextureRect.h) / 2;
+	cvec2& grindStonePivotBottomPosition = cveci2((blockTextureSize - (int)grindStonePivotBottomTextureRect.size.x) / 2, 0);
 
 	fillTransformedBrushRectangle(grindStoneSideTextureRect, grindStoneSidePosition, *grindStoneSideTexture, *grindStoneTexture);
 	fillTransformedBrushRectangle(grindStonePivotBottomTextureRect, grindStoneSidePosition, *grindStoneSideTexture, *grindStoneTexture);
@@ -1942,13 +1982,13 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"fletching_table_side.png")), std::wstring(L"fletching_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	resolutionTexture *innerBeaconTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"beacon.png"));
+	resolutionTexture* innerBeaconTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"beacon.png"));
 
 	constexpr rectangle2 innerBeaconTextureRect = crectangle2(2, 2, 28, 28);
 
 	constexpr rectangle2 beaconObsidianTextureRect = crectangle2(0, 0, blockTextureSize, innerBeaconTextureRect.getY());
 
-	resolutionTexture *beaconTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
+	resolutionTexture* beaconTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
 	fillTransformedBrushRectangle(innerBeaconTextureRect, innerBeaconTextureRect.pos0, *innerBeaconTexture, *beaconTexture);
 
@@ -1959,9 +1999,9 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, beaconTexture, std::wstring(L"beacon"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withHand, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
 	identifier++;
 
-	resolutionTexture *conduitTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
+	resolutionTexture* conduitTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
-	resolutionTexture *unOpenedConduitTexture = loadTextureFromResourcePack(entityTextureFolder / L"conduit" / L"base.png");
+	resolutionTexture* unOpenedConduitTexture = loadTextureFromResourcePack(entityTextureFolder / L"conduit" / L"base.png");
 
 	constexpr rectangle2 unOpenedConduitRect = crectangle2(cveci2(4), cveci2(12));
 
@@ -1970,9 +2010,9 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, conduitTexture, std::wstring(L"conduit"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withHand, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
 	identifier++;
 
-	resolutionTexture *lecternSidesTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lectern_sides.png"));
+	resolutionTexture* lecternSidesTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lectern_sides.png"));
 
-	resolutionTexture *lecternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * lecternSidesTexture->getScaleModifier()))), cvec2(blockTextureSize));
+	resolutionTexture* lecternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * lecternSidesTexture->getScaleModifier()))), cvec2(blockTextureSize));
 
 	constexpr rectangle2 lecternPoleTextureRect = crectangle2(4, 0, 8, 12);
 
@@ -2112,15 +2152,15 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tripwire_hook.png")), std::wstring(L"tripwire_hook"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, withPickaxe, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	const wstringContainer pistonNames = {std::wstring(L"piston"), std::wstring(L"sticky_piston")};
-	const wstringContainer pistonTopTextureNames = {std::wstring(L"piston_top"), std::wstring(L"piston_top_sticky")};
+	const wstringContainer pistonNames = { std::wstring(L"piston"), std::wstring(L"sticky_piston") };
+	const wstringContainer pistonTopTextureNames = { std::wstring(L"piston_top"), std::wstring(L"piston_top_sticky") };
 
-	resolutionTexture *pistonSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"piston_side.png"), false);
+	resolutionTexture* pistonSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"piston_side.png"), false);
 	for (int i = 0; i < 2; i++)
 	{
-		resolutionTexture *pistonTopTexture = loadTextureFromResourcePack(blockTextureFolder / (pistonTopTextureNames[i] + std::wstring(L".png")), false);
-		cfp &scaleModifier = pistonTopTexture->getScaleModifier();
-		resolutionTexture *pistonTexture = new resolutionTexture(texture(cveci2((int)(blockTextureSize * scaleModifier), (int)(blockTextureSize * scaleModifier * 2))), cvec2(blockTextureSize, blockTextureSize * 2));
+		resolutionTexture* pistonTopTexture = loadTextureFromResourcePack(blockTextureFolder / (pistonTopTextureNames[i] + std::wstring(L".png")), false);
+		cfp& scaleModifier = pistonTopTexture->getScaleModifier();
+		resolutionTexture* pistonTexture = new resolutionTexture(texture(cveci2((int)(blockTextureSize * scaleModifier), (int)(blockTextureSize * scaleModifier * 2))), cvec2(blockTextureSize, blockTextureSize * 2));
 
 		// bottom
 		fillTransformedBrushRectangle(crectangle2(0, 0, blockTextureSize, blockTextureSize - pistonTopPixelSize), cveci2(), *pistonSideTexture, *pistonTexture);
@@ -2169,7 +2209,7 @@ static void loadBlocks()
 
 	for (int i = 0; i < netherTreeTypeCount; i++)
 	{
-		const std::wstring &name = woodTypeDataList[(int)woodTypeID::crimson + i]->name + std::wstring(L"_roots");
+		const std::wstring& name = woodTypeDataList[(int)woodTypeID::crimson + i]->name + std::wstring(L"_roots");
 		blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (name + std::wstring(L".png"))), name, breakRoots, stepRoots, breakRoots, breakRoots, breakRoots, noLightFilter, withHand, noHarvestTier, collisionTypeID::willNotCollide);
 		identifier++;
 	}
@@ -2179,8 +2219,8 @@ static void loadBlocks()
 
 	for (int i = 0; i < (int)netherVineTypeID::count; i++)
 	{
-		const std::wstring &name = netherVineTypeDataList[i]->name + std::wstring(L"_vines");
-		const std::wstring &plantName = name + std::wstring(L"_plant");
+		const std::wstring& name = netherVineTypeDataList[i]->name + std::wstring(L"_vines");
+		const std::wstring& plantName = name + std::wstring(L"_plant");
 		blockList[identifier] = new connectedBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (plantName + std::wstring(L".png"))), name, breakRoots, stepRoots, breakRoots, breakRoots, breakRoots, lightFiltering, withHand, noHarvestTier, collisionTypeID::willNotCollide), loadTextureFromResourcePack(blockTextureFolder / (name + std::wstring(L".png"))), (i == 0) ? cveci2(0, -1) : cveci2(0, 1));
 		identifier++;
 	}
@@ -2204,13 +2244,13 @@ static void loadBlocks()
 			std::wstring(L"lilac"),
 			std::wstring(L"rose_bush"),
 			std::wstring(L"peony"),
-		});
+			});
 
 	for (int i = 0; i < flowerTypeCount; i++)
 	{
 		if (isDoubleBlock((blockID)identifier))
 		{
-			resolutionTexture *topTexture = loadTextureFromResourcePack(blockTextureFolder / (flowerNames[i] + std::wstring(L"_top.png")));
+			resolutionTexture* topTexture = loadTextureFromResourcePack(blockTextureFolder / (flowerNames[i] + std::wstring(L"_top.png")));
 			blockList[identifier] = new doubleBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, topTexture, flowerNames[i], stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, withHand, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true), loadTextureFromResourcePack(blockTextureFolder / (flowerNames[i] + std::wstring(L"_bottom.png"))), topTexture, cveci2(0, 1));
 			identifier++;
 		}
@@ -2221,8 +2261,8 @@ static void loadBlocks()
 		}
 	}
 
-	const wstringContainer sandStoneColorNames = {std::wstring(), std::wstring(L"red_")};
-	const wstringContainer sandStoneTypeNames = {std::wstring(), std::wstring(L"chiseled_"), std::wstring(L"cut_"), std::wstring(L"smooth_")};
+	const wstringContainer sandStoneColorNames = { std::wstring(), std::wstring(L"red_") };
+	const wstringContainer sandStoneTypeNames = { std::wstring(), std::wstring(L"chiseled_"), std::wstring(L"cut_"), std::wstring(L"smooth_") };
 	for (int i = 0; i < (int)sandStoneColorID::count; i++)
 	{
 		for (int j = 0; j < (int)sandStoneTypeID::count; j++)
@@ -2237,7 +2277,7 @@ static void loadBlocks()
 
 	for (int i = 0; i < (int)colorID::count; i++)
 	{
-		resolutionTexture *bedTexture = loadTextureFromResourcePack(entityTextureFolder / L"bed" / (colorNames[i] + std::wstring(L".png")));
+		resolutionTexture* bedTexture = loadTextureFromResourcePack(entityTextureFolder / L"bed" / (colorNames[i] + std::wstring(L".png")));
 		auto backTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 		auto frontTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
@@ -2265,8 +2305,8 @@ static void loadBlocks()
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_plant.png")), std::wstring(L"chorus_plant"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withHand, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	resolutionTexture *chorusFlowerTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower.png"));
-	blockList[identifier] = new cropBlock(block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, chorusFlowerTexture, std::wstring(L"chorus_flower"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withHand, noHarvestTier, collisionTypeID::willCollideTop), 6, std::vector<resolutionTexture *>({chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower_dead.png"))}), 1);
+	resolutionTexture* chorusFlowerTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower.png"));
+	blockList[identifier] = new cropBlock(block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, chorusFlowerTexture, std::wstring(L"chorus_flower"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withHand, noHarvestTier, collisionTypeID::willCollideTop), 6, std::vector<resolutionTexture*>({ chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower_dead.png")) }), 1);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cactus_side.png")), std::wstring(L"cactus"), stepCloth, stepCloth, stepCloth, stepCloth, stepCloth, lightFiltering, withHand, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
@@ -2278,7 +2318,7 @@ static void loadBlocks()
 	identifier++;
 	// blockList[identifier] = new block((blockID)id, 0, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"white_bed.png")), std::wstring(L"sugar_cane"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, withHand, new itemDrop((itemID)id),noToolTier, collisionTypeID::willNotCollide)); id++;
 
-	wstringContainer cropNames = wstringContainer({std::wstring(L"wheat"), std::wstring(L"carrots"), std::wstring(L"potatoes"), std::wstring(L"beetroots"), std::wstring(L"nether_wart")});
+	wstringContainer cropNames = wstringContainer({ std::wstring(L"wheat"), std::wstring(L"carrots"), std::wstring(L"potatoes"), std::wstring(L"beetroots"), std::wstring(L"nether_wart") });
 	cint cropsToAdd = 5;
 
 	cint growthStageTextureCount[cropsToAdd]{
@@ -2314,13 +2354,13 @@ static void loadBlocks()
 
 	for (int i = 0; i < cropsToAdd; i++)
 	{
-		auto growthStageTextures = std::vector<resolutionTexture *>();
+		auto growthStageTextures = std::vector<resolutionTexture*>();
 
 		for (int stageTextureIndex = 0; stageTextureIndex < growthStageTextureCount[i]; stageTextureIndex++)
 		{
 			growthStageTextures.push_back(loadTextureFromResourcePack(blockTextureFolder / (cropNames[i] + std::wstring(L"_stage") + std::to_wstring(stageTextureIndex) + std::wstring(L".png"))));
 		}
-		auto linkedGrowthStageTextures = std::vector<resolutionTexture *>();
+		auto linkedGrowthStageTextures = std::vector<resolutionTexture*>();
 		for (int stageIndex = 0; stageIndex < growthStageCount[i]; stageIndex++)
 		{
 			linkedGrowthStageTextures.push_back(growthStageTextures[growthStageTextureIndexes[i][stageIndex]]);
@@ -2337,13 +2377,13 @@ static void loadBlocks()
 	blockList[blockID::nether_wart]->tex = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"nether_wart.png"));
 
 	cint sweetBerryBushGrowthStageCount = 4;
-	std::vector<resolutionTexture *> sweetBerriesGrowthStageTextures = loadGrowthStageTextures(std::wstring(L"sweet_berry_bush"), {0ULL, 1ULL, 2ULL, 3ULL});
+	std::vector<resolutionTexture*> sweetBerriesGrowthStageTextures = loadGrowthStageTextures(std::wstring(L"sweet_berry_bush"), { 0ULL, 1ULL, 2ULL, 3ULL });
 	blockList[identifier] = new cropBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, sweetBerriesGrowthStageTextures[sweetBerryBushGrowthStageCount - 1], std::wstring(L"sweet_berry_bush"), stepGrass, stepGrass, stepGrass, breakBerryBush, placeBerryBush, lightFiltering, withHand, noHarvestTier, collisionTypeID::willNotCollide), sweetBerryBushGrowthStageCount, sweetBerriesGrowthStageTextures, (defaultTicksPerRandomTick * sweetBerryBushGrowthStageCount) / (ticksPerDay * 0.5));
 	identifier++;
 
 	const std::wstring stemPlantNames[stemPlantTypeCount]{
 		std::wstring(L"melon"),
-		std::wstring(L"pumpkin")};
+		std::wstring(L"pumpkin") };
 	for (int i = 0; i < stemPlantTypeCount; i++)
 	{
 		unAttachedStemTextures[i] = loadTextureFromResourcePack(blockTextureFolder / (stemPlantNames[i] + std::wstring(L"_stem.png")));
@@ -2352,7 +2392,7 @@ static void loadBlocks()
 
 	for (int i = 0; i < stemPlantTypeCount; i++)
 	{
-		blockList[identifier] = new cropBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, unAttachedStemTextures[i], stemPlantNames[i] + std::wstring(L"_stem"), stepWood, stepWood, stepWood, breakCrop, breakCrop, noLightFilter, withAxe, noHarvestTier, collisionTypeID::willNotCollide), stemPlantGrowthStageCount[i], std::vector<resolutionTexture *>(8, unAttachedStemTextures[i]), stemPlantChanceToGrow[i]);
+		blockList[identifier] = new cropBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, unAttachedStemTextures[i], stemPlantNames[i] + std::wstring(L"_stem"), stepWood, stepWood, stepWood, breakCrop, breakCrop, noLightFilter, withAxe, noHarvestTier, collisionTypeID::willNotCollide), stemPlantGrowthStageCount[i], std::vector<resolutionTexture*>(8, unAttachedStemTextures[i]), stemPlantChanceToGrow[i]);
 		identifier++;
 	}
 	for (int i = 0; i < stemPlantTypeCount; i++)
@@ -2370,14 +2410,14 @@ static void loadBlocks()
 
 	for (int i = 0; i < (int)colorID::count; i++)
 	{
-		const std::wstring &name = colorNames[i] + std::wstring(L"_concrete");
+		const std::wstring& name = colorNames[i] + std::wstring(L"_concrete");
 		blockList[identifier] = new block((blockID)identifier, 1.8, 1.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (name + std::wstring(L".png"))), name, stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, withPickaxe, woodHarvestTier);
 		identifier++;
 	}
 
 	for (int i = 0; i < (int)colorID::count; i++)
 	{
-		const std::wstring &name = colorNames[i] + std::wstring(L"_concrete_powder");
+		const std::wstring& name = colorNames[i] + std::wstring(L"_concrete_powder");
 		blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (name + std::wstring(L".png"))), name, stepSand, stepSand, stepSand, digSand, digSand, lightBlocking, withShovel, noHarvestTier);
 		identifier++;
 	}
@@ -2386,7 +2426,7 @@ static void loadBlocks()
 	identifier++;
 	const wstringContainer sandTypeNames = {
 		std::wstring(L"sand"),
-		std::wstring(L"red_sand")};
+		std::wstring(L"red_sand") };
 	for (size_t i = 0; i < sandTypeNames.size(); i++)
 	{
 		blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (sandTypeNames[i] + std::wstring(L".png"))), sandTypeNames[i], stepSand, stepSand, stepSand, digSand, digSand, sunlightPermeable, withShovel, noHarvestTier);
@@ -2398,7 +2438,7 @@ static void loadBlocks()
 	// ores
 
 	cint stoneTypeCount = 0x3;
-	std::wstring stoneTypeNames[stoneTypeCount]{std::wstring(L"andesite"), std::wstring(L"diorite"), std::wstring(L"granite")};
+	std::wstring stoneTypeNames[stoneTypeCount]{ std::wstring(L"andesite"), std::wstring(L"diorite"), std::wstring(L"granite") };
 
 	for (int i = 0; i < stoneTypeCount; i++)
 	{
@@ -2427,7 +2467,7 @@ static void loadBlocks()
 			identifier++;
 		}
 	}
-	// collisionTypeID::willCollide so you can close the door before you and zombies can't hit you
+	// collisionTypeID::willCollide so you can close the door before you and zombies can'T hit you
 	blockList[identifier] = new block((blockID)identifier, 5.0, 5.0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_trapdoor.png")), std::wstring(L"iron_trapdoor"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollide);
 	identifier++;
 	for (int i = 0; i < woodTypeCount; i++)
@@ -2436,17 +2476,17 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	// collisionTypeID::willCollide so you can close the door before you and zombies can't hit you
+	// collisionTypeID::willCollide so you can close the door before you and zombies can'T hit you
 	blockList[identifier] = new doubleBlock(block((blockID)identifier, 5.0, 5, standardBlockWeightPerCubicMeter,
-												  loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_door.png")), std::wstring(L"iron_door"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollide),
-											loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_bottom.png")), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_top.png")), veci2(0, 1));
+		loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_door.png")), std::wstring(L"iron_door"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollide),
+		loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_bottom.png")), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_top.png")), veci2(0, 1));
 	identifier++;
 	for (int i = 0; i < woodTypeCount; i++)
 	{
 		blockList[identifier] = new doubleBlock(block((blockID)identifier, 3.0, 3, standardBlockWeightPerCubicMeter,
-													  loadTextureFromResourcePack(itemTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door.png"))), woodTypeDataList[i]->name + std::wstring(L"_door"), stepWood, stepWood, stepWood, digWood, digWood,
-													  lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollide),
-												loadTextureFromResourcePack(blockTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door_bottom.png"))), loadTextureFromResourcePack(blockTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door_top.png"))), veci2(0, 1));
+			loadTextureFromResourcePack(itemTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door.png"))), woodTypeDataList[i]->name + std::wstring(L"_door"), stepWood, stepWood, stepWood, digWood, digWood,
+			lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollide),
+			loadTextureFromResourcePack(blockTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door_bottom.png"))), loadTextureFromResourcePack(blockTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_door_top.png"))), veci2(0, 1));
 		identifier++;
 	}
 
@@ -2458,7 +2498,7 @@ static void loadBlocks()
 
 	for (int i = 0; i < woodTypeCount; i++)
 	{
-		resolutionTexture *tex = blockList[getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
+		resolutionTexture* tex = blockList[getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
 
 		blockList[identifier] = new block((blockID)identifier, 2, 3, standardBlockWeightPerCubicMeter, tex, woodTypeDataList[i]->name + std::wstring(L"_fence_gate"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollide, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount);
 		identifier++;
@@ -2466,13 +2506,13 @@ static void loadBlocks()
 
 	for (int i = 0; i < woodTypeCount; i++)
 	{
-		resolutionTexture *tex = blockList[getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
+		resolutionTexture* tex = blockList[getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->tex;
 
 		blockList[identifier] = new block((blockID)identifier, 2, 3, standardBlockWeightPerCubicMeter, tex, woodTypeDataList[i]->name + std::wstring(L"_fence"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, withAxe, noHarvestTier, collisionTypeID::willCollideTop, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount ? 5 : 0, i < normalTreeTypeCount);
 		identifier++;
 	}
 
-	resolutionTexture *netherBrickFenceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"nether_bricks.png"));
+	resolutionTexture* netherBrickFenceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"nether_bricks.png"));
 
 	blockList[identifier] = new block((blockID)identifier, 2, 6, standardBlockWeightPerCubicMeter, netherBrickFenceTexture, std::wstring(L"nether_brick_fence"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightFiltering, withPickaxe, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
@@ -2494,20 +2534,20 @@ static void loadBlocks()
 static void loadItems()
 {
 	// calculate possible enchantments, to use for loading the items
-	const std::vector<enchantmentID> &normalEnchantments = {enchantmentID::unBreaking, enchantmentID::mending, enchantmentID::curseOfVanishing};
-	std::vector<enchantmentID> armorEnchantments = {enchantmentID::protection, enchantmentID::fireProtection, enchantmentID::blastProtection, enchantmentID::projectileProtection, enchantmentID::thorns, enchantmentID::curseOfBinding};
+	const std::vector<enchantmentID>& normalEnchantments = { enchantmentID::unBreaking, enchantmentID::mending, enchantmentID::curseOfVanishing };
+	std::vector<enchantmentID> armorEnchantments = { enchantmentID::protection, enchantmentID::fireProtection, enchantmentID::blastProtection, enchantmentID::projectileProtection, enchantmentID::thorns, enchantmentID::curseOfBinding };
 	armorEnchantments.insert(armorEnchantments.end(), normalEnchantments.begin(), normalEnchantments.end());
-	std::vector<enchantmentID> helmetEnchantments = {enchantmentID::aquaAffinity, enchantmentID::respiration};
+	std::vector<enchantmentID> helmetEnchantments = { enchantmentID::aquaAffinity, enchantmentID::respiration };
 	helmetEnchantments.insert(helmetEnchantments.end(), armorEnchantments.begin(), armorEnchantments.end());
-	std::vector<enchantmentID> bootsEnchantments = {enchantmentID::depthStrider, enchantmentID::frostWalker, enchantmentID::soulSpeed, enchantmentID::featherFalling};
+	std::vector<enchantmentID> bootsEnchantments = { enchantmentID::depthStrider, enchantmentID::frostWalker, enchantmentID::soulSpeed, enchantmentID::featherFalling };
 	bootsEnchantments.insert(bootsEnchantments.end(), armorEnchantments.begin(), armorEnchantments.end());
-	std::vector<enchantmentID> swordEnchantments = {enchantmentID::sharpness, enchantmentID::baneOfArthropods, enchantmentID::smite, enchantmentID::knockback, enchantmentID::fireAspect, enchantmentID::looting, enchantmentID::sweepingEdge};
+	std::vector<enchantmentID> swordEnchantments = { enchantmentID::sharpness, enchantmentID::baneOfArthropods, enchantmentID::smite, enchantmentID::knockback, enchantmentID::fireAspect, enchantmentID::looting, enchantmentID::sweepingEdge };
 	swordEnchantments.insert(swordEnchantments.end(), normalEnchantments.begin(), normalEnchantments.end());
-	std::vector<enchantmentID> axeEnchantments = {enchantmentID::sharpness, enchantmentID::baneOfArthropods, enchantmentID::smite};
+	std::vector<enchantmentID> axeEnchantments = { enchantmentID::sharpness, enchantmentID::baneOfArthropods, enchantmentID::smite };
 	axeEnchantments.insert(axeEnchantments.end(), normalEnchantments.begin(), normalEnchantments.end());
-	std::vector<enchantmentID> toolEnchantments = {enchantmentID::efficiency, enchantmentID::fortune, enchantmentID::silkTouch};
+	std::vector<enchantmentID> toolEnchantments = { enchantmentID::efficiency, enchantmentID::fortune, enchantmentID::silkTouch };
 	toolEnchantments.insert(toolEnchantments.end(), normalEnchantments.begin(), normalEnchantments.end());
-	std::vector<enchantmentID> shearsEnchantments = {enchantmentID::efficiency, enchantmentID::mending};
+	std::vector<enchantmentID> shearsEnchantments = { enchantmentID::efficiency, enchantmentID::mending };
 	shearsEnchantments.insert(shearsEnchantments.end(), normalEnchantments.begin(), normalEnchantments.end());
 
 	std::vector<enchantmentID> bookEnchantments = {};
@@ -2517,11 +2557,11 @@ static void loadItems()
 	}
 
 	// load items
-	itemList = idList<itemData *, itemID>(fastList<itemData *>((int)itemID::count));
+	itemList = idList<itemData*, itemID>(fastList<itemData*>((int)itemID::count));
 
 	// reset identifier to add the blocks as items
 	int identifier = 0;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"air"), nullptr, -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"air"), nullptr);
 	identifier++;
 	for (int i = 1; i < blockIDCount; i++)
 	{
@@ -2539,16 +2579,17 @@ static void loadItems()
 
 	for (int i = 0; i < musicDiscTypeCount; i++)
 	{
-		const std::wstring &name = std::wstring(L"music_disc_") + musicDiscNames[i];
-		itemList[identifier] = new itemData((itemID)identifier, name, loadTextureFromResourcePack(itemTextureFolder / (name + std::wstring(L".png"))), -1, noHarvestTier, withHand, 1, 1, 1);
+		const std::wstring& name = std::wstring(L"music_disc_") + musicDiscNames[i];
+		itemList[identifier] = new itemData((itemID)identifier, name, loadTextureFromResourcePack(itemTextureFolder / (name + std::wstring(L".png"))), noHarvestTier, withHand, 1, 1, 1);
 		identifier++;
 	}
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"stick"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"stick.png")), 100);
+
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"stick"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"stick.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"charcoal"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"charcoal.png")), 1600);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"charcoal"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"charcoal.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clay_ball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"clay_ball.png")), 1600);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clay_ball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"clay_ball.png")));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"leather"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"leather.png")));
 	identifier++;
@@ -2556,9 +2597,9 @@ static void loadItems()
 	identifier++;
 
 	constexpr int bookEnchantability = 10;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"book.png")), -1, noHarvestTier, withHand, 1, 1, 64, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"book.png")), noHarvestTier, withHand, 1, 1, 64, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"enchanted_book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"enchanted_book.png")), -1, noHarvestTier, withHand, 1, 1, 1, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"enchanted_book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"enchanted_book.png")), noHarvestTier, withHand, 1, 1, 1, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"blaze_rod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"blaze_rod.png")));
 	identifier++;
@@ -2633,32 +2674,32 @@ static void loadItems()
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"experience_bottle"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"experience_bottle.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dragon_breath"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"dragon_breath.png")), -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dragon_breath"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"dragon_breath.png")), noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
 
 	auto potionTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"potion.png"));
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"awkward_potion"), potionTexture, -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"awkward_potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mundane_potion"), potionTexture, -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mundane_potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"thick_potion"), potionTexture, -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"thick_potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"potion"), potionTexture, -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"splash_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"splash_potion.png")), -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"splash_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"splash_potion.png")), noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lingering_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lingering_potion.png")), -1, noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lingering_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lingering_potion.png")), noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bow"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bow.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1, true);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bow"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bow.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"egg"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"egg.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"egg"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"egg.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fishing_rod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"fishing_rod.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fishing_rod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"fishing_rod.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"snowball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"snowball.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"snowball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"snowball.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_pearl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ender_pearl.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_pearl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ender_pearl.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_eye"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ender_eye.png")));
 	identifier++;
@@ -2694,42 +2735,42 @@ static void loadItems()
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"apple"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"apple.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_soup"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beetroot_soup.png")), -1, noHarvestTier, withHand, 0.0, INFINITY, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_soup"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beetroot_soup.png")), noHarvestTier, withHand, 0.0, INFINITY, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"baked_potato"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"baked_potato.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"baked_potato"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"baked_potato.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rotten_flesh"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rotten_flesh.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rotten_flesh"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rotten_flesh.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_carrot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_carrot.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_carrot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_carrot.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"porkchop.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"porkchop.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_porkchop.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_porkchop.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beef.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beef.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_beef.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_beef.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"mutton.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"mutton.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_mutton.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_mutton.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"chicken.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"chicken.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_chicken.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_chicken.png")));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_rabbit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_rabbit.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_rabbit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_rabbit.png")));
 	identifier++;
 
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cod.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_cod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_cod.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_cod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_cod.png")));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"salmon"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"salmon.png")));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_salmon"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_salmon.png")), -1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_salmon"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_salmon.png")));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"tropical_fish"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"tropical_fish.png")));
 	identifier++;
@@ -2740,7 +2781,7 @@ static void loadItems()
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bread"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bread.png")));
 	identifier++;
 
-	resolutionTexture *goldenAppleTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_apple.png"));
+	resolutionTexture* goldenAppleTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_apple.png"));
 
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_apple"), goldenAppleTexture);
 	identifier++;
@@ -2752,17 +2793,17 @@ static void loadItems()
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_stew"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit_stew.png")));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bowl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bowl.png")), 100, noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bowl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bowl.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bucket.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"water_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"water_bucket.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"water_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"water_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lava_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lava_bucket.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lava_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lava_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"milk_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"milk_bucket.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"milk_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"milk_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint_and_steel"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"flint_and_steel.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(normalEnchantments));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint_and_steel"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"flint_and_steel.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(normalEnchantments));
 	identifier++;
 
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bone"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bone.png")));
@@ -2798,17 +2839,17 @@ static void loadItems()
 	// spawn eggs will be added after the entity list is added
 	identifier += mobTypeCount;
 
-	const wstringContainer minecartNames = {std::wstring(L"minecart"), std::wstring(L"chest_minecart"), std::wstring(L"furnace_minecart"), std::wstring(L"hopper_minecart"), std::wstring(L"tnt_minecart"), std::wstring(L"command_block_minecart")};
+	const wstringContainer minecartNames = { std::wstring(L"minecart"), std::wstring(L"chest_minecart"), std::wstring(L"furnace_minecart"), std::wstring(L"hopper_minecart"), std::wstring(L"tnt_minecart"), std::wstring(L"command_block_minecart") };
 
 	for (int i = 0; i < mineCartItemTypeCount; i++)
 	{
-		itemList[identifier] = new itemData((itemID)identifier, minecartNames[i], loadTextureFromResourcePack(itemTextureFolder / (minecartNames[i] + std::wstring(L".png"))), -1, noHarvestTier, withHand, 1, 1, 1);
+		itemList[identifier] = new itemData((itemID)identifier, minecartNames[i], loadTextureFromResourcePack(itemTextureFolder / (minecartNames[i] + std::wstring(L".png"))), noHarvestTier, withHand, 1, 1, 1);
 		identifier++;
 	}
 
 	for (int i = 0; i < normalTreeTypeCount; i++)
 	{
-		itemList[identifier] = new itemData((itemID)identifier, woodTypeDataList[i]->name + std::wstring(L"_boat"), loadTextureFromResourcePack(itemTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_boat.png"))), -1, noHarvestTier, withHand, 1.0, 1.0, 1);
+		itemList[identifier] = new itemData((itemID)identifier, woodTypeDataList[i]->name + std::wstring(L"_boat"), loadTextureFromResourcePack(itemTextureFolder / (woodTypeDataList[i]->name + std::wstring(L"_boat.png"))), noHarvestTier, withHand, 1.0, 1.0, 1);
 		identifier++;
 		boatTextures[i] = loadTextureFromResourcePack(entityTextureFolder / L"boat" / (woodTypeDataList[i]->name + std::wstring(L".png")));
 	}
@@ -2817,7 +2858,7 @@ static void loadItems()
 		bootsEnchantments,
 		armorEnchantments,
 		armorEnchantments,
-		helmetEnchantments};
+		helmetEnchantments };
 
 	cint toolTypeCount = 6; // sword, pickaxe, axe, shovel, hoe, shears
 	std::vector<enchantmentID> toolTypeEnchantments[toolTypeCount]{
@@ -2826,17 +2867,17 @@ static void loadItems()
 		axeEnchantments,
 		toolEnchantments,
 		toolEnchantments,
-		toolEnchantments};
+		toolEnchantments };
 
 	// add tools
-	wstringContainer toolTierNames = {std::wstring(L"wooden_"), std::wstring(L"golden_"), std::wstring(L"stone_"), std::wstring(L"iron_"), std::wstring(L"diamond_"), std::wstring(L"netherite_")};
-	wstringContainer toolTypeNames = {std::wstring(L"sword"), std::wstring(L"pickaxe"), std::wstring(L"axe"), std::wstring(L"shovel"), std::wstring(L"hoe")};
-	std::vector<fp> attackSpeeds = {1.6, 1.2, 0.8, 1, 0};
-	std::vector<fp> hoeAttackSpeeds = {1, 1, 2, 3, 4, 4};
-	std::vector<fp> axeAttackSpeeds = {0.8, 1, 0.8, 0.9, 1, 1};
-	std::vector<fp> baseAttackDamageList = {4, 2, 0, 2.5, 0};
-	std::vector<fp> axeAttackDamageList = {7, 7, 9, 9, 9, 10};
-	std::vector<fp> tierAttackDamageList = {0, 0, 1, 2, 3, 4};
+	wstringContainer toolTierNames = { std::wstring(L"wooden_"), std::wstring(L"golden_"), std::wstring(L"stone_"), std::wstring(L"iron_"), std::wstring(L"diamond_"), std::wstring(L"netherite_") };
+	wstringContainer toolTypeNames = { std::wstring(L"sword"), std::wstring(L"pickaxe"), std::wstring(L"axe"), std::wstring(L"shovel"), std::wstring(L"hoe") };
+	std::vector<fp> attackSpeeds = { 1.6, 1.2, 0.8, 1, 0 };
+	std::vector<fp> hoeAttackSpeeds = { 1, 1, 2, 3, 4, 4 };
+	std::vector<fp> axeAttackSpeeds = { 0.8, 1, 0.8, 0.9, 1, 1 };
+	std::vector<fp> baseAttackDamageList = { 4, 2, 0, 2.5, 0 };
+	std::vector<fp> axeAttackDamageList = { 7, 7, 9, 9, 9, 10 };
+	std::vector<fp> tierAttackDamageList = { 0, 0, 1, 2, 3, 4 };
 	for (int toolTierIndex = 0; toolTierIndex < toolTierNames.size(); toolTierIndex++)
 	{
 		std::wstring toolTierName = toolTierNames[toolTierIndex];
@@ -2844,25 +2885,25 @@ static void loadItems()
 		{
 			std::wstring toolTypeName = toolTypeNames[toolTypeIndex];
 			cfp attackSpeed = toolTypeIndex == (withHoe - 1) ? hoeAttackSpeeds[toolTierIndex] : toolTypeIndex == (withAxe - 1) ? axeAttackSpeeds[toolTierIndex]
-																															   : attackSpeeds[toolTypeIndex];
-			cfp attackDamage = toolTypeIndex == (withHoe - 1) ? 1 : toolTypeIndex == (withAxe - 1) ? axeAttackDamageList[toolTierIndex]
-																								   : baseAttackDamageList[toolTypeIndex] + tierAttackDamageList[toolTierIndex];
-			std::wstring toolName = toolTierName + toolTypeName;
-			itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), toolTierIndex == woodHarvestTier ? 200 : 50, (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
-			identifier++;
+				: attackSpeeds[toolTypeIndex];
+				cfp attackDamage = toolTypeIndex == (withHoe - 1) ? 1 : toolTypeIndex == (withAxe - 1) ? axeAttackDamageList[toolTierIndex]
+					: baseAttackDamageList[toolTypeIndex] + tierAttackDamageList[toolTierIndex];
+					std::wstring toolName = toolTierName + toolTypeName;
+					itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
+					identifier++;
 		}
 	}
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shears"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"shears.png")), -1, ironHarvestTier, withSwordOrShears, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(shearsEnchantments), 14);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shears"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"shears.png")), ironHarvestTier, withSwordOrShears, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(shearsEnchantments), 14);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"elytra"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"elytra.png")), -1, noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, chestplateArmorType, std::vector<enchantmentID>(normalEnchantments), 15);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"elytra"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"elytra.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, chestplateArmorType, std::vector<enchantmentID>(normalEnchantments), 15);
 	identifier++;
 
 	// add armor
-	wstringContainer armorTierNames = {std::wstring(L"turtle_"), std::wstring(L"leather_"), std::wstring(L"golden_"), std::wstring(L"chainmail_"), std::wstring(L"iron_"), std::wstring(L"diamond_"), std::wstring(L"netherite_")};
-	wstringContainer armorTypeNames = {std::wstring(L"boots"), std::wstring(L"leggings"), std::wstring(L"chestplate"), std::wstring(L"helmet")};
-	wstringContainer armorMaterialNames = {std::wstring(L"turtle"), std::wstring(L"leather"), std::wstring(L"gold"), std::wstring(L"chainmail"), std::wstring(L"iron"), std::wstring(L"diamond"), std::wstring(L"netherite")};
-	wstringContainer armorSoundNames = {std::wstring(L"(no sound)"), std::wstring(L"leather"), std::wstring(L"gold"), std::wstring(L"chain"), std::wstring(L"iron"), std::wstring(L"diamond"), std::wstring(L"netherite")};
+	wstringContainer armorTierNames = { std::wstring(L"turtle_"), std::wstring(L"leather_"), std::wstring(L"golden_"), std::wstring(L"chainmail_"), std::wstring(L"iron_"), std::wstring(L"diamond_"), std::wstring(L"netherite_") };
+	wstringContainer armorTypeNames = { std::wstring(L"boots"), std::wstring(L"leggings"), std::wstring(L"chestplate"), std::wstring(L"helmet") };
+	wstringContainer armorMaterialNames = { std::wstring(L"turtle"), std::wstring(L"leather"), std::wstring(L"gold"), std::wstring(L"chainmail"), std::wstring(L"iron"), std::wstring(L"diamond"), std::wstring(L"netherite") };
+	wstringContainer armorSoundNames = { std::wstring(L"(no sound)"), std::wstring(L"leather"), std::wstring(L"gold"), std::wstring(L"chain"), std::wstring(L"iron"), std::wstring(L"diamond"), std::wstring(L"netherite") };
 
 	const color leatherColor = hexToColor(0xA06540);
 
@@ -2876,14 +2917,14 @@ static void loadItems()
 				std::wstring armorTypeName = armorTypeNames[armorTypeIndex];
 
 				std::wstring armorName = armorTierName + armorTypeName;
-				resolutionTexture *itemTexture = loadTextureFromResourcePack(itemTextureFolder / (armorName + std::wstring(L".png")));
+				resolutionTexture* itemTexture = loadTextureFromResourcePack(itemTextureFolder / (armorName + std::wstring(L".png")));
 				if (armorTierIndex == leatherArmorTier - turtleArmorTier) // leather
 				{
 					// multiply colors
 					multiplyRectangle(itemTexture->getClientRect(), leatherColor, *itemTexture);
 				}
 
-				itemList[identifier] = new itemData((itemID)identifier, armorName, itemTexture, -1, noHarvestTier, withHand, 1, 1, 1, true, (armorTierID)(armorTierIndex + turtleArmorTier), (armorTypeID)(armorTypeIndex + 1), std::vector<enchantmentID>(armorTypeEnchantments[armorTypeIndex]), armorEnchantability[armorTierIndex]);
+				itemList[identifier] = new itemData((itemID)identifier, armorName, itemTexture, noHarvestTier, withHand, 1, 1, 1, true, (armorTierID)(armorTierIndex + turtleArmorTier), (armorTypeID)(armorTypeIndex + 1), std::vector<enchantmentID>(armorTypeEnchantments[armorTypeIndex]), armorEnchantability[armorTierIndex]);
 				identifier++;
 			}
 		}
@@ -2892,7 +2933,7 @@ static void loadItems()
 		armorEquipSound[armorTierIndex] = armorTierIndex ? std::make_shared<soundCollection>(itemSoundFolder / L"armor" / (L"equip_" + armorSoundNames[armorTierIndex])) : equipSound;
 	}
 
-	resolutionTexture *leatherArmorTexture = armorTextures[leatherArmorTier - 1];
+	resolutionTexture* leatherArmorTexture = armorTextures[leatherArmorTier - 1];
 	multiplyRectangle(leatherArmorTexture->getClientRect(), leatherColor, *leatherArmorTexture);
 	leatherArmorTexture = armorLegTextures[leatherArmorTier - 1];
 	multiplyRectangle(leatherArmorTexture->getClientRect(), leatherColor, *leatherArmorTexture);
@@ -2904,7 +2945,7 @@ static void loadItems()
 static void loadEntityData()
 {
 	// add mob data
-	entityDataList = idList<entityData *, entityID>(fastList<entityData *>());
+	entityDataList = idList<entityData*, entityID>(fastList<entityData*>());
 	int currentEntityID = 0;
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"human"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTexture(skinFolder / L"current.png", humanSkinSize), nullptr, nullptr, std::make_shared<soundCollection>(generalSoundFolder / L"damage" / L"hit"), nullptr, humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::green], 4.0, 1.0, new experienceDrop(), humanFlyingSpeed));
 	currentEntityID++;
@@ -2930,7 +2971,7 @@ static void loadEntityData()
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"enderman"), 40, endermanHitbox, 0.1, 100), loadTextureFromResourcePack(entityTextureFolder / L"enderman" / L"enderman.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"hit"), std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(endermanLegSize.y, maxEndermanLegAngle), rgbColorValues[(int)colorID::black], rgbColorValues[(int)colorID::purple], 1.5, 7, new experienceDrop(5, 5)));
 	currentEntityID++;
 
-	resolutionTexture *unEditedSlimeTexture = loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"slime.png");
+	resolutionTexture* unEditedSlimeTexture = loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"slime.png");
 
 	auto editedSlimeTexture = new resolutionTexture(texture(vect2<fsize_t>(editedSlimeTextureRect.size), false), cvec2(editedSlimeTextureRect.size));
 
@@ -2978,7 +3019,7 @@ static void loadEntityData()
 	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"boat"), 4, crectangle2(boatHitboxSize.x * -0.5, 0, boatHitboxSize.x, boatHitboxSize.y), math::squared(boatHitboxSize.x) * boatHitboxSize.y));
 	currentEntityID++;
 
-	resolutionTexture *unEditedMinecartTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"minecart.png"));
+	resolutionTexture* unEditedMinecartTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"minecart.png"));
 	auto minecartEditedTexture = new resolutionTexture(texture(vect2<fsize_t>(minecartEditedTextureRect.size)), minecartEditedTextureRect.size);
 	fillTransformedBrushRectangle(minecartBottomTextureRect, cvec2(), *unEditedMinecartTexture, *minecartEditedTexture);
 	fillTransformedBrushRectangle(minecartTopTextureRect, cvec2(0, minecartBottomTextureRect.size.y), *unEditedMinecartTexture, *minecartEditedTexture);
@@ -3085,7 +3126,7 @@ void loadResourcePacks()
 	unLitRedstoneTorchTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_torch_off.png"));
 	redstoneLampOnTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_lamp_on.png"));
 
-	const wstringContainer &furnaceNames{std::wstring(L"furnace"), std::wstring(L"blast_furnace"), std::wstring(L"smoker")};
+	const wstringContainer& furnaceNames{ std::wstring(L"furnace"), std::wstring(L"blast_furnace"), std::wstring(L"smoker") };
 
 	for (int i = 0; i < furnaceTypeCount; i++)
 	{
@@ -3100,10 +3141,10 @@ void loadResourcePacks()
 	loadBlocks();
 
 	// load destroy stage textures
-	destroyStageTextures = std::vector<resolutionTexture *>();
+	destroyStageTextures = std::vector<resolutionTexture*>();
 	for (int i = 0; i < 9; i++)
 	{
-		resolutionTexture *destroyStageTexture = loadTextureFromResourcePack(blockTextureFolder / (std::wstring(L"destroy_stage_") + std::to_wstring(i) + std::wstring(L".png")));
+		resolutionTexture* destroyStageTexture = loadTextureFromResourcePack(blockTextureFolder / (std::wstring(L"destroy_stage_") + std::to_wstring(i) + std::wstring(L".png")));
 		// const auto& destroyStageBrush = grayScaleToTransparency<texture>(destroyStageTexture, colorPalette::black);
 		// destroyStageBrush.invert = true;
 		// destroyStageTexture->fillRectangleUnsafe(destroyStageTexture->getClientRect(), destroyStageBrush);
@@ -3114,27 +3155,7 @@ void loadResourcePacks()
 
 	// add item data
 
-	// add fuel properties
-	itemList[(int)blockID::crafting_table]->fuelTicks = 300;
-	itemList[(int)itemID::coal]->fuelTicks = 1600;
-	itemList[(int)blockID::torch]->fuelTicks = 1700 / 4; // coal + stick = 4 torches
-	itemList[(int)blockID::ladder]->fuelTicks = 300;
-	itemList[(int)itemID::lava_bucket]->fuelTicks = 20000;
-	itemList[(int)blockID::note_block]->fuelTicks = 300;
-	itemList[(int)blockID::jukebox]->fuelTicks = 300;
 
-	for (int i = 0; i < woodTypeCount; i++)
-	{
-		itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::log)]->fuelTicks = 300;
-		itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::strippedLog)]->fuelTicks = 300;
-		itemList[(int)getTreeBlock((woodTypeID)i, treeItemTypeID::planks)]->fuelTicks = 300;
-
-		itemList[(int)blockID::wood_door + i]->maxStackSize = 0x10;
-	}
-	for (int i = 0; i < normalTreeTypeCount; i++)
-	{
-		itemList[(int)blockID::wood_sapling + i]->fuelTicks = 100;
-	}
 
 	for (int i = 0; i < (int)colorID::count; i++)
 	{
@@ -3145,8 +3166,8 @@ void loadResourcePacks()
 	// color the texture
 	for (int i = 0; i < normalTreeTypeCount; i++)
 	{
-		const blockID &idToColor = getTreeBlock((woodTypeID)i, treeItemTypeID::leaves);
-		resolutionTexture *leavesInventoryGraphics = new resolutionTexture(texture(blockList[idToColor]->tex->scaledTextures[0]->size), cvec2(blockTextureSize));
+		const blockID& idToColor = getTreeBlock((woodTypeID)i, treeItemTypeID::leaves);
+		resolutionTexture* leavesInventoryGraphics = new resolutionTexture(texture(blockList[idToColor]->tex->scaledTextures[0]->size), cvec2(blockTextureSize));
 		fillTransformedTexture(*blockList[idToColor]->tex, *leavesInventoryGraphics);
 
 		constexpr color oakLeavesInventoryColor = hexToColor(0x48B518);
@@ -3183,28 +3204,30 @@ void loadResourcePacks()
 	*/
 
 	setFoodValues();
+	addFuelProperties();
 
 	loadEntityData();
 
-	resolutionTexture *spawnEggTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg.png"));
-	resolutionTexture *spawnEggOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg_overlay.png"));
+	resolutionTexture* spawnEggTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg.png"));
+	resolutionTexture* spawnEggOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg_overlay.png"));
 	for (int i = 0; i < mobTypeCount; i++)
 	{
 		entityID id = mobList[i];
-		mobData *data = (mobData *)entityDataList[(int)id];
+		mobData* data = (mobData*)entityDataList[(int)id];
 
 		auto currentSpawnEggTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
 		const solidColorBrush spawnEggColorBrush = solidColorBrush(data->spawnEggColor);
-		const auto &spawnEggMultiplier = colorMultiplier<resolutionTexture, solidColorBrush>(*spawnEggTexture, spawnEggColorBrush);
+		const auto& spawnEggMultiplier = colorMultiplier<resolutionTexture, solidColorBrush>(*spawnEggTexture, spawnEggColorBrush);
 		fillTransparentRectangle(crectangle2(currentSpawnEggTexture->getClientRect()), spawnEggMultiplier, *currentSpawnEggTexture);
 
 		const solidColorBrush overLayColorBrush = solidColorBrush(data->spawnEggOverlayColor);
-		const auto &overLayMultiplier = colorMultiplier<resolutionTexture, solidColorBrush>(*spawnEggOverlayTexture, overLayColorBrush);
+		const auto& overLayMultiplier = colorMultiplier<resolutionTexture, solidColorBrush>(*spawnEggOverlayTexture, overLayColorBrush);
 		fillTransparentRectangle(crectangle2(currentSpawnEggTexture->getClientRect()), overLayMultiplier, *currentSpawnEggTexture);
 
 		itemList[(int)itemID::spawn_egg + i] = new itemData((itemID)((int)itemID::spawn_egg + i), data->name + std::wstring(L"_spawn_egg"), currentSpawnEggTexture);
 	}
+
 
 	loadTags();
 	loadLootTables();
@@ -3218,7 +3241,7 @@ void loadResourcePacks()
 	//	std::wstring fileNameWithoutExtension = fileNameWithExtension.substr(0, fileNameWithExtension.find(L'.'));
 	//}
 
-	dimensionDataList = idList<dimensionData *, dimensionID>(fastList<dimensionData *>((int)dimensionID::count));
+	dimensionDataList = idList<dimensionData*, dimensionID>(fastList<dimensionData*>((int)dimensionID::count));
 	int currentDimensionID = 0;
 	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"overworld"), loadTextureFromResourcePack(lightMapFolder / std::wstring(L"world0.png")), true);
 	currentDimensionID++;
@@ -3239,13 +3262,13 @@ void loadResourcePacks()
 		creditsText = replace(creditsText, std::wstring(L"PLAYERNAME"), std::wstring(L"Me"));
 	}
 }
-std::vector<resolutionTexture *> loadGrowthStageTextures(const std::wstring &blockName, std::vector<size_t> growthStageIndexes)
+std::vector<resolutionTexture*> loadGrowthStageTextures(const std::wstring& blockName, std::vector<size_t> growthStageIndexes)
 {
-	auto loadedTextures = std::vector<resolutionTexture *>();
-	auto indexedTextures = std::vector<resolutionTexture *>(growthStageIndexes.size());
+	auto loadedTextures = std::vector<resolutionTexture*>();
+	auto indexedTextures = std::vector<resolutionTexture*>(growthStageIndexes.size());
 	for (size_t i = 0; i < growthStageIndexes.size(); i++)
 	{
-		csize_t &index = growthStageIndexes[i];
+		csize_t& index = growthStageIndexes[i];
 		if (index >= loadedTextures.size())
 		{
 			loadedTextures.push_back(loadTextureFromResourcePack(blockTextureFolder / (blockName + std::wstring(L"_stage") + std::to_wstring(index) + std::wstring(L".png"))));
@@ -3255,7 +3278,7 @@ std::vector<resolutionTexture *> loadGrowthStageTextures(const std::wstring &blo
 
 	return indexedTextures;
 }
-fp getItemWeakness(const itemID &identifier)
+fp getItemWeakness(const itemID& identifier)
 {
 	if (isMaterialArmor(identifier))
 	{
@@ -3285,7 +3308,7 @@ fp getItemWeakness(const itemID &identifier)
 		}
 	}
 }
-std::shared_ptr<soundCollection> getEquipSound(const itemID &identifier)
+std::shared_ptr<soundCollection> getEquipSound(const itemID& identifier)
 {
 	if (isMaterialArmor(identifier))
 	{
@@ -3303,27 +3326,27 @@ std::shared_ptr<soundCollection> getEquipSound(const itemID &identifier)
 
 void unloadResourcePacks()
 {
-	for (resolutionTexture *tex : loadedTextures)
+	for (resolutionTexture* tex : loadedTextures)
 	{
 		delete tex;
 	}
-	loadedTextures = std::vector<resolutionTexture *>();
+	loadedTextures = std::vector<resolutionTexture*>();
 	chestLootTables.clear();
 }
 
-const resolutionTexture &replaceIfMissing(const resolutionTexture *const &textureToReplace)
+const resolutionTexture& replaceIfMissing(const resolutionTexture* const& textureToReplace)
 {
 	return textureToReplace ? *textureToReplace : *missingTexture;
 }
-resolutionTexture *loadChestTexture(const stdPath &path)
+resolutionTexture* loadChestTexture(const stdPath& path)
 {
-	resolutionTexture *chestImage = loadTextureFromResourcePack(path);
-	cfp &scaleMultiplier = (fp)chestImage->scaledTextures[0]->size.x / chestImage->defaultSize.x;
-	resolutionTexture *croppedTexture = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)((fp)blockTextureSize * scaleMultiplier))), cvec2(blockTextureSize));
+	resolutionTexture* chestImage = loadTextureFromResourcePack(path);
+	cfp& scaleMultiplier = (fp)chestImage->scaledTextures[0]->size.x / chestImage->defaultSize.x;
+	resolutionTexture* croppedTexture = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)((fp)blockTextureSize * scaleMultiplier))), cvec2(blockTextureSize));
 
-	cfp &chestBottomPixelHeight = 10;
-	cfp &padLockPixelWidth = 6;
-	cfp &padLockPixelHeight = 5;
+	cfp& chestBottomPixelHeight = 10;
+	cfp& padLockPixelWidth = 6;
+	cfp& padLockPixelHeight = 5;
 	fillTransformedBrushRectangle(crectangle2(0, 21, chestPixelWidth, chestBottomPixelHeight), cvec2((blockTextureSize - chestPixelWidth) / 2, 0), *chestImage, *croppedTexture);
 	fillTransformedBrushRectangle(crectangle2(0, 45, chestPixelWidth, chestPixelHeight - chestBottomPixelHeight), cvec2((blockTextureSize - chestPixelWidth) / 2, chestBottomPixelHeight), *chestImage, *croppedTexture);
 	fillTransparentRectangle(crectangle2(0, 59, padLockPixelWidth, padLockPixelHeight), crectangle2((blockTextureSize - (padLockPixelWidth / 2)) / 2, chestBottomPixelHeight - (padLockPixelHeight / 4), padLockPixelWidth / 2, padLockPixelHeight / 2), *chestImage, *croppedTexture);

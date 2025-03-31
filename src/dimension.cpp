@@ -50,25 +50,25 @@
 #include "math/algorithm/findInCircles.h"
 #include "math/graphics/brush/brushes/bilinearInterpolator.h"
 #include "array/arraynd/arrayndFunctions.h"
-#include "nbt/nbtSerializer.h"
 #include "include/filesystem/fileFunctions.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 #include "gameTime.h"
 
 color dimension::getColorMultiplier(cfp& sunLight, cfp& blockLight) const
 {
 	const texture& lightMapTexture = *dimensionDataList[identifier]->lightMapTexture->scaledTextures[0];
-	cfp preciseSunlightLevel = (timeToLightLevel.getValue(getTimeOfDay(currentWorld->currentTime)) / maxLightLevel) * (fp)(lightMapTexture.size.x - 2);//-2 for thunder
+	cfp sunlightX = (timeToLightLevel.getValue(getTimeOfDay(currentWorld->currentTime)) / maxLightLevel) * (fp)(lightMapTexture.size.x - 2);//-2 for thunder
 
-	cfsize_t& quarter = lightMapTexture.size.y / 4;
+	//the size of one lightmap square
+	cfsize_t& squareSize = lightMapTexture.size.x;
 
-	cfp sunLightYRow = lightMapTexture.size.y - (sunLight / maxLightLevel) * (quarter - 1) - 1;
-	cfp blockLightYRow = (lightMapTexture.size.y - quarter) - ((blockLight / maxLightLevel) * (quarter - 1) + 1);
+	cfp sunLightY = lightMapTexture.size.y - (sunLight / maxLightLevel) * (squareSize - 1) - 1;
+	cfp blockLightY = (lightMapTexture.size.y - squareSize) - ((blockLight / maxLightLevel) * (squareSize - 1) + 1);
 	const auto& interpolator = bilinearInterpolator(lightMapTexture);
 
 	return color::maximizeColors(
-		interpolator.getValue(cvec2(currentWorld->ticksSinceStart % (int)lightMapTexture.size.x, blockLightYRow)),
-		interpolator.getValue(cvec2(preciseSunlightLevel, sunLightYRow))
+		interpolator.getValue(cvec2(currentWorld->ticksSinceStart % (int)lightMapTexture.size.x, blockLightY)),
+		interpolator.getValue(cvec2(sunlightX, sunLightY))
 	);
 }
 
@@ -265,7 +265,7 @@ void dimension::serializeValue(nbtSerializer& s)
 
 void dimension::tick()
 {
-	const auto copy = loadedChunksMap;
+	const std::vector<std::pair<veci2, chunk*>> copy = loadedChunksMap;
 
 	currentBenchmark->addBenchmarkPoint(cpuUsageID::entities);
 
@@ -382,7 +382,7 @@ bool dimension::meetsSpawningConditions(entity* const& e)
 	//?#?
 	cbool& inWater = e->getFluidArea(e->calculateHitBox(), { blockID::water }) > 0;
 
-	cvec2& absoluteHitboxTopLeft = e->position + e->relativeHitbox.pos0;
+	cvec2& absoluteHitbox00 = e->position + e->relativeHitbox.pos0;
 	if (inWater)
 	{
 		if (!canSpawnInWater(e->entityType))
@@ -400,8 +400,8 @@ bool dimension::meetsSpawningConditions(entity* const& e)
 		//check if the floor does collide
 		if ((e->entityType != entityID::blaze) && (e->entityType != entityID::ghast) && (e->entityType != entityID::drowned))
 		{
-			cvec2 posStandingOn = absoluteHitboxTopLeft + cvec2(e->relativeHitbox.w * 0.5, -1);
-			crectangle2 floorRectangle = crectangle2(absoluteHitboxTopLeft.x, posStandingOn.y, e->relativeHitbox.size.x, 1);
+			cvec2 posStandingOn = absoluteHitbox00 + cvec2(e->relativeHitbox.w * 0.5, -1);
+			crectangle2 floorRectangle = crectangle2(absoluteHitbox00.x, posStandingOn.y, e->relativeHitbox.size.x, 1);
 			collisionTypeID floorCollision = getHitboxCollisionType(floorRectangle);
 			if (floorCollision == collisionTypeID::willCollide)
 			{
@@ -423,7 +423,7 @@ bool dimension::meetsSpawningConditions(entity* const& e)
 	}
 
 	//check if the room does not collide
-	collisionTypeID topCollision = getHitboxCollisionType(crectangle2(absoluteHitboxTopLeft, e->relativeHitbox.size));
+	collisionTypeID topCollision = getHitboxCollisionType(crectangle2(absoluteHitbox00, e->relativeHitbox.size));
 	if (topCollision == collisionTypeID::willCollide)
 	{
 		return false;
@@ -432,24 +432,24 @@ bool dimension::meetsSpawningConditions(entity* const& e)
 	if (isMob(e->entityType))
 	{
 		mob* mobToSpawn = (mob*)e;
+		mobToSpawn->updateBodyParts();
 		//check if the room above has water at head level
 		cveci2 flooredHeadPosition = floorVector(mobToSpawn->getHeadPosition());
-		const lightLevel visibleLightLevel = getVisibleLightLevel(flooredHeadPosition);
+		//light level is measured at the head of mobs!
 		const lightLevel visibleSunLightLevel = getVisibleSunLightLevel(getInternalSunLightLevel(flooredHeadPosition));
 		//room to spawn more of those mobs
 		if (isUndeadMob(e->entityType) || (e->entityType == entityID::enderman) || (e->entityType == entityID::creeper))
 		{
-			//feet sunlightlevel = head sunlightlevel
+			//head sunlightlevel
 			//> to allow hostile mobs to spawn in spawners
-			if (visibleLightLevel > hostileMobSpawnTreshold)
+			if (visibleSunLightLevel > hostileMobSpawnSunLightTreshold || getBlockLightLevel(flooredHeadPosition) > hostileMobSpawnBlockLightTreshold)
 			{
 				return false;
 			}
 		}
 		else if (isPassiveMob(e->entityType) || e->entityType == entityID::wolf)
 		{
-			if (visibleSunLightLevel <= hostileMobSpawnTreshold
-				)
+			if (visibleSunLightLevel <= hostileMobSpawnSunLightTreshold)
 			{
 				return false;
 			}
@@ -502,6 +502,12 @@ std::vector<entity*> dimension::findNearEntities(crectangle2& searchBox)
 	return list;
 }
 
+chunkLoadLevel dimension::getLoadLevel(cveci2& position) const
+{
+	chunk* c = getChunk(getChunkCoordinates(cvec2(position)));
+	return c ? c->loadLevel : chunkLoadLevel::notLoaded;
+}
+
 std::vector<chunk*> dimension::getLoadedChunks(crectanglei2& range)
 {
 	std::vector<chunk*> list = std::vector<chunk*>();
@@ -539,18 +545,6 @@ std::vector<entity*> dimension::getCollidingEntities(crectangle2& rect)
 		}
 	}
 	return collidingEntities;
-}
-bool dimension::canAddUpdates(cveci2& position)
-{
-	if (!inBounds(position))
-	{
-		return false;
-	}
-	else
-	{
-		chunk* c = getChunk(getChunkCoordinates(cvec2(position)));
-		return c && c->loadLevel >= chunkLoadLevel::updateLoaded;
-	}
 }
 
 collisionDataCollection dimension::getRecursiveHitboxCollisionData(crectangle2& box, cvec2& hitboxSpeed)

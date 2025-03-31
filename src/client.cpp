@@ -26,7 +26,7 @@
 #include "math/timemath.h"
 #include "main.h"
 #include <filesystem/filemanager.h>
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 #include "nbt/serializeUUID.h"
 #include "include/filesystem/fileFunctions.h"
 #include "nbt/serializeList.h"
@@ -57,7 +57,7 @@ void client::render(cveci2& position, const texture& renderTarget)
 			c.a() = color::maxValue;
 		}
 
-		renderTarget.Save(screenshotsFolder / (stringToWString(timeToString("%Y-%m-%d_%H.%M.%S")) + L".png"));
+		renderTarget.Save(screenshotsFolder / (timeToString("{:%Y-%m-%d_%H-%M-%S}") + ".png"));
 		lastScreenshotTime = getMiliseconds();
 	}
 	// 0.5 seconds flash
@@ -243,7 +243,7 @@ void client::processIncomingPackets(const texture& renderTarget)
 
 	}
 
-	// receive packets, but don't process the screen if another packet is waiting, so we can catch up
+	// receive packets, but don'T process the screen if another packet is waiting, so we can catch up
 	// dividing by 4 to make the experience more smooth
 	// math::ceil<size_t,fp>(size / 4.0)
 	// size

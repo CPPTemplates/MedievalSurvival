@@ -19,7 +19,7 @@ constexpr vec2 minecartRotationCenter = cvec2(minecartRenderSize.getX() * 0.5, 0
 constexpr fp minecartWheelSize = minecartWheelPixelSize * minecartPixelSize;
 struct minecart : public hollowRidableEntity
 {
-	minecart(dimension* dimensionIn, cvec2& position);
+	minecart();
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void tick() override;
 	virtual void onDeath() override;

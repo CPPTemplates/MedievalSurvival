@@ -40,7 +40,7 @@ constexpr vec2 chickenWattlesRotationCenter = cvec2(0, chickenWattlesSize.getY()
 struct chicken : public passiveMob
 {
 	int timeUntilNextEgg = 0;
-	chicken(dimension *dimensionIn, cvec2 &position);
+	chicken();
 	bodyPart2D *leftWing = nullptr;
 	bodyPart2D *rightWing = nullptr;
 	bodyPart2D *leftUpperLeg = nullptr;

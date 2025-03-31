@@ -4,7 +4,7 @@
 #include "attackOnCollideAI.h"
 #include "wanderAI.h"
 #include "dimension.h"
-slime::slime(dimension* dimensionIn, cvec2& position, const entityID& entityType) : mob(dimensionIn, position, entityType)
+slime::slime(const entityID& entityType) : mob(entityType)
 {
 	tasks = new taskList(this, {
 	new attackOnCollideAI(this, entityID::human),

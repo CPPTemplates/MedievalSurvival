@@ -18,7 +18,7 @@
 #include "dimension.h"
 #include "dropData.h"
 #include "experienceOrb.h"
-#include "blockParticleBrush.h"
+#include "blockParticle.h"
 #include <vector>
 #include <math.h>
 #include <cmath>
@@ -296,12 +296,12 @@ void humanoid::render(const gameRenderData& targetData) const
 
 void humanoid::updateSelection()
 {
-	cveci2 oldBlockPos = selectedBlockPosition;//don't make a const reference, copy the value
+	cveci2 oldBlockPos = selectedBlockPosition;//don'T make a const reference, copy the value
 	tickableBlockContainer* const oldContainer = selectedBlockContainer;//warning! oldContainer might be deleted
 	mob::updateSelection();
 	if ((selectedBlockPosition != oldBlockPos) && oldContainer)
 	{
-		//can't compare blocks, as the old container might be deleted
+		//can'T compare blocks, as the old container might be deleted
 		if (oldContainer == selectedBlockContainer)// || (selectedBlockContainer->getBlockID(selectedBlockPosition) != oldContainer->getBlockID(oldBlockPos))
 		{
 			resetDigProgress();
@@ -355,8 +355,8 @@ bool humanoid::addDamageSource(cfp& damage, std::shared_ptr<damageSource> source
 			case blastDamage:
 				enchantmentProtectionFactor += s->getEnchantmentLevel(enchantmentID::blastProtection) * 2;
 				break;
-                default:
-                    break;
+			default:
+				break;
 			}
 		}
 	}
@@ -442,7 +442,7 @@ fp humanoid::getWeight() const
 	}
 	return entity::getWeight() / weightDivider;
 }
-humanoid::humanoid(dimension* dimensionIn, cvec2& position, const entityID& entityType) :mob(dimensionIn, position, entityType)
+humanoid::humanoid(const entityID& entityType) :mob(entityType)
 {
 	armorSlots = new rectangularSlotContainer(cveci2(1, 4));
 }
@@ -665,7 +665,7 @@ void humanoid::tick()
 							//show particles
 							for (int i = 0; i < particleCount; i++)
 							{
-								summonParticle(selectedBlockContainer, getrandomPosition(currentRandom, rectangle2(selectedBlockPosition, vec2(1)), cvec2(particleSize)), new blockParticleBrush(b->identifier), maxParticleSpeed);
+								summonEntity(new blockParticle(particleID::block, b->identifier), selectedBlockContainer, getrandomPosition(currentRandom, rectangle2(selectedBlockPosition, vec2(1)), cvec2(particleSize)));
 							}
 							//break block
 							selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::air, chunkLoadLevel::entityLoaded);
@@ -678,7 +678,7 @@ void humanoid::tick()
 						{
 							//play digging sound if the arm is on its furthest point
 							//cfp furthestPoint = 0.5;
-							
+
 							if (armSwingSynchronizer.maximumSineAmpBetween(currentWorld->ticksSinceStart * secondsPerTick, (currentWorld->ticksSinceStart + 1) * secondsPerTick))
 							{
 								//start playing the sound just before 'hitting'
@@ -774,7 +774,7 @@ bool humanoid::placeBlock(blockID blockToPlace)
 				{
 					upsideDown = !upsideDown;
 				}
-				dynamic_cast<upsideDownData*> (placedBlockData)->upsideDown = upsideDown;
+				dynamic_cast<upsideDownData*>(placedBlockData)->upsideDown = upsideDown;
 			}
 			directionID direction;
 			if (hasFacingData(blockToPlace))
@@ -854,7 +854,7 @@ bool humanoid::placeBlock(blockID blockToPlace)
 				if (nearestAttachment == -1)
 				{
 
-					//can't place
+					//can'T place
 					return false;
 				}
 				else

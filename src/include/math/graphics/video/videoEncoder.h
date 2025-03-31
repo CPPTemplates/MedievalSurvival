@@ -11,7 +11,7 @@ enum class videoEncoderType{
     decoder,
     encoder
 };
-//template <videoEncoderType t>
+//template <videoEncoderType T>
 struct videoEncoder
 {
     bool shouldCompress = false;

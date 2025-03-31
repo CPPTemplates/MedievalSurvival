@@ -40,7 +40,7 @@ lootTable* readDrop(const jsonContainer& container)
 	if (auto typeContainer = container.getChild(L"type"))
 	{
 		const std::wstring& typeName = typeContainer->children[0].value;
-		//can be minecraft:block, minecraft:item, minecraft:gift etc. it doesn't really matter.
+		//can be minecraft:block, minecraft:item, minecraft:gift etc. it doesn'T really matter.
 		if (typeName == L"minecraft:item")
 		{
 			const itemID& itemIndex = itemList.getIDByName(container[L"name"].children[0].value);
@@ -191,7 +191,7 @@ noEntriesFound:
 	else
 	{
 		return new lootTable();
-		//handleError(std::wstring(L"can't parse loot table");
+		//handleError(std::wstring(L"can'T parse loot table");
 	}
 }
 void lootTable::dropLoot(const std::vector<itemStack>& rolledStacks, tickableBlockContainer* containerIn, cvec2& position, cvec2& speed)

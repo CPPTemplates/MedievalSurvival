@@ -10,7 +10,7 @@ struct experienceOrb : public entity
 {
 	int value = 0;
 	int ticksFloating = 0;
-	experienceOrb(dimension* dimensionIn, cvec2& pos);
+	experienceOrb();
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void serializeValue(nbtSerializer& s) override;

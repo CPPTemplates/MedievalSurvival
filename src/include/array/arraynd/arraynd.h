@@ -8,20 +8,20 @@
 #include "math/graphics/brush/brush.h"
 #include "math/graphics/brush/transformbrush.h"
 #include "math/axis.h"
-#include "math/graphics/brush/colorMixer.h"
+#include "math/graphics/brush/brushes/colorMixer.h"
 #include "math/vector/vectorfunctions.h"
 
-template <typename t, fsize_t n>
+template <typename T, fsize_t n>
 struct arraynd
 {
 	vectn<fsize_t, n> size = vectn<fsize_t, n>();
-	t *baseArray = nullptr;
+	T *baseArray = nullptr;
 
-	constexpr arraynd(cvectn<fsize_t, n> &size, t *const &baseArray) : size(size), baseArray(baseArray) {}
+	constexpr arraynd(cvectn<fsize_t, n> &size, T *const &baseArray) : size(size), baseArray(baseArray) {}
 
-	constexpr arraynd(cvectn<fsize_t, n> &size = cvect2<fsize_t>(), cbool &initializeToDefault = true) : arraynd(size, initializeToDefault ? new t[size.volume()]() : new t[size.volume()]) {}
+	constexpr arraynd(cvectn<fsize_t, n> &size = cvect2<fsize_t>(), cbool &initializeToDefault = true) : arraynd(size, initializeToDefault ? new T[size.volume()]() : new T[size.volume()]) {}
 
-	constexpr arraynd(const std::vector<t> &elements, cvectn<fsize_t, n> &size) : size(size), baseArray(new t[size.volume()])
+	constexpr arraynd(const std::vector<T> &elements, cvectn<fsize_t, n> &size) : size(size), baseArray(new T[size.volume()])
 	{
 		if constexpr (isDebugging)
 		{
@@ -36,10 +36,10 @@ struct arraynd
 
 	// so [0][1] = [0][1]
 	//[y][x]
-	constexpr arraynd(const fastArray<fastArray<t>> elements) : arraynd(cvect2<fsize_t>(elements.size ? elements[0].size : 0, elements.size))
+	constexpr arraynd(const fastArray<fastArray<T>> elements) : arraynd(cvect2<fsize_t>(elements.size ? elements[0].size : 0, elements.size))
 	{
-		t *ptr = baseArray;
-		for (const fastArray<t> &arr : elements)
+		T *ptr = baseArray;
+		for (const fastArray<T> &arr : elements)
 		{
 			std::copy(arr.begin(), arr.end(), ptr);
 			ptr += size.x;
@@ -55,11 +55,11 @@ struct arraynd
 		}
 	}
 
-	inline t *begin() const
+	inline T *begin() const
 	{
 		return baseArray;
 	}
-	inline t *end() const
+	inline T *end() const
 	{
 		return baseArray + size.volume();
 	}
@@ -90,7 +90,7 @@ struct arraynd
 
 	// copy constructor
 	inline arraynd(const arraynd &other) : size(other.size),
-										   baseArray(new t[other.size.volume()])
+										   baseArray(new T[other.size.volume()])
 	{
 		std::copy(other.begin(), other.end(), begin());
 	}
@@ -98,16 +98,16 @@ struct arraynd
 	inline arraynd &operator=(const arraynd &other)
 	{
 		size = other.size;
-		// we don't have to check for null pointers
+		// we don'T have to check for null pointers
 		delete[] baseArray;
-		baseArray = new t[other.size.volume()];
+		baseArray = new T[other.size.volume()];
 		std::copy(other.begin(), other.end(), begin());
 		return *this;
 	}
 
 	// CAUTION!
 	//[y][x]
-	inline t *operator[](cfsize_t &index) const
+	inline T *operator[](cfsize_t &index) const
 	{
 		if constexpr (isDebugging)
 		{
@@ -125,9 +125,9 @@ struct arraynd
 
 		// in = y
 		// adds the sum of each x row to one element of the output
-		inline fastArray<t> multPointMatrix(const fastArray<t> &in) const
+		inline fastArray<T> multPointMatrix(const fastArray<T> &in) const
 	{
-		fastArray<t> result = fastArray<t>(size.x);
+		fastArray<T> result = fastArray<T>(size.x);
 		for (fsize_t toIndex = 0; toIndex < result.size; toIndex++)
 		{
 			fsize_t fromIndex = 0;
@@ -181,13 +181,13 @@ struct arraynd
 		return true;
 	}
 
-	inline constexpr void fill(const t &value) const
+	inline constexpr void fill(const T &value) const
 	{
 		std::fill(baseArray, baseArray + size.volume(), value);
 	}
 
 	template <typename indexType>
-	inline t &getValueReferenceUnsafe(cvectn<indexType, n> &pos) const
+	inline T &getValueReferenceUnsafe(cvectn<indexType, n> &pos) const
 	{
 		if constexpr (isDebugging)
 		{
@@ -206,25 +206,25 @@ struct arraynd
 	}
 
 	template <typename indexType>
-	inline t getValueUnsafe(cvectn<indexType, n> &pos) const
+	inline T getValueUnsafe(cvectn<indexType, n> &pos) const
 	{
 		return getValueReferenceUnsafe(pos);
 	}
 
 	template <typename indexType>
-	inline t getValue(cvectn<indexType, n> &pos) const
+	inline T getValue(cvectn<indexType, n> &pos) const
 	{
-		return inBounds(pos) ? getValueUnsafe(pos) : t();
+		return inBounds(pos) ? getValueUnsafe(pos) : T();
 	}
 
 	template <typename indexType>
-	inline void setValueUnsafe(cvectn<indexType, n> &pos, const t &value) const
+	inline void setValueUnsafe(cvectn<indexType, n> &pos, const T &value) const
 	{
 		getValueReferenceUnsafe(pos) = value;
 	}
 
 	template <typename indexType>
-	inline void setValue(cvectn<indexType, n> &pos, const t &value) const
+	inline void setValue(cvectn<indexType, n> &pos, const T &value) const
 	{
 		if (inBounds(pos))
 		{
@@ -232,7 +232,7 @@ struct arraynd
 		}
 	}
 
-	inline t getValueClampedToEdgePositive(cvectn<fsize_t, n> &pos) const
+	inline T getValueClampedToEdgePositive(cvectn<fsize_t, n> &pos) const
 	{
 		vectn<fsize_t, n> clamped = cvectn<fsize_t, n>();
 
@@ -244,7 +244,7 @@ struct arraynd
 		return getValueUnsafe(clamped);
 	}
 
-	inline t getValueClampedToEdge(cvecin<n> &pos) const
+	inline T getValueClampedToEdge(cvecin<n> &pos) const
 	{
 		cvecin<n> clamped = cvecin<n>();
 		for (auto axisIt : std::views::zip(clamped, pos))
@@ -256,8 +256,8 @@ struct arraynd
 	}
 };
 
-template <typename t>
-using array2d = arraynd<t, 2>;
+template <typename T>
+using array2d = arraynd<T, 2>;
 
-template <typename t>
-using array3d = arraynd<t, 3>;
+template <typename T>
+using array3d = arraynd<T, 3>;

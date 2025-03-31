@@ -2,7 +2,7 @@
 #include "dimension.h"
 #include "math/LayerNoiseSimplex.h"
 
-struct nether :dimension
+struct nether final :dimension
 {
 	layerNoiseSimplex* terrainNoise = nullptr;
 	layerNoiseSimplex* biomeLocationNoise = nullptr;

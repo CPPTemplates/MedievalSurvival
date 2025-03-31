@@ -1,6 +1,6 @@
 #include "fourLeggedMob.h"
 #include "mobData.h"
-fourLeggedMob::fourLeggedMob(dimension* dimensionIn, cvec2& position, const entityID& entityType) :mob(dimensionIn, position, entityType)
+fourLeggedMob::fourLeggedMob(const entityID& entityType) :mob(entityType)
 {
 }
 void fourLeggedMob::updateBodyParts() const

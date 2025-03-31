@@ -1,8 +1,8 @@
 #include "piston.h"
 #include "movableBlockContainer.h"
 #include "block.h"
-#include "nbt/serializeColor.h"
-piston::piston(dimension* dimensionIn, cvec2& position) : entity(dimensionIn, position, entityID::piston)
+#include "nbt/serializeVector.h"
+piston::piston() : entity(entityID::piston)
 {
 }
 

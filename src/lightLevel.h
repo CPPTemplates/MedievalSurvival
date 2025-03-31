@@ -5,7 +5,8 @@ constexpr lightLevel maxLightLevel = 0x100;
 constexpr lightLevel glowInTheDarkLightLevel = (lightLevel)(maxLightLevel * 0.1);
 constexpr lightLevel moodyLightLevel = (lightLevel)(maxLightLevel * 0.5);
 constexpr lightLevel brightLightLevel = (lightLevel)(maxLightLevel * 0.7);
-constexpr lightLevel hostileMobSpawnTreshold = glowInTheDarkLightLevel;
+constexpr lightLevel hostileMobSpawnSunLightTreshold = glowInTheDarkLightLevel;
+constexpr lightLevel hostileMobSpawnBlockLightTreshold = 0;
 
 constexpr int moonLightLevel = glowInTheDarkLightLevel;
 #pragma once

@@ -12,15 +12,15 @@
 inline std::string readAllText(const stdPath& path)
 {
 
-	std::ifstream t(path, getOpenMode(false));
-	t.seekg(0, std::ios::end);
-	size_t size = (size_t)t.tellg();
+	std::ifstream T(path, getOpenMode(false));
+	T.seekg(0, std::ios::end);
+	size_t size = (size_t)T.tellg();
 	if(size == std::wstring::npos){
-		throw "can't open " + path.string();
+		throw "can'T open " + path.string();
 	}
 	std::string buffer(size, '#');
-	t.seekg(0);
-	t.read(&buffer[0], (std::streamsize)size);
+	T.seekg(0);
+	T.read(&buffer[0], (std::streamsize)size);
 	return buffer;
 }
 inline void writealltext(const stdPath& path, std::string text)

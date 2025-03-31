@@ -24,7 +24,7 @@ void inventory::clickedOnItem(cmb& button, stackDivider& divider,
 	//             //    occupyingSlot->addStack(stackHolding);
 	//             //} else {
 	//             //    if (occupyingSlot->count) {
-	//             //        //can't divide original stack when swapping items
+	//             //        //can'T divide original stack when swapping items
 	//             //        slotsDividingOver.clear();
 	//             //    }
 	//             //    //swap slots (also works if occupying slot is empty)

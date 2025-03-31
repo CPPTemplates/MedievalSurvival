@@ -1,12 +1,12 @@
 #pragma once
 #include "math/graphics/brush/brush.h"
 #include <math/graphics/color/colorFunctions.h>
-struct squareInterpolator final : public colorBrush
+struct squareInterpolator final : public brush<color, veci2>
 {
-	colorf cornerColors[4]{};
-	inline color getValue(cvec2& pos) const
+	color cornerColors[4]{};
+	inline color getValue(cveci2& pos) const
 	{
-		return interpolateColor(cornerColors, pos);
+		return interpolateColorBilinear(cornerColors, pos);
 	}
 
 	inline squareInterpolator()
@@ -14,7 +14,7 @@ struct squareInterpolator final : public colorBrush
 
 	}
 
-	inline squareInterpolator(ccolor cornerColors[4])
+	inline squareInterpolator(ccolor (&cornerColors)[4])
 	{
 		std::copy(&cornerColors[0], &cornerColors[4], this->cornerColors);
 	}

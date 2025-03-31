@@ -468,7 +468,7 @@ static int stbi_write_bmp_core(stbi__write_context* s, int x, int y, int comp, c
     else {
         // RGBA bitmaps need a v4 header
         // use BI_BITFIELDS mode with 32bpp and alpha mask
-        // (straight BI_RGB with alpha mask doesn't work in most readers)
+        // (straight BI_RGB with alpha mask doesn'T work in most readers)
         return stbiw__outfile(s, -1, -1, x, y, comp, 1, (void*)data, 1, 0,
             "11 4 22 4" "4 44 22 444444 4444 4 444 444 444 444",
             'B', 'M', 14 + 108 + x * y * 4, 0, 0, 14 + 108, // file header
@@ -1083,7 +1083,7 @@ static void stbiw__encode_png_line(unsigned char* pixels, int stride_bytes, int 
         return;
     }
 
-    // first loop isn't optimized since it's just one pixel
+    // first loop isn'T optimized since it's just one pixel
     for (i = 0; i < n; ++i) {
         switch (type) {
         case 1: line_buffer[i] = z[i]; break;
@@ -1143,7 +1143,7 @@ STBIWDEF unsigned char* stbi_write_png_to_mem(const unsigned char* pixels, int s
                     best_filter = filter_type;
                 }
             }
-            if (filter_type != best_filter) {  // If the last iteration already got us the best filter, don't redo it
+            if (filter_type != best_filter) {  // If the last iteration already got us the best filter, don'T redo it
                 stbiw__encode_png_line((unsigned char*)(pixels), stride_bytes, x, y, j, n, best_filter, line_buffer);
                 filter_type = best_filter;
             }
@@ -1377,7 +1377,7 @@ static int stbiw__jpg_processDU(stbi__write_context* s, int* bitBuf, int* bitCnt
 }
 
 static int stbi_write_jpg_core(stbi__write_context* s, int width, int height, int comp, const void* data, int quality) {
-    // Constants that don't pollute global namespace
+    // Constants that don'T pollute global namespace
     static const unsigned char std_dc_luminance_nrcodes[] = { 0,0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0 };
     static const unsigned char std_dc_luminance_values[] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
     static const unsigned char std_ac_luminance_nrcodes[] = { 0,0,2,1,3,3,2,4,3,5,5,4,4,0,0,1,0x7d };

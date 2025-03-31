@@ -2,10 +2,14 @@
 #include "panicAI.h"
 #include "wanderAI.h"
 #include "taskList.h"
-passiveMob::passiveMob(dimension *dimensionIn, cvec2 &position, const entityID &entityType) : mob(dimensionIn, position, entityType)
+#include "loveModeAI.h"
+#include "lureAI.h"
+passiveMob::passiveMob(const entityID& entityType) : mob(entityType)
 {
 	this->tasks = new taskList(this, {
-										 new panicAI(this),
-										 new wanderAI(this),
-									 });
+		new panicAI(this),
+		new loveModeAI(this),
+		new lureAI(this),
+		new wanderAI(this),
+		});
 }

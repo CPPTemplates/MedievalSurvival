@@ -15,7 +15,7 @@
 #include "levelID.h"
 #include "nbt/nbtSerializer.h"
 #include "include/array/arraynd/arrayndFunctions.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 void* movableBlockContainer::getArrayValuePointerUnsafe(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
 {
 	veci2 movedPosition = position - arrayPos00Offset;

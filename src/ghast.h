@@ -18,7 +18,7 @@ constexpr fp ghastFlyingSpeed = 0x4;
 constexpr int ghastLegCount = 0x8;
 struct ghast : public mob
 {
-	ghast(dimension* dimensionIn, cvec2& position);
+	ghast();
 	virtual void updateBodyParts() const override;
 	bodyPart2D* legs[ghastLegCount];
 	waveShaper legSynchronizers[ghastLegCount];

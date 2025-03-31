@@ -1,24 +1,24 @@
 #pragma once
 #include "nbt/nbtSerializer.h"
 //fallback function
-//make sure to have instantiated the templates by for example #include "nbt/serializeColor.h"!
-template<typename t>
-inline bool serializeNBTValue(nbtSerializer&s,  const std::wstring &memberName, t &value)
+//make sure to have instantiated the templates by for example #include "nbt/serializeVector.h"!
+template<typename T>
+inline bool serializeNBTValue(nbtSerializer&s,  const std::wstring &memberName, T &value)
 {
     return s.serializeValue(memberName, value);
 }
 // for basic lists, use the serializeVariableArray function
-template <typename t>
-inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, std::vector<t> &value)
+template <typename T>
+inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, std::vector<T> &value)
 {
-    // CAUTION! this SFINAE construct uses double ::type! basically, it doesn't get the ::type until the end of the evaluation, because not all ::type s are actually defined
-    // std::common_type is just a trick to get a struct with ::type being t
-    using signedT = std::conditional_t<std::is_integral_v<t>, std::make_signed<t>,
-                                       std::conditional_t<std::is_enum_v<t>, std::underlying_type<t>,
-                                                          std::conditional_t<std::is_same_v<t, bool>, std::common_type<bool>,
-                                                                             std::common_type<t>>>>::type;
-    // using signedT = std::conditional_t<std::is_integral_v<t>, std::make_signed_t<t>, t>;
-    //  using signedT = std::is_integral_v<t> ? std::make_signed_t<t> : t;
+    // CAUTION! this SFINAE construct uses double ::type! basically, it doesn'T get the ::type until the end of the evaluation, because not all ::type s are actually defined
+    // std::common_type is just a trick to get a struct with ::type being T
+    using signedT = std::conditional_t<std::is_integral_v<T>, std::make_signed<T>,
+                                       std::conditional_t<std::is_enum_v<T>, std::underlying_type<T>,
+                                                          std::conditional_t<std::is_same_v<T, bool>, std::common_type<bool>,
+                                                                             std::common_type<T>>>>::type;
+    // using signedT = std::conditional_t<std::is_integral_v<T>, std::make_signed_t<T>, T>;
+    //  using signedT = std::is_integral_v<T> ? std::make_signed_t<T> : T;
     //constexpr auto dataTag = getListDataTag<signedT *>();
     if constexpr (getListDataTag<signedT *>() != nbtDataTag::tagEnd)
     {
@@ -40,9 +40,9 @@ inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, 
         {
             if (!s.write)
             {
-                value = std::vector<t>(s.getChildren().size());
+                value = std::vector<T>(s.getChildren().size());
             }
-            for (t &it : value)
+            for (T &it : value)
             {
                 serializeNBTValue(s, std::wstring(), it);
             }
@@ -53,17 +53,17 @@ inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, 
     return false;
 }
 
-template <typename t>
-inline bool serializeListOfSerializables(nbtSerializer &s, const std::wstring &memberName, std::vector<t> &value)
+template <typename T>
+inline bool serializeListOfSerializables(nbtSerializer &s, const std::wstring &memberName, std::vector<T> &value)
 {
     if (s.push<nbtDataTag::tagList>(memberName))
     {
         if (!s.write)
         {
-            value = std::vector<t>(s.getChildren().size());
+            value = std::vector<T>(s.getChildren().size());
         }
         //size_t i = 0;
-        for (t &it : value)
+        for (T &it : value)
         {
             if (s.push())
             {

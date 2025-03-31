@@ -30,23 +30,23 @@ void readRecipe(const jsonContainer& recipeDescription)
 		{
 			if (keyContainer.children.size() > 1)
 			{
-				tag* t = new tag(std::wstring());//name does not matter
+				tag* T = new tag(std::wstring());//name does not matter
 				for (const jsonContainer& child : keyContainer.children)
 				{
 					if (IItemComparable* comparable = getItemComparableByName(child.children[0].children[0].value))
 					{
-						t->taggedComparables->push_back(comparable);
+						T->taggedComparables->push_back(comparable);
 					}
 				}
-				t->taggedComparables->update();
-				if (t->taggedComparables->size)
+				T->taggedComparables->update();
+				if (T->taggedComparables->size)
 				{
-					keyList->push_back(t);
+					keyList->push_back(T);
 				}
 				else
 				{
 
-					delete t;
+					delete T;
 
 					delete keyList;
 

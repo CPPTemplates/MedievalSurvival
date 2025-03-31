@@ -1,15 +1,17 @@
 #pragma once
 #include "math/graphics/color/color.h"
-#include "math/graphics/brush/brush.h"
+#include "math/graphics/brush/brushes/combineBrush.h"
 #include "math/graphics/color/colorFunctions.h"
 template <typename brush0Type, typename brush1Type>
-struct colorMixer final : public colorBrush
+struct colorMixer final : public combinebrush<brush0Type, brush1Type>
 {
 	typedef brush1Type::inputType inputType;
-	const brush0Type &topBrush;
-	const brush1Type &bottomBrush;
+	//top brush
+	const brush0Type& brush0;
+	//bottom brush
+	const brush1Type& brush1;
 
-	colorMixer(const brush0Type &topBrush, const brush1Type &bottomBrush) : topBrush(topBrush), bottomBrush(bottomBrush) {}
+	colorMixer(const brush0Type& topBrush, const brush1Type& bottomBrush) : brush0(topBrush), brush1(bottomBrush) {}
 
 	// inline static constexpr color getColor(ccolor& topColor, ccolor& bottomColor)
 	//{
@@ -18,17 +20,31 @@ struct colorMixer final : public colorBrush
 	//		topColor :
 	//		(topColor.a() ? color::transition(topColor, bottomColor) : bottomColor);
 	// }
+	constexpr color combine(const color& topColor, const color& bottomColor) const {
+		if (topColor.a() == color::maxValue)
+		{
+			return topColor;
+		}
+		else if (topColor.a())
+		{
+			return transitionColor(topColor, bottomColor);
+		}
+		else
+		{
+			return bottomColor;
+		}
+	}
 
-	inline color getValue(const inputType &pos) const
+	inline color getValue(const inputType& pos) const
 	{
-		ccolor &topColor = topBrush.getValue((typename brush0Type::inputType)pos);
+		ccolor& topColor = brush0.getValue((typename brush0Type::inputType)pos);
 		if (topColor.a() == color::maxValue)
 		{
 			return topColor;
 		}
 		else
 		{
-			ccolor &bottomColor = bottomBrush.getValue(pos);
+			ccolor& bottomColor = brush1.getValue(pos);
 			if (topColor.a())
 			{
 				return transitionColor(topColor, bottomColor);

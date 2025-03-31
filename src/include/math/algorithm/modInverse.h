@@ -4,53 +4,53 @@ namespace math
     // https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
     // To compute x raised to power y under modulo M
     // To compute x^y under modulo m
-    template <typename t>
-    constexpr t power(const t &x, const t &y, const t &M)
+    template <typename T>
+    constexpr T power(const T &x, const T &y, const T &M)
     {
         if (y == 0)
             return 1;
 
-        t p = power(x, y / 2, M) % M;
+        T p = power(x, y / 2, M) % M;
         p = (p * p) % M;
 
         return (y % 2 == 0) ? p : (x * p) % M;
     }
 
     // when M = maxvalue + 1 (aka 0)
-    template <typename t>
-    constexpr t powerM0(const t &x, const t &y)
+    template <typename T>
+    constexpr T powerM0(const T &x, const T &y)
     {
         if (y == 0)
             return 1;
 
-        t p = powerM0(x, y / 2);
+        T p = powerM0(x, y / 2);
         p = (p * p);
 
         return (y % 2 == 0) ? p : (x * p);
     }
 
     // Function to find modular inverse of a under modulo M
-    template <typename t>
-    constexpr t modInverse(const t &A, const t &M)
+    template <typename T>
+    constexpr T modInverse(const T &A, const T &M)
     {
         // variables have to be initialized in constant expressions
-        t x = 0, y = 0;
-        const t &g = gcdExtended(A, M, x, y);
+        T x = 0, y = 0;
+        const T &g = gcdExtended(A, M, x, y);
         if (g != 1)
             return 0;
-        // cout << "Inverse doesn't exist";
+        // cout << "Inverse doesn'T exist";
         else
         {
 
             // m is added to handle negative x
-            t res = (x % M + M) % M;
+            T res = (x % M + M) % M;
             return res;
             // cout << "Modular multiplicative inverse is " << res;
         }
         // int g = gcd(A, M);
         // if (g != 1)
         //     return 3;
-        //// cout << "Inverse doesn't exist";
+        //// cout << "Inverse doesn'T exist";
         // else
         //{
         //     // If a and m are relatively prime, then modulo
@@ -66,13 +66,13 @@ namespace math
     //  to m using extended Euclid Algorithm
     //  Assumption: a and m are coprimes, i.e.,
     //  gcd(A, M) = 1
-    template <typename t>
-    constexpr t modInverseIterative(t A, t M)
+    template <typename T>
+    constexpr T modInverseIterative(T A, T M)
     {
 
         // copy
-        const t m0 = M;
-        t y = 0, x = 1;
+        const T m0 = M;
+        T y = 0, x = 1;
 
         if (M == 1)
             return 0;
@@ -80,8 +80,8 @@ namespace math
         while (A > 1)
         {
             // q is quotient
-            const t &q = A / M;
-            t temp = M;
+            const T &q = A / M;
+            T temp = M;
 
             // m is remainder now, process same as
             // Euclid's algo

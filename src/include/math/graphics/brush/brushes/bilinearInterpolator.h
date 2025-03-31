@@ -24,7 +24,7 @@ struct bilinearInterpolator final :colorBrush
 		};
 
 		cvec2& weight = pos - cvec2(pos00);
-		return interpolateColor(colorsToInterpolate, weight);
+		return interpolateColorBilinear(colorsToInterpolate, weight);
 	}
 	bilinearInterpolator(const texture& baseTexture) :baseTexture(baseTexture) {}
 };

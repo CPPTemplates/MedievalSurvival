@@ -88,7 +88,7 @@ block::block(blockID identifier, fp hardness, fp blastResistance, cfp &weightPer
 	  canReplaceBlock(canReplaceBlock),
 	  experienceWhenBroken(experienceWhenBroken)
 {
-	// we check for block light filter strength, because there are solid blocks which don't allow block light, but do allow sunlight
+	// we check for block light filter strength, because there are solid blocks which don'T allow block light, but do allow sunlight
 	if (filterStrength[(int)levelID::light + (int)lightLevelID::blockLight] != maxLightLevel &&
 		!(isTreeType(identifier) && is_in(getTreeItemType(identifier), treeItemTypeID::log, treeItemTypeID::strippedLog)))
 	{
@@ -336,7 +336,7 @@ void block::render(const gameRenderData &targetData, blockData *const data, bloc
 	}
 	else if (identifier == blockID::end_rod)
 	{
-		// TODO: pre-render end rod texture correctly, so this complex transformation doensn't have to be done every time
+		// TODO: pre-render end rod texture correctly, so this complex transformation doensn'T have to be done every time
 		const directionID &attachmentDirection = dynamic_cast<attachmentDirectionData *>(data)->attachmentDirection;
 		cmat3x3 &rotationTransform =
 			mat3x3::rotateDegrees(cvec2(blockPosition) + cvec2(0.5), getAngle2DDegrees(flipDirection(attachmentDirection)));

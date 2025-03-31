@@ -3,7 +3,7 @@
 #include "math/bodypart2d.h"
 #include "soundList.h"
 #include "dimension.h"
-arrow::arrow(dimension* dimensionIn, cvec2& position) : throwable(dimensionIn, position, entityID::arrow)
+arrow::arrow() : throwable(entityID::arrow)
 {
 	mainBodyPart = new bodyPart2D(arrowTextureRect, nullptr, position, arrowSize, arrowSize * 0.5);
 	mainBodyPart->hasTransparency = true;

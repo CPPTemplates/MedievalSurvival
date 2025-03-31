@@ -1,5 +1,5 @@
 #include "cow.h"
-cow::cow(dimension *dimensionIn, cvec2 &position) : mob(dimensionIn, position, entityID::cow), fourLeggedPassiveMob(dimensionIn, position, entityID::cow)
+cow::cow() : mob(entityID::cow), fourLeggedPassiveMob(entityID::cow)
 {
 	// intialize body parts
 	mainBodyPart = new bodyPart2D(cowBodyTextureRect, nullptr, vec2(position.x, position.y + cowLegSize.y), cowBodySize, cowBodyRotationCenter, 0, 90);

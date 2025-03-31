@@ -10,24 +10,24 @@
 /// @return a generator based on the current nanosecond
 std::mt19937 getGeneratorBasedOnTime();
 
-template <typename t = int, typename = std::enable_if_t<std::is_integral_v<t>>>
-inline t rand(std::mt19937 &generator)
+template <typename T = int, typename = std::enable_if_t<std::is_integral_v<T>>>
+inline T rand(std::mt19937 &generator)
 {
-	std::uniform_int_distribution<t> distribution(0);
+	std::uniform_int_distribution<T> distribution(0);
 	return distribution(generator);
 }
 // CAN ALSO RETURN MAX
-template <typename t = int, typename = std::enable_if_t<std::is_integral_v<t>>>
-inline t rand(std::mt19937 &generator, const t &max)
+template <typename T = int, typename = std::enable_if_t<std::is_integral_v<T>>>
+inline T rand(std::mt19937 &generator, const T &max)
 {
-	std::uniform_int_distribution<t> distribution(0, max);
+	std::uniform_int_distribution<T> distribution(0, max);
 	return distribution(generator);
 }
 // CAN ALSO RETURN MAX
-template <typename t = int, typename = std::enable_if_t<std::is_integral_v<t>>>
-inline t rand(std::mt19937 &generator, const t &min, const t &max)
+template <typename T = int, typename = std::enable_if_t<std::is_integral_v<T>>>
+inline T rand(std::mt19937 &generator, const T &min, const T &max)
 {
-	std::uniform_int_distribution<t> distribution(min, max);
+	std::uniform_int_distribution<T> distribution(min, max);
 	return distribution(generator);
 }
 // DOES RETURN MAX
@@ -37,10 +37,10 @@ inline bool randChance(std::mt19937 &generator, cint &averageRollCount)
 	std::uniform_int_distribution<int> distribution(0, averageRollCount - 1);
 	return distribution(generator) == 0;
 }
-template <typename t, typename = std::enable_if<std::is_integral<t>::value>>
-inline t randIndex(std::mt19937 &generator, const t &arraySize)
+template <typename T, typename = std::enable_if<std::is_integral<T>::value>>
+inline T randIndex(std::mt19937 &generator, const T &arraySize)
 {
-	std::uniform_int_distribution<t> distribution(0, arraySize - 1);
+	std::uniform_int_distribution<T> distribution(0, arraySize - 1);
 	return distribution(generator);
 }
 inline fsize_t randIndex(std::mt19937 &generator, const std::vector<fp> weights, cfp &totalWeight)
@@ -92,46 +92,46 @@ inline int rand(cint &min, cint &maxPlus1)
 	return rand() % (maxPlus1 - min) + min;
 }
 
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp(std::mt19937 &generator)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp(std::mt19937 &generator)
 {
-	std::uniform_real_distribution<t> distribution(0, 1);
+	std::uniform_real_distribution<T> distribution(0, 1);
 	return distribution(generator);
 }
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp(std::mt19937 &generator, const t &max)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp(std::mt19937 &generator, const T &max)
 {
-	std::uniform_real_distribution<t> distribution(0, max);
+	std::uniform_real_distribution<T> distribution(0, max);
 	return distribution(generator);
 }
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp(std::mt19937 &generator, const t &min, const t &max)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp(std::mt19937 &generator, const T &min, const T &max)
 {
-	std::uniform_real_distribution<t> distribution(min, max);
+	std::uniform_real_distribution<T> distribution(min, max);
 	return distribution(generator);
 }
 
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp()
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp()
 {
-	return (t)rand() / RAND_MAX;
+	return (T)rand() / RAND_MAX;
 }
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp(const t &max)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp(const T &max)
 {
 	return randFp() * max;
 }
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline t randFp(const t &min, const t &max)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline T randFp(const T &min, const T &max)
 {
 	return math::lerp(min, max, randFp());
 }
 
-template <typename t = fp, typename = std::enable_if_t<std::is_floating_point_v<t>>>
-inline int roundRandom(std::mt19937 &generator, const t &value)
+template <typename T = fp, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+inline int roundRandom(std::mt19937 &generator, const T &value)
 {
 	cint flooredValue = (int)floor(value);
-	const t fractionalValue = value - flooredValue;
+	const T fractionalValue = value - flooredValue;
 	return randFp(generator) < fractionalValue ? flooredValue + 1 : flooredValue;
 }
 

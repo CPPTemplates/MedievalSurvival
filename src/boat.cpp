@@ -13,7 +13,7 @@ fp boat::getPaddleAngle(cfp& paddleRotations)
 	return sin(paddleRotations * math::PI2) * maxPaddleAngle * math::degreesToRadians;
 }
 
-boat::boat(dimension* dimensionIn, cvec2& position) : hollowRidableEntity(dimensionIn, position, entityID::boat, 2)
+boat::boat() : hollowRidableEntity(entityID::boat, 2)
 {
 
 	//boat texture

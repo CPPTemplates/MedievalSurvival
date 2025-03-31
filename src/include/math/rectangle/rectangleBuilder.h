@@ -1,15 +1,15 @@
 #include "rectangletn.h"
 #include <map>
 #include <list>
-template <typename t>
+template <typename T>
 struct rectangleBuilder
 {
     struct rectPair
     {
         rectanglei2 rect;
-        t value;
+        T value;
     };
-    // typedef std::pair<rectanglei2, t> rectPair;
+    // typedef std::pair<rectanglei2, T> rectPair;
     std::vector<rectPair *>
         finishedRectangles = std::vector<rectPair *>();
     // the height of currentRectBuilding is always 1!!
@@ -81,7 +81,7 @@ private:
     }
 
 public:
-    inline void addNextPosition(cveci2 &pos, const t &value)
+    inline void addNextPosition(cveci2 &pos, const T &value)
     {
         checkYChange(pos);
         if (currentRectBuilding && currentRectBuilding->value == value)

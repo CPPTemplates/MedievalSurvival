@@ -6,7 +6,7 @@
 #include "math/direction.h"
 #include "math/mathFunctions.h"
 
-constexpr int currentFileVersionID = 125;
+constexpr int currentFileVersionID = 126;
 
 //forward declarations
 //typedefs
@@ -39,7 +39,7 @@ struct biomeData;
 
 //constants
 
-constexpr wchar_t colorCodeChar = '\xA7';
+constexpr wchar_t colorCodeChar = L'\xA7';
 
 
 constexpr int maxNameLetterCount = 0x10;
@@ -75,6 +75,9 @@ constexpr int ticksPerHour = 50 * ticksPerRealLifeSecond;
 constexpr int ticksPerDay = ticksPerHour * 24;
 constexpr int ticksPerMonth = ticksPerDay * 30;
 constexpr int ticksPerYear = ticksPerMonth * 12;
+
+
+constexpr int adultAge = ticksPerDay;
 
 //independent variables
 constexpr int blockTextureSize = 0x10;
@@ -374,8 +377,8 @@ extern std::mt19937 currentRandom;
 //extern microseconds lastTickTimeMicroseconds;
 //extern seconds lastTickTime;
 
-//template<typename t>
-//std::wstring getClassName(const t& instance);
+//template<typename T>
+//std::wstring getClassName(const T& instance);
 
 fp getPowerStrength(const powerLevel& level);
 

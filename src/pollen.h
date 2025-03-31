@@ -8,7 +8,7 @@ struct pollen : public entity
 	int ticksToExist = 0x200;
 	blockID blockToSpread = blockID::short_grass;
 	virtual void render(const gameRenderData& targetData) const override;
-	pollen(dimension* dimensionIn, cvec2& position) : entity(dimensionIn, position, entityID::pollen) {}
+	pollen() : entity(entityID::pollen) {}
 	virtual void tick() override;
 	virtual void serializeValue(nbtSerializer& s) override;
 };

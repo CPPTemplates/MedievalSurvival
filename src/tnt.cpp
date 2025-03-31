@@ -3,7 +3,7 @@
 #include "block.h"
 #include "include/math/graphics/graphicsFunctions.h"
 #include "include/math/graphics/brush/brushes.h"
-tnt::tnt(dimension* dimensionIn, cvec2& position) : entity(dimensionIn, position, entityID::tnt)
+tnt::tnt() : entity(entityID::tnt)
 {
 
 }

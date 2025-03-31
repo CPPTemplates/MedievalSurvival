@@ -1,12 +1,12 @@
 #pragma once
 #include "fastList.h"
-template<typename t, typename vectn>
+template<typename T, typename vectn>
 struct tile:IDestructable
 {
 	vectn position = vec2();
 	//the elements in this tile
-	fastList<t>* elements = nullptr;
-	tile(vectn position, fastList<t>* elements) 
+	fastList<T>* elements = nullptr;
+	tile(vectn position, fastList<T>* elements) 
 	{
 		this->position = position;
 		this->elements = elements;

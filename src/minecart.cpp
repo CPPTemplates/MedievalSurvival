@@ -4,7 +4,7 @@
 #include "minecart.h"
 #include "math/bodypart2d.h"
 #include "dimension.h"
-minecart::minecart(dimension* dimensionIn, cvec2& position) :hollowRidableEntity(dimensionIn, position, entityID::minecart)
+minecart::minecart() :hollowRidableEntity(entityID::minecart)
 {
 	mainBodyPart = new bodyPart2D(minecartEditedTextureRect, nullptr, position, minecartRenderSize, minecartRotationCenter);
 }

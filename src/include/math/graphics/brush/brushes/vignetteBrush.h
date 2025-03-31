@@ -9,6 +9,6 @@ struct vignetteBrush final : colorBrush
 	vignetteBrush(cvec2& middle, cfp& darkenAmountAtMaxDistance, cfp& maxDistance, const brush0Type& baseBrush) :distanceMultiplier((darkenAmountAtMaxDistance* color::maxValue) / math::squared(maxDistance)), middle(middle), baseBrush(baseBrush) {}
 	virtual inline color getValue(cvec2& pos) const
 	{
-		return color::muliplyColors(baseBrush.getValue(pos), color::maxValue - (colorChannel)((pos - middle).lengthSquared() * distanceMultiplier));
+		return color::multiplyColors(baseBrush.getValue(pos), color::maxValue - (colorChannel)((pos - middle).lengthSquared() * distanceMultiplier));
 	}
 };

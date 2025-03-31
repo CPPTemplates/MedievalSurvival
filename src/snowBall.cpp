@@ -1,5 +1,5 @@
 #include "snowBall.h"
-snowBall::snowBall(dimension* dimensionIn, cvec2& position) :throwable(dimensionIn, position, entityID::snowball)
+snowBall::snowBall() : throwable(entityID::snowball)
 {
 
 }

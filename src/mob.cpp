@@ -8,7 +8,7 @@
 #include "math/collisions.h"
 #include "block.h"
 #include "particle.h"
-#include "blockParticleBrush.h"
+#include "blockParticle.h"
 #include "endCrystal.h"
 #include "dropData.h"
 #include "math/raycast.h"
@@ -16,11 +16,11 @@
 #include "furnaceRecipe.h"
 #include "world.h"
 #include "server.h"
-#include "textureParticleBrush.h"
+#include "textureParticle.h"
 #include "statusEffectData.h"
-#include "effectParticleBrush.h"
+#include "effectParticle.h"
 #include "nbt/serializeUUID.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 
 constexpr fp verticalSwimSpeedSeconds = 1.0f;
 constexpr fp verticalSwimSpeed = verticalSwimSpeedSeconds;
@@ -32,7 +32,7 @@ constexpr fp climbUpSpeed = ladderSpeed;
 constexpr fp climbDownSpeed = ladderSpeed;
 constexpr fp swimSpeed = 5.612f;
 
-entity *mob::getSelectedEntity()
+entity* mob::getSelectedEntity()
 {
 	return selectedUUID ? dimensionIn->findUUID(position, getArmRange() + mobSizeMargin, selectedUUID) : nullptr;
 }
@@ -72,11 +72,11 @@ void mob::tick()
 		totalLegDistance += speed.x * secondsPerTick;
 	}
 
-	if (((mobData *)entityDataList[(int)entityType])->ambientSound)
+	if (((mobData*)entityDataList[(int)entityType])->ambientSound)
 	{
 		if (ambientSoundCoolDown <= 0)
 		{
-			((mobData *)entityDataList[(int)entityType])->ambientSound->playRandomSound(dimensionIn, getHeadPosition());
+			((mobData*)entityDataList[(int)entityType])->ambientSound->playRandomSound(dimensionIn, getHeadPosition());
 			resetAmbientSoundCoolDown();
 		}
 		else
@@ -103,7 +103,7 @@ void mob::tick()
 	{
 		if (selectedUUID)
 		{
-			entity *entityToAttack = dimensionIn->findUUID(position, getArmRange() + mobSizeMargin, selectedUUID);
+			entity* entityToAttack = dimensionIn->findUUID(position, getArmRange() + mobSizeMargin, selectedUUID);
 			if (entityToAttack)
 			{
 				// cooldown
@@ -124,23 +124,23 @@ void mob::tick()
 					durabilityDecrease *= 1.5;
 				}
 				// enchantments
-				if (isHumanoid(entityType) && (int)((humanoid *)this)->itemHolding->stackItemID)
+				if (isHumanoid(entityType) && (int)((humanoid*)this)->itemHolding->stackItemID)
 				{
-					int sharpnessLevel = ((humanoid *)this)->itemHolding->getEnchantmentLevel(enchantmentID::sharpness);
+					int sharpnessLevel = ((humanoid*)this)->itemHolding->getEnchantmentLevel(enchantmentID::sharpness);
 					fp enchantmentDamage = sharpnessLevel ? 0.5 + sharpnessLevel * 0.5 : 0;
 					// undead mobs
 					if (isUndeadMob(entityToAttack->entityType))
 					{
-						enchantmentDamage += 2.5 * ((humanoid *)this)->itemHolding->getEnchantmentLevel(enchantmentID::smite);
+						enchantmentDamage += 2.5 * ((humanoid*)this)->itemHolding->getEnchantmentLevel(enchantmentID::smite);
 					}
 					// not squared
 					cfp enchantmentsCoolDownMultiplier = ticksSinceToolUsed < totalCoolDownTime ? math::lerp(1 - cooldownTreshold, (fp)1.0, (this->ticksSinceToolUsed + 0.5) / totalCoolDownTime) : 1.0;
 					enchantmentDamage *= enchantmentsCoolDownMultiplier;
 					attackDamage += enchantmentDamage;
 
-					entityToAttack->setOnFire(80 * ((humanoid *)this)->itemHolding->getEnchantmentLevel(enchantmentID::fireAspect));
+					entityToAttack->setOnFire(80 * ((humanoid*)this)->itemHolding->getEnchantmentLevel(enchantmentID::fireAspect));
 
-					const itemID &idHolding = ((humanoid *)this)->itemHolding->stackItemID;
+					const itemID& idHolding = ((humanoid*)this)->itemHolding->stackItemID;
 
 					if (hasDurability(idHolding))
 					{
@@ -159,7 +159,7 @@ void mob::tick()
 						}
 						if (isHumanoid(entityType))
 						{
-							((humanoid *)this)->decreaseDurability(*((humanoid *)this)->itemHolding, durabilityDecrease);
+							((humanoid*)this)->decreaseDurability(*((humanoid*)this)->itemHolding, durabilityDecrease);
 						}
 					}
 				}
@@ -177,7 +177,7 @@ void mob::tick()
 							criticalAttackSound->playRandomSound(dimensionIn, exactEntityIntersection);
 							for (int i = 0; i < 5; i++)
 							{
-								summonParticle(dimensionIn, exactEntityIntersection, new textureParticleBrush(particleID::crit), 4);
+								summonEntity(new textureParticle(particleID::crit), dimensionIn, exactEntityIntersection);
 							}
 						}
 						else
@@ -188,14 +188,14 @@ void mob::tick()
 				}
 				// mob is in the way, hit the mob instead
 
-				cint knockBackLevel = isHumanoid(entityType) ? ((humanoid *)this)->itemHolding->getEnchantmentLevel(enchantmentID::knockback) : 0;
+				cint knockBackLevel = isHumanoid(entityType) ? ((humanoid*)this)->itemHolding->getEnchantmentLevel(enchantmentID::knockback) : 0;
 				cfp difference = entityToAttack->position.x - position.x;
 				cfp knockbackDistance = 0.5; // the mob has to be this amount of blocks away to recieve knockback
 				cfp baseKnockBackSpeed = 5;
 				cvec2 sideWaysBonusSpeed = cvec2((knockBackLevel + 1) * baseKnockBackSpeed *
-													 (difference < -knockbackDistance ? -1 : difference > knockbackDistance ? 1
-																															: 0),
-												 0);
+					(difference < -knockbackDistance ? -1 : difference > knockbackDistance ? 1
+						: 0),
+					0);
 				// cvec2 knockBack = speed + sideWaysBonusSpeed;
 
 				speed = entityToAttack->handleCollision(speed, getWeight());
@@ -227,7 +227,7 @@ void mob::tick()
 
 		// MovementSpeed = MovementSpeed;
 
-		if (isHumanoid(entityType) && ((humanoid *)this)->climbing)
+		if (isHumanoid(entityType) && ((humanoid*)this)->climbing)
 		{
 			if (wantsToGoUp || wantsToJump)
 			{
@@ -281,9 +281,9 @@ void mob::tick()
 	else // flying
 	{
 		MovementSpeed =
-			(entityType == entityID::human && ((human *)this)->currentGameMode == gameModeID::spectator)
-				? ((human *)this)->spectatorSpeed
-				: ((mobData *)entityDataList[entityType])->flyingSpeed;
+			(entityType == entityID::human && ((human*)this)->currentGameMode == gameModeID::spectator)
+			? ((human*)this)->spectatorSpeed
+			: ((mobData*)entityDataList[entityType])->flyingSpeed;
 
 		if (wantsToSprint)
 		{
@@ -310,9 +310,9 @@ void mob::tick()
 		forceToAdd.x -= MovementSpeed;
 	}
 
-	cfp &effectMultiplier = 1 + 0.2 * getEffectLevel(statusEffectID::speed);
-	cfp &totalMultiplier = effectMultiplier * terminalVelocityMultiplier;
-	cvec2 &multiplied = forceToAdd * totalMultiplier;
+	cfp& effectMultiplier = 1 + 0.2 * getEffectLevel(statusEffectID::speed);
+	cfp& totalMultiplier = effectMultiplier * terminalVelocityMultiplier;
+	cvec2& multiplied = forceToAdd * totalMultiplier;
 	speed += multiplied;
 
 	if (forceToAdd.lengthSquared())
@@ -340,14 +340,14 @@ void mob::tick()
 	}
 	else if (flying)
 	{
-		cbool &noSpeed = speed.lengthSquared() == 0;
-		cbool &noSpeedToAdd = forceToAdd.lengthSquared() == 0;
+		cbool& noSpeed = speed.lengthSquared() == 0;
+		cbool& noSpeedToAdd = forceToAdd.lengthSquared() == 0;
 
 		if (!noSpeedToAdd)
 		{
 			if (!noSpeed)
 			{
-				cfp &angle = angleBetween(forceToAdd.normalized(), speed.normalized());
+				cfp& angle = angleBetween(forceToAdd.normalized(), speed.normalized());
 
 				if (angle < (math::PI2 * 0.25))
 				{
@@ -370,10 +370,10 @@ void mob::tick()
 	// dont play sounds if sneaking or falling
 	if (!sneaking && onGround && moving)
 	{
-		if (((mobData *)entityDataList[(int)entityType])->legSwingSynchronizer.maximumSineAmpBetween(lastLegDistance, totalLegDistance))
+		if (((mobData*)entityDataList[(int)entityType])->legSwingSynchronizer.maximumSineAmpBetween(lastLegDistance, totalLegDistance))
 		{
 			// check block
-			block *b = blockList[(int)dimensionIn->getBlockID(veci2((int)floor(position.x), (int)floor(position.y - 0.05)))];
+			block* b = blockList[(int)dimensionIn->getBlockID(veci2((int)floor(position.x), (int)floor(position.y - 0.05)))];
 			if (b->blockCollisionType != collisionTypeID::willNotCollide)
 			{
 				std::shared_ptr<soundCollection> mobStepSound = getMobData(entityType)->stepSound;
@@ -383,13 +383,13 @@ void mob::tick()
 				{
 					stepSound->playRandomSound(dimensionIn, position, volume);
 					// add particle
-					summonParticle(dimensionIn, position, new blockParticleBrush(b->identifier));
+					summonEntity(new blockParticle(particleID::block, b->identifier), dimensionIn, position);
 				}
 				else if (abs(speed.x) > legBrakeSpeed.x)
 				{
 					stepSound->playRandomSound(dimensionIn, position, volume, mobStepSound ? 1 : 0.5);
 					// add particle
-					summonParticle(dimensionIn, position, new blockParticleBrush(b->identifier));
+					summonEntity(new blockParticle(particleID::block, b->identifier), dimensionIn, position);
 				}
 			}
 			// play block touch sound
@@ -398,14 +398,14 @@ void mob::tick()
 
 	if (entityType == entityID::human)
 	{
-		human *currentHuman = (human *)this;
+		human* currentHuman = (human*)this;
 		currentHuman->addExhaustion(exhaustionIncrease);
 	}
 
-	entity *selectedEntity = selectedUUID ? dimensionIn->findUUID(position, getArmRange() + mobSizeMargin, selectedUUID) : nullptr;
+	entity* selectedEntity = selectedUUID ? dimensionIn->findUUID(position, getArmRange() + mobSizeMargin, selectedUUID) : nullptr;
 	if (UUIDRidingOn)
 	{
-		entity *entityRidingOn = dimensionIn->findUUID(position, ridingEntitySearchRadius, UUIDRidingOn);
+		entity* entityRidingOn = dimensionIn->findUUID(position, ridingEntitySearchRadius, UUIDRidingOn);
 		if (!entityRidingOn)
 		{
 			// exit boat
@@ -418,7 +418,7 @@ void mob::tick()
 		{
 			if (selectedEntity->entityType == entityID::end_crystal)
 			{
-				((endCrystal *)selectedEntity)->explode();
+				((endCrystal*)selectedEntity)->explode();
 			}
 		}
 	}
@@ -428,7 +428,7 @@ void mob::tick()
 	{
 		if (randChance(currentRandom, (ticksPerRealLifeSecond / activeEffects[i].potency)))
 		{
-			summonParticle(dimensionIn, getrandomPosition(currentRandom, calculateHitBox()), new effectParticleBrush(statusEffectDataList[activeEffects[i].identifier]->particleColor));
+			summonEntity(new effectParticle(statusEffectDataList[activeEffects[i].identifier]->particleColor), dimensionIn, getrandomPosition(currentRandom, calculateHitBox()));
 		}
 	}
 
@@ -441,13 +441,14 @@ void mob::tick()
 			despawn = true; // despawn
 		}
 	}
+	setAge(age + 1);
 }
 
 void mob::onDeath()
 {
-	if (((mobData *)entityDataList[(int)entityType])->deathSound)
+	if (((mobData*)entityDataList[(int)entityType])->deathSound)
 	{
-		((mobData *)entityDataList[(int)entityType])->deathSound->playRandomSound(dimensionIn, position);
+		((mobData*)entityDataList[(int)entityType])->deathSound->playRandomSound(dimensionIn, position);
 	}
 	dropData data = dropData();
 
@@ -459,14 +460,14 @@ void mob::onDeath()
 		if (it->get()->type == mobDamage)
 		{
 
-			mobDamageSource *source = (mobDamageSource *)it->get();
+			mobDamageSource* source = (mobDamageSource*)it->get();
 
-			if (entity *entityFrom = dimensionIn->findUUID(position, 0x40, source->uuidFrom))
+			if (entity* entityFrom = dimensionIn->findUUID(position, 0x40, source->uuidFrom))
 			{
 				if (entityFrom->entityType == entityID::human)
 				{
-					human *currentHuman = (human *)entityFrom;
-					((mobData *)entityDataList[(int)entityType])->experienceWhenKilled->dropLoot(dimensionIn, position);
+					human* currentHuman = (human*)entityFrom;
+					((mobData*)entityDataList[(int)entityType])->experienceWhenKilled->dropLoot(dimensionIn, position);
 
 					data.toolUsed = currentHuman->itemHolding;
 				}
@@ -474,11 +475,11 @@ void mob::onDeath()
 		}
 	}
 
-	std::vector<itemStack> currentDrops = ((mobData *)entityDataList[(int)entityType])->dropsWhenKilled->roll(data, currentRandom);
+	std::vector<itemStack> currentDrops = ((mobData*)entityDataList[(int)entityType])->dropsWhenKilled->roll(data, currentRandom);
 	if (fireTicks)
 	{
 		// drop cooked version
-		for (itemStack &stack : currentDrops)
+		for (itemStack& stack : currentDrops)
 		{
 			stack.stackItemID = getCookedItem(stack.stackItemID);
 		}
@@ -488,7 +489,7 @@ void mob::onDeath()
 	entity::onDeath();
 }
 
-bool mob::addDamageSource(cfp &damage, std::shared_ptr<damageSource> source)
+bool mob::addDamageSource(cfp& damage, std::shared_ptr<damageSource> source)
 {
 	if (entity::addDamageSource(damage, source))
 	{
@@ -522,11 +523,11 @@ void mob::updateBodyParts() const
 {
 }
 
-void mob::onCollisionWithGround(cfp &verticalSpeed)
+void mob::onCollisionWithGround(cfp& verticalSpeed)
 {
 	// play block sound of block below
 	rectangle2 h = calculateHitBox(position);
-	block *below = blockList[(int)dimensionIn->getBlockID(cveci2(math::floor(position.x), math::floor(position.y) - 1))];
+	block* below = blockList[(int)dimensionIn->getBlockID(cveci2(math::floor(position.x), math::floor(position.y) - 1))];
 	cfp damage = CalculateFallDamage(verticalSpeed);
 	if (damage > 0)
 	{
@@ -546,7 +547,7 @@ void mob::onCollisionWithGround(cfp &verticalSpeed)
 		}
 	}
 }
-void mob::serializeValue(nbtSerializer &s)
+void mob::serializeValue(nbtSerializer& s)
 {
 	// body parts are not serialized, as they change shape
 	entity::serializeValue(s);
@@ -555,6 +556,9 @@ void mob::serializeValue(nbtSerializer &s)
 	s.serializeValue(std::wstring(L"walking"), walking);
 	s.serializeValue(std::wstring(L"jump stamina"), jumpStamina);
 	s.serializeValue(std::wstring(L"total leg distance"), totalLegDistance);
+	s.serializeValue(std::wstring(L"age"), age);
+	if (!s.write && age < adultAge)
+		updateBodyPartSize(mainBodyPart, (fp)0.5);
 	serializeNBTValue(s, std::wstring(L"uuid riding on"), UUIDRidingOn);
 	serializeNBTValue(s, std::wstring(L"selected uuid"), selectedUUID);
 	serializeNBTValue(s, std::wstring(L"looking at"), lookingAt);
@@ -563,40 +567,41 @@ void mob::serializeValue(nbtSerializer &s)
 	serializeNBTValue(s, std::wstring(L"exact block intersection"), exactBlockIntersection);
 	serializeNBTValue(s, std::wstring(L"exact entity intersection"), exactEntityIntersection);
 	s.serializeValue(std::wstring(L"ticks since tool used"), ticksSinceToolUsed);
+	serializeNBTValue(s, std::wstring(L"partner found"), partnerFound);
 }
-void mob::render(const gameRenderData &targetData) const
+void mob::render(const gameRenderData& targetData) const
 {
 	updateBodyParts();
 	renderBodyPart(mainBodyPart, targetData.worldToRenderTargetTransform, targetData);
 	entity::render(targetData);
 }
-bool mob::shouldJump(bool &wantsToGoLeft, bool &wantsToGoRight) const
+bool mob::shouldJump(bool& wantsToGoLeft, bool& wantsToGoRight) const
 {
 	// check if there is a block in front
-	cfp speedX = ((mobData *)entityDataList[(int)entityType])->walkingSpeed * (wantsToGoLeft ? -1 : wantsToGoRight ? 1
-																												   : 0);
+	cfp speedX = ((mobData*)entityDataList[(int)entityType])->walkingSpeed * (wantsToGoLeft ? -1 : wantsToGoRight ? 1
+		: 0);
 	crectangle2 testHitbox = calculateHitBox(position);
 	constexpr fp timeBeforeJump = 0.5; // 0.5 seconds
 	cvec2 testSpeed = cvec2(speedX, 0);
 	collisionDataCollection data = dimensionIn->getHitboxCollisionData(testHitbox, testSpeed * timeBeforeJump);
 
 	// filter on 'willcollide'
-	cbool allowCollisionType[3] = {false, false, true};
+	cbool allowCollisionType[3] = { false, false, true };
 
 	data.evaluate(testHitbox, testSpeed, timeBeforeJump);
-	const auto &noJumpData = data.getFirstCollision(allowCollisionType);
+	const auto& noJumpData = data.getFirstCollision(allowCollisionType);
 
 	//cbool &willCollideIfNotJumping = data.getMaximumCollision() == collisionTypeID::willCollide;
 
 	if (noJumpData.collisionTime < timeBeforeJump)
 	{
 		// check if the mob will still collide when jumping
-		cvec2 &positionJump = position + cvec2(0, JumpHeight);
-		crectangle2 &testHitboxJump = calculateHitBox(positionJump);
+		cvec2& positionJump = position + cvec2(0, JumpHeight);
+		crectangle2& testHitboxJump = calculateHitBox(positionJump);
 		collisionDataCollection jumpData = dimensionIn->getHitboxCollisionData(testHitboxJump, testSpeed);
 		jumpData.evaluate(testHitboxJump, testSpeed, timeBeforeJump);
 
-		const auto &firstJumpCollision = jumpData.getFirstCollision(allowCollisionType);
+		const auto& firstJumpCollision = jumpData.getFirstCollision(allowCollisionType);
 		if (firstJumpCollision.collisionTime > noJumpData.collisionTime)
 		{
 
@@ -605,7 +610,7 @@ bool mob::shouldJump(bool &wantsToGoLeft, bool &wantsToGoRight) const
 			return true;
 		}
 		else
-		{ // jumping won't help
+		{ // jumping won'T help
 			if (noJumpData.collisionTime < 0.1)
 			{
 				wantsToGoLeft = wantsToGoRight = false;
@@ -618,9 +623,9 @@ void mob::lookForward()
 {
 	lookingAt = getHeadPosition() + vec2(mainBodyPart->flipX ? -2 : 2, 0);
 }
-void mob::lookAtEntity(entity *const &e)
+void mob::lookAtEntity(entity* const& e)
 {
-	lookingAt = isMob(e->entityType) ? ((mob *)e)->getHeadPosition() : e->position;
+	lookingAt = isMob(e->entityType) ? ((mob*)e)->getHeadPosition() : e->position;
 }
 void mob::flipBodyToLookingDirection()
 {
@@ -634,7 +639,7 @@ void mob::flipBodyToSpeedDirection()
 {
 	mainBodyPart->flipX = speed.x < 0;
 }
-bool mob::goToPosition(cvec2 &destination)
+bool mob::goToPosition(cvec2& destination)
 {
 	if (destination.x < position.x)
 	{
@@ -656,7 +661,7 @@ bool mob::goToPosition(cvec2 &destination)
 	if (wantsToGoLeft || wantsToGoRight)
 	{
 		// if the mob is flying but is on the ground we can still evaluate this
-		// also if the collision level is willNotCollide, it won't set onGround to true
+		// also if the collision level is willNotCollide, it won'T set onGround to true
 		wantsToJump = onGround && shouldJump(wantsToGoLeft, wantsToGoRight);
 		if (!wantsToGoLeft && !wantsToGoRight)
 		{
@@ -670,7 +675,7 @@ void mob::updateHeadAngle() const
 {
 	mainBodyPart->CalculateAllTransforms();
 	// look at 'lookingAt'
-	cvec2 headJoint = getHeadPosition();
+	cvec2 headJoint = getHeadPosition(false);
 	vec2 headLookingAtDifference = lookingAt - headJoint;
 	headLookingAtDifference.normalize();
 	cvec2 headLookingAtDifferenceFlipped = vec2(abs(headLookingAtDifference.x), headLookingAtDifference.y);
@@ -693,12 +698,40 @@ fp mob::getArmRange() const
 	{
 	case entityID::human:
 		return humanArmRange;
-		break;
 	default:
 		return mobArmRange;
-		break;
 	}
-	return mobArmRange;
+}
+void mob::updateBodyPartSize(bodyPart2D* bodyPart, fp multiplier) const
+{
+	bodyPart->changed = true;
+	if (bodyPart != head) {
+		bodyPart->size *= multiplier;
+		bodyPart->rotationCenter *= multiplier;
+	}
+	for (bodyPart2D* child : bodyPart->children)
+	{
+		updateBodyPartSize(child, multiplier);
+		if (bodyPart != head) {
+			child->translate *= multiplier;
+		}
+	}
+}
+void mob::setAge(cint& newAge)
+{
+	if (newAge >= adultAge) {
+		if (age < adultAge) {
+			//grow up!
+			updateBodyPartSize(mainBodyPart, (fp)2);
+			relativeHitbox = relativeHitbox.multiplied((fp)2);
+		}
+	}
+	else if (age >= adultAge) {
+		//shrink!
+		updateBodyPartSize(mainBodyPart, 0.5);
+		relativeHitbox = relativeHitbox.multiplied(0.5);
+	}
+	age = newAge;
 }
 void mob::updateSelection()
 {
@@ -727,8 +760,8 @@ void mob::updateSelection()
 
 	cfp marginRange = (fp)chunkSize.x; // for if the 'position' is their feet and you want to hit their head
 
-	std::vector<entity *> nearEntities = dimensionIn->findNearEntities(position, getArmRange() + marginRange);
-	for (entity *e : nearEntities)
+	std::vector<entity*> nearEntities = dimensionIn->findNearEntities(position, getArmRange() + marginRange);
+	for (entity* e : nearEntities)
 	{
 		if (canHit(e->entityType))
 		{
@@ -777,7 +810,7 @@ fp mob::getAttackDamage() const
 {
 	return getMobData(entityType)->attackDamage;
 }
-mob::mob(dimension *dimensionIn, cvec2 &position, const entityID &entityType) : entity(dimensionIn, position, entityType)
+mob::mob(const entityID& entityType) : entity(entityType)
 {
 	totalLegDistance = 0;
 }
@@ -786,7 +819,7 @@ void mob::exitRodeEntity()
 {
 	if (UUIDRidingOn)
 	{
-		ridableEntity *entityRodeOn = (ridableEntity *)dimensionIn->findUUID(position, ridingEntitySearchRadius, UUIDRidingOn);
+		ridableEntity* entityRodeOn = (ridableEntity*)dimensionIn->findUUID(position, ridingEntitySearchRadius, UUIDRidingOn);
 		for (size_t i = 0; i < entityRodeOn->seats.size(); i++)
 		{
 			if (entityRodeOn->seats[i] == identifier)
@@ -797,16 +830,16 @@ void mob::exitRodeEntity()
 		UUIDRidingOn = uuid();
 	}
 }
-void mob::renderBodyPart(bodyPart2D *const &b, cmat3x3 &transform, const gameRenderData &targetData) const
+void mob::renderBodyPart(bodyPart2D* const& b, cmat3x3& transform, const gameRenderData& targetData) const
 {
-	renderBodyPart(b, transform, *((mobData *)entityDataList[(int)entityType])->skin, targetData);
+	renderBodyPart(b, transform, *((mobData*)entityDataList[(int)entityType])->skin, targetData);
 }
 // just do it here:
 // https://elsenaju.eu/Calculator/online-curve-fit.htm
 
 // sources:
 // https://gaming.stackexchange.com/questions/178726/what-is-the-terminal-velocity-of-a-sheep
-fp mob::CalculateFallDamage(cfp &vertspeed)
+fp mob::CalculateFallDamage(cfp& vertspeed)
 {
 	// fall 3 blocks without taking damage,
 	// at 10 blocks take 7 fall damage
@@ -815,8 +848,10 @@ fp mob::CalculateFallDamage(cfp &vertspeed)
 	return -9.8 - (0.7 * vertspeed);
 }
 
-vec2 mob::getHeadPosition() const
+vec2 mob::getHeadPosition(cbool& shouldUpdateBodyParts) const
 {
+	if (shouldUpdateBodyParts)
+		updateBodyParts();
 	return head->getRotationCenterPosition();
 }
 mob::~mob()

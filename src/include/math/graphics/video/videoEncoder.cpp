@@ -211,8 +211,8 @@ void videoEncoder::addFrameDiff(streamSerializer& serializer)
             }
         }
     }
-    // tex will safely go out of scope, as it doesn't hurt to delete a null pointer
-    // this can't be in the destructor, as that is also used by the encoder
+    // tex will safely go out of scope, as it doesn'T hurt to delete a null pointer
+    // this can'T be in the destructor, as that is also used by the encoder
     diffTex.baseArray = nullptr;
 }
 
@@ -236,7 +236,7 @@ void videoEncoder::addFrame(const texture &frame, streamSerializer& serializer)
 
         // optimize frame further: detect general image motion
 
-        // block matching algorithms don't seem to help much:
+        // block matching algorithms don'T seem to help much:
         // https://en.wikipedia.org/wiki/Block-matching_algorithm
         // we'll store the motion of each pixel and make an image of this motion. the PNG compressor will create a PNG from the motion.
 
@@ -259,7 +259,7 @@ void videoEncoder::addFrame(const texture &frame, streamSerializer& serializer)
             // the outer borders of the frame will not be checked. too bad
             for (cveci2 &blockPos : currentVectorArray.getClientRect())
             {
-                //  we extend to the right, but that doesn't really matter
+                //  we extend to the right, but that doesn'T really matter
                 // crectanglei2 &rectToCheck = crectanglei2(posToCheck - cveci2(0x4), cveci2(0x8));
                 crectanglei2 &rectToCheck = crectanglei2(blockPos * currentMotionBlockSize, cveci2(currentMotionBlockSize));
                 // ccolor &colorToCompare = totalTexture.getValue(posToCheck);
@@ -311,7 +311,7 @@ void videoEncoder::addFrame(const texture &frame, streamSerializer& serializer)
                     rectanglei2 testRect = rectToCheck;
                     if (!cropCheckRect(imageRect, testRect, zoomInOn))
                     {
-                        // the parent rect isn't fully out of bounds but this subrect is
+                        // the parent rect isn'T fully out of bounds but this subrect is
                         // look around the last motion, maybe we can copy something from there
                         zoomInOn = lastMotion;
                     }
@@ -341,7 +341,7 @@ void videoEncoder::addFrame(const texture &frame, streamSerializer& serializer)
                     // }
                 }
             found:;
-                // old: // finally, check 00 if it hasn't been checked yet
+                // old: // finally, check 00 if it hasn'T been checked yet
                 //      if (leastError && !blockMotionWeight.contains(veci2()))
                 //      {
                 //          cint &error = getMovementCostUnsafe(totalTexture, frame, rectToCheck, leastErrorPos, leastError);
@@ -552,7 +552,7 @@ void videoEncoder::serializeMotionVectors(streamSerializer& serializer)
     // sbyte *ptr = nullptr;
     // int count;
     //
-    //// declare the string outside so it doesn't go out of scope
+    //// declare the string outside so it doesn'T go out of scope
     // std::string compressedVectors;
     // if (serializer.write)
     //{
@@ -653,7 +653,7 @@ void videoEncoder::serializeScreen(streamSerializer& serializer)
                                      (uint32_t)compressedScreen.size(), decompressedScreen, size.x,
                                      size.y, channelCount, compressionColorChannelCount);
 
-            // a dangerous trick: we don't copy the difftex, but use the vector pointer!
+            // a dangerous trick: we don'T copy the difftex, but use the vector pointer!
             diffTex = texture(size, (color *)&*decompressedScreen.begin());
         }
     }
@@ -662,7 +662,7 @@ void videoEncoder::serializeScreen(streamSerializer& serializer)
 
 void videoEncoder::resizeGrid()
 {
-    // we can't resize difftex here; it might be pointing to the vector
+    // we can'T resize difftex here; it might be pointing to the vector
     sourceMotionVectors = array2d<compressedSourceMotionVector>(totalTexture.size);
     // resize arrays
     for (byte motionStepIndex = 0; motionStepIndex < motionCheckStepCount; motionStepIndex++)

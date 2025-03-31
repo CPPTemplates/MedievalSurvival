@@ -727,7 +727,7 @@ void chat::say(human& sender, std::wstring line)
 				}
 				else
 				{
-					addLine(std::wstring(L"you can't cheat"));
+					addLine(std::wstring(L"you can'T cheat"));
 				}
 			}
 		}

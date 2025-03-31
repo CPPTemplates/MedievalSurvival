@@ -1,7 +1,7 @@
 #include "dragonFireBall.h"
 #include "soundList.h"
 #include "dimension.h"
-dragonFireBall::dragonFireBall(dimension* dimensionIn, cvec2& position) :fireBall(dimensionIn, position, entityID::dragon_fireball)
+dragonFireBall::dragonFireBall() :fireBall(entityID::dragon_fireball)
 {
 }
 

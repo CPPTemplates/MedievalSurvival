@@ -20,7 +20,7 @@ bool shapelessRecipe::verifyPattern(rectangularSlotContainer* container)
 					IItemComparable* comparable = (*requiredItems)[i];
 					if (comparable->compare(s->stackItemID))
 					{
-						if (!found[i]) //can't have too much of the same item
+						if (!found[i]) //can'T have too much of the same item
 						{
 							found[i] = true;
 							goto itemBelongs;

@@ -1,5 +1,5 @@
 #include "smallFireBall.h"
-smallFireBall::smallFireBall(dimension* dimensionIn, cvec2& position) :fireBall(dimensionIn, position, entityID::small_Fireball)
+smallFireBall::smallFireBall() :fireBall(entityID::small_Fireball)
 {
 
 }

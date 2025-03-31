@@ -63,7 +63,7 @@ void dropExperienceOrbs(tickableBlockContainer * containerIn, cvec2& position, c
 		orb->speed = vec2::getrotatedvector(randFp(currentRandom, math::PI2)) * maxExperienceSpeed;
 	}
 }
-experienceOrb::experienceOrb(dimension* dimensionIn, cvec2& pos) : entity(dimensionIn, pos, entityID::experience_orb)
+experienceOrb::experienceOrb() : entity(entityID::experience_orb)
 {
 }
 

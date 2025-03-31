@@ -267,7 +267,7 @@
     <ClCompile Include="src\blockData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\blockParticleBrush.cpp">
+    <ClCompile Include="src\blockParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\blockStateCondition.cpp">
@@ -426,7 +426,7 @@
     <ClCompile Include="src\eatGrassAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\effectParticleBrush.cpp">
+    <ClCompile Include="src\effectParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\egg.cpp">
@@ -645,7 +645,7 @@
     <ClCompile Include="src\itemDrop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\itemParticleBrush.cpp">
+    <ClCompile Include="src\itemParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\itemStack.cpp">
@@ -819,7 +819,7 @@
     <ClCompile Include="src\rectangularSlotContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rectParticleBrush.cpp">
+    <ClCompile Include="src\rectParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\redstoneLampData.cpp">
@@ -1023,7 +1023,7 @@
     <ClCompile Include="src\textureList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\textureParticleBrush.cpp">
+    <ClCompile Include="src\textureParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\theEnd.cpp">
@@ -1105,6 +1105,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\nbt\nbtSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\iconParticle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\followAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lureAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\composterData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1323,9 +1335,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\include\math\graphics\brush\brushes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\math\graphics\brush\colorMixer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\include\math\graphics\brush\transformbrush.h">
@@ -1685,7 +1694,7 @@
     <ClInclude Include="src\blockData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\blockParticleBrush.h">
+    <ClInclude Include="src\blockParticle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\blockStateCondition.h">
@@ -1898,7 +1907,7 @@
     <ClInclude Include="src\eatGrassAI.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\effectParticleBrush.h">
+    <ClInclude Include="src\effectParticle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\egg.h">
@@ -2174,7 +2183,7 @@
     <ClInclude Include="src\itemID.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\itemParticleBrush.h">
+    <ClInclude Include="src\itemParticle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\itemStack.h">
@@ -2360,9 +2369,6 @@
     <ClInclude Include="src\particle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\particleBrush.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\particleID.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2414,7 +2420,7 @@
     <ClInclude Include="src\rectangularSlotContainer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rectParticleBrush.h">
+    <ClInclude Include="src\rectParticle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\redstoneLampData.h">
@@ -2582,9 +2588,6 @@
     <ClInclude Include="src\statusEffectID.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\stdafxdynamic.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\stemPlantData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2657,7 +2660,7 @@
     <ClInclude Include="src\textureList.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\textureParticleBrush.h">
+    <ClInclude Include="src\textureParticle.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\theEnd.h">
@@ -2765,7 +2768,7 @@
     <ClInclude Include="src\nbt\nbtValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\nbt\serializeColor.h">
+    <ClInclude Include="src\nbt\serializeVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\nbt\serializeDirection.h">
@@ -2780,8 +2783,32 @@
     <ClInclude Include="src\nbt\serializeUUID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\iconParticle.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\followAI.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lureAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\math\graphics\brush\brushes\colorMixer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\math\graphics\brush\brushes\combineBrush.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\math\graphics\fillRow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\composterData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="visualization.natvis" />
   </ItemGroup>
 </Project>

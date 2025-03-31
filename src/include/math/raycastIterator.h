@@ -12,10 +12,10 @@ struct rayCastIterator
 	//sign: the sign of the direction of the ray in this axis
 	vecin<axisCount> sign = vecin<axisCount>();
 	
-	//how much do you have to increase t to increment this axis?
+	//how much do you have to increase T to increment this axis?
 	vecn<axisCount> delta = vecn<axisCount>();
 
-	//the lowest value of t where the ray crosses the border of this axis
+	//the lowest value of T where the ray crosses the border of this axis
 	vecn<axisCount> nextAxisCrossingT;
 
 	size_t lastChangedAxis = axisCount;

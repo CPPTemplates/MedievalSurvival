@@ -1,9 +1,9 @@
 #pragma once
 #include "color.h"
-// template <typename t, fsize_t channelCount>
+// template <typename T, fsize_t channelCount>
 // struct colorPaletteTN
 //{
-//     typedef colortn<t, channelCount> colorType;
+//     typedef colortn<T, channelCount> colorType;
 //     inline static constexpr colorType transparent = colorType(0, 0);
 //     inline static constexpr colorType black = colorType(0, 0, 0);
 //     inline static constexpr colorType red = colorType(colorType::maxValue, 0, 0);

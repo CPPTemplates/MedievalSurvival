@@ -4,8 +4,8 @@
 
 //if write: right = left
 //else left = right
-template<typename t>
-inline void serialize(t& left, t& right, cbool& write)
+template<typename T>
+inline void serialize(T& left, T& right, cbool& write)
 {
 	if (write)
 	{

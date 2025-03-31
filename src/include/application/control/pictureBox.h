@@ -6,5 +6,5 @@ public:
 	texture* backGroundImage = nullptr;
 	pictureBox(texture* const& backGroundImage);
 	virtual void renderBackGround(cveci2& position, const texture& renderTarget) override;
-	//won't destruct the texture!
+	//won'T destruct the texture!
 };

@@ -33,5 +33,5 @@ constexpr fp codFrontFinTextureOffset = 4;
 struct cod : public mob
 {
 	virtual void updateBodyParts() const override;
-	cod(dimension* dimensionIn, cvec2& position);
+	cod();
 };

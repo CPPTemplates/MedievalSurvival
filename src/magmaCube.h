@@ -13,6 +13,6 @@ struct magmaCube : public slime
 {
 	bodyPart2D* layers[magmaCubeLayerCount]{};
 
-	magmaCube(dimension* dimensionIn, cvec2& position);
+	magmaCube();
 	virtual void createBodyParts() override;
 };

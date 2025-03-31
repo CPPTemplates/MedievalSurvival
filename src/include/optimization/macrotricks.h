@@ -5,14 +5,14 @@
 #define COMMA ,
 
 // add a member to your struct with [expression] = other variable&
-#define addMemberName(memberName, expression) \
-	constexpr t &memberName()                 \
-	{                                         \
-		return expression;                    \
-	}                                         \
-	constexpr const t &memberName() const     \
-	{                                         \
-		return expression;                    \
+#define addMemberName(memberName, expression, requireClause)		\
+	constexpr T &memberName() noexcept requires(requireClause)				\
+	{																\
+		return expression;											\
+	}																\
+	constexpr const T &memberName() const noexcept requires(requireClause)	\
+	{																\
+		return expression;											\
 	}
 
 #define addTypeSizes(structName)            \
@@ -22,8 +22,8 @@
 	typedef structName##n<4> structName##4;
 
 #define addTemplateSize(shortenedTemplateName, size) \
-	template <typename t>                            \
-	using shortenedTemplateName##t##size = shortenedTemplateName##tn<t, size>;
+	template <typename T>                            \
+	using shortenedTemplateName##t##size = shortenedTemplateName##tn<T, size>;
 
 #define addTemplateSizes(shortenedTemplateName)       \
 	addTemplateSize(shortenedTemplateName, 1)         \
@@ -43,8 +43,8 @@
 	addTypeSizes(c##shortenedTemplateName##typeTemplateName)
 
 #define addTemplateTypes(shortenedTemplateName)                                         \
-	template <typename t, fsize_t axisCount>                                            \
-	using c##shortenedTemplateName##tn = const shortenedTemplateName##tn<t, axisCount>; \
+	template <typename T, fsize_t axisCount>                                            \
+	using c##shortenedTemplateName##tn = const shortenedTemplateName##tn<T, axisCount>; \
 	addTemplateSizes(shortenedTemplateName)                                             \
 		addTemplateSizes(c##shortenedTemplateName)                                      \
 			addTemplateType(shortenedTemplateName, , fp)                                \
@@ -62,7 +62,7 @@
 
 // newexpression should be a macro that creates a new instance with the same size as the argument
 #define addOperator(o, newExpression, structType, otherStructType, functionType)                                                               \
-	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<t>() o std::declval<t2>())>> \
+	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<T>() o std::declval<t2>())>> \
 	functionType decltype(auto) operator o(const t2 &b) const                                                                                  \
 	{                                                                                                                                          \
 		newExpression(resultType, (*this)) auto resultPtr = result.begin();                                                                    \
@@ -73,7 +73,7 @@
 		}                                                                                                                                      \
 		return result;                                                                                                                         \
 	}                                                                                                                                          \
-	template <typename t2, typename resultType = decltype(std::declval<t>() o std::declval<t2>())>                                             \
+	template <typename t2, typename resultType = decltype(std::declval<T>() o std::declval<t2>())>                                             \
 	functionType decltype(auto) operator o(const otherStructType &b) const                                                                     \
 	{                                                                                                                                          \
 		newExpression(resultType, b) auto resultPtr = result.begin();                                                                          \
@@ -85,7 +85,7 @@
 		}                                                                                                                                      \
 		return result;                                                                                                                         \
 	}                                                                                                                                          \
-	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<t>() o std::declval<t2>())>> \
+	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<T>() o std::declval<t2>())>> \
 	functionType friend decltype(auto) operator o(const t2 &a, const structType &b)                                                            \
 	{                                                                                                                                          \
 		newExpression(resultType, b) auto resultPtr = result.begin();                                                                          \
@@ -110,7 +110,7 @@
 	template <typename t2>                                                                                                                     \
 	functionType typename std::enable_if<std::is_arithmetic_v<t2>, void>::type operator o##=(const t2 &b)                                      \
 	{                                                                                                                                          \
-		for (t & val : (*this))                                                                                                                \
+		for (T & val : (*this))                                                                                                                \
 		{                                                                                                                                      \
 			val o## = b;                                                                                                                       \
 		}                                                                                                                                      \

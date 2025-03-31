@@ -1,6 +1,8 @@
 #include "wanderAI.h"
 #include "mob.h"
 #include "nbt/nbtSerializer.h"
+#include "nbt/serializeVector.h"
+#include "dimension.h"
 bool wanderAI::continueExecuting()
 {
 
@@ -9,18 +11,27 @@ bool wanderAI::continueExecuting()
 
 void wanderAI::startExecuting()
 {
-	targetX = connectedEntity->position.x;
+	targetPos = connectedEntity->position;
 }
 
 void wanderAI::updateTask()
 {
 	mob* connectedMob = (mob*)connectedEntity;
-	bool canReachTargetPoint = connectedMob->goToPosition(cvec2(targetX, connectedEntity->position.y));
-	if (randChance(currentRandom, (!canReachTargetPoint || (abs(targetX - connectedEntity->position.x) < 1)) ? 0x10 : 0x100))
+	cbool& reachedTarget = abs(targetPos.x - connectedEntity->position.x) < 0.5;
+	cbool& canReachTargetPoint = reachedTarget || connectedMob->goToPosition(targetPos);
+	int averageStandTime = 10 * ticksPerRealLifeSecond;
+	if (randChance(currentRandom,
+		reachedTarget ? averageStandTime : //standing still before going to a new random position
+		canReachTargetPoint ? 20 * ticksPerRealLifeSecond : //walking to target point
+		5 * ticksPerRealLifeSecond))//can'T reach target point somehow, let's choose another point
 	{
 		cfp targetOffset = 0x10;
 		//choose new target
-		targetX = connectedEntity->position.x + randFp(currentRandom, -targetOffset, targetOffset);
+		vec2 newTargetPos = vec2(connectedEntity->position.x + randFp(currentRandom, -targetOffset, targetOffset), connectedEntity->position.y);
+		//check if chunk is loaded at new position. do not walk into unloaded chunks randomly!
+		if (connectedMob->dimensionIn->getLoadLevel(floorVector(newTargetPos)) >= chunkLoadLevel::entityLoaded) {
+			targetPos = newTargetPos;
+		}
 	}
 
 	connectedMob->flipBodyToWalkingDirection();
@@ -29,7 +40,7 @@ void wanderAI::updateTask()
 
 void wanderAI::resetTask()
 {
-	targetX = connectedEntity->position.x;
+	targetPos = connectedEntity->position;
 }
 
 wanderAI::wanderAI(entity* connectedEntity) : taskAI(connectedEntity)
@@ -39,5 +50,5 @@ wanderAI::wanderAI(entity* connectedEntity) : taskAI(connectedEntity)
 
 void wanderAI::serializeValue(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"target x"), targetX);
+	serializeNBTValue(s, L"target position", targetPos);
 }

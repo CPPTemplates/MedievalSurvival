@@ -158,7 +158,7 @@ bool pistonData::tick(tickableBlockContainer* containerIn, cveci2& position)
 
 			summonedPiston->movingBlocks->setParentContainer(containerIn, cmat3x3::translate(exactPistonHeadPosition - summonedPiston->movingBlocks->relativeAttachmentPosition));
 
-			//so entities don't get pushed further and get stuck in blocks
+			//so entities don'T get pushed further and get stuck in blocks
 
 
 			if ((pushProgress == 0) || (pushProgress == maxPushProgress))
@@ -225,7 +225,7 @@ void pistonData::dropBlocksMoving(tickableBlockContainer* containerIn, cveci2& p
 		{
 			cveci2& relativePosition = cveci2(i, j);
 			cveci2& absolutePosition = add + relativePosition;
-			//don't overwrite the own piston
+			//don'T overwrite the own piston
 			if (summonedPiston->movingBlocks->getBlockID(relativePosition) != blockID::air)
 			{
 				if (absolutePosition != position)

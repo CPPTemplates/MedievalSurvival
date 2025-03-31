@@ -21,7 +21,7 @@
 const waveShaper enderDragonInnerWingSynchronizer = waveShaper(2, -10 * math::degreesToRadians, 40 * math::degreesToRadians);
 const waveShaper enderDragonOuterWingSynchronizer = waveShaper(2, -50 * math::degreesToRadians, 40 * math::degreesToRadians, 0.5);
 
-enderDragon::enderDragon(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position, entityID::ender_dragon)
+enderDragon::enderDragon() :mob(entityID::ender_dragon)
 {
 	tasks = new taskList(this, {
 		new enderDragonPortalFlyingAI(this) ,
@@ -65,7 +65,7 @@ enderDragon::enderDragon(dimension* dimensionIn, cvec2& position) :mob(dimension
 	createSpine(head, neckSpines, enderDragonNeckSpineCount);
 
 	body = new bodyPart2D(enderDragonBodyTextureRect, neckSpines[enderDragonNeckSpineCount - 1], vec2(-enderDragonspineSize.x, 0), enderDragonBodySize, cvec2(enderDragonBodySize.x, enderDragonBodySize.y * 0.5));
-	bodyPart2D* bodySpinePlates[enderDragonBodySpinePlateCount];
+	bodyPart2D* bodySpinePlates[enderDragonBodySpinePlateCount]{};
 	for (int i = 0; i < enderDragonBodySpinePlateCount; i++)
 	{
 		cvec2 enderDragonBodySpinePlateSize = cvec2(enderDragonBodySpineTextureRect.size) * enderDragonPixelSize;
@@ -134,7 +134,7 @@ enderDragon::enderDragon(dimension* dimensionIn, cvec2& position) :mob(dimension
 	head->children.push_back(rightHeadPlate);
 }
 
-bodyPart2D* enderDragon::createDragonLeg(cvec2& attachmentPoint, crectangle2& upperLegTextureRect, cfp& upperLegAngle, crectangle2& lowerLegTextureRect, cfp& lowerLegAngle, crectangle2& footTextureRect, cfp& footAngle)
+bodyPart2D* enderDragon::createDragonLeg(cvec2& attachmentPoint, crectangle2& upperLegTextureRect, cfp& upperLegAngle, crectangle2& lowerLegTextureRect, cfp& lowerLegAngle, crectangle2& footTextureRect, cfp& footAngle) const
 {
 	cvec2 upperLegSize = cvec2(upperLegTextureRect.size) * enderDragonPixelSize;
 	bodyPart2D* upperLeg = new bodyPart2D(upperLegTextureRect, body, attachmentPoint, upperLegSize, cvec2(upperLegSize.x * 0.5, upperLegSize.y - upperLegSize.x * 0.5), upperLegAngle);

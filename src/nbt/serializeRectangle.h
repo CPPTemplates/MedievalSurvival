@@ -1,9 +1,9 @@
 #pragma once
 #include "nbt/nbtSerializer.h"
 #include "math/rectangle/rectangletn.h"
-#include "serializeColor.h"
-template <typename t>
-inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, rectanglet2<t> &box)
+#include "serializeVector.h"
+template <typename T>
+inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, rectanglet2<T> &box)
 {
     if (s.push<nbtDataTag::tagCompound>(memberName))
     {

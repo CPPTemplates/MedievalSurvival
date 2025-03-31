@@ -20,7 +20,7 @@ struct shulker : public mob
 {
 	colorID shulkerColor = colorID();
 	directionID attachmentDirection = directionID::negativeY;
-	shulker(dimension* dimensionIn, cvec2& position);
+	shulker();
 
 	bodyPart2D* bottomShell = nullptr;
 	bodyPart2D* topShell = nullptr;

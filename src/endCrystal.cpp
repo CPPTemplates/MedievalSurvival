@@ -6,7 +6,7 @@
 #include "math/bodypart2d.h"
 #include "world.h"
 
-endCrystal::endCrystal(dimension* dimensionIn, cvec2& position) :entity(dimensionIn, position, entityID::end_crystal)
+endCrystal::endCrystal() :entity(entityID::end_crystal)
 {
 	cvec2 outerSquareSize = cvec2(endCrystalOuterSquareTextureRect.size) * endCrystalPixelSize;
 	outerPart = new bodyPart2D(endCrystalOuterSquareTextureRect, nullptr, vec2(), outerSquareSize, outerSquareSize * 0.5, 0, 0, true);

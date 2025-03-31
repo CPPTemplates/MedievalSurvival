@@ -1,24 +1,24 @@
 #include "globalFunctions.h"
 #include "math/timemath.h"
 #pragma once
-template<typename t>
+template<typename T>
 struct benchMarkPoint
 {
-	benchMarkPoint(const t& processingType):processingType(processingType),measureTime(getmicroseconds()){}
-	t processingType;
+	benchMarkPoint(const T& processingType):processingType(processingType),measureTime(getmicroseconds()){}
+	T processingType;
 	microseconds measureTime;
 };
 
-template<typename t>
+template<typename T>
 struct benchmarkContainer
 {
-	std::vector<benchMarkPoint<t>> benchMarks;
-	inline microseconds measureBenchmarkTime(const t& processingType) const
+	std::vector<benchMarkPoint<T>> benchMarks;
+	inline microseconds measureBenchmarkTime(const T& processingType) const
 	{
 		microseconds totalMicroSeconds = 0;
 		for (size_t i = 0; i < benchMarks.size(); i++)
 		{
-			const benchMarkPoint<t> point = benchMarks[i];
+			const benchMarkPoint<T> point = benchMarks[i];
 			if (point.processingType == processingType && i + 1 < benchMarks.size())
 			{
 				totalMicroSeconds += benchMarks[i + 1].measureTime - point.measureTime;
@@ -32,9 +32,9 @@ struct benchmarkContainer
 	}
 	inline void removeOldBenchmarks()
 	{
-		benchMarks = std::vector<benchMarkPoint<t>>({ benchMarks[benchMarks.size() - 1] });
+		benchMarks = std::vector<benchMarkPoint<T>>({ benchMarks[benchMarks.size() - 1] });
 	}
-	inline void addBenchmarkPoint(const t& processingType) {
-		benchMarks.push_back(benchMarkPoint<t>(processingType));
+	inline void addBenchmarkPoint(const T& processingType) {
+		benchMarks.push_back(benchMarkPoint<T>(processingType));
 	}
 };

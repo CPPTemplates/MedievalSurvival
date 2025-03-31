@@ -29,5 +29,5 @@ constexpr vec2 pigHeadRotationCenter = cvec2(0, pigHeadSize.getY() * 0.5);
 
 struct pig : public fourLeggedPassiveMob
 {
-	pig(dimension* dimensionIn, cvec2& position);
+	pig();
 };

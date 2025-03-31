@@ -2,7 +2,7 @@
 #include "idConverter.h"
 #include "nbt/nbtSerializer.h"
 #include "nbt/serializeList.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 void fireWorkStarData::serializeValue(nbtSerializer& s)
 {
 	s.serializeValue(std::wstring(L"flicker"), flicker);

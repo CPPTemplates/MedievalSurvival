@@ -34,96 +34,118 @@
 #include "fallingBlock.h"
 #include "minecart.h"
 #include "particle.h"
+#include "iconParticle.h"
+#include "textureParticle.h"
 #include "piston.h"
 #include "fireworkRocket.h"
 #include "pollen.h"
 #include "slime.h"
-
+#include "effectParticle.h"
 #include "idAnalysis.h"
 #include "world.h"
+#include "blockParticle.h"
+#include "itemParticle.h"
 
-entity* createEntity(const entityID& entityType, dimension* dimensionIn, cvec2& position)
+entity* createEntity(const entityID& entityType)
 {
 	switch (entityType)
 	{
 	case entityID::zombiefied_piglin:
-		return new zombifiedPiglin(dimensionIn, position);
+		return new zombifiedPiglin();
 	case entityID::enderman:
-		return new enderman(dimensionIn, position);
+		return new enderman();
 	case entityID::slime:
-		return new slime(dimensionIn, position);
+		return new slime();
 	case entityID::magma_cube:
-		return new magmaCube(dimensionIn, position);
+		return new magmaCube();
 	case entityID::creeper:
-		return new creeper(dimensionIn, position);
+		return new creeper();
 	case entityID::pig:
-		return new pig(dimensionIn, position);
+		return new pig();
 	case entityID::cow:
-		return new cow(dimensionIn, position);
+		return new cow();
 	case entityID::sheep:
-		return new sheep(dimensionIn, position);
+		return new sheep();
 	case entityID::wolf:
-		return new wolf(dimensionIn, position);
+		return new wolf();
 	case entityID::cod:
-		return new cod(dimensionIn, position);
+		return new cod();
 	case entityID::boat:
-		return new boat(dimensionIn, position);
+		return new boat();
 	case entityID::experience_orb:
-		return new experienceOrb(dimensionIn, position);
+		return new experienceOrb();
 	case entityID::item:
-		return new floatingSlot(dimensionIn, position);
+		return new floatingSlot();
 	case entityID::egg:
-		return new egg(dimensionIn, position);
+		return new egg();
 	case entityID::snowball:
-		return new snowBall(dimensionIn, position);
+		return new snowBall();
 	case entityID::ender_pearl:
-		return new enderPearl(dimensionIn, position);
+		return new enderPearl();
 	case entityID::ender_eye:
-		return new eyeOfEnder(dimensionIn, position);
+		return new eyeOfEnder();
 	case entityID::fishing_bobber:
-		return new fishingHook(dimensionIn, position);
+		return new fishingHook();
 	case entityID::arrow:
-		return new arrow(dimensionIn, position);
+		return new arrow();
 	case entityID::ghast_fireball:
-		return new ghastFireBall(dimensionIn, position);
+		return new ghastFireBall();
 	case entityID::dragon_fireball:
-		return new dragonFireBall(dimensionIn, position);
+		return new dragonFireBall();
 	case entityID::small_Fireball:
-		return new smallFireBall(dimensionIn, position);
+		return new smallFireBall();
 	case entityID::tnt:
-		return new tnt(dimensionIn, position);
+		return new tnt();
 	case entityID::end_crystal:
-		return new endCrystal(dimensionIn, position);
+		return new endCrystal();
 	case entityID::falling_block:
-		return new fallingBlock(dimensionIn, position);
+		return new fallingBlock();
 	case entityID::shulker:
-		return new shulker(dimensionIn, position);
+		return new shulker();
 	case entityID::blaze:
-		return new blaze(dimensionIn, position);
+		return new blaze();
 	case entityID::ghast:
-		return new ghast(dimensionIn, position);
+		return new ghast();
 	case entityID::ender_dragon:
-		return new enderDragon(dimensionIn, position);
+		return new enderDragon();
 	case entityID::chicken:
-		return new chicken(dimensionIn, position);
+		return new chicken();
 	case entityID::minecart:
-		return new minecart(dimensionIn, position);
-	case entityID::particle:
-		return new particle(dimensionIn, position);
+		return new minecart();
 	case entityID::piston:
-		return new piston(dimensionIn, position);
+		return new piston();
 	case entityID::firework_rocket:
-		return new fireworkRocket(dimensionIn, position);
+		return new fireworkRocket();
 	case entityID::pollen:
-		return new pollen(dimensionIn, position);
+		return new pollen();
 	default:
 		if (isZombie(entityType))
 		{
-			return new zombie(dimensionIn, position, entityType);
+			return new zombie(entityType);
 		}
 		else if (isSkeleton(entityType))
 		{
-			return new skeleton(dimensionIn, position, entityType);
+			return new skeleton(entityType);
+		}
+		else if (isParticle(entityType)) {
+			particleID particleType = (particleID)((int)entityType - (int)entityID::particle);
+			switch (particleType)
+			{
+			case particleID::block:
+				return new blockParticle(particleID::block);
+			case particleID::item:
+				return new itemParticle(particleID::item);
+			case particleID::effect:
+				return new effectParticle();
+			default:
+				break;
+			}
+			if (isIconParticle(particleType)) {
+				return new iconParticle(particleType);
+			}
+			else {
+				return new textureParticle(particleType);
+			}
 		}
 		else
 		{
@@ -133,3 +155,11 @@ entity* createEntity(const entityID& entityType, dimension* dimensionIn, cvec2& 
 		break;
 	}
 }
+
+entity* createEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position)
+{
+	entity* e = createEntity(entityType);
+	e->setInitialPosition(containerIn, position);
+	return e;
+}
+

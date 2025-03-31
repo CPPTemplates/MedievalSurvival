@@ -8,7 +8,7 @@ void cod::updateBodyParts() const
 	mainBodyPart->changed = true;
 }
 
-cod::cod(dimension* dimensionIn, cvec2& position) : mob(dimensionIn, position, entityID::cod)
+cod::cod() : mob(entityID::cod)
 {
 	tasks = new taskList(this, {
 		new panicAI(this),

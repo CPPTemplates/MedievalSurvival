@@ -1,10 +1,10 @@
 #pragma once
 #include "type/conversion.h"
-template<typename t>
+template<typename T>
 struct nbtDataArray :nbtData
 {
 	size_t arraySize = 0;
-	t* data = nullptr;
+	T* data = nullptr;
 	virtual inline bool serialize(const streamSerializer& s) override
 	{
 		int intSize = (int)arraySize;
@@ -13,7 +13,7 @@ struct nbtDataArray :nbtData
 		if (!s.write)
 		{
 			arraySize = intSize;
-			data = new t[arraySize];
+			data = new T[arraySize];
 		}
 		s.serialize(data, arraySize);
 		return true;
@@ -37,10 +37,10 @@ struct nbtDataArray :nbtData
 			arraySize = container.size();
 			//size of container will always be 1 or more (when nothing is in the string, it will return 1 string containing "")
 			assumeInRelease1(arraySize);
-			data = new t[arraySize];
+			data = new T[arraySize];
 			for (size_t i = 0; i < arraySize; i++)
 			{
-				convertTo<t>(s, data[i]);
+				convertTo<T>(s, data[i]);
 			}
 		}
 		return true;
@@ -56,13 +56,13 @@ struct nbtDataArray :nbtData
 		{
 			//copy array
 			arraySize = size;
-			data = new t[size];
-			std::copy(value, (t*)value + size, data);
+			data = new T[size];
+			std::copy(value, (T*)value + size, data);
 		}
 		else
 		{
 			size = arraySize;
-			value = new t[size];
+			value = new T[size];
 			//copy array
 			std::copy(data, data + arraySize, value);
 		}
@@ -70,9 +70,9 @@ struct nbtDataArray :nbtData
 	}
 	virtual bool compare(const nbtData& other) const override;
 };
-template<typename t>
-inline bool nbtDataArray<t>::compare(const nbtData& other) const
+template<typename T>
+inline bool nbtDataArray<T>::compare(const nbtData& other) const
 {
-	return (((const nbtDataArray<t>&)other).arraySize == arraySize) &&
-		(std::equal(data, data + arraySize, ((const nbtDataArray<t>&)other).data));
+	return (((const nbtDataArray<T>&)other).arraySize == arraySize) &&
+		(std::equal(data, data + arraySize, ((const nbtDataArray<T>&)other).data));
 }

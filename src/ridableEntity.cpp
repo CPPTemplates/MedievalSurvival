@@ -50,7 +50,7 @@ void ridableEntity::serializeValue(nbtSerializer& s)
 	}
 }
 
-ridableEntity::ridableEntity(dimension* dimensionIn, cvec2& position, const entityID& entityType, cint& seatCount) : entity(dimensionIn, position, entityType), seats(std::vector<uuid>(seatCount))
+ridableEntity::ridableEntity(const entityID& entityType, cint& seatCount) : entity(entityType), seats(std::vector<uuid>(seatCount))
 {
 }
 

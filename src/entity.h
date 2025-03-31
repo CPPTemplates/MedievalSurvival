@@ -62,11 +62,12 @@ struct entity :IDestructable, nbtSerializable
 
 	vec2 getRenderOffset(const gameRenderData& targetData) const;
 
+	void setInitialPosition(tickableBlockContainer* containerIn, cvec2& position);
 	void addSpeed(cvec2& additionalSpeed);
 
 	vec2 handleCollision(cvec2& otherSpeed, cfp& otherMass);
 
-	entity(dimension* dimensionIn, cvec2& position, const entityID& entityType);
+	entity(const entityID& entityType);
 	virtual void tick();
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source);
 	virtual void applyStatusEffect(const statusEffect& effect);
@@ -119,7 +120,9 @@ struct entity :IDestructable, nbtSerializable
 	~entity();
 };
 
-entity* createEntity(const entityID& entityType, dimension* dimensionIn, cvec2& position);
+entity* createEntity(const entityID& entityType);
+entity* createEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position);
+entity* summonEntity(entity* e, tickableBlockContainer* containerIn, cvec2& position);
 entity* summonEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position);
 entity* trySummonEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position);
 int getEntityIDByName(const std::wstring& name);

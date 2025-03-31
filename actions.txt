@@ -2,7 +2,7 @@ following https://www.sfml-dev.org/tutorials/3.0/getting-started/visual-studio/#
 
 actions taken:
 
-sfml sdk downloaded from https://www.sfml-dev.org/download/sfml/3.0.0/#windows and extracted. moved folder to c:/libs/sfml-3.0.0
+sfml 64 bit sdk downloaded from https://www.sfml-dev.org/download/sfml/3.0.0/#windows . moved folder to c:/libs/sfml-3.0.0
 
 made a new project called crossppvs and set its language standard to 17. added SFML_STATIC to all configurations, and added these to linker->input (for both debug configs):
 freetyped.lib
@@ -67,3 +67,39 @@ also, i managed to make the program link fully static.
 i just fixed a major bug which made the mouse click extra times randomly, the keyboard press keys more times randomly, etc.
 it turned out that when serializing events, some events (mousemoveraw) weren't added to the serialization function. the event list was resized to the new size, but wasn't completely filled.
 this allowed for old events to keep being in the event list, or even for 'default' events to appear. when moving the mouse, the other events got copied.
+
+changed entry point to winmain and added sfml-main-s.lib and sfml-main-s-d.lib to libraries
+
+when trying to use lctg:pcinstrument for profile guided optimization, everything works until starting up the application, which gives error code 0xc000007b.
+
+fixed by copying pgort140.dll from hostx64/x64 to the output directory and using /GENPROFILE like the microsoft article about profile guided optimization states.
+
+the optimization for bilinear color interpolation doesn't turn out better, sadly.
+
+since a long time this warning has been here:
+1>------ Build started: Project: CrossPPVS, Configuration: Release x64 ------
+1>LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+1>Generating code
+1>Finished generating code
+1>CrossPPVS.vcxproj -> C:\Users\realj\Documents\MedievalSurvival\x64\Release\CrossPPVS.exe
+1>Done building project "CrossPPVS.vcxproj".
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+========== Build completed at 3:23 PM and took 16.608 seconds ==========
+
+it seems to indicate that some libraries aren't x64.
+
+changed option 'runtime library' to /mt (https://stackoverflow.com/questions/37398/how-do-i-make-a-fully-statically-linked-exe-with-visual-studio-express-2005)
+
+didn't work; we need the openal.dll file.
+
+therefore i added libcmt.lib; libcmtd.lib; msvcrtd.lib to ignore specific default libraries (https://learn.microsoft.com/en-us/cpp/error-messages/tool-errors/linker-tools-warning-lnk4098?view=msvc-170)
+
+
+
+changed floating point model from fp:precise to fp:fast
+
+found a duplicate in block rendering code and removed it
+
+performance improved from 15 to 20 fps after converting colorf to color and the weights to integers and dividing by 256 * 256.
+
+also, we still should check if the background is transparent, and in that case, not multiply colors for that place. previously we did that. it's probably the reason why that part of code still is so slow.

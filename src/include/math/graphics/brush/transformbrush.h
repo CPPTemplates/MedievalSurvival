@@ -7,8 +7,8 @@ constexpr fp brushFixScaleFactor = (1.0 - (brushFixTranslateAmount / brushFixMax
 
 constexpr mat3x3 brushFixTransform = mat3x3();//mat3x3::translate(cvec2(brushFixTranslateAmount));
 //	mat3x3::cross(
-//	mat3x3::translate(cvec2(1.0 / (fp)0x10000)), //translate the point a bit forward so when it rotates it won't access the end of the array (it's like the pixels are in the center)
-//	mat3x3::scale(cvec2(0xffffff / (fp)0x1000000)) //scales a bit so the last pixels don't get out of bounds
+//	mat3x3::translate(cvec2(1.0 / (fp)0x10000)), //translate the point a bit forward so when it rotates it won'T access the end of the array (it's like the pixels are in the center)
+//	mat3x3::scale(cvec2(0xffffff / (fp)0x1000000)) //scales a bit so the last pixels don'T get out of bounds
 //);
 //transforms a point (after offsetting it a bit for rotation) and then calls a base brush
 template<typename brush0Type>
@@ -19,7 +19,6 @@ struct transformBrush final : public colorBrush
 	mat3x3 modifiedTransform;//cannot access the transform, as it is modified
 //public:
 	const brush0Type& baseBrush;
-	vecb2 roundUp;
 	transformBrush(const mat3x3& transform, const brush0Type& baseBrush) :
 		modifiedTransform(mat3x3::cross(brushFixTransform, transform)),//transformed pixel -> scale (make smaller), translate
 		baseBrush(baseBrush)
@@ -28,8 +27,8 @@ struct transformBrush final : public colorBrush
 		for (int i = 0; i < 2; i++) {
 			vec2 testSize = vec2(1);//directionVectors2D[i * 2 + 1];
 			vec2 result = transform.multSizeMatrix(testSize);
-			roundUp[i] = result[i] < 0;
-			if (roundUp[i]) {
+			if (result[i] < 0) {
+				//round up
 				add[i] -= 1.0 / 0x1000;
 			}
 		}

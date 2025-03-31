@@ -4,7 +4,7 @@
 struct floatingSlot : public entity
 {
 	itemStack stack;
-	floatingSlot(dimension *dimensionIn, cvec2 &position);
+	floatingSlot();
 	// the amount of ticks since this floating slot is ready to be picked up
 	// can also be negative. then it is still waiting until it can be picked up
 	// it will be able to be picked up in half a second

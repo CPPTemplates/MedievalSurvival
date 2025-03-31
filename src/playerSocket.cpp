@@ -22,12 +22,13 @@
 #include "application/thread/setThreadName.h"
 #include "filesystem/serializer.h"
 #include "nbt/serializeUUID.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 #include "nbt/serializeList.h"
 #include "math/sound/sound.h"
 #include "serializeClientInput.h"
+#include "dimension.h"
 
-playerSocket::playerSocket(sf::TcpSocket *socket)
+playerSocket::playerSocket(sf::TcpSocket* socket)
 {
 	screen = new gameControl(*this);
 	this->s.socket = socket;
@@ -61,7 +62,8 @@ playerSocket::playerSocket(sf::TcpSocket *socket)
 	serializeNBTValue(inNBTSerializer, L"uuid", playerUUID);
 	std::wstring playerName;
 	inNBTSerializer.serializeValue(L"name", playerName);
-	screen->player = player = new human(currentWorld->dimensions[(int)currentWorld->worldSpawnDimension], vec2(), *screen, playerName);
+	screen->player = player = new human(*screen, playerName);
+	player->setInitialPosition(currentWorld->dimensions[(int)currentWorld->worldSpawnDimension], vec2());
 
 	std::wstring clientOSName;
 	inNBTSerializer.serializeValue(L"OS", clientOSName);
@@ -77,7 +79,7 @@ playerSocket::playerSocket(sf::TcpSocket *socket)
 	serializeNBTValue(inNBTSerializer, L"screenSize", screenRect.size);
 	screen->layout(screenRect);
 
-	crectangle2 &relativeHitbox = player->calculateHitBox();
+	crectangle2& relativeHitbox = player->calculateHitBox();
 
 	player->position = currentWorld->worldSpawnPoint;
 	player->newPosition = player->position;
@@ -96,10 +98,10 @@ playerSocket::~playerSocket()
 	delete s.socket;
 }
 
-void renderAsync(playerSocket *socket)
+void renderAsync(playerSocket* socket)
 {
 	setCurrentThreadName(L"renderer for " + socket->player->name);
-	// we need to instantiate a context for openGL rendering. we don't need to do anything with it.
+	// we need to instantiate a context for openGL rendering. we don'T need to do anything with it.
 	// texture &currentContext = socket->contexts[socket->thread0DoubleBufferIndex];
 	// currentContext.setActive(true);
 	// sf::RenderTexture &newRenderResult = socket->doubleBuffer[socket->thread0DoubleBufferIndex];
@@ -108,7 +110,7 @@ void renderAsync(playerSocket *socket)
 	// newRenderResult.create(socket->screen->rect.size.x, socket->screen->rect.size.y, sf::ContextSettings());
 	// newRenderResult.setActive(true);
 	// TODO: check if it needs clear()
-	texture *&currentRenderTarget = socket->buffer[0];
+	texture*& currentRenderTarget = socket->buffer[0];
 
 	if (!currentRenderTarget || currentRenderTarget->size != vect2<fsize_t>(socket->screen->rect.size))
 	{
@@ -120,7 +122,7 @@ void renderAsync(playerSocket *socket)
 		// this way it will not be transparent
 		currentRenderTarget->fill(colorPalette::black);
 	}
-	// we don't have to set the new render texture to active because its context is active already
+	// we don'T have to set the new render texture to active because its context is active already
 	// newRenderResult.setActive(true);
 	// newRenderResult.clear();
 	socket->screen->render(cveci2(), *currentRenderTarget);
@@ -139,11 +141,11 @@ void renderAsync(playerSocket *socket)
 	// socket->lastRenderResult = newRenderResult;
 	socket->write = true;
 
-	// don't serialize this part async, as it doesn't take much time and might cause corruption when for example sounds are added mid-sending
+	// don'T serialize this part async, as it doesn'T take much time and might cause corruption when for example sounds are added mid-sending
 	// send sounds
 	// pointers because we pass this to another thread
-	nbtCompound *compound = new nbtCompound(L"packetOut");
-	nbtSerializer *outSerializer = new nbtSerializer(*compound, true);
+	nbtCompound* compound = new nbtCompound(L"packetOut");
+	nbtSerializer* outSerializer = new nbtSerializer(*compound, true);
 
 	// always serialize. the target client may be on android or need an on-screen keyboard in another way
 	bool wantsTextInput = socket->screen->wantsTextInput();
@@ -162,13 +164,13 @@ void renderAsync(playerSocket *socket)
 	vec3 earPosition = vec3(socket->screen->cameraPosition.x, socket->screen->cameraPosition.y, settings::soundSettings::headScreenDistance * socket->screen->visibleRange.x);
 	// vec2 earPosition = socket->screen->player->getHeadPosition();
 	serializeNBTValue(*outSerializer, L"earPosition", earPosition);
-	// ear speed doesn't take into account that the ear can move closer and farther from the screen when zooming out
+	// ear speed doesn'T take into account that the ear can move closer and farther from the screen when zooming out
 	vec3 earSpeed = vec3((socket->screen->player->newPosition - socket->screen->player->position) * ticksPerRealLifeSecond);
 	serializeNBTValue(*outSerializer, L"earSpeed", earSpeed);
 
 	if (outSerializer->push<nbtDataTag::tagList>(L"sounds"))
 	{
-		for (auto &data : socket->screen->dataToSend)
+		for (auto& data : socket->screen->dataToSend)
 		{
 			if (outSerializer->push())
 			{
@@ -193,7 +195,7 @@ void renderAsync(playerSocket *socket)
 	selector.add(*socket->s.socket);
 	selector.wait(sf::microseconds(1));
 	fp receivedPackets = 0;
-	// we don't wait for input, we just process the input in the next frame. too bad, it would cause server lag
+	// we don'T wait for input, we just process the input in the next frame. too bad, it would cause server lag
 	while (selector.isReady(*socket->s.socket))
 	{ // the wait() of the socket is called in the main server loop once a tick
 		// finally, send the packet with all the data of this render cycle to the player
@@ -215,7 +217,7 @@ void renderAsync(playerSocket *socket)
 			nbtSerializer currentNBTSerializer = nbtSerializer(inCompound, false);
 
 			// read input while sending
-			serializeClientInput(socket->screen->mostRecentInput,currentNBTSerializer);
+			serializeClientInput(socket->screen->mostRecentInput, currentNBTSerializer);
 
 			vect2<fsize_t> newScreenSize;
 			serializeNBTValue(currentNBTSerializer, L"screenSize", newScreenSize);
@@ -239,7 +241,7 @@ void renderAsync(playerSocket *socket)
 	socket->packetsSentPerSecond++;
 }
 
-void sendRenderResultAsync(playerSocket *socket, nbtCompound *compound)
+void sendRenderResultAsync(playerSocket* socket, nbtCompound* compound)
 {
 	socket->sending = true;
 	setCurrentThreadName(L"screen compresser for " + socket->player->name);
@@ -247,7 +249,7 @@ void sendRenderResultAsync(playerSocket *socket, nbtCompound *compound)
 	// serialize screen and finally, send the packet
 
 	// TODO: serialize the screen in 'sendrenderresultasync'. this is hard because s->write = false
-	// we don't use the normal 'serialize' function so we don't have to use the 'write' boolean
+	// we don'T use the normal 'serialize' function so we don'T have to use the 'write' boolean
 	// std::stringstream compressedScreenPacket = std::stringstream();
 	// sf::RenderTexture tex = sf::RenderTexture();
 	// tex.create(socket->lastRenderResult->size.x, socket->lastRenderResult->size.y);
@@ -285,18 +287,18 @@ void sendRenderResultAsync(playerSocket *socket, nbtCompound *compound)
 
 	// socket->sendPacketThread = new std::thread(sendPacketAsync, socket);
 	socket->sendPacketThread = new std::thread([compound, socket]()
-											   { 
-	setCurrentThreadName(L"packet sender for " + socket->player->name);
-	// this way we can set the 'write' value to true
-	//we can only start serializing once the old sending thread has finished
-	streamSerializer streamS = streamSerializer(socket->s, true, std::endian::big);
-	
-	compound->serialize(streamS);
-	texture *&currentRenderResult = socket->buffer[1];
-	socket->encoder.addFrame(*currentRenderResult, streamS);
-	
-	delete compound;
-	socket->s.sendPacket(); });
+		{
+			setCurrentThreadName(L"packet sender for " + socket->player->name);
+			// this way we can set the 'write' value to true
+			//we can only start serializing once the old sending thread has finished
+			streamSerializer streamS = streamSerializer(socket->s, true, std::endian::big);
+
+			compound->serialize(streamS);
+			texture*& currentRenderResult = socket->buffer[1];
+			socket->encoder.addFrame(*currentRenderResult, streamS);
+
+			delete compound;
+			socket->s.sendPacket(); });
 	socket->sending = false;
 }
 

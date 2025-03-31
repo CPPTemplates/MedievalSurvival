@@ -2,7 +2,7 @@
 #include "math/LayerNoiseSimplex.h"
 #include "dimension.h"
 constexpr size_t obsidianPillarCount = 2;
-struct end :dimension
+struct end final : dimension
 {
 	layerNoiseSimplex* terrainNoise = nullptr;
 

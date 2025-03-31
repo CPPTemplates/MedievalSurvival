@@ -66,7 +66,7 @@ struct humanoid : public mob, public slotContainer
 
 	fp getWeight() const override;
 
-	humanoid(dimension* dimensionIn, cvec2& position, const entityID& entityType);
+	humanoid(const entityID& entityType);
 
 	void initializeBodyParts(crectangle2& headTextureRect, crectangle2& bodyTextureRect, crectangle2& leftLegTextureRect, crectangle2& rightLegTextureRect, crectangle2& leftArmTextureRect, crectangle2& rightArmTextureRect, cfp& pixelSize = humanPixelSize);
 

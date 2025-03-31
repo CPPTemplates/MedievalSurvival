@@ -9,7 +9,7 @@ constexpr rectangle2 editedSlimeTextureRect = crectangle2(0, 0, 8, 8);
 struct slime : public mob
 {
 	fp size = 0;
-	slime(dimension* dimensionIn, cvec2& position, const entityID& entityType = entityID::slime);
+	slime(const entityID& entityType = entityID::slime);
 	virtual void updateBodyParts() const override;
 	virtual void serializeValue(nbtSerializer& s) override;
 	void resize();

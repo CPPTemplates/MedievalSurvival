@@ -10,7 +10,7 @@ constexpr std::ios_base::openmode getOpenMode(cbool& write)
 	return (write ? std::ios::out : std::ios::in) | std::ios::binary;
 }
 
-//don't use or delete buffer, it will destroy itself once it goes out of scope
+//don'T use or delete buffer, it will destroy itself once it goes out of scope
 inline std::fstream getAcceleratedFstream(const stdPath& path, cbool& write, std::shared_ptr<char[]>& buffer, cint& bufferSize)
 {
 	std::fstream stream;
@@ -30,28 +30,28 @@ inline std::fstream getAcceleratedFstream(const stdPath& path, cbool& write, std
 template<typename streamType, typename valueType>
 inline void writeToStream(streamType& stream, const valueType& value)
 {
-	static_assert(!std::is_pointer<valueType>::value, "you can't just write a pointer to a stream!");
+	static_assert(!std::is_pointer<valueType>::value, "you can'T just write a pointer to a stream!");
 	stream.write(castout(&value), sizeof(valueType));
 }
 template<typename streamType, typename valueType>
 inline void readFromStream(streamType& stream, valueType& value)
 {
-	static_assert(!std::is_pointer<valueType>::value, "you can't just write a pointer to a stream!");
-	static_assert(!std::is_const<valueType>::value, "you can't just read to a const value!");
+	static_assert(!std::is_pointer<valueType>::value, "you can'T just write a pointer to a stream!");
+	static_assert(!std::is_const<valueType>::value, "you can'T just read to a const value!");
 	stream.read(castin(&value), sizeof(valueType));
 }
 
 template<typename streamType, typename valueType>
 inline void writeToStream(streamType& stream, valueType* const& valuesPointer, cint& arraySize)
 {
-	static_assert(!std::is_pointer<valueType>::value, "you can't just write a pointer to a stream!");
+	static_assert(!std::is_pointer<valueType>::value, "you can'T just write a pointer to a stream!");
 	stream.write(castout(valuesPointer), sizeof(valueType) * arraySize);
 }
 
 template<typename streamType, typename valueType>
 inline void readFromStream(streamType& stream, valueType* const& valuesPointer, cint& arraySize)
 {
-	static_assert(!std::is_pointer<valueType>::value, "you can't just write a pointer to a stream!");
-	static_assert(!std::is_const<valueType>::value, "you can't just read to a const value!");
+	static_assert(!std::is_pointer<valueType>::value, "you can'T just write a pointer to a stream!");
+	static_assert(!std::is_const<valueType>::value, "you can'T just read to a const value!");
 	stream.read(castin(valuesPointer), sizeof(valueType) * arraySize);
 }

@@ -36,7 +36,7 @@ vec2 minecraftFont::DrawString(const std::wstring& text, crectangle2 &rect, cvec
                     currentLetter = obfuscateLetters[randIndex(currentRandom, obfuscateLetters.size())];
                     if (collides2d(rect, crectangle2(currentOffset, cvec2(fontSize))))
                     {
-                        // mat3x3 t = mat3x3::cross(transform, mat3x3::fromRectToRect(crectangle2()));
+                        // mat3x3 T = mat3x3::cross(transform, mat3x3::fromRectToRect(crectangle2()));
                         if (currentTextColor == colorPalette::white)
                         {
                             family.DrawLetter(currentLetter, currentOffset, fontSize, renderTarget, *family.tex, matrix);

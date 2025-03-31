@@ -1,6 +1,6 @@
 #pragma once
 #include "blockData.h"
-constexpr int maxSapLevel = 0x10;//maximum = 16 blocks
+constexpr int maxSapLevel = 0x6;//maximum = 16 blocks
 struct sapSpreadData : virtual blockData
 {
 	int sapLevel;

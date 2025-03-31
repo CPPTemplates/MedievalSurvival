@@ -6,7 +6,7 @@
 #include "hurtByTargetAI.h"
 #include "taskList.h"
 #include "wanderAI.h"
-zombifiedPiglin::zombifiedPiglin(dimension* dimensionIn, cvec2& position) :humanoid(dimensionIn, position, entityID::zombiefied_piglin)
+zombifiedPiglin::zombifiedPiglin() :humanoid(entityID::zombiefied_piglin)
 {
 	tasks = new taskList(this, {
 	new hurtByTargetAI(this),

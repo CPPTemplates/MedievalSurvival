@@ -1,7 +1,7 @@
 #include "soundPacket.h"
 #include <string>
 #include "nbt/nbtSerializer.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 
 bool soundPacket::serialize(nbtSerializer& s)
 {

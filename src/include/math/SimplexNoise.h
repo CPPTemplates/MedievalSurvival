@@ -313,11 +313,11 @@ public:
 
 		// Unskew the cell origin back to (x,y) space
 
-		cfp t = static_cast<fp>(i + j) * G2;
+		cfp T = static_cast<fp>(i + j) * G2;
 
-		cfp X0 = i - t;
+		cfp X0 = i - T;
 
-		cfp Y0 = j - t;
+		cfp Y0 = j - T;
 
 		cfp x0 = position.x - X0;  // The x,y distances from the cell origin
 
@@ -438,13 +438,13 @@ public:
 
 		cint k = math::floor(position.z + s);
 
-		cfp t = (i + j + k) * G3;
+		cfp T = (i + j + k) * G3;
 
-		cfp X0 = i - t; // Unskew the cell origin back to (x,y,z) space
+		cfp X0 = i - T; // Unskew the cell origin back to (x,y,z) space
 
-		cfp Y0 = j - t;
+		cfp Y0 = j - T;
 
-		cfp Z0 = k - t;
+		cfp Z0 = k - T;
 
 		cfp x0 = position.x - X0; // The x,y,z distances from the cell origin
 

@@ -4,14 +4,14 @@
 /// <summary>
 ///
 /// </summary>
-/// <typeparam name="t"></typeparam>
+/// <typeparam name="T"></typeparam>
 /// <typeparam name="rows"></typeparam>
 /// <typeparam name="cols">nested deeper</typeparam>
-template <typename t, fsize_t rows, fsize_t cols>
+template <typename T, fsize_t rows, fsize_t cols>
 // ordering in memory : 0 0, 0 1, 0 2, 1 0
 //[0] [1] means from x to y
 //[row] [col]
-struct mattnxn : public vectn<vectn<t, cols>, rows>
+struct mattnxn : public vectn<vectn<T, cols>, rows>
 {
 	static constexpr fsize_t minimumSize = math::minimum(rows, cols);
 
@@ -25,18 +25,18 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	template <typename t2, fsize_t cols2, fsize_t rows2>
-	constexpr mattnxn(const vectn<vectn<t2, cols2>, rows2> &in) : vectn<vectn<t, cols>, rows>(in)
+	constexpr mattnxn(const vectn<vectn<t2, cols2>, rows2> &in) : vectn<vectn<T, cols>, rows>(in)
 	{
 	}
 
 	inline static constexpr mattnxn empty()
 	{
-		return mattnxn(vectn<vectn<t, cols>, rows>());
+		return mattnxn(vectn<vectn<T, cols>, rows>());
 	}
 
-	constexpr mattnxn<t, cols, rows> transposed() const
+	constexpr mattnxn<T, cols, rows> transposed() const
 	{
-		mattnxn<t, cols, rows> result = mattnxn<t, cols, rows>();
+		mattnxn<T, cols, rows> result = mattnxn<T, cols, rows>();
 		for (fsize_t i = 0; i < rows; i++)
 		{
 			for (fsize_t j = 0; j < cols; j++)
@@ -74,13 +74,13 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		return out;
 	}
 
-	constexpr mattnxn<t, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
+	constexpr mattnxn<T, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
 	coFactor(cvect2<fsize_t> &pos) const
 		requires((rows > 1) && cols > 1)
 	{
-		mattnxn<t, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
+		mattnxn<T, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
 			result =
-				mattnxn<t, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>();
+				mattnxn<T, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>();
 
 		// Looping for each element of the matrix
 		for (fsize_t row = 0, i = 0; row < rows; row++)
@@ -119,7 +119,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 				for (fsize_t j = 0; j < cols; j++)
 				{
 					// Get cofactor of A[i][j]
-					mattnxn<t,
+					mattnxn<T,
 							math::maximum(rows, (fsize_t)2) - (fsize_t)1,
 							math::maximum(cols, (fsize_t)2) - (fsize_t)1>
 						temp = coFactor(cvect2<fsize_t>(i, j));
@@ -138,7 +138,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	// https://stackoverflow.com/questions/42802208/code-for-determinant-of-n-x-n-matrix#comment72802190_42804835
-	constexpr t determinant() const
+	constexpr T determinant() const
 	{
 		if constexpr (rows == 1)
 		{
@@ -150,13 +150,13 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		}
 		else
 		{
-			t result = 0;
+			T result = 0;
 			int sign = 1;
 
 			for (fsize_t k = 0; k < rows; k++)
 			{
-				mattnxn<t, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
-					subMatrix = mattnxn<t, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>();
+				mattnxn<T, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
+					subMatrix = mattnxn<T, math::maximum(rows, (fsize_t)2) - (fsize_t)1, math::maximum(cols, (fsize_t)2) - (fsize_t)1>();
 
 				for (fsize_t i = 1; i < rows; i++)
 				{
@@ -182,7 +182,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	{
 		// https://en.wikipedia.org/wiki/Inverse_matrix
 		// https://www.youtube.com/watch?v=pKZyszzmyeQ
-		const t &det = determinant();
+		const T &det = determinant();
 
 		const mattnxn &adj = adjoint();
 
@@ -191,13 +191,13 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 
 	// if x++, output += getxstep
 	template <fsize_t vectorSize = cols - 1>
-	constexpr vectn<t, vectorSize> getStep(const axisID &axis) const
+	constexpr vectn<T, vectorSize> getStep(const axisID &axis) const
 	{
-		return vectn<t, vectorSize>(this->axis[(int)axis]);
+		return vectn<T, vectorSize>(this->axis[(int)axis]);
 	}
 
 	// output at x 0 y 0
-	constexpr vectn<t, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
+	constexpr vectn<T, math::maximum(cols, (fsize_t)2) - (fsize_t)1>
 	getstart() const
 		requires(cols > 1)
 	{
@@ -205,7 +205,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	template <fsize_t dimensionCount>
-	constexpr static mattnxn translate(cvectn<t, dimensionCount> &add)
+	constexpr static mattnxn translate(cvectn<T, dimensionCount> &add)
 		requires(rows > 1)
 	{
 		mattnxn result = mattnxn();
@@ -240,7 +240,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		return result;
 	}
 
-	inline static mattnxn rotateDegrees(const vect2<t> &rotateAround, cint &angle)
+	inline static mattnxn rotateDegrees(const vect2<T> &rotateAround, cint &angle)
 	{
 		return combine({// first set rotation point to 0,0
 						translate(-rotateAround),
@@ -251,10 +251,10 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 						translate(rotateAround)});
 	}
 	// clockwise
-	inline static mattnxn rotate(const t &angle)
+	inline static mattnxn rotate(const T &angle)
 	{
-		const t &sina = sin(angle);
-		const t &cosa = cos(angle);
+		const T &sina = sin(angle);
+		const T &cosa = cos(angle);
 
 		mattnxn result = mattnxn();
 		result[0][0] = cosa;
@@ -264,7 +264,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		return result;
 	}
 
-	inline static mattnxn rotate(const vect2<t> &rotateAround, const t &angle)
+	inline static mattnxn rotate(const vect2<T> &rotateAround, const T &angle)
 	{
 		return combine({// first set rotation point to 0,0
 						translate(-rotateAround),
@@ -275,12 +275,12 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 						translate(rotateAround)});
 	}
 
-	inline static mattnxn rotate3d(vect3<t> axis, const t &angle)
+	inline static mattnxn rotate3d(vect3<T> axis, const T &angle)
 	{
 		axis.Normalize();
-		t sinr = (t)sin(angle);
-		t cosr = (t)cos(angle);
-		t mincos = 1 - cosr;
+		T sinr = (T)sin(angle);
+		T cosr = (T)cos(angle);
+		T mincos = 1 - cosr;
 		// https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
 		return mattnxn{
 			cosr + axis.x * axis.x * mincos,
@@ -299,7 +299,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	template <fsize_t dimensionCount>
-	inline static constexpr mattnxn scale(const vectn<t, dimensionCount> scalar)
+	inline static constexpr mattnxn scale(const vectn<T, dimensionCount> scalar)
 	{
 		constexpr fsize_t minimumSizeAndVector = math::minimum(dimensionCount, minimumSize);
 		constexpr fsize_t maximumSizeAndVector = math::maximum(dimensionCount, minimumSize);
@@ -316,12 +316,12 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		return result;
 	}
 
-	inline static constexpr mattnxn mirror(const axisID &axisIndex, const t &mirrorLocation)
+	inline static constexpr mattnxn mirror(const axisID &axisIndex, const T &mirrorLocation)
 	{
-		vectn<t, rows - 1> translateAmount = vectn<t, rows - 1>();
+		vectn<T, rows - 1> translateAmount = vectn<T, rows - 1>();
 		translateAmount[axisIndex] = mirrorLocation;
 
-		vectn<t, rows - 1> scaleAmount = vectn<t, rows - 1>(1);
+		vectn<T, rows - 1> scaleAmount = vectn<T, rows - 1>(1);
 		scaleAmount[axisIndex] = -1;
 
 		return cross(translate(translateAmount),		  // move back
@@ -329,38 +329,38 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 						   translate(-translateAmount))); // move to mirror place
 	}
 
-	inline static constexpr mattnxn expandRectangle(const rectanglet2<t> &rect, const t &border)
+	inline static constexpr mattnxn expandRectangle(const rectanglet2<T> &rect, const T &border)
 	{
 		return fromRectToRect(rect, rect.expanded(border));
 	}
 	template <fsize_t axisCount>
-	inline static constexpr mattnxn fromRectToRect(const rectangletn<t, axisCount> &rectFrom, const rectangletn<t, axisCount> &rectTo)
+	inline static constexpr mattnxn fromRectToRect(const rectangletn<T, axisCount> &rectFrom, const rectangletn<T, axisCount> &rectTo)
 	{
 		const mattnxn translateFrom = translate(-rectFrom.pos0);   // move rectangle from pos0 of rectFrom to 0, 0
 		const mattnxn scaled = scale(rectTo.size / rectFrom.size); // resize it
 		const mattnxn translateTo = translate(rectTo.pos0);		   // move it to the pos0 of rectTo
 		return cross(translateTo, cross(scaled, translateFrom));
 	}
-	inline static constexpr mattnxn fromPointsToPoints(const vect2<t> &a00, const vect2<t> &a10, const vect2<t> &a01, const vect2<t> &b00, const vect2<t> &b10, const vect2<t> &b01)
+	inline static constexpr mattnxn fromPointsToPoints(const vect2<T> &a00, const vect2<T> &a10, const vect2<T> &a01, const vect2<T> &b00, const vect2<T> &b10, const vect2<T> &b01)
 	{
 		// from a->barycentric point->b
 		return cross(baryCentric(b00, b10, b01).inverse(), baryCentric(a00, a10, a01));
 	}
 
-	inline static constexpr mattnxn fromRectToRotatedRect(const rectanglet2<t> &rectFrom, cint &angle, const rectanglet2<t> &rectTo)
+	inline static constexpr mattnxn fromRectToRotatedRect(const rectanglet2<T> &rectFrom, cint &angle, const rectanglet2<T> &rectTo)
 	{
 		mattnxn transform = mattnxn();
 		if (angle == 90 || angle == 270)
 		{
-			transform = fromRectToRect(rectanglet2<t>(rectFrom.x + rectFrom.w * 0.5 - rectFrom.h * 0.5, rectFrom.y + rectFrom.h * 0.5 - rectFrom.w * 0.5, rectFrom.h, rectFrom.w), rectTo);
+			transform = fromRectToRect(rectanglet2<T>(rectFrom.x + rectFrom.w * 0.5 - rectFrom.h * 0.5, rectFrom.y + rectFrom.h * 0.5 - rectFrom.w * 0.5, rectFrom.h, rectFrom.w), rectTo);
 		}
 		else
 		{
-			transform = fromRectToRect(rectanglet2<t>(rectFrom), rectTo);
+			transform = fromRectToRect(rectanglet2<T>(rectFrom), rectTo);
 		}
 		if (angle != 0)
 		{
-			transform = cross(transform, rotateDegrees(vect2<t>(rectFrom.x + rectFrom.w * 0.5, rectFrom.y + rectFrom.h * 0.5), angle));
+			transform = cross(transform, rotateDegrees(vect2<T>(rectFrom.x + rectFrom.w * 0.5, rectFrom.y + rectFrom.h * 0.5), angle));
 		}
 		return transform;
 	}
@@ -373,21 +373,21 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 
 	/*
 	//https://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
-	template<typename t>
-	inline static mattnxn getTransform(const vect2<t> from[4], const vect2<t> to[4])
+	template<typename T>
+	inline static mattnxn getTransform(const vect2<T> from[4], const vect2<T> to[4])
 	{
 		int yRowIndex = 0;
 
-		Eigen::Matrix<t, 8, 8> A = Eigen::Matrix<t, 8, 8>();
+		Eigen::Matrix<T, 8, 8> A = Eigen::Matrix<T, 8, 8>();
 		for (int i = 0; i < 4; i++)
 		{
-			const t rowXValues[8] = { from[i].x, from[i].y, 1, 0, 0, 0, -from[i].x * to[i].x, -from[i].y * to[i].x };
+			const T rowXValues[8] = { from[i].x, from[i].y, 1, 0, 0, 0, -from[i].x * to[i].x, -from[i].y * to[i].x };
 			A.row(yRowIndex++) = auto(rowXValues);
-			const t rowYValues[8] = { 0, 0, 0, from[i].x, from[i].y, 1, -from[i].x * to[i].y, -from[i].y * to[i].y };
+			const T rowYValues[8] = { 0, 0, 0, from[i].x, from[i].y, 1, -from[i].x * to[i].y, -from[i].y * to[i].y };
 			A.setYRow(yRowIndex++, rowYValues);
 		}
 		int yRowIndex = 0;
-		glm<t, 8, 1> b = mattnxn<t, 8, 1>();
+		glm<T, 8, 1> b = mattnxn<T, 8, 1>();
 			for (int i = 0; i < 4; i++)
 			{
 				b.values[yRowIndex++] = to[i].x;
@@ -423,7 +423,7 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 						H = getTransform(from, to)
 
 						# Apply the matrix3d as H transposed because matrix3d is column major order
-						# Also need use toFixed because css doesn't allow scientific notation
+						# Also need use toFixed because css doesn'T allow scientific notation
 						$(element).css
 						'transform': "matrix3d(#{(H[j][i].toFixed(20) for j in [0...4] for i in [0...4]).join(',')})"
 						'transform-origin' : '0 0'
@@ -495,28 +495,28 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	*/
 
 	// Compute barycentric set with respect to triangle (p00, p10, p01)
-	// multiply a vect2<t> by the returned matrix and get a vect2<t>(v, w)
-	inline static constexpr mattnxn baryCentric(const vect2<t> &p00, const vect2<t> &p10, const vect2<t> &p01)
+	// multiply a vect2<T> by the returned matrix and get a vect2<T>(v, w)
+	inline static constexpr mattnxn baryCentric(const vect2<T> &p00, const vect2<T> &p10, const vect2<T> &p01)
 	{
-		cvect2<t> &v0 = p10 - p00, v1 = p01 - p00,
-				  v2a00 = -p00, v2a10 = vect2<t>(1, 0) - p00, v2a01 = vect2<t>(0, 1) - p00; // calculate for (0,0),(1,0),(0,1)
-		const t &d00 = vect2<t>::dot(v0, v0);
-		const t &d01 = vect2<t>::dot(v0, v1);
-		const t &d11 = vect2<t>::dot(v1, v1);
-		const t &d20a00 = vect2<t>::dot(v2a00, v0);
-		const t &d21a00 = vect2<t>::dot(v2a00, v1);
-		const t &d20a10 = vect2<t>::dot(v2a10, v0);
-		const t &d21a10 = vect2<t>::dot(v2a10, v1);
-		const t &d20a01 = vect2<t>::dot(v2a01, v0);
-		const t &d21a01 = vect2<t>::dot(v2a01, v1);
-		const t &denom = d00 * d11 - d01 * d01;
-		const t &div = 1.0 / denom;
-		const t &va00 = (d11 * d20a00 - d01 * d21a00) * div; // v at x 0 y 0
-		const t &wa00 = (d00 * d21a00 - d01 * d20a00) * div; // w at x 0 y 0
-		const t &va10 = (d11 * d20a10 - d01 * d21a10) * div; // v at x 1 y 0
-		const t &wa10 = (d00 * d21a10 - d01 * d20a10) * div; // w at x 1 y 0
-		const t &va01 = (d11 * d20a01 - d01 * d21a01) * div; // v at x 0 y 1
-		const t &wa01 = (d00 * d21a01 - d01 * d20a01) * div; // w at x 0 y 1
+		cvect2<T> &v0 = p10 - p00, v1 = p01 - p00,
+				  v2a00 = -p00, v2a10 = vect2<T>(1, 0) - p00, v2a01 = vect2<T>(0, 1) - p00; // calculate for (0,0),(1,0),(0,1)
+		const T &d00 = vect2<T>::dot(v0, v0);
+		const T &d01 = vect2<T>::dot(v0, v1);
+		const T &d11 = vect2<T>::dot(v1, v1);
+		const T &d20a00 = vect2<T>::dot(v2a00, v0);
+		const T &d21a00 = vect2<T>::dot(v2a00, v1);
+		const T &d20a10 = vect2<T>::dot(v2a10, v0);
+		const T &d21a10 = vect2<T>::dot(v2a10, v1);
+		const T &d20a01 = vect2<T>::dot(v2a01, v0);
+		const T &d21a01 = vect2<T>::dot(v2a01, v1);
+		const T &denom = d00 * d11 - d01 * d01;
+		const T &div = 1.0 / denom;
+		const T &va00 = (d11 * d20a00 - d01 * d21a00) * div; // v at x 0 y 0
+		const T &wa00 = (d00 * d21a00 - d01 * d20a00) * div; // w at x 0 y 0
+		const T &va10 = (d11 * d20a10 - d01 * d21a10) * div; // v at x 1 y 0
+		const T &wa10 = (d00 * d21a10 - d01 * d20a10) * div; // w at x 1 y 0
+		const T &va01 = (d11 * d20a01 - d01 * d21a01) * div; // v at x 0 y 1
+		const T &wa01 = (d00 * d21a01 - d01 * d20a01) * div; // w at x 0 y 1
 		// multx, multy, plus
 		return mattnxn(
 			va10 - va00, va01 - va00, va00, // v
@@ -526,11 +526,11 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	// glm method
-	inline static constexpr mattnxn perspectiveFov(const t &fov, const t &width, const t &height, const t &zNear, const t &zFar)
+	inline static constexpr mattnxn perspectiveFov(const T &fov, const T &width, const T &height, const T &zNear, const T &zFar)
 	{
-		const t &rad = fov;
-		const t &h = cos(static_cast<fp>(0.5) * rad) / sin(static_cast<fp>(0.5) * rad);
-		const t &w = h * height / width; /// todo max(width , Height) / min(width , Height)?
+		const T &rad = fov;
+		const T &h = cos(static_cast<fp>(0.5) * rad) / sin(static_cast<fp>(0.5) * rad);
+		const T &w = h * height / width; /// todo max(width , Height) / min(width , Height)?
 
 		mattnxn result = empty();
 		result[0][0] = w;								 // the width multiplier of the screen
@@ -547,12 +547,12 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	// glm method
 	// https://stackoverflow.com/questions/19740463/lookat-function-im-going-crazy
 	// https://stackoverflow.com/questions/21830340/understanding-glmlookat
-	inline static constexpr mattnxn lookat(cvect3<t> &eye, cvect3<t> &center, cvect3<t> &up)
+	inline static constexpr mattnxn lookat(cvect3<T> &eye, cvect3<T> &center, cvect3<T> &up)
 	{
 		// Create a new coordinate system
-		cvect3<t> &screenz((center - eye).normalized());			   // the look direction
-		cvect3<t> &screenx(vect3<t>::cross(screenz, up).normalized()); // the sideways direction
-		cvect3<t> &screeny(vect3<t>::cross(screenz, screenx));		   // the upwards direction
+		cvect3<T> &screenz((center - eye).normalized());			   // the look direction
+		cvect3<T> &screenx(vect3<T>::cross(screenz, up).normalized()); // the sideways direction
+		cvect3<T> &screeny(vect3<T>::cross(screenz, screenx));		   // the upwards direction
 
 		mattnxn result = mattnxn();
 		result[0][0] = screenx.x; // the new x
@@ -564,24 +564,24 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 		result[0][2] = -screenz.x; // the new z
 		result[1][2] = -screenz.y;
 		result[2][2] = -screenz.z;
-		result[3][0] = -vect3<t>::dot(screenx, eye);
-		result[3][1] = -vect3<t>::dot(screeny, eye);
-		result[3][2] = vect3<t>::dot(screenz, eye);
+		result[3][0] = -vect3<T>::dot(screenx, eye);
+		result[3][1] = -vect3<T>::dot(screeny, eye);
+		result[3][2] = vect3<T>::dot(screenz, eye);
 		return result;
 	}
 
-	constexpr rectanglet2<t> getTransformedRectangleBounds(const rectanglet2<t> &rect) const
+	constexpr rectanglet2<T> getTransformedRectangleBounds(const rectanglet2<T> &rect) const
 	{
-		const vect2<t> pos00 = multPointMatrix(rect.pos0); // upper left corner
-		const vect2<t> pos10 = multPointMatrix(rect.pos10());
-		const vect2<t> pos01 = multPointMatrix(rect.pos01());
-		const vect2<t> pos11 = multPointMatrix(rect.pos1());
+		const vect2<T> pos00 = multPointMatrix(rect.pos0); // upper left corner
+		const vect2<T> pos10 = multPointMatrix(rect.pos10());
+		const vect2<T> pos01 = multPointMatrix(rect.pos01());
+		const vect2<T> pos11 = multPointMatrix(rect.pos1());
 
-		rectanglet2<t> boundaries;
-		boundaries.pos0 = vect2<t>(
+		rectanglet2<T> boundaries;
+		boundaries.pos0 = vect2<T>(
 			math::minimum(math::minimum(pos00.x, pos10.x), math::minimum(pos01.x, pos11.x)),
 			math::minimum(math::minimum(pos00.y, pos10.y), math::minimum(pos01.y, pos11.y)));
-		boundaries.size = vect2<t>(
+		boundaries.size = vect2<T>(
 							  math::maximum(math::maximum(pos00.x, pos10.x), math::maximum(pos01.x, pos11.x)),
 							  math::maximum(math::maximum(pos00.y, pos10.y), math::maximum(pos01.y, pos11.y))) -
 						  boundaries.pos0;
@@ -589,20 +589,20 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 	}
 
 	// template <fsize_t inputAxisCount = cols, fsize_t outputAxisCount = inputAxisCount>
-	// constexpr vectn<t, outputAxisCount> multPointMatrix(const vectn<t, inputAxisCount> &in) const;
+	// constexpr vectn<T, outputAxisCount> multPointMatrix(const vectn<T, inputAxisCount> &in) const;
 
 	// template<fsize_t inputAxisCount, fsize_t outputAxisCount>
-	inline constexpr vectn<t, 2> multPointMatrix(const vectn<t, 2> &in) const
+	inline constexpr vectn<T, 2> multPointMatrix(const vectn<T, 2> &in) const
 		requires(rows == 3 && cols == 3)
 	{
-		return vectn<t, 2>(
+		return vectn<T, 2>(
 			in.axis[0] * this->axis[0].axis[0] + in.axis[1] * this->axis[1].axis[0] + this->axis[2].axis[0],
 			in.axis[0] * this->axis[0].axis[1] + in.axis[1] * this->axis[1].axis[1] + this->axis[2].axis[1]);
 	}
 	template <fsize_t inputAxisCount, fsize_t outputAxisCount>
-	inline constexpr vectn<t, outputAxisCount> multPointMatrix(const vectn<t, inputAxisCount> &in) const
+	inline constexpr vectn<T, outputAxisCount> multPointMatrix(const vectn<T, inputAxisCount> &in) const
 	{
-		vectn<t, outputAxisCount> result = in.axis[0] * this->axis[0];
+		vectn<T, outputAxisCount> result = in.axis[0] * this->axis[0];
 		fsize_t fromIndex = 1;
 		for (; fromIndex < inputAxisCount; fromIndex++)
 		{
@@ -618,9 +618,9 @@ struct mattnxn : public vectn<vectn<t, cols>, rows>
 
 	// multpointmatrix, but without the translate
 	template <fsize_t axisCount>
-	constexpr vectn<t, axisCount> multSizeMatrix(const vectn<t, axisCount> &size) const
+	constexpr vectn<T, axisCount> multSizeMatrix(const vectn<T, axisCount> &size) const
 	{
-		vectn<t, axisCount> result = vectn<t, axisCount>();
+		vectn<T, axisCount> result = vectn<T, axisCount>();
 		for (fsize_t toIndex = 0; toIndex < axisCount; toIndex++)
 		{
 			for (fsize_t fromIndex = 0; fromIndex < axisCount; fromIndex++)

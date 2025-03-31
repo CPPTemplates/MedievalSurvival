@@ -35,7 +35,6 @@
 #include "math/rectangle/rectangletn.h"
 #include "math/uuid.h"
 #include "math/vector/vectn.h"
-#include "itemID.h"
 #include "itemStack.h"
 #include "levelID.h"
 #include "lightLevel.h"
@@ -92,10 +91,6 @@ void tickableBlockContainer::removeBlock(cveci2& position, const blockID& oldBlo
 bool tickableBlockContainer::cropRelativeLineToContainer(vec2& p0, vec2& p1)
 {
 	return true;
-}
-bool tickableBlockContainer::canAddUpdates(cveci2& position)
-{
-	return inBounds(position);
 }
 void tickableBlockContainer::setBlockWithData(cveci2& position, const blockID& block, blockData* const& data, const chunkLoadLevel& minimalLoadLevel)
 {
@@ -701,7 +696,7 @@ void tickableBlockContainer::addLevelUpdatePosition(cveci2& position)
 
 void tickableBlockContainer::reCalculateLevels()
 {
-	//copy the list, so the newly added updates won't affect this tick
+	//copy the list, so the newly added updates won'T affect this tick
 	std::set<veci2> copiedQueue = std::set<veci2>(emittanceUpdateQueue.begin(), emittanceUpdateQueue.end());
 	emittanceUpdateQueue.clear();
 

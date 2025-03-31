@@ -2,7 +2,7 @@
 #include "taskAI.h"
 struct wanderAI : taskAI
 {
-	fp targetX = 0;
+	vec2 targetPos = vec2();
 	virtual bool continueExecuting() override;
 	virtual void startExecuting() override;
 	virtual void updateTask() override;

@@ -1,6 +1,6 @@
 #include "enderPearl.h"
 #include "dimension.h"
-enderPearl::enderPearl(dimension* dimensionIn, cvec2& position) : throwable(dimensionIn, position, entityID::ender_pearl)
+enderPearl::enderPearl() : throwable(entityID::ender_pearl)
 {
 
 }

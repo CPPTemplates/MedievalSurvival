@@ -7,7 +7,7 @@
 //	dataPackFolder / L"randomized loot",
 // };
 //  from lowest to highest priority: resource packs
-//  we don't need a separate folder for data packs. data and resource packs are the same, as they both modify server behavior.
+//  we don'T need a separate folder for data packs. data and resource packs are the same, as they both modify server behavior.
 std::vector<stdPath> resourcePackPaths =
 {
 	minecraftVersionFolder,
@@ -18,7 +18,8 @@ std::vector<stdPath> resourcePackPaths =
 	// resourcePackFolder / L"happy-v1-3",
 	// resourcePackFolder / L"light levels 1.16",
 	resourcePackFolder / L"creator pack",
-	resourcePackFolder / L"randomized loot",
+	//resourcePackFolder / L"randomized loot",
+	//resourcePackFolder / L"Light Mob Spawning 1.19"
 	// resourcePackFolder / L"4thful",};
 };
 

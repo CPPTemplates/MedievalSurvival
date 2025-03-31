@@ -1,6 +1,6 @@
 #include "ghastFireBall.h"
 #include "dimension.h"
-ghastFireBall::ghastFireBall(dimension* dimensionIn, cvec2& position) :fireBall(dimensionIn, position, entityID::ghast_fireball)
+ghastFireBall::ghastFireBall() :fireBall(entityID::ghast_fireball)
 {
 }
 

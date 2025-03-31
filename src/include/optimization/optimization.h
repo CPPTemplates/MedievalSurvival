@@ -21,7 +21,7 @@
 # define assumeInRelease1(shouldBeTrue)   __assume(shouldBeTrue)
 # define assumeInRelease2(shouldBeTrue, errorMessageIfFalse)   __assume(shouldBeTrue)
 #elif __clang__
-//when an expression can't be evaluated at compile time, we just replace it with 'true'
+//when an expression can'T be evaluated at compile time, we just replace it with 'true'
 # define assumeInRelease1(shouldBeTrue)   __builtin_assume(__builtin_constant_p(shouldBeTrue) ? shouldBeTrue : true)
 # define assumeInRelease2(shouldBeTrue, errorMessageIfFalse)   __builtin_assume(__builtin_constant_p(shouldBeTrue) ? shouldBeTrue : true)
 #else
@@ -30,11 +30,11 @@
 #endif
 #endif
 
-//doesn't modify outside world, but can still access it
+//doesn'T modify outside world, but can still access it
 //always returns the same value for the same input
 #define pure __attribute__((pure))
 
-//this function can only use the variables passed in. you can't even access the values of pointers passed in!
+//this function can only use the variables passed in. you can'T even access the values of pointers passed in!
 #define pureInputFunc __attribute__((const))
 
 #define assumeInRelease(...) GetMacroOverLoad(__VA_ARGS__, noFunctionFound, assumeInRelease2, assumeInRelease1)(__VA_ARGS__)

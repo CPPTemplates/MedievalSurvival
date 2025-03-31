@@ -49,10 +49,10 @@ inline vec2 getrandomPosition(std::mt19937 &generator, crectangle2 &rect)
 }
 
 // copies a piece out of an old array into a new array
-template <typename t>
-inline t *cut(t *const &arr, crectanglet1<size_t> &range)
+template <typename T>
+inline T *cut(T *const &arr, crectanglet1<size_t> &range)
 {
-	t *newArray = new t[range.w];
+	T *newArray = new T[range.w];
 	std::copy(arr + range.x, arr + range.pos1().x, newArray);
 	return newArray;
 }

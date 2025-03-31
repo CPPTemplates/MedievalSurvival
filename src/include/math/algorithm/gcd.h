@@ -1,17 +1,17 @@
 namespace math
 {
         //  Function to return gcd of a and b
-    template <typename t>
-    constexpr t gcd(const t &a, const t &b)
+    template <typename T>
+    constexpr T gcd(const T &a, const T &b)
     {
         if (a == 0)
             return b;
         return gcd(b % a, a);
     }
 
-    template <typename t>
+    template <typename T>
     // Function for extended Euclidean Algorithm
-    constexpr t gcdExtended(const t &a, const t &b, t &x, t &y)
+    constexpr T gcdExtended(const T &a, const T &b, T &x, T &y)
     {
 
         // Base Case
@@ -23,8 +23,8 @@ namespace math
 
         // To store results of recursive call
         //variables have to be initialized in constant expressions
-        t x1 = 0, y1 = 0;
-        t gcd = gcdExtended(b % a, a, x1, y1);
+        T x1 = 0, y1 = 0;
+        T gcd = gcdExtended(b % a, a, x1, y1);
 
         // Update x and y using results of recursive
         // call

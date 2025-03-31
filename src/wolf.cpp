@@ -3,7 +3,7 @@
 #include "attackOnCollideAI.h"
 #include "wanderAI.h"
 #include "hurtByTargetAI.h"
-wolf::wolf(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position, entityID::wolf), fourLeggedMob(dimensionIn, position, entityID::wolf)
+wolf::wolf() :mob(entityID::wolf), fourLeggedMob(entityID::wolf)
 {
 	tasks = new taskList(this, {
 		new hurtByTargetAI(this),

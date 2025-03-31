@@ -1,7 +1,7 @@
 #include "floatingSlot.h"
 #include "dimension.h"
 #include "itemData.h"
-floatingSlot::floatingSlot(dimension* dimensionIn, cvec2& position) :entity(dimensionIn, position, entityID::item)
+floatingSlot::floatingSlot() :entity(entityID::item)
 {
 	this->stack = itemStack();
 }

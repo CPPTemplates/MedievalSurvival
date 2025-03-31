@@ -16,7 +16,7 @@ struct dimensionalindex
 	}
 	int* locations;//a pointer
 };
-template<typename t, int DimensionCount>
+template<typename T, int DimensionCount>
 struct Idimensional
 {
 	int index;
@@ -24,8 +24,8 @@ struct Idimensional
 	{
 		index = 0;
 	}
-	inline virtual t GetElementAtIndex(dimensionalindex<DimensionCount> index) const
+	inline virtual T GetElementAtIndex(dimensionalindex<DimensionCount> index) const
 	{
-		return t();
+		return T();
 	}
 };

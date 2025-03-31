@@ -24,6 +24,7 @@
     <ProjectGuid>{e109c450-4aea-4f65-86bd-233938e67e35}</ProjectGuid>
     <RootNamespace>CrossPPVS</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>MedievalSurvival</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -93,12 +94,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4201;4499</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\libs\SFML-3.0.0\lib;C:\Program Files (x86)\GnuWin32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetyped.lib;flacd.lib;vorbisencd.lib;vorbisfiled.lib;vorbisd.lib;oggd.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetyped.lib;flacd.lib;vorbisencd.lib;vorbisfiled.lib;vorbisd.lib;oggd.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-main-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,14 +123,17 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <FloatingPointModel>Precise</FloatingPointModel>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DisableSpecificWarnings>4201;4499</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\libs\SFML-3.0.0\lib;C:\Program Files (x86)\GnuWin32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-main-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib; libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,12 +147,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4201;4499</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\libs\SFML-3.0.0\lib;C:\Program Files (x86)\GnuWin32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetyped.lib;flacd.lib;vorbisencd.lib;vorbisfiled.lib;vorbisd.lib;oggd.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetyped.lib;flacd.lib;vorbisencd.lib;vorbisfiled.lib;vorbisd.lib;oggd.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-main-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -170,14 +176,17 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <FloatingPointModel>Precise</FloatingPointModel>
       <SupportJustMyCode>false</SupportJustMyCode>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DisableSpecificWarnings>4201;4499</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\libs\SFML-3.0.0\lib;C:\Program Files (x86)\GnuWin32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-graphics-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-main-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib; libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -212,7 +221,7 @@
     <ClCompile Include="src\block.cpp" />
     <ClCompile Include="src\blockContainer.cpp" />
     <ClCompile Include="src\blockData.cpp" />
-    <ClCompile Include="src\blockParticleBrush.cpp" />
+    <ClCompile Include="src\blockParticle.cpp" />
     <ClCompile Include="src\blockStateCondition.cpp" />
     <ClCompile Include="src\boat.cpp" />
     <ClCompile Include="src\boidsAI.cpp" />
@@ -234,6 +243,7 @@
     <ClCompile Include="src\collisionDataCollection.cpp" />
     <ClCompile Include="src\collisionEdgeData.cpp" />
     <ClCompile Include="src\comparatorData.cpp" />
+    <ClCompile Include="src\composterData.cpp" />
     <ClCompile Include="src\conditionDrop.cpp" />
     <ClCompile Include="src\connectedBlock.cpp" />
     <ClCompile Include="src\constantAmountDistribution.cpp" />
@@ -265,7 +275,7 @@
     <ClCompile Include="src\dropperData.cpp" />
     <ClCompile Include="src\durabilityData.cpp" />
     <ClCompile Include="src\eatGrassAI.cpp" />
-    <ClCompile Include="src\effectParticleBrush.cpp" />
+    <ClCompile Include="src\effectParticle.cpp" />
     <ClCompile Include="src\egg.cpp" />
     <ClCompile Include="src\enchantingTableSlotContainer.cpp" />
     <ClCompile Include="src\enchantment.cpp" />
@@ -303,6 +313,7 @@
     <ClCompile Include="src\fishingHook.cpp" />
     <ClCompile Include="src\floatingSlot.cpp" />
     <ClCompile Include="src\fluidData.cpp" />
+    <ClCompile Include="src\followAI.cpp" />
     <ClCompile Include="src\forest.cpp" />
     <ClCompile Include="src\fourLeggedMob.cpp" />
     <ClCompile Include="src\frostedIceData.cpp" />
@@ -325,6 +336,7 @@
     <ClCompile Include="src\humanSlotContainerUI.cpp" />
     <ClCompile Include="src\hurtByTargetAI.cpp" />
     <ClCompile Include="src\iceSpikes.cpp" />
+    <ClCompile Include="src\iconParticle.cpp" />
     <ClCompile Include="src\idAnalysis.cpp" />
     <ClCompile Include="src\idConverter.cpp" />
     <ClCompile Include="src\idList.cpp" />
@@ -389,7 +401,7 @@
     <ClCompile Include="src\ironTrapDoorData.cpp" />
     <ClCompile Include="src\itemData.cpp" />
     <ClCompile Include="src\itemDrop.cpp" />
-    <ClCompile Include="src\itemParticleBrush.cpp" />
+    <ClCompile Include="src\itemParticle.cpp" />
     <ClCompile Include="src\itemStack.cpp" />
     <ClCompile Include="src\itemTag.cpp" />
     <ClCompile Include="src\jigsawData.cpp" />
@@ -402,6 +414,7 @@
     <ClCompile Include="src\lightLevel.cpp" />
     <ClCompile Include="src\lootTable.cpp" />
     <ClCompile Include="src\loveModeAI.cpp" />
+    <ClCompile Include="src\lureAI.cpp" />
     <ClCompile Include="src\magmaCube.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mainMenu.cpp" />
@@ -452,7 +465,7 @@
     <ClCompile Include="src\pressurePlateData.cpp" />
     <ClCompile Include="src\recipe.cpp" />
     <ClCompile Include="src\rectangularSlotContainer.cpp" />
-    <ClCompile Include="src\rectParticleBrush.cpp" />
+    <ClCompile Include="src\rectParticle.cpp" />
     <ClCompile Include="src\redstoneLampData.cpp" />
     <ClCompile Include="src\redstoneTorchData.cpp" />
     <ClCompile Include="src\renderBlockContainer.cpp" />
@@ -525,7 +538,7 @@
     <ClCompile Include="src\teleportToAttachAI.cpp" />
     <ClCompile Include="src\test.cpp" />
     <ClCompile Include="src\textureList.cpp" />
-    <ClCompile Include="src\textureParticleBrush.cpp" />
+    <ClCompile Include="src\textureParticle.cpp" />
     <ClCompile Include="src\theEnd.cpp" />
     <ClCompile Include="src\throwable.cpp" />
     <ClCompile Include="src\throwableData.cpp" />
@@ -591,7 +604,7 @@
     <ClInclude Include="src\blockArrayContainer.h" />
     <ClInclude Include="src\blockContainer.h" />
     <ClInclude Include="src\blockData.h" />
-    <ClInclude Include="src\blockParticleBrush.h" />
+    <ClInclude Include="src\blockParticle.h" />
     <ClInclude Include="src\blockStateCondition.h" />
     <ClInclude Include="src\boat.h" />
     <ClInclude Include="src\boidsAI.h" />
@@ -618,6 +631,7 @@
     <ClInclude Include="src\colorID.h" />
     <ClInclude Include="src\colors.h" />
     <ClInclude Include="src\comparatorData.h" />
+    <ClInclude Include="src\composterData.h" />
     <ClInclude Include="src\conditionDrop.h" />
     <ClInclude Include="src\connectedBlock.h" />
     <ClInclude Include="src\constantAmountDistribution.h" />
@@ -663,7 +677,7 @@
     <ClInclude Include="src\dropperData.h" />
     <ClInclude Include="src\durabilityData.h" />
     <ClInclude Include="src\eatGrassAI.h" />
-    <ClInclude Include="src\effectParticleBrush.h" />
+    <ClInclude Include="src\effectParticle.h" />
     <ClInclude Include="src\egg.h" />
     <ClInclude Include="src\enchantingTableSlotContainer.h" />
     <ClInclude Include="src\enchantment.h" />
@@ -709,6 +723,7 @@
     <ClInclude Include="src\fluidData.h" />
     <ClInclude Include="src\fluidList.h" />
     <ClInclude Include="src\folderList.h" />
+    <ClInclude Include="src\followAI.h" />
     <ClInclude Include="src\forest.h" />
     <ClInclude Include="src\fourLeggedMob.h" />
     <ClInclude Include="src\fourLeggedPassiveMob.h" />
@@ -742,6 +757,7 @@
     <ClInclude Include="src\humanSlotContainerUI.h" />
     <ClInclude Include="src\hurtByTargetAI.h" />
     <ClInclude Include="src\iceSpikes.h" />
+    <ClInclude Include="src\iconParticle.h" />
     <ClInclude Include="src\idAnalysis.h" />
     <ClInclude Include="src\idConverter.h" />
     <ClInclude Include="src\idList.h" />
@@ -816,7 +832,9 @@
     <ClInclude Include="src\include\math\graphics\brush\brushes\alphaMask.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\bilinearInterpolator.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\colorMaximizer.h" />
+    <ClInclude Include="src\include\math\graphics\brush\brushes\colorMixer.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\colorMultiplier.h" />
+    <ClInclude Include="src\include\math\graphics\brush\brushes\combineBrush.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\functionPointerBrush.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\grayScaleToTransparency.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\repeatingBrush.h" />
@@ -825,7 +843,6 @@
     <ClInclude Include="src\include\math\graphics\brush\brushes\solidColorBrush.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\squareInterpolator.h" />
     <ClInclude Include="src\include\math\graphics\brush\brushes\vignetteBrush.h" />
-    <ClInclude Include="src\include\math\graphics\brush\colorMixer.h" />
     <ClInclude Include="src\include\math\graphics\brush\font\baseFont.h" />
     <ClInclude Include="src\include\math\graphics\brush\font\font.h" />
     <ClInclude Include="src\include\math\graphics\brush\font\fontfamily.h" />
@@ -834,6 +851,7 @@
     <ClInclude Include="src\include\math\graphics\color\colorFunctions.h" />
     <ClInclude Include="src\include\math\graphics\color\colorPalette.h" />
     <ClInclude Include="src\include\math\graphics\doubleBuffer.h" />
+    <ClInclude Include="src\include\math\graphics\fillRow.h" />
     <ClInclude Include="src\include\math\graphics\frustum.h" />
     <ClInclude Include="src\include\math\graphics\graphicsFunctions.h" />
     <ClInclude Include="src\include\math\graphics\imageLoader.h" />
@@ -906,7 +924,7 @@
     <ClInclude Include="src\itemData.h" />
     <ClInclude Include="src\itemDrop.h" />
     <ClInclude Include="src\itemID.h" />
-    <ClInclude Include="src\itemParticleBrush.h" />
+    <ClInclude Include="src\itemParticle.h" />
     <ClInclude Include="src\itemStack.h" />
     <ClInclude Include="src\itemTag.h" />
     <ClInclude Include="src\jigsawData.h" />
@@ -924,6 +942,7 @@
     <ClInclude Include="src\lightLevelID.h" />
     <ClInclude Include="src\lootTable.h" />
     <ClInclude Include="src\loveModeAI.h" />
+    <ClInclude Include="src\lureAI.h" />
     <ClInclude Include="src\magmaCube.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\mainMenu.h" />
@@ -951,7 +970,7 @@
     <ClInclude Include="src\nbt\nbtSerializable.h" />
     <ClInclude Include="src\nbt\nbtSerializer.h" />
     <ClInclude Include="src\nbt\nbtValue.h" />
-    <ClInclude Include="src\nbt\serializeColor.h" />
+    <ClInclude Include="src\nbt\serializeVector.h" />
     <ClInclude Include="src\nbt\serializeDirection.h" />
     <ClInclude Include="src\nbt\serializeList.h" />
     <ClInclude Include="src\nbt\serializeRectangle.h" />
@@ -980,7 +999,6 @@
     <ClInclude Include="src\packetSerializer.h" />
     <ClInclude Include="src\panicAI.h" />
     <ClInclude Include="src\particle.h" />
-    <ClInclude Include="src\particleBrush.h" />
     <ClInclude Include="src\particleID.h" />
     <ClInclude Include="src\particleTypeData.h" />
     <ClInclude Include="src\passiveMob.h" />
@@ -998,7 +1016,7 @@
     <ClInclude Include="src\pressurePlateData.h" />
     <ClInclude Include="src\recipe.h" />
     <ClInclude Include="src\rectangularSlotContainer.h" />
-    <ClInclude Include="src\rectParticleBrush.h" />
+    <ClInclude Include="src\rectParticle.h" />
     <ClInclude Include="src\redstoneLampData.h" />
     <ClInclude Include="src\redstoneTorchData.h" />
     <ClInclude Include="src\renderBlockContainer.h" />
@@ -1055,7 +1073,6 @@
     <ClInclude Include="src\statusEffectData.h" />
     <ClInclude Include="src\statusEffectID.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\stdafxdynamic.h" />
     <ClInclude Include="src\stemPlantData.h" />
     <ClInclude Include="src\structure.h" />
     <ClInclude Include="src\structureBlockData.h" />
@@ -1080,7 +1097,7 @@
     <ClInclude Include="src\teleportToAttachAI.h" />
     <ClInclude Include="src\test.h" />
     <ClInclude Include="src\textureList.h" />
-    <ClInclude Include="src\textureParticleBrush.h" />
+    <ClInclude Include="src\textureParticle.h" />
     <ClInclude Include="src\theEnd.h" />
     <ClInclude Include="src\throwable.h" />
     <ClInclude Include="src\throwableData.h" />
@@ -1111,6 +1128,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="visualization.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

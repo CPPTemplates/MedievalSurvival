@@ -54,7 +54,7 @@ colorf rgb2hsv(const colorf& in)
 
 colorf hsv2rgb(const colorf& in)
 {
-    double      hh, p, q, t, ff;
+    double      hh, p, q, T, ff;
     long        i;
     colorf         out;
     out.a() = in.a();
@@ -73,12 +73,12 @@ colorf hsv2rgb(const colorf& in)
     ff = hh - i;
     p = in.v() * (1.0 - in.s());
     q = in.v() * (1.0 - (in.s() * ff));
-    t = in.v() * (1.0 - (in.s() * (1.0 - ff)));
+    T = in.v() * (1.0 - (in.s() * (1.0 - ff)));
 
     switch (i) {
     case 0:
         out.r() = in.v();
-        out.g() = t;
+        out.g() = T;
         out.b() = p;
         break;
     case 1:
@@ -89,7 +89,7 @@ colorf hsv2rgb(const colorf& in)
     case 2:
         out.r() = p;
         out.g() = in.v();
-        out.b() = t;
+        out.b() = T;
         break;
 
     case 3:
@@ -98,7 +98,7 @@ colorf hsv2rgb(const colorf& in)
         out.b() = in.v();
         break;
     case 4:
-        out.r() = t;
+        out.r() = T;
         out.g() = p;
         out.b() = in.v();
         break;

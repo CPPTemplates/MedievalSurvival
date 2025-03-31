@@ -1,10 +1,10 @@
 #pragma once
 #include <sstream>
 // #include "windowsIncluder.h"
-template <typename t>
-inline bool convertTo(const std::wstring &s, t &value)
+template <typename T>
+inline bool convertTo(const std::wstring &s, T &value)
 {
-	if constexpr (std::is_same<t, std::wstring>::value)
+	if constexpr (std::is_same<T, std::wstring>::value)
 	{
 		csize_t &start = (s.length() && s[0] == L'\"') ? 1 : 0;
 		csize_t &end = (s.length() && s[s.length() - 1] == L'\"') ? (s.length() - 1) : s.length();
@@ -15,21 +15,21 @@ inline bool convertTo(const std::wstring &s, t &value)
 	{
 		if (s.size())
 		{
-			if constexpr (std::is_integral<t>::value)
+			if constexpr (std::is_integral<T>::value)
 			{
 				long l;
 				if (convertToLong(s, l))
 				{
-					value = (t)l;
+					value = (T)l;
 					return true;
 				}
 			}
-			else if constexpr (std::is_floating_point<t>::value)
+			else if constexpr (std::is_floating_point<T>::value)
 			{
 				fp d;
 				if (convertToDouble(s, d))
 				{
-					value = (t)d;
+					value = (T)d;
 					return true;
 				}
 			}

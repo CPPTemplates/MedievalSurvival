@@ -35,7 +35,7 @@
 #include "fluidData.h"
 #include "bucketData.h"
 #include "potionData.h"
-#include "itemParticleBrush.h"
+#include "itemParticle.h"
 #include "particle.h"
 #include "soundList.h"
 #include "world.h"
@@ -112,6 +112,7 @@
 #include "nbt/nbtSerializer.h"
 #include "include/filesystem/fileFunctions.h"
 #include "gameTime.h"
+#include "iconParticle.h"
 // std::shared_ptr<audio2d> currentWindSound;
 
 void human::tick()
@@ -123,7 +124,7 @@ void human::tick()
 	humanoid::tick();
 	updateSelection();
 
-	entity *selectedEntity = selectedUUID ? dimensionIn->findUUID(position, humanArmRange + mobSizeMargin, selectedUUID) : nullptr;
+	entity* selectedEntity = selectedUUID ? dimensionIn->findUUID(position, humanArmRange + mobSizeMargin, selectedUUID) : nullptr;
 	if (currentGameMode != gameModeID::spectator)
 	{
 		pickUpFloatingSlots();
@@ -131,7 +132,7 @@ void human::tick()
 
 	mainBodyPart->flipX = lookingAt.x < position.x;
 
-	const bool &pressedExit = screen.pressedKey((vk)keyID::exit);
+	const bool& pressedExit = screen.pressedKey((vk)keyID::exit);
 	if (pressedExit)
 	{
 		if (UUIDRidingOn)
@@ -158,7 +159,7 @@ void human::tick()
 			{
 				if (isRidable(selectedEntity->entityType))
 				{
-					ridableEntity *selectedRidable = (ridableEntity *)selectedEntity;
+					ridableEntity* selectedRidable = (ridableEntity*)selectedEntity;
 					uuid uuidRodeOn = UUIDRidingOn;
 					if (uuidRodeOn)
 					{
@@ -173,13 +174,13 @@ void human::tick()
 				}
 				else if (selectedEntity->entityType == entityID::end_crystal)
 				{
-					((endCrystal *)selectedEntity)->explode();
+					((endCrystal*)selectedEntity)->explode();
 					goto rightClickUsed;
 				}
 			}
 			// check for interactable block
 			blockID selectedBlockID = selectedBlockContainer->getBlockID(selectedBlockPosition);
-			blockData *selectedBlockData = selectedBlockContainer->getBlockData(selectedBlockPosition);
+			blockData* selectedBlockData = selectedBlockContainer->getBlockData(selectedBlockPosition);
 			if (hasGUI(selectedBlockID))
 			{
 				switch (selectedBlockID)
@@ -205,7 +206,7 @@ void human::tick()
 				case blockID::brewing_stand:
 				{
 					screen.inventoryUI->linkUp(brewingStandSlots);
-					brewingstandData *selectedBrewingStandData = (brewingstandData *)selectedBlockData;
+					brewingstandData* selectedBrewingStandData = (brewingstandData*)selectedBlockData;
 					brewingStandSlots->selectedBrewingStandData = selectedBrewingStandData;
 					brewingStandSlots->blazePowderSlot->linkedContainer = selectedBrewingStandData->blazePowderSlot;
 					brewingStandSlots->ingredientSlot->linkedContainer = selectedBrewingStandData->ingredientSlot;
@@ -224,14 +225,14 @@ void human::tick()
 				case blockID::structure_block:
 				{
 					screen.focusChild(screen.structureBlockOptions);
-					screen.structureBlockOptions->temporaryStructureBlockData = new structureBlockData(*(structureBlockData *)selectedBlockData);
+					screen.structureBlockOptions->temporaryStructureBlockData = new structureBlockData(*(structureBlockData*)selectedBlockData);
 					screen.structureBlockOptions->serializeWithTemporaryData(false);
 					break;
 				}
 				case blockID::jigsaw:
 				{
 					screen.focusChild(screen.jigsawOptions);
-					screen.jigsawOptions->temporaryJigsawData = new jigsawData(*dynamic_cast<jigsawData *>(selectedBlockData));
+					screen.jigsawOptions->temporaryJigsawData = new jigsawData(*dynamic_cast<jigsawData*>(selectedBlockData));
 					screen.jigsawOptions->serializeWithTemporaryData(false);
 					break;
 				}
@@ -241,7 +242,7 @@ void human::tick()
 					{
 						screen.inventoryUI->linkUp(dispenserSlots);
 						// link containers
-						dispenserData *selectedDispenserData = dynamic_cast<dispenserData *>(selectedBlockData);
+						dispenserData* selectedDispenserData = dynamic_cast<dispenserData*>(selectedBlockData);
 						dispenserSlots->selectedDispenserData = selectedDispenserData;
 						dispenserSlots->dispenserSlots->linkedContainer = selectedDispenserData->slots;
 					}
@@ -250,7 +251,7 @@ void human::tick()
 						// interact with furnace
 						screen.inventoryUI->linkUp(furnaceSlots);
 						// link containers
-						furnaceData *selectedFurnaceData = (furnaceData *)selectedBlockData;
+						furnaceData* selectedFurnaceData = (furnaceData*)selectedBlockData;
 						furnaceSlots->selectedFurnaceData = selectedFurnaceData;
 
 						furnaceSlots->furnaceInputSlot->linkedContainer = selectedFurnaceData->inputSlot;
@@ -261,7 +262,7 @@ void human::tick()
 					{
 						screen.inventoryUI->linkUp(chestSlots);
 						// link containers
-						chestData *selectedChestData = (chestData *)selectedBlockData;
+						chestData* selectedChestData = (chestData*)selectedBlockData;
 						selectedChestData->generateChestLoot();
 						chestSlots->selectedChestData = selectedChestData;
 						chestSlots->chestSlots->linkedContainer = selectedChestData->slots;
@@ -288,14 +289,14 @@ void human::tick()
 			{
 				if (isBed(selectedBlockID))
 				{
-					bedData *data = dynamic_cast<bedData *>(selectedBlockData);
+					bedData* data = dynamic_cast<bedData*>(selectedBlockData);
 					if (dimensionIn->identifier == dimensionID::overworld)
 					{
 						if (canSleep())
 						{
 							sleeping = true;
 							cvec2 middlePosition = cvec2(selectedBlockPosition.x + getOtherPartRelativeLocation(selectedBlockID, data->isPart0, data->directionFacing).x * 0.5 + 0.5, selectedBlockPosition.y + bedHitboxHeight + math::fpepsilon);
-							cvec2 &absolute = selectedBlockContainer->containerToRootTransform.multPointMatrix(middlePosition);
+							cvec2& absolute = selectedBlockContainer->containerToRootTransform.multPointMatrix(middlePosition);
 							// set respawn point
 							currentWorld->worldSpawnPoint = absolute;
 							currentWorld->worldSpawnDimension = dimensionIn->identifier;
@@ -312,43 +313,43 @@ void human::tick()
 				}
 				else if (((isDoor(selectedBlockID) && (selectedBlockID != blockID::iron_door)) || isFenceGate(selectedBlockID) || (isTrapDoor(selectedBlockID) && (selectedBlockID != blockID::iron_trapdoor))))
 				{
-					selectedBlockContainer->openDoorType(selectedBlockPosition, !dynamic_cast<openData *>(selectedBlockContainer->getBlockData(selectedBlockPosition))->isOpen);
+					selectedBlockContainer->openDoorType(selectedBlockPosition, !dynamic_cast<openData*>(selectedBlockContainer->getBlockData(selectedBlockPosition))->isOpen);
 					goto rightClickUsed;
 				}
 				else if (isButton(selectedBlockID))
 				{
-					const collisionDataCollection &buttonCollision = blockList[(int)selectedBlockID]->getCollisionData(selectedBlockContainer, selectedBlockPosition);
+					const collisionDataCollection& buttonCollision = blockList[(int)selectedBlockID]->getCollisionData(selectedBlockContainer, selectedBlockPosition);
 					if (buttonCollision.hitboxes[0].hitboxCollidingWith.contains(exactBlockIntersection))
 					{
-						dynamic_cast<buttonData *>(selectedBlockData)->ticksToPress = isWoodenButton(selectedBlockID) ? (ticksPerRealLifeSecond * 3) / 2 : ticksPerRealLifeSecond;
+						dynamic_cast<buttonData*>(selectedBlockData)->ticksToPress = isWoodenButton(selectedBlockID) ? (ticksPerRealLifeSecond * 3) / 2 : ticksPerRealLifeSecond;
 						dimensionIn->addUpdatePosition(selectedBlockPosition);
 					}
 					goto rightClickUsed;
 				}
 				else if (selectedBlockID == blockID::lever)
 				{
-					leverData *toLeverData = dynamic_cast<leverData *>(selectedBlockData);
+					leverData* toLeverData = dynamic_cast<leverData*>(selectedBlockData);
 					toLeverData->active = !toLeverData->active;
 					dimensionIn->addUpdatePosition(selectedBlockPosition);
 					goto rightClickUsed;
 				}
 				else if (selectedBlockID == blockID::repeater)
 				{
-					repeaterData *toRepeaterData = dynamic_cast<repeaterData *>(selectedBlockData);
+					repeaterData* toRepeaterData = dynamic_cast<repeaterData*>(selectedBlockData);
 					toRepeaterData->delayArrayIndex = (toRepeaterData->delayArrayIndex + 1) % delayArraySize;
 					dimensionIn->addUpdatePosition(selectedBlockPosition);
 					goto rightClickUsed;
 				}
 				else if (selectedBlockID == blockID::comparator)
 				{
-					comparatorData *toComparatorData = dynamic_cast<comparatorData *>(selectedBlockData);
+					comparatorData* toComparatorData = dynamic_cast<comparatorData*>(selectedBlockData);
 					toComparatorData->substractionMode = !toComparatorData->substractionMode;
 					dimensionIn->addUpdatePosition(selectedBlockPosition);
 					goto rightClickUsed;
 				}
 				else if (selectedBlockID == blockID::jukebox)
 				{
-					jukeBoxData *toJukeBoxData = dynamic_cast<jukeBoxData *>(selectedBlockData);
+					jukeBoxData* toJukeBoxData = dynamic_cast<jukeBoxData*>(selectedBlockData);
 					if (toJukeBoxData->recordSlot->slots[0].count)
 					{
 						// remove music disc from jukebox
@@ -364,7 +365,7 @@ void human::tick()
 				}
 				else if (selectedBlockID == blockID::note_block)
 				{
-					noteBlockData *toNoteBlockData = dynamic_cast<noteBlockData *>(selectedBlockData);
+					noteBlockData* toNoteBlockData = dynamic_cast<noteBlockData*>(selectedBlockData);
 
 					toNoteBlockData->note = (toNoteBlockData->note + 1) % maxNoteBlockNote;
 
@@ -413,7 +414,7 @@ rightClickUsed:;
 	// currentWindSound->setPitch(math::lerp(currentWindSound->pitch, speedToPitch.getValue(windSpeed), 0.2));
 }
 
-void human::applyStatusEffect(const statusEffect &effect)
+void human::applyStatusEffect(const statusEffect& effect)
 {
 	if (effect.identifier == statusEffectID::hunger)
 	{
@@ -429,35 +430,35 @@ void human::onDeath()
 {
 	if (!currentWorld->keepInventoryOnDeath)
 	{
-		std::vector<rectangularSlotContainer *> containers =
-			{
-				hotbarSlots,
-				leftHandSlot,
-				inventorySlots,
-				armorSlots,
-				leftHandSlot,
-			};
+		std::vector<rectangularSlotContainer*> containers =
+		{
+			hotbarSlots,
+			leftHandSlot,
+			inventorySlots,
+			armorSlots,
+			leftHandSlot,
+		};
 		// drop all items
-		for (rectangularSlotContainer *container : containers)
+		for (rectangularSlotContainer* container : containers)
 		{
 			// container->dropContent(getDropPosition(), floatingSlotSpeedOnDeath);
-			cint &slotCount = container->rowsAndColumns.x * container->rowsAndColumns.y;
-			cvec2 &dropPosition = getDropPosition();
+			cint& slotCount = container->rowsAndColumns.x * container->rowsAndColumns.y;
+			cvec2& dropPosition = getDropPosition();
 			for (int i = 0; i < slotCount; i++)
 			{
 				if (container->slots[i].count)
 				{
 					if (container->slots[i].getEnchantmentLevel(enchantmentID::curseOfVanishing) == 0)
 					{
-						lootTable::dropLoot({container->slots[i]}, dimensionIn, dropPosition, floatingSlotSpeedOnDeath);
+						lootTable::dropLoot({ container->slots[i] }, dimensionIn, dropPosition, floatingSlotSpeedOnDeath);
 					}
 					container->slots[i].clearData();
 				}
 			}
 		}
 		// drop experience
-		cint &levels = math::floor(getExperienceLevel(experience));
-		cint &experienceToDrop = math::minimum(levels * 7, 100);
+		cint& levels = math::floor(getExperienceLevel(experience));
+		cint& experienceToDrop = math::minimum(levels * 7, 100);
 		dropExperienceOrbs(dimensionIn, position, experienceToDrop);
 
 		experience = 0;
@@ -465,7 +466,7 @@ void human::onDeath()
 	}
 	// dont call mob::ondeath because it will look for the loot table of a human
 	entity::onDeath();
-	despawn = false; // don't let the human despawn!
+	despawn = false; // don'T let the human despawn!
 	// create a copy that respawns
 	respawn();
 }
@@ -481,7 +482,7 @@ human::~human()
 	itemHolding = nullptr;
 }
 
-void human::serializeValue(nbtSerializer &s)
+void human::serializeValue(nbtSerializer& s)
 {
 	humanoid::serializeValue(s);
 
@@ -497,25 +498,26 @@ void human::serializeValue(nbtSerializer &s)
 	s.serializeValue(std::wstring(L"food tick timer"), foodticktimer);
 	s.serializeValue(std::wstring(L"food animation ticks"), foodAnimationTime);
 	s.serializeValue(std::wstring(L"right hand slot index"), rightHandSlotIndex);
+	updateHeldItem();
 	s.serializeValue(std::wstring(L"gamemode"), currentGameMode);
 	s.serializeValue(std::wstring(L"has seen credits"), seenCredits);
 	s.serializeValue(std::wstring(L"spectator speed"), spectatorSpeed);
 	s.serializeValue(std::wstring(L"visible range"), visibleRangeXWalk);
 }
 
-bool human::serialize(cbool &write)
+bool human::serialize(cbool& write)
 {
-	const stdPath &playersFolder = savesFolder / currentWorld->name / L"players";
+	const stdPath& playersFolder = savesFolder / currentWorld->name / L"players";
 	if (write)
 	{
 		createFoldersIfNotExists(playersFolder);
 	}
-	const stdPath &path = playersFolder / (std::wstring)identifier;
+	const stdPath& path = playersFolder / (std::wstring)identifier;
 	// to point out which 'serialize' function to use. this might cause errors. is mob::serialize calling human::serializeValue?
 	return mob::serialize(L"player", path, write);
 }
 
-bool human::addDamageSource(cfp &damage, std::shared_ptr<damageSource> source)
+bool human::addDamageSource(cfp& damage, std::shared_ptr<damageSource> source)
 {
 	if (currentGameMode == gameModeID::survival || source.get()->type == voidDamage)
 	{
@@ -531,18 +533,18 @@ bool human::addDamageSource(cfp &damage, std::shared_ptr<damageSource> source)
 	}
 }
 
-bool human::compareSelector(const human &sender, const std::wstring &selectorString) const
+bool human::compareSelector(const human& sender, const std::wstring& selectorString) const
 {
 	return entity::compareSelector(sender, selectorString) ||
-		   ((&sender == this) && (selectorString == std::wstring(L"@p"))) || (selectorString == std::wstring(L"@a"));
+		((&sender == this) && (selectorString == std::wstring(L"@p"))) || (selectorString == std::wstring(L"@a"));
 }
 
-bool human::addStack(itemStack &stack)
+bool human::addStack(itemStack& stack)
 {
 	return hotbarSlots->addStack(stack) || inventorySlots->addStack(stack);
 }
 
-void human::addStackOrDrop(itemStack &stack)
+void human::addStackOrDrop(itemStack& stack)
 {
 	if (!addStack(stack))
 	{
@@ -550,17 +552,17 @@ void human::addStackOrDrop(itemStack &stack)
 	}
 }
 
-bool human::substractStack(itemStack &stack)
+bool human::substractStack(itemStack& stack)
 {
 	return hotbarSlots->substractStack(stack) || inventorySlots->substractStack(stack);
 }
 
 std::vector<vec3> human::getFrictions() const
 {
-	return flying ? std::vector<vec3>({noCollisionFriction}) : humanoid::getFrictions();
+	return flying ? std::vector<vec3>({ noCollisionFriction }) : humanoid::getFrictions();
 }
 
-void human::render(const gameRenderData &targetData) const
+void human::render(const gameRenderData& targetData) const
 {
 	if (currentGameMode == gameModeID::spectator)
 	{
@@ -569,8 +571,8 @@ void human::render(const gameRenderData &targetData) const
 
 		updateBodyParts();
 
-		const auto &transparencyBrush = solidColorBrush(color(color::halfMaxValue, 0));
-		const auto &transparentSkin = alphaMask<solidColorBrush, resolutionTexture>(transparencyBrush, *((mobData *)entityDataList[(int)entityType])->skin);
+		const auto& transparencyBrush = solidColorBrush(color(color::halfMaxValue, 0));
+		const auto& transparentSkin = alphaMask<solidColorBrush, resolutionTexture>(transparencyBrush, *((mobData*)entityDataList[(int)entityType])->skin);
 
 		head->hasTransparency = true;
 		renderBodyPart(head, mat3x3::cross(targetData.worldToRenderTargetTransform, head->getCumulativeParentTransform()), transparentSkin, targetData);
@@ -583,22 +585,22 @@ void human::render(const gameRenderData &targetData) const
 	if (!sneaking)
 	{
 		// render nametag
-		crectangle2 &hitbox = calculateHitBox();
+		crectangle2& hitbox = calculateHitBox();
 		constexpr fp averageLetterRelativeWidth = 0.7;
 		constexpr fp averageNameLetterCount = 7.0;
 		constexpr fp averageNameTagSize = 1.0;
 		constexpr fp letterSize = averageNameTagSize / (averageNameLetterCount * averageLetterRelativeWidth);
 		constexpr fp maxNameLength = 2.0;
 		minecraftFont clonedFont = minecraftFont(letterSize);
-		cvec2 &nameTagMiddleBottom = hitbox.pos0 + cvec2(hitbox.size.x * 0.5, hitbox.size.y);
-		cvec2 &movedBottom = nameTagMiddleBottom + cvec2(clonedFont.measureStringSize(cvec2(maxNameLength, letterSize), name) * -0.5, 0);
+		cvec2& nameTagMiddleBottom = hitbox.pos0 + cvec2(hitbox.size.x * 0.5, hitbox.size.y);
+		cvec2& movedBottom = nameTagMiddleBottom + cvec2(clonedFont.measureStringSize(cvec2(maxNameLength, letterSize), name) * -0.5, 0);
 
 		rectangle2 nameTagRect = crectangle2(movedBottom, cvec2(maxNameLength, letterSize));
 		clonedFont.DrawString(name, nameTagRect, targetData.renderTarget, targetData.worldToRenderTargetTransform);
 	}
 }
 
-void human::setGameMode(const gameModeID &newGameMode)
+void human::setGameMode(const gameModeID& newGameMode)
 {
 	if (newGameMode == gameModeID::spectator)
 	{
@@ -632,13 +634,13 @@ void human::pickUpFloatingSlots()
 	crectangle2 floatingSlotAttractionBox = hitbox.expanded(1.0f);	// attract items from 1 block away
 	crectangle2 experienceOrbAttractionBox = hitbox.expanded(7.0f); // attract experience from 7 blocks away
 
-	std::vector<entity *> entityList = dimensionIn->findNearEntities(experienceOrbAttractionBox);
-	for (entity *const &currentEntity : entityList)
+	std::vector<entity*> entityList = dimensionIn->findNearEntities(experienceOrbAttractionBox);
+	for (entity* const& currentEntity : entityList)
 	{
 		// entity* currentEntity = entityList[i];
 		if (currentEntity->entityType == entityID::item)
 		{
-			floatingSlot *slot = (floatingSlot *)currentEntity;
+			floatingSlot* slot = (floatingSlot*)currentEntity;
 			if ((slot->ticksAvailable >= 0) && floatingSlotAttractionBox.contains(slot->position))
 			{
 				if (collides2d(hitbox, slot->calculateHitBox()))
@@ -665,7 +667,7 @@ void human::pickUpFloatingSlots()
 		}
 		else if (currentEntity->entityType == entityID::experience_orb)
 		{
-			experienceOrb *orb = (experienceOrb *)currentEntity;
+			experienceOrb* orb = (experienceOrb*)currentEntity;
 			if (!pickedUpExperience && collides2d(hitbox, orb->calculateHitBox()))
 			{
 				orb->despawn = true;
@@ -687,11 +689,15 @@ void human::pickUpFloatingSlots()
 		}
 	}
 }
-void human::drop(itemStack &s, cint &amount)
+void human::updateHeldItem()
+{
+	itemHolding = hotbarSlots->getSlot(cveci2(rightHandSlotIndex, 0));
+}
+void human::drop(itemStack& s, cint& amount)
 {
 	constexpr fp humanDropSpeed = 10;
-	cvec2 &dropPosition = getDropPosition();
-	floatingSlot *slot = (floatingSlot *)summonEntity(entityID::item, dimensionIn, dropPosition);
+	cvec2& dropPosition = getDropPosition();
+	floatingSlot* slot = (floatingSlot*)summonEntity(entityID::item, dimensionIn, dropPosition);
 	slot->speed = (lookingAt - getHeadPosition()).normalized() * humanDropSpeed;
 	popSound->playRandomSound(dimensionIn, dropPosition);
 
@@ -716,8 +722,8 @@ bool human::canSleep() const
 {
 	return timeToLightLevel.getValue(getTimeOfDay(currentWorld->currentTime)) < maxLightLevel && immunityFrameCount == 0;
 }
-human::human(dimension *dimensionIn, cvec2 &position, gameControl &screen, const std::wstring &name) : humanoid(dimensionIn, position, entityID::human), INamable(name),
-																									   screen(screen)
+human::human(gameControl& screen, const std::wstring& name) : humanoid(entityID::human), INamable(name),
+screen(screen)
 {
 	initializeBodyParts(humanHeadTextureRect, humanBodyTextureRect, humanLeftLegTextureRect, humanRightLegTextureRect, humanLeftArmTextureRect, humanRightArmTextureRect);
 	hotbarSlots = new rectangularSlotContainer(cveci2(StandardInventoryColumnCount, 1));
@@ -738,16 +744,18 @@ human::human(dimension *dimensionIn, cvec2 &position, gameControl &screen, const
 	humanSlots = new humanSlotContainerUI();
 	linkUpInventories();
 	tasks = new playerControlledAI(this);
+	//point to 1st slot
+	itemHolding = hotbarSlots->slots;
 	// enchantmentSlots->enchantmentSeed = rand(worldRandom);
 }
-void human::onItemRightClick(itemStack &stackIn)
+void human::onItemRightClick(itemStack& stackIn)
 {
 	blockID selectedBlock = selectedBlockContainer->getBlockID(selectedBlockPosition);
-	entity *selectedEntity = getSelectedEntity();
+	entity* selectedEntity = getSelectedEntity();
 
 	if (itemList[(int)stackIn.stackItemID]->harvestType == harvestTypeID::withHoe)
 	{
-		std::vector<blockID> hoeArray = {blockID::dirt, blockID::grass_block};
+		std::vector<blockID> hoeArray = { blockID::dirt, blockID::grass_block };
 		if (std::find(hoeArray.begin(), hoeArray.end(), selectedBlock) != hoeArray.end())
 		{
 			selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::farmland, chunkLoadLevel::updateLoaded);
@@ -764,7 +772,7 @@ void human::onItemRightClick(itemStack &stackIn)
 		if (isTreeType(selectedBlock) && getTreeItemType(selectedBlock) == treeItemTypeID::log)
 		{
 			// caution! data will be deleted once we setBlockWithData
-			facingData *data = dynamic_cast<facingData *>(selectedBlockContainer->getBlockData(selectedBlockPosition));
+			facingData* data = dynamic_cast<facingData*>(selectedBlockContainer->getBlockData(selectedBlockPosition));
 			selectedBlockContainer->setBlockWithData(selectedBlockPosition, (blockID)((int)selectedBlock + 1), new facingData(data->directionFacing), chunkLoadLevel::updateLoaded);
 			;
 			stripLogSound->playRandomSound(selectedBlockContainer, exactBlockIntersection);
@@ -777,7 +785,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	{
 		if (selectedBlock == blockID::jukebox)
 		{
-			jukeBoxData *data = (jukeBoxData *)selectedBlockContainer->getBlockData(selectedBlockPosition);
+			jukeBoxData* data = (jukeBoxData*)selectedBlockContainer->getBlockData(selectedBlockPosition);
 			if (data->recordSlot->slots[0].count == 0)
 			{
 				data->recordSlot->addStack(stackIn);
@@ -788,7 +796,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	}
 	else if (wantsToStartUsing)
 	{
-		const blockID &blockToPlace = getBlockToPlace(stackIn.stackItemID);
+		const blockID& blockToPlace = getBlockToPlace(stackIn.stackItemID);
 		if ((int)blockToPlace && placeBlock(blockToPlace))
 		{
 			if (currentGameMode != gameModeID::creative)
@@ -796,6 +804,18 @@ void human::onItemRightClick(itemStack &stackIn)
 				stackIn.add(-1);
 			}
 			return;
+		}
+		if (selectedEntity && isBreedItem(selectedEntity->entityType, itemHolding->stackItemID)) {
+			mob* selectedMob = (mob*)selectedEntity;
+			if (selectedMob->ticksInLove == 0 && selectedMob->age >= adultAge) {
+				//will search a partner for 30 seconds
+				selectedMob->ticksInLove = 30 * ticksPerRealLifeSecond;
+				selectedMob->updateBodyParts();
+				summonEntity(new iconParticle(particleID::heart), selectedMob->dimensionIn, selectedMob->getHeadPosition());
+				if (currentGameMode != gameModeID::creative)
+					stackIn.add(-1);
+				return;
+			}
 		}
 	}
 	if (stackIn.stackItemID == itemID::end_crystal && wantsToStartUsing)
@@ -843,7 +863,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	{
 		// switch or equip armor
 		// equip armor
-		itemStack *armorSlot = &armorSlots->slots[getArmorType(stackIn.stackItemID) - bootsArmorType];
+		itemStack* armorSlot = &armorSlots->slots[getArmorType(stackIn.stackItemID) - bootsArmorType];
 		if (!wantsToStartUsing && armorSlot->count)
 		{
 			return; // to prevent continuous swapping of armor, but to allow putting all armor on while holding RMB and scrolling
@@ -855,7 +875,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	{
 		if (selectedBlock == blockID::snow)
 		{
-			snowLayerData *data = dynamic_cast<snowLayerData *>(selectedBlockContainer->getBlockData(selectedBlockPosition));
+			snowLayerData* data = dynamic_cast<snowLayerData*>(selectedBlockContainer->getBlockData(selectedBlockPosition));
 			if (data->layerThickness < 1)
 			{
 				data->layerThickness = math::minimum(data->layerThickness + minimalSnowLayerThickness, (fp)1.0);
@@ -869,13 +889,14 @@ void human::onItemRightClick(itemStack &stackIn)
 	}
 	else if (wantsToStartUsing && isBoatOrMinecart(stackIn.stackItemID))
 	{
-		const entityID &entityTypeToSpawn = isBoat(stackIn.stackItemID) ? entityID::boat : entityID::minecart;
+		const entityID& entityTypeToSpawn = isBoat(stackIn.stackItemID) ? entityID::boat : entityID::minecart;
 
 		// place boat
 		vec2 positionToPlace = exactBlockIntersection;
 		crectangle2 initialRelativeHitbox = entityDataList[(int)entityTypeToSpawn]->initialRelativeHitbox;
 		vec2 boatPos00 = positionToPlace - initialRelativeHitbox.size * 0.5;
-		ridableEntity *r = (ridableEntity *)createEntity(entityTypeToSpawn, dimensionIn, boatPos00 - initialRelativeHitbox.pos0);
+		ridableEntity* r = (ridableEntity*)createEntity(entityTypeToSpawn);
+		r->setInitialPosition(dimensionIn, boatPos00 - initialRelativeHitbox.pos0);
 
 		// check if hitbox collides
 		collisionTypeID top = dimensionIn->getHitboxCollisionType(r->calculateHitBox());
@@ -885,7 +906,7 @@ void human::onItemRightClick(itemStack &stackIn)
 			r->addToWorld();
 			if (isBoat(stackIn.stackItemID))
 			{
-				((boat *)r)->boatType = (woodTypeID)((int)stackIn.stackItemID - (int)itemID::wood_boat);
+				((boat*)r)->boatType = (woodTypeID)((int)stackIn.stackItemID - (int)itemID::wood_boat);
 			}
 			r->addCollidingEntities();
 			if (currentGameMode != gameModeID::creative)
@@ -917,19 +938,19 @@ void human::onItemRightClick(itemStack &stackIn)
 			const entityID mobToSpawn = mobList[(int)stackIn.stackItemID - (int)itemID::spawn_egg];
 			if (selectedBlock == blockID::spawner)
 			{
-				dynamic_cast<spawnerData *>(selectedBlockContainer->getBlockData(selectedBlockPosition))->entityToSpawn = mobToSpawn;
+				dynamic_cast<spawnerData*>(selectedBlockContainer->getBlockData(selectedBlockPosition))->entityToSpawn = mobToSpawn;
 			}
 			else
 			{
 				// spawn mob
-				entity *summonedEntity = summonEntity(mobToSpawn, selectedBlockContainer, exactBlockIntersection);
+				entity* summonedEntity = summonEntity(mobToSpawn, selectedBlockContainer, exactBlockIntersection);
 				if (selectedUUID)
 				{
-					entity *e = selectedBlockContainer->findUUID(position, humanArmRange + mobSizeMargin, selectedUUID);
+					entity* e = selectedBlockContainer->findUUID(position, humanArmRange + mobSizeMargin, selectedUUID);
 					if (e && isRidable(e->entityType))
 					{
-						ridableEntity *selectedRidable = (ridableEntity *)e;
-						selectedRidable->addPassenger((mob *)summonedEntity);
+						ridableEntity* selectedRidable = (ridableEntity*)e;
+						selectedRidable->addPassenger((mob*)summonedEntity);
 					}
 				}
 			}
@@ -942,7 +963,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	}
 	else if (stackIn.stackItemID == itemID::ender_eye && selectedBlock == blockID::end_portal_frame)
 	{
-		endPortalFrameData *data = dynamic_cast<endPortalFrameData *>(selectedBlockContainer->getBlockData(selectedBlockPosition));
+		endPortalFrameData* data = dynamic_cast<endPortalFrameData*>(selectedBlockContainer->getBlockData(selectedBlockPosition));
 		if (!data->hasEye && endPortalFrameEyeBlockRect.contains(lookingAt - selectedBlockPosition))
 		{
 			int checkDirection = data->directionFacing == directionID::negativeX ? -1 : 1;
@@ -953,7 +974,7 @@ void human::onItemRightClick(itemStack &stackIn)
 				if (currentBlock == blockID::end_portal_frame)
 				{
 					// found the other frame
-					endPortalFrameData *otherSideData = dynamic_cast<endPortalFrameData *>(selectedBlockContainer->getBlockData(currentPosition));
+					endPortalFrameData* otherSideData = dynamic_cast<endPortalFrameData*>(selectedBlockContainer->getBlockData(currentPosition));
 					// check direction
 					if (otherSideData->directionFacing != data->directionFacing)
 					{
@@ -1006,7 +1027,7 @@ void human::onItemRightClick(itemStack &stackIn)
 		{
 			if (selectedEntity->entityType == entityID::sheep)
 			{
-				sheep *selectedSheep = dynamic_cast<sheep *>(selectedEntity);
+				sheep* selectedSheep = dynamic_cast<sheep*>(selectedEntity);
 				if (selectedSheep->hasWool)
 				{
 					cvec2 shearPosition = selectedSheep->mainBodyPart->translate;
@@ -1017,15 +1038,15 @@ void human::onItemRightClick(itemStack &stackIn)
 
 					selectedSheep->hasWool = false;
 					// drop wool at location of the main body part of the sheep
-					lootTable::dropLoot({itemStack((itemID)((int)blockID::wool + (int)selectedSheep->woolColor), rand(currentRandom, 1, 3))}, dimensionIn, shearPosition, maxFloatingSlotSpeed);
+					lootTable::dropLoot({ itemStack((itemID)((int)blockID::wool + (int)selectedSheep->woolColor), rand(currentRandom, 1, 3)) }, dimensionIn, shearPosition, maxFloatingSlotSpeed);
 					return;
 				}
 			}
 		}
 		else if (selectedBlock == blockID::pumpkin)
 		{
-			cvec2 &shearPosition = cvec2(selectedBlockPosition) + 0.5;
-			lootTable::dropLoot({itemStack(itemID::pumpkin_seeds, rand(currentRandom, 1, 3))}, selectedBlockContainer, shearPosition, maxFloatingSlotSpeed);
+			cvec2& shearPosition = cvec2(selectedBlockPosition) + 0.5;
+			lootTable::dropLoot({ itemStack(itemID::pumpkin_seeds, rand(currentRandom, 1, 3)) }, selectedBlockContainer, shearPosition, maxFloatingSlotSpeed);
 			selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::carved_pumpkin, chunkLoadLevel::updateLoaded);
 			pumpkinCarveSound->playRandomSound(selectedBlockContainer, shearPosition);
 			return;
@@ -1035,7 +1056,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	{
 		if (selectedEntity && isMob(selectedEntity->entityType))
 		{
-			mob *selectedMob = (mob *)selectedEntity;
+			mob* selectedMob = (mob*)selectedEntity;
 			if (selectedMob->entityType == entityID::cow)
 			{
 				stackIn.add(-1);
@@ -1050,7 +1071,7 @@ void human::onItemRightClick(itemStack &stackIn)
 		// scoop up
 		if (isFluid(selectedBlock))
 		{
-			fluidLevel fluidLevel = ((fluidData *)selectedBlockContainer->getBlockData(selectedBlockPosition))->currentFluidLevel;
+			fluidLevel fluidLevel = ((fluidData*)selectedBlockContainer->getBlockData(selectedBlockPosition))->currentFluidLevel;
 			if (fluidLevel)
 			{
 				if (currentGameMode != gameModeID::creative)
@@ -1078,21 +1099,21 @@ void human::onItemRightClick(itemStack &stackIn)
 	else if ((stackIn.stackItemID == itemID::water_bucket || stackIn.stackItemID == itemID::lava_bucket))
 	{
 		blockID fluidID = stackIn.stackItemID == itemID::water_bucket ? blockID::water : blockID::lava;
-		if ((currentGameMode != gameModeID::creative) && ((bucketData *)stackIn.data)->fillLevel != maxFluidLevel &&
+		if ((currentGameMode != gameModeID::creative) && ((bucketData*)stackIn.data)->fillLevel != maxFluidLevel &&
 			selectedBlockContainer->getBlockID(selectedBlockPosition) == fluidID)
 		{
 			// scoop up more
-			fluidData *selectedFluidData = (fluidData *)selectedBlockContainer->getBlockData(selectedBlockPosition);
+			fluidData* selectedFluidData = (fluidData*)selectedBlockContainer->getBlockData(selectedBlockPosition);
 			fluidLevel transferAmount = selectedFluidData->currentFluidLevel;
 
-			cint totalAmount = selectedFluidData->currentFluidLevel + ((bucketData *)stackIn.data)->fillLevel;
+			cint totalAmount = selectedFluidData->currentFluidLevel + ((bucketData*)stackIn.data)->fillLevel;
 			if (totalAmount > maxFluidLevel)
 			{
-				transferAmount = maxFluidLevel - ((bucketData *)stackIn.data)->fillLevel;
+				transferAmount = maxFluidLevel - ((bucketData*)stackIn.data)->fillLevel;
 			}
 
 			selectedFluidData->currentFluidLevel -= transferAmount;
-			((bucketData *)stackIn.data)->fillLevel += transferAmount;
+			((bucketData*)stackIn.data)->fillLevel += transferAmount;
 			if (selectedFluidData->currentFluidLevel == 0)
 			{
 				selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::air, chunkLoadLevel::updateLoaded);
@@ -1109,8 +1130,8 @@ void human::onItemRightClick(itemStack &stackIn)
 			if (selectedBlockContainer->getBlock(selectedBlockPosition)->canReplaceBlock)
 			{
 				selectedBlockContainer->setBlockID(selectedBlockPosition, fluidID, chunkLoadLevel::updateLoaded);
-				fluidData *selectedFluidData = (fluidData *)selectedBlockContainer->getBlockData(selectedBlockPosition);
-				selectedFluidData->currentFluidLevel = ((bucketData *)stackIn.data)->fillLevel;
+				fluidData* selectedFluidData = (fluidData*)selectedBlockContainer->getBlockData(selectedBlockPosition);
+				selectedFluidData->currentFluidLevel = ((bucketData*)stackIn.data)->fillLevel;
 
 				cvec2 soundPosition = selectedBlockPosition + cvec2(0.5);
 				if (fluidID == blockID::water)
@@ -1136,7 +1157,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	{
 		if (selectedBlockContainer->getBlockID(selectedBlockPosition) == blockID::water)
 		{
-			fluidData *data = dynamic_cast<fluidData *>(selectedBlockContainer->getBlockData(selectedBlockPosition));
+			fluidData* data = dynamic_cast<fluidData*>(selectedBlockContainer->getBlockData(selectedBlockPosition));
 			if (data->currentFluidLevel >= bottleFluidLevel)
 			{
 				if (currentGameMode != gameModeID::creative)
@@ -1162,7 +1183,7 @@ void human::onItemRightClick(itemStack &stackIn)
 			}
 		}
 	}
-	else if (stackIn.stackItemID == itemID::potion && wantsToStartUsing && (((potionData *)stackIn.data)->effectsToAdd.size() == 0))
+	else if (stackIn.stackItemID == itemID::potion && wantsToStartUsing && (((potionData*)stackIn.data)->effectsToAdd.size() == 0))
 	{
 		if (selectedBlock == blockID::water || selectedBlock == blockID::air)
 		{
@@ -1172,7 +1193,7 @@ void human::onItemRightClick(itemStack &stackIn)
 			}
 			else if (selectedBlock == blockID::water)
 			{
-				fluidData *data = dynamic_cast<fluidData *>(selectedBlockContainer->getBlockData(selectedBlockPosition));
+				fluidData* data = dynamic_cast<fluidData*>(selectedBlockContainer->getBlockData(selectedBlockPosition));
 				data->currentFluidLevel = math::minimum(data->currentFluidLevel, maxFluidLevel);
 			}
 			if (currentGameMode != gameModeID::creative)
@@ -1193,7 +1214,7 @@ void human::onItemRightClick(itemStack &stackIn)
 			{
 				// bite
 				// add particle
-				summonParticle(dimensionIn, getHeadPosition(), new itemParticleBrush(stackIn.stackItemID), maxEatingParticleSpeed);
+				summonEntity(new itemParticle(particleID::item, stackIn.stackItemID), dimensionIn, getHeadPosition());
 				eatSound->playRandomSound(dimensionIn, getHeadPosition());
 			}
 
@@ -1210,43 +1231,43 @@ void human::onItemRightClick(itemStack &stackIn)
 				}
 				else if (stackIn.stackItemID == itemID::golden_apple)
 				{
-					addStatusEffects(std::vector<statusEffect>({statusEffect(statusEffectID::absorption, 2 * ticksPerRealLifeMinute),
-																statusEffect(statusEffectID::regeneration, 5 * ticksPerRealLifeSecond, 2)}));
+					addStatusEffects(std::vector<statusEffect>({ statusEffect(statusEffectID::absorption, 2 * ticksPerRealLifeMinute),
+																statusEffect(statusEffectID::regeneration, 5 * ticksPerRealLifeSecond, 2) }));
 				}
 				else if (stackIn.stackItemID == itemID::enchanted_golden_apple)
 				{
-					addStatusEffects(std::vector<statusEffect>({statusEffect(statusEffectID::absorption, 2 * ticksPerRealLifeMinute, 4),
+					addStatusEffects(std::vector<statusEffect>({ statusEffect(statusEffectID::absorption, 2 * ticksPerRealLifeMinute, 4),
 																statusEffect(statusEffectID::regeneration, 20 * ticksPerRealLifeSecond, 2),
 																statusEffect(statusEffectID::fireResistance, 5 * ticksPerRealLifeMinute),
-																statusEffect(statusEffectID::resistance, 5 * ticksPerRealLifeMinute)}));
+																statusEffect(statusEffectID::resistance, 5 * ticksPerRealLifeMinute) }));
 				}
 				else if (stackIn.stackItemID == itemID::rotten_flesh)
 				{
 					if (!randChance(currentRandom, 5))
 					{
-						addStatusEffects({statusEffect(statusEffectID::hunger, 600, 1)});
+						addStatusEffects({ statusEffect(statusEffectID::hunger, 600, 1) });
 					}
 				}
 				else if (stackIn.stackItemID == itemID::chicken)
 				{
 					if (randIndex(currentRandom, 10) < 3) // 30 % chance
 					{
-						addStatusEffects({statusEffect(statusEffectID::hunger, 600, 1)});
+						addStatusEffects({ statusEffect(statusEffectID::hunger, 600, 1) });
 					}
 				}
 				else if (stackIn.stackItemID == itemID::pufferfish)
 				{
-					addStatusEffects({statusEffect(statusEffectID::hunger, 300, 3),
+					addStatusEffects({ statusEffect(statusEffectID::hunger, 300, 3),
 									  statusEffect(statusEffectID::poison, ticksPerRealLifeMinute, 2),
-									  statusEffect(statusEffectID::nausea, 15 * ticksPerRealLifeSecond, 1)});
+									  statusEffect(statusEffectID::nausea, 15 * ticksPerRealLifeSecond, 1) });
 				}
 				else if (stackIn.stackItemID == itemID::spider_eye)
 				{
-					addStatusEffects({statusEffect(statusEffectID::poison, 4 * ticksPerRealLifeSecond, 1)});
+					addStatusEffects({ statusEffect(statusEffectID::poison, 4 * ticksPerRealLifeSecond, 1) });
 				}
 				else if ((stackIn.stackItemID == itemID::poisonous_potato) && (randIndex(currentRandom, 5) < 3))
 				{
-					addStatusEffects({statusEffect(statusEffectID::poison, 5 * ticksPerRealLifeSecond, 1)});
+					addStatusEffects({ statusEffect(statusEffectID::poison, 5 * ticksPerRealLifeSecond, 1) });
 				}
 				if (currentGameMode != gameModeID::creative)
 				{
@@ -1281,7 +1302,7 @@ void human::onItemRightClick(itemStack &stackIn)
 			// apply effects
 			if (stackIn.stackItemID == itemID::potion)
 			{
-				potionData *data = (potionData *)stackIn.data;
+				potionData* data = (potionData*)stackIn.data;
 				addStatusEffects(data->effectsToAdd);
 			}
 			else if (stackIn.stackItemID == itemID::milk_bucket)
@@ -1305,7 +1326,7 @@ void human::onItemRightClick(itemStack &stackIn)
 	}
 }
 
-void human::onItemRightClickReleased(itemStack &stackIn)
+void human::onItemRightClickReleased(itemStack& stackIn)
 {
 	if (stackIn.stackItemID == itemID::bow)
 	{
@@ -1324,10 +1345,10 @@ void human::onItemRightClickReleased(itemStack &stackIn)
 void human::linkUpInventories() const
 {
 	// link all containers up
-	const std::vector<inventory *> inventories =
-		{humanSlots, craftingTableSlots, smithingTableSlots, anvilSlots, furnaceSlots, chestSlots, enchantmentSlots, brewingStandSlots, dispenserSlots};
+	const std::vector<inventory*> inventories =
+	{ humanSlots, craftingTableSlots, smithingTableSlots, anvilSlots, furnaceSlots, chestSlots, enchantmentSlots, brewingStandSlots, dispenserSlots };
 
-	for (inventory *const &inventoryToLinkUp : inventories)
+	for (inventory* const& inventoryToLinkUp : inventories)
 	{
 		inventoryToLinkUp->hotbarSlots->linkedContainer = hotbarSlots;
 		inventoryToLinkUp->inventorySlots->linkedContainer = inventorySlots;
@@ -1351,7 +1372,7 @@ void human::respawn()
 
 	// respawnedHuman->seenCredits = seenCredits;
 }
-void human::addExperience(cint &amount)
+void human::addExperience(cint& amount)
 {
 	if (amount)
 	{
@@ -1424,12 +1445,12 @@ void human::calculateFood()
 		foodticktimer = 0;
 	}
 }
-void human::addExhaustion(cfp &exhaustion)
+void human::addExhaustion(cfp& exhaustion)
 {
 	foodExhaustionlevel += exhaustion;
 }
 
-rectangle2 human::calculateHitBox(cvec2 &position) const
+rectangle2 human::calculateHitBox(cvec2& position) const
 {
 	return sleeping ? crectangle2(position.x - humanHitboxSize.y / 2, position.y, humanHitboxSize.y, humanHitboxSize.x) : humanoid::calculateHitBox(position);
 }

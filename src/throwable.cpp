@@ -4,7 +4,7 @@
 #include "throwable.h"
 #include "dimension.h"
 #include "nbt/serializeUUID.h"
-throwable::throwable(dimension* dimensionIn, cvec2& position, const entityID& entityType) :entity(dimensionIn, position, entityType)
+throwable::throwable(const entityID& entityType) :entity(entityType)
 {
 }
 

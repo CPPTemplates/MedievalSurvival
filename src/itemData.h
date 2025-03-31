@@ -7,9 +7,9 @@
 #include "idList.h"
 struct itemData :IItemComparable, IDestructable
 {
-	itemData(const itemID& identifier, std::wstring name, resolutionTexture* tex, cint& burningTicks = -1, harvestTierID harvestTier = noHarvestTier, harvestTypeID harvestType = withHand, fp attackDamageModifier = 0, fp attackSpeedModifier = INFINITY, int maxStackSize = 0x40, bool hasHilt = false, armorTierID protectionTier = noArmorTier, armorTypeID protectionType = noArmorType, std::vector<enchantmentID> possibleEnchantments = std::vector<enchantmentID>(), int enchantability = 0) :
+	itemData(const itemID& identifier, std::wstring name, resolutionTexture* tex, harvestTierID harvestTier = noHarvestTier, harvestTypeID harvestType = withHand, fp attackDamageModifier = 0, fp attackSpeedModifier = INFINITY, int maxStackSize = 0x40, bool hasHilt = false, armorTierID protectionTier = noArmorTier, armorTypeID protectionType = noArmorType, std::vector<enchantmentID> possibleEnchantments = std::vector<enchantmentID>(), int enchantability = 0) :
 		//identifier(identifier), maxStackSize(maxStackSize), tex(tex), name(name), fuelTicks(burningTicks), attackDamageModifier(attackDamageModifier), attackSpeedModifier(attackSpeedModifier), harvestTier(harvestTier), harvestType(harvestType), hasHilt(hasHilt), protectionTier(protectionTier), protectionType(protectionType), possibleEnchantments(possibleEnchantments), enchantability(enchantability) {}
-		identifier(identifier), maxStackSize(maxStackSize), tex(tex), name(name), attackDamageModifier(attackDamageModifier), attackSpeedModifier(attackSpeedModifier), harvestTier(harvestTier), harvestType(harvestType), protectionTier(protectionTier), protectionType(protectionType), hasHilt(hasHilt), fuelTicks(burningTicks), enchantability(enchantability), possibleEnchantments(possibleEnchantments) {}
+		identifier(identifier), maxStackSize(maxStackSize), tex(tex), name(name), attackDamageModifier(attackDamageModifier), attackSpeedModifier(attackSpeedModifier), harvestTier(harvestTier), harvestType(harvestType), protectionTier(protectionTier), protectionType(protectionType), hasHilt(hasHilt), enchantability(enchantability), possibleEnchantments(possibleEnchantments) {}
 	itemID identifier = (itemID)0;
 	int maxStackSize = 0x40;
 	resolutionTexture* tex = nullptr;

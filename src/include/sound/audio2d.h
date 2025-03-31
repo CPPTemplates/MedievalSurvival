@@ -51,9 +51,9 @@ struct audio2dt : audio2d, IDestructable
 	virtual void setPlayingOffset(const microseconds& offset) override;
 	virtual microseconds getPlayingOffset() override;
 	virtual void setPosition(cvec2& newPosition) override;
-	inline void setSpeed(cvec2& speed) const
+	inline void setSpeed(cvec2& newSpeed) const
 	{
-		playingAudio->setVelocity({ (float)speed.x, (float)speed.y, 0.f });
+		playingAudio->setVelocity({ (float)newSpeed.x, (float)newSpeed.y, 0.f });
 	}
 
 	virtual void play() override;
@@ -67,21 +67,21 @@ struct audio2dt : audio2d, IDestructable
 		playingAudio = nullptr;
 	}
 };
-template <typename t>
-inline bool audio2dt<t>::audioLoaded() const
+template <typename T>
+inline bool audio2dt<T>::audioLoaded() const
 {
 	return playingAudio;
 }
 
-template <typename t>
-inline sf::SoundSource::Status audio2dt<t>::getStatus() const
+template <typename T>
+inline sf::SoundSource::Status audio2dt<T>::getStatus() const
 {
 	assumeInRelease((bool)playingAudio);
 	return playingAudio->getStatus();
 }
 
-template <typename t>
-inline void audio2dt<t>::unLoadAudio()
+template <typename T>
+inline void audio2dt<T>::unLoadAudio()
 {
 	if (playingAudio)
 	{
@@ -91,62 +91,62 @@ inline void audio2dt<t>::unLoadAudio()
 	}
 }
 
-template <typename t>
-inline void audio2dt<t>::setMinDistance(cfp& minDistance)
+template <typename T>
+inline void audio2dt<T>::setMinDistance(cfp& minDistance)
 {
 	playingAudio->setMinDistance((float)minDistance);
 }
 
-template <typename t>
-inline void audio2dt<t>::setAttenuation(cfp& attenuation)
+template <typename T>
+inline void audio2dt<T>::setAttenuation(cfp& attenuation)
 {
 	playingAudio->setAttenuation((float)attenuation);
 }
 
-template <typename t>
-inline void audio2dt<t>::setVolume(cfp& volume)
+template <typename T>
+inline void audio2dt<T>::setVolume(cfp& newVolume)
 {
-	if (audio2d::volume != volume)
+	if (audio2d::volume != newVolume)
 	{
 
-		audio2d::volume = volume;
+		audio2d::volume = newVolume;
 		if (playingAudio)
 		{
-			playingAudio->setVolume((float)volume * 100.0f);
+			playingAudio->setVolume((float)newVolume * 100.0f);
 		}
 	}
 }
-template <typename t>
-inline void audio2dt<t>::setPitch(cfp& pitch)
+template <typename T>
+inline void audio2dt<T>::setPitch(cfp& newPitch)
 {
-	audio2d::pitch = pitch;
+	audio2d::pitch = newPitch;
 	if (playingAudio)
 	{
-		playingAudio->setPitch((float)pitch);
+		playingAudio->setPitch((float)newPitch);
 	}
 }
 
-template <typename t>
-inline void audio2dt<t>::setPlayingOffset(const microseconds& offset)
+template <typename T>
+inline void audio2dt<T>::setPlayingOffset(const microseconds& offset)
 {
 	playingAudio->setPlayingOffset(sf::microseconds(offset));
 }
 
-template <typename t>
-inline microseconds audio2dt<t>::getPlayingOffset()
+template <typename T>
+inline microseconds audio2dt<T>::getPlayingOffset()
 {
 	return playingAudio->getPlayingOffset().asMicroseconds();
 }
 
-template <typename t>
-inline void audio2dt<t>::setPosition(cvec2& newPosition)
+template <typename T>
+inline void audio2dt<T>::setPosition(cvec2& newPosition)
 {
 	playingAudio->setPosition({ (float)newPosition.x, (float)newPosition.y, 0 });
 	audio2d::setPosition(newPosition);
 }
 
-template <typename t>
-inline void audio2dt<t>::play()
+template <typename T>
+inline void audio2dt<T>::play()
 {
 	playingAudio->play();
 	if (pitch != 1)
@@ -161,8 +161,8 @@ inline void audio2dt<t>::play()
 	}
 }
 
-template <typename t>
-inline void audio2dt<t>::stop()
+template <typename T>
+inline void audio2dt<T>::stop()
 {
 	playingAudio->stop();
 }

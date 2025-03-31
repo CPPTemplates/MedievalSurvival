@@ -16,29 +16,29 @@ struct ep
 
 	}
 
-	template<typename t>
+	template<typename T>
 	constexpr uint64_t getMult() const
 	{
-		return std::is_same<t, float>::value ? math::powSizeTSimple<uint64_t>(FLT_RADIX, FLT_MANT_DIG) :
-			(std::is_same<t, double>::value ? math::powSizeTSimple<uint64_t>(DBL_RADIX, DBL_MANT_DIG) :
+		return std::is_same<T, float>::value ? math::powSizeTSimple<uint64_t>(FLT_RADIX, FLT_MANT_DIG) :
+			(std::is_same<T, double>::value ? math::powSizeTSimple<uint64_t>(DBL_RADIX, DBL_MANT_DIG) :
 				math::powSizeTSimple<uint64_t>(LDBL_RADIX, LDBL_MANT_DIG));
 	}
 
 	//https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-	template<typename t>
-	ep(const t& val)
+	template<typename T>
+	ep(const T& val)
 	{
-		t withoutExponent = frexp(val, &exponent);
+		T withoutExponent = frexp(val, &exponent);
 
 
-		uint64_t baseVal = withoutExponent * getMult<t>();
+		uint64_t baseVal = withoutExponent * getMult<T>();
 
 		data[0] = baseVal;
 		data[1] = baseVal >> 32;
 	}
 
-	template<typename t>
-	operator t() const 
+	template<typename T>
+	operator T() const 
 	{
 		
 
@@ -46,15 +46,15 @@ struct ep
 
 		//cut the value down to the least significant bits
 
-		uint64_t mult = getMult<t>();
+		uint64_t mult = getMult<T>();
 
 		while (baseVal > mult)
 		{
 			baseVal /= 2;
 		}
-		t withoutExponent = baseVal / (t)mult;
+		T withoutExponent = baseVal / (T)mult;
 
-		//t withoutExponent = (baseVal % mult) / (t)mult;
+		//T withoutExponent = (baseVal % mult) / (T)mult;
 
 		return ldexp(withoutExponent, exponent);
 	}

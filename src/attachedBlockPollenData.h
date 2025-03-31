@@ -11,7 +11,7 @@ struct attachedBlockPollenData : virtual pollenData, attachedBlockData
 	{
 		return pollenData::randomTick(containerIn, position);
 	}
-	//using attachedBlockData::tick;  //doesn't work
+	//using attachedBlockData::tick;  //doesn'T work
 	//using pollenData::randomTick;
 	attachedBlockPollenData() : pollenData(), attachedBlockData() {}
 };

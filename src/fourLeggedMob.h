@@ -3,7 +3,7 @@
 //keep this at first in the derived struct list!
 struct fourLeggedMob : virtual mob
 {
-	fourLeggedMob(dimension* dimensionIn, cvec2& position, const entityID& entityType);
+	fourLeggedMob(const entityID& entityType);
 
 	bodyPart2D* backLeftLeg = nullptr;
 	bodyPart2D* backRightLeg = nullptr;

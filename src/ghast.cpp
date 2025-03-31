@@ -4,7 +4,7 @@
 #include "taskList.h"
 #include "ghastFireBallAI.h"
 #include "wanderAI.h"
-ghast::ghast(dimension* dimensionIn, cvec2& position) :mob(dimensionIn, position, entityID::ghast)
+ghast::ghast() :mob(entityID::ghast)
 {
 	tasks = new taskList(this, {
 	new ghastFireBallAI(this),

@@ -377,7 +377,8 @@ void structureFeature::placeStructurePart(structure* s, tickableBlockContainer* 
 		//add entities
 		for (entity* e : s->entities)
 		{
-			entity* clonedEntity = createEntity(e->entityType, containerIn->rootDimension, entitiesToWorldTransform.multPointMatrix(e->position));
+			entity* clonedEntity = createEntity(e->entityType);
+			clonedEntity->setInitialPosition(containerIn, entitiesToWorldTransform.multPointMatrix(e->position));
 			e->clone(*clonedEntity);
 			clonedEntity->newPosition = entitiesToWorldTransform.multPointMatrix(e->newPosition);
 			if (flipX)

@@ -17,7 +17,7 @@ struct application: INamable, IDestructable
 {
 	//WINDOWPLACEMENT g_wpPrev = WINDOWPLACEMENT();
 
-	//pointer because a copy constructor isn't implemented
+	//pointer because a copy constructor isn'T implemented
 	sf::RenderWindow* window = nullptr;
 	sf::Texture* windowTexture;
 	sf::Sprite* windowSprite;

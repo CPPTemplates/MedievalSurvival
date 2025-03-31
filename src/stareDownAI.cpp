@@ -26,7 +26,7 @@ bool stareDownAI::shouldExecute()
 				crectangle2(endermanHeadPos, cvec2()).expanded(endermanHeadTextureRect.size.x * endermanPixelSize * 0.5), tMin, tMax)
 				)
 			{
-				if (targetNear(m)) {
+				if (canSeeTarget(m)) {
 					target = m->identifier;
 					ticksAngry = maxTicksAngry;
 					endermanStareSound->playRandomSound(connectedEntity->dimensionIn, endermanHeadPos);

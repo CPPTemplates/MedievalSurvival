@@ -49,7 +49,7 @@
 #include "human.h"
 #include "chunk.h"
 #include "tag.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 
 bool world::serialize(cbool& write)
 {
@@ -181,7 +181,7 @@ world::~world()
 
 	for (size_t i = 0; i < biomeList.size(); i++)
 	{
-		//new biomes don't have to exist
+		//new biomes don'T have to exist
 		if (biomeList[i])
 		{
 			delete biomeList[i];

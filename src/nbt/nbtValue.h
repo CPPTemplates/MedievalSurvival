@@ -1,12 +1,12 @@
 #pragma once
 #include "type/conversion.h"
-template<typename t>
+template<typename T>
 struct nbtValue :nbtData
 {
-	t data = t();
+	T data = T();
 	virtual inline bool serialize(const streamSerializer& s) override
 	{
-		static_assert(!std::is_pointer<t>::value, "no arrays");
+		static_assert(!std::is_pointer<T>::value, "no arrays");
 		if (dataTag == nbtDataTag::tagUTF8String)
 		{
 			byte* ptr = (byte*)&data;
@@ -15,7 +15,7 @@ struct nbtValue :nbtData
 		}
 		else
 		{
-			if constexpr (is_endian_convertable_v<t>) {
+			if constexpr (is_endian_convertable_v<T>) {
 				s.serialize(data);
 			}
 		}
@@ -25,15 +25,15 @@ struct nbtValue :nbtData
 	{
 		if (write)
 		{
-			if constexpr (std::is_integral<t>::value)
+			if constexpr (std::is_integral<T>::value)
 			{
 				s = std::to_wstring(data);
 			}
-			else if constexpr (std::is_floating_point<t>::value)
+			else if constexpr (std::is_floating_point<T>::value)
 			{
 				s = std::to_wstring(data);
 			}
-			else if constexpr (std::is_same<t, std::wstring>::value)
+			else if constexpr (std::is_same<T, std::wstring>::value)
 			{
 				s = data;
 			}
@@ -46,14 +46,14 @@ struct nbtValue :nbtData
 		}
 		else
 		{
-			return convertTo<t>(s, data);
+			return convertTo<T>(s, data);
 		}
 	}
-	nbtValue(const std::wstring& name, const nbtDataTag& dataTag) :nbtData(name, dataTag), data(t()) {}
+	nbtValue(const std::wstring& name, const nbtDataTag& dataTag) :nbtData(name, dataTag), data(T()) {}
 	virtual bool compare(const nbtData& other) const override;
 };
-template<typename t>
-inline bool nbtValue<t>::compare(const nbtData& other) const
+template<typename T>
+inline bool nbtValue<T>::compare(const nbtData& other) const
 {
-	return ((const nbtValue<t>&)other).data == data;
+	return ((const nbtValue<T>&)other).data == data;
 }

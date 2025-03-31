@@ -5,7 +5,7 @@
 #include "enderDragonCirclingAI.h"
 #include "math/vector/vectorrandom.h"
 #include "nbt/nbtSerializer.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 void enderDragonCirclingAI::startExecuting()
 {
 	chooseTargetPoint();

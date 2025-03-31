@@ -2,7 +2,7 @@
 #include "nbt/nbtSerializer.h"
 void nbtSerializable::serializeValue(nbtSerializer& s)
 {
-	//don't throw an error, it could be that something just has no data to serialize
+	//don'T throw an error, it could be that something just has no data to serialize
 }
 
 void nbtSerializable::serialize(nbtSerializer& s, const std::wstring& name)

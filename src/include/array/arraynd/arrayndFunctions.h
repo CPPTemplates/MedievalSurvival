@@ -1,10 +1,10 @@
 #pragma once
 #include "arraynd.h"
-template <typename t>
-inline void floodFill(const array2d<t> &array, cveci2 &pos, const t &value)
+template <typename T>
+inline void floodFill(const array2d<T> &array, cveci2 &pos, const T &value)
 {
     //	1. If target is equal to replacement, return.
-    t target = array.getValue(pos);
+    T target = array.getValue(pos);
     if (target == value)
         return;
     // 3. Set the value of node to replacement.
@@ -53,16 +53,16 @@ inline void floodFill(const array2d<t> &array, cveci2 &pos, const t &value)
     // 14. Return.
 }
 
-// template <typename t, fsize_t n>
-// inline void copyArrayUnsafe(const array2d<t> &array, const array2d<t> &otherArray, crectanglet2<fsize_t> &destinationRect, cfsize_t &otherArrayWidth)
+// template <typename T, fsize_t n>
+// inline void copyArrayUnsafe(const array2d<T> &array, const array2d<T> &otherArray, crectanglet2<fsize_t> &destinationRect, cfsize_t &otherArrayWidth)
 //{
 //     cvect2<fsize_t> &pos11 = destinationRect.pos1();
 //
-//     t *const &xPtr = baseArrayPointer + destinationRect.x;
-//     const t *const &endPtr = xPtr + pos11.y * array.size.x;
+//     T *const &xPtr = baseArrayPointer + destinationRect.x;
+//     const T *const &endPtr = xPtr + pos11.y * array.size.x;
 //
 //     for (
-//         t *ptr = xPtr + (destinationRect.pos0.y * array.size.x);
+//         T *ptr = xPtr + (destinationRect.pos0.y * array.size.x);
 //         ptr < endPtr;
 //         ptr += array.size.x, otherArrayPointer += otherArrayWidth)
 //     {
@@ -70,13 +70,13 @@ inline void floodFill(const array2d<t> &array, cveci2 &pos, const t &value)
 //     }
 // }
 
-template <typename t>
-inline void copyArrayUnsafe(const array2d<t> &source, const array2d<t> &destination, crectanglet2<fsize_t> &sourceRect, cvect2<fsize_t> &destinationPosition)
+template <typename T>
+inline void copyArrayUnsafe(const array2d<T> &source, const array2d<T> &destination, crectanglet2<fsize_t> &sourceRect, cvect2<fsize_t> &destinationPosition)
 {
-    t *sourceYPtr = &source.getValueReferenceUnsafe(sourceRect.pos0);
-    t *destYPtr = &destination.getValueReferenceUnsafe(destinationPosition);
+    T *sourceYPtr = &source.getValueReferenceUnsafe(sourceRect.pos0);
+    T *destYPtr = &destination.getValueReferenceUnsafe(destinationPosition);
 
-    for (const t *const &sourceEndPtr = sourceYPtr + source.size.x * sourceRect.size.y;
+    for (const T *const &sourceEndPtr = sourceYPtr + source.size.x * sourceRect.size.y;
          sourceYPtr < sourceEndPtr; sourceYPtr += source.size.x, destYPtr += destination.size.x)
     {
         std::copy(sourceYPtr, sourceYPtr + sourceRect.size.x, destYPtr);
@@ -105,8 +105,8 @@ inline void copyArray(const arraynd<valueType, n> &source, const arraynd<valueTy
         copyArrayUnsafe(source, destination, crectanglet2<fsize_t>(croppedSourceRect), croppedDestinationRect.pos0);
     }
 }
-template <typename t, fsize_t n>
-inline void copyArray(const array2d<t> &source, const arraynd<t, n> &destination, cveci2 &destinationPosition = veci2())
+template <typename T, fsize_t n>
+inline void copyArray(const array2d<T> &source, const arraynd<T, n> &destination, cveci2 &destinationPosition = veci2())
 {
     copyArray(source, destination, source.getClientRect(), destinationPosition);
 }
@@ -131,8 +131,8 @@ inline void expandToContain(arraynd<valueType, n> &array, cvecin<n> &relativePos
     }
 }
 
-template <typename t, typename compareFunction>
-inline bool findRayCast(const array2d<t> &array, cvec2 &p0, cvec2 &p1, veci2 &resultingBlockPos, veci2 &adjacentBlockPosition, vec2 &exactIntersection, const compareFunction &&function)
+template <typename T, typename compareFunction>
+inline bool findRayCast(const array2d<T> &array, cvec2 &p0, cvec2 &p1, veci2 &resultingBlockPos, veci2 &adjacentBlockPosition, vec2 &exactIntersection, const compareFunction &&function)
 {
     // https://www.redblobgames.com/grids/line-drawing.html
     // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -151,7 +151,7 @@ inline bool findRayCast(const array2d<t> &array, cvec2 &p0, cvec2 &p1, veci2 &re
     progress *= delta; //'divide' by total length
     int count = 0;
     bool looping = false; // initialize to get the warning to shut up
-    t hit = t();
+    T hit = T();
     do
     {
         // check point
@@ -206,8 +206,8 @@ inline bool findRayCast(const array2d<t> &array, cvec2 &p0, cvec2 &p1, veci2 &re
 }
 // to is NOT compared compared!
 // the 'elements' outside the border are not compared
-template <typename t, typename compareFunction>
-inline bool find2dBox(const array2d<t> &array, cveci2 &pos00, cveci2 &pos11, const compareFunction &&function)
+template <typename T, typename compareFunction>
+inline bool find2dBox(const array2d<T> &array, cveci2 &pos00, cveci2 &pos11, const compareFunction &&function)
 {
     for (veci2 position = pos00; position.y < pos11.y; position.y++)
     {

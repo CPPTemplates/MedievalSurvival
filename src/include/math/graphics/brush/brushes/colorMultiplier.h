@@ -1,19 +1,23 @@
 #pragma once
 #include "math/graphics/brush/brush.h"
+#include "math/graphics/brush/brushes/combineBrush.h"
 #include "math/graphics/brush/brushes/solidColorBrush.h"
 template<typename brush0Type, typename brush1Type>
-struct colorMultiplier final : public colorBrush
+struct colorMultiplier final : public combinebrush<brush0Type, brush1Type>
 {
-	const brush0Type& baseBrush;
-	const brush1Type& multColors;
-	colorMultiplier(const brush0Type& baseBrush, const brush1Type& multColors) : baseBrush(baseBrush), multColors(multColors) {}
-	inline color getValue(cvec2& pos) const
+	typedef combinebrush<brush0Type, brush1Type> base;
+	const brush0Type& brush0;
+	const brush1Type& brush1;
+	colorMultiplier(const brush0Type& baseBrush, const brush1Type& multColors) : brush0(baseBrush), brush1(multColors) {}
+	constexpr color combine(const color& original, const color& multiplyWith) const {
+		return color::multiplyColors<4>(original, multiplyWith);
+	}
+	constexpr color getValue(const typename base::inputType& pos) const
 	{
-		const color& original = baseBrush.getValue((typename brush0Type::inputType)pos);
-		const color& multiplyWith = multColors.getValue(pos);
-		color multiplied = color::muliplyColors(original, multiplyWith);
-		multiplied.a() = color::multiplyColorChannels(original.a(), multiplyWith.a());
-		return multiplied;
+		const color& original = brush0.getValue((typename brush0Type::inputType)pos);
+		const color& multiplyWith = brush1.getValue((typename brush1Type::inputType)pos);
+
+		return combine(original, multiplyWith);
 	}
 };
 

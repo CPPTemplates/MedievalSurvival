@@ -27,7 +27,7 @@ struct sheep : public fourLeggedPassiveMob
 {
 	colorID woolColor = (colorID)0;
 	bool hasWool = false;
-	sheep(dimension* dimensionIn, cvec2& position);
+	sheep();
 	virtual void serializeValue(nbtSerializer& s) override;
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void onDeath() override;

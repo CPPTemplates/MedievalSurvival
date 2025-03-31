@@ -1,5 +1,5 @@
 #include "pig.h"
-pig::pig(dimension* dimensionIn, cvec2& position) : mob(dimensionIn, position, entityID::pig), fourLeggedPassiveMob(dimensionIn, position, entityID::pig)
+pig::pig() : mob(entityID::pig), fourLeggedPassiveMob(entityID::pig)
 {
 
 	//intialize body parts

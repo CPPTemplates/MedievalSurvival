@@ -2,7 +2,7 @@
 #include "entity.h"
 struct throwable : public entity
 {
-	throwable(dimension* dimensionIn, cvec2& position, const entityID& entityType);
+	throwable(const entityID& entityType);
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void onCollision(const std::vector<entity*>& collidingEntities);

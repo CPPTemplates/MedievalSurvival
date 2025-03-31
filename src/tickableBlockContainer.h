@@ -49,7 +49,6 @@ struct tickableBlockContainer : blockContainer, IDestructable
 
 	//p0 and p1 will be cropped
 	virtual bool cropRelativeLineToContainer(vec2& p0, vec2& p1);
-	virtual bool canAddUpdates(cveci2& position);
 	//if the update does not already exist
 	void addBlockUpdatePositionsAround(cveci2& pos);
 	virtual void addBlockUpdatePosition(cveci2& position);
@@ -78,6 +77,10 @@ struct tickableBlockContainer : blockContainer, IDestructable
 	void fuseTNT(cveci2& position, cbool& ignitedByExplosion = false);
 	void createExplosion(cvec2& position, cfp& explosionPower, cbool& startFire = false);
 	virtual void tick();
+	inline chunkLoadLevel getLoadLevel(cveci2& position) const override {
+		return inBounds(position) ? chunkLoadLevel::updateLoaded : chunkLoadLevel::notLoaded;
+	}
+
 	~tickableBlockContainer();
 };
 

@@ -12,14 +12,14 @@ struct nbtSerializable
 	bool serialize(const std::wstring& name, const stdPath& path, cbool& write);
 	std::wstring toString();
 
-	template<typename t>
-	t clone();
+	template<typename T>
+	T clone();
 
 };
-template<typename t>
-inline t nbtSerializable::clone()
+template<typename T>
+inline T nbtSerializable::clone()
 {
-	t clonedObject = t();
+	T clonedObject = T();
 	clone(clonedObject);
 	return clonedObject;
 }

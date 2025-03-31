@@ -5,7 +5,7 @@
 #include "attackOnCollideAI.h"
 #include "wanderAI.h"
 #include "world.h"
-blaze::blaze(dimension *dimensionIn, cvec2 &position) : mob(dimensionIn, position, entityID::blaze)
+blaze::blaze() : mob(entityID::blaze)
 {
 	tasks = new taskList(this, {
 								   new blazeFireBallAI(this),
@@ -31,7 +31,7 @@ void blaze::updateBodyParts() const
 	head->changed = true;
 	for (size_t ringIndex = 0; ringIndex < blazeRingCount; ringIndex++)
 	{
-		// the rods don't rotate really; they go forward until a quarter and then lag back, in order to maintain the correct z-order
+		// the rods don'T rotate really; they go forward until a quarter and then lag back, in order to maintain the correct z-order
 		cfp additionalRingRotation = math::mod((fp)(currentWorld->ticksSinceStart * secondsPerTick * blazeRodSpeed[ringIndex]), (fp)(1.0 / blazeRingRodCount));
 		for (size_t ringRodIndex = 0; ringRodIndex < blazeRingRodCount; ringRodIndex++)
 		{

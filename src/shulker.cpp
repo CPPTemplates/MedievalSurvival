@@ -4,7 +4,7 @@
 #include "teleportToAttachAI.h"
 #include "dimension.h"
 #include "math/vector/vectorrandom.h"
-shulker::shulker(dimension* dimensionIn, cvec2& position) : mob(dimensionIn, position, entityID::shulker)
+shulker::shulker() : mob(entityID::shulker)
 {
 	tasks = new taskList(this, {
 	new teleportToAttachAI(this)

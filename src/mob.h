@@ -20,6 +20,10 @@ struct mob :public entity
 	uuid UUIDRidingOn = uuid();//the entity that this mob rides on
 	uuid selectedUUID = uuid();
 
+	//the number of ticks this mob is searching for a partner. negative means that it has bred recently
+	int ticksInLove = 0;
+	uuid partnerFound = uuid();
+
 	vec2 lookingAt;
 
 	veci2 selectedBlockPosition = veci2();
@@ -52,9 +56,9 @@ struct mob :public entity
 	virtual void updateBodyParts() const;
 
 	virtual fp CalculateFallDamage(cfp& vertspeed);
-	vec2 getHeadPosition() const;
+	vec2 getHeadPosition(cbool& shouldUpdateBodyParts = true) const;
 	virtual ~mob();
-	mob(dimension* dimensionIn, cvec2& position, const entityID& entityType);
+	mob(const entityID& entityType);
 	void exitRodeEntity();
 	void renderBodyPart(bodyPart2D* const& b, cmat3x3& transform, const gameRenderData& targetData) const;
 
@@ -81,6 +85,11 @@ struct mob :public entity
 	//look at 'lookingat'. CALL THIS ONCE YOU UPDATED ALL OTHER BODY PARTS
 	void updateHeadAngle()  const;
 	fp getArmRange() const;
+	void updateBodyPartSize(bodyPart2D* bodyPart, fp multiplier) const;
+
+	void setAge(cint& newAge);
+	//use setAge to modify this!
+	int age = ticksPerDay;
 };
 template<typename brush0Type>
 inline void mob::renderBodyPart(bodyPart2D* const& b, cmat3x3& transform, const brush0Type& skin, const gameRenderData& targetData) const

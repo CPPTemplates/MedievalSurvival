@@ -77,10 +77,10 @@ struct blockContainer
 
 	void moveTileToContainer(cveci2& sourcePosition, blockContainer& destinationContainer, cveci2& destinationPosition);
 
-	template<typename t>
-	t getArrayValue(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
-	template<typename t>
-	void setArrayValue(cveci2& position, const t& value, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
+	template<typename T>
+	T getArrayValue(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
+	template<typename T>
+	void setArrayValue(cveci2& position, const T& value, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
 
 	template<typename checkFunction>
 	bool getAffectedPositions(cveci2& startPosition, cveci2& startDirection, csize_t& maxSize, checkFunction checkFunctionToUse, std::set<veci2>& affectedPositions, const std::vector<veci2>& relativeCheckPositions);
@@ -90,28 +90,34 @@ struct blockContainer
 
 	template<typename checkFunction>
 	veci2 findBlock(cveci2& startPosition, cveci2& stepSize, cveci2& endPosition, checkFunction checkFunctionToUse);
+	inline virtual chunkLoadLevel getLoadLevel(cveci2& position) const {
+		return inBounds(position) ? chunkLoadLevel::worldGenerationLoaded : chunkLoadLevel::notLoaded;
+	}
+	bool canAddUpdates(cveci2& position) const {
+		return getLoadLevel(position) >= chunkLoadLevel::updateLoaded;
+	}
 };
 
-template<typename t>
-inline void blockContainer::setArrayValue(cveci2& position, const t& value, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
+template<typename T>
+inline void blockContainer::setArrayValue(cveci2& position, const T& value, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
 {
 	if (inBounds(position))
 	{
-		*((t*)getArrayValuePointerUnsafe(position, dataType, minimalLoadLevel)) = value;
+		*((T*)getArrayValuePointerUnsafe(position, dataType, minimalLoadLevel)) = value;
 	}
 }
 
-template<typename t>
-inline t blockContainer::getArrayValue(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
+template<typename T>
+inline T blockContainer::getArrayValue(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel)
 {
 	if (inBounds(position))
 	{
-		const t* val = (t*)getArrayValuePointerUnsafe(position, dataType, minimalLoadLevel);
-		return val ? *val : t();
+		const T* val = (T*)getArrayValuePointerUnsafe(position, dataType, minimalLoadLevel);
+		return val ? *val : T();
 	}
 	else
 	{
-		return t();
+		return T();
 	}
 }
 

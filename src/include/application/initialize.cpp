@@ -99,7 +99,7 @@ std::filesystem::path getCommonAppDataFolder()
     jint res = vm->AttachCurrentThread(&env, &attachargs);
     if (res == JNI_ERR)
     {
-        handleError(L"couldn't attach to current thread");
+        handleError(L"couldn'T attach to current thread");
         return L"";
     }
 

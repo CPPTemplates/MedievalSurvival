@@ -36,7 +36,7 @@ void taskList::serializeValue(nbtSerializer& s)
 	s.serializeValue(std::wstring(L"executing task index"), executingTaskIndex);
 	if (s.push<nbtDataTag::tagCompound>(std::wstring(L"tasks")))
 	{
-		//won't mess up that much when tasks are shuffeled
+		//won'T mess up that much when tasks are shuffeled
 		for (taskAI* const& task : tasks)
 		{
 			if (s.push<nbtDataTag::tagCompound>(getClassName(*task)))

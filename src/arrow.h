@@ -3,7 +3,7 @@
 #include "math/bodypart2d.h"
 struct arrow : public throwable
 {
-	arrow(dimension* dimensionIn, cvec2& position);
+	arrow();
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void onCollision(const std::vector<entity*>& collidingEntities) override;
 	bodyPart2D* mainBodyPart = nullptr;

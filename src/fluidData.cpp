@@ -13,7 +13,7 @@ constexpr fluidLevel minLavaFlowHeight = maxFluidLevel / 4;
 bool fluidData::tick(tickableBlockContainer* containerIn, cveci2& position)
 {
 	//1 more thing to fix:
-	//because it can't check if the water below will go away, water falls will fall like this: water, no water, water etc.
+	//because it can'T check if the water below will go away, water falls will fall like this: water, no water, water etc.
 	const blockID fluidType = containerIn->getBlockID(position);
 	const fluidLevel sideWardsFlowSpeed = fluidType == blockID::water ? sideWardsWaterFlowSpeed : sideWardsLavaFlowSpeed;
 	const fluidLevel minFlowHeight = fluidType == blockID::water ? minWaterFlowHeight : minLavaFlowHeight;
@@ -154,7 +154,7 @@ bool fluidData::tick(tickableBlockContainer* containerIn, cveci2& position)
 		if (currentFluidLevel == 0)
 		{
 			containerIn->setBlockID(position, blockID::air, chunkLoadLevel::updateLoaded);
-			return false;//as this block flowed empty, no update is needed. we can't return the normal way, as currentFluidLevel is undefined now.
+			return false;//as this block flowed empty, no update is needed. we can'T return the normal way, as currentFluidLevel is undefined now.
 		}
 		else
 		{

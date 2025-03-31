@@ -73,7 +73,7 @@ fp eyeOfEnder::getGravityForce() const
 {
 	return 0;
 }
-eyeOfEnder::eyeOfEnder(dimension* dimensionIn, cvec2& position) : throwable(dimensionIn, position, entityID::ender_eye)
+eyeOfEnder::eyeOfEnder() : throwable(entityID::ender_eye)
 {
 	//calculate distance to the nearest stronghold
 	dimensionIn->locateStructure(structureID::stronghold, position, strongholdPosition);

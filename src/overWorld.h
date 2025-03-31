@@ -1,9 +1,9 @@
 #pragma once
 #include "dimension.h"
 struct layerNoiseSimplex;
-template <typename t>
+template <typename T>
 struct shuffleRandom;
-struct overWorld :dimension
+struct overWorld final :dimension
 {
 	overWorld();
 

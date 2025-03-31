@@ -5,7 +5,7 @@
 #include "wanderAI.h"
 #include "stareDownAI.h"
 
-enderman::enderman(dimension* dimensionIn, cvec2& position) :humanoid(dimensionIn, position, entityID::enderman)
+enderman::enderman() :humanoid(entityID::enderman)
 {
 	tasks = new taskList(this, {
 	new teleportOnDamageAI(this),

@@ -25,5 +25,5 @@ constexpr vec2 cowHeadRotationCenter = cvec2(0, cowHeadSize.getY() * 0.5);
 
 struct cow : public fourLeggedPassiveMob
 {
-	cow(dimension* dimensionIn, cvec2& position);
+	cow();
 };

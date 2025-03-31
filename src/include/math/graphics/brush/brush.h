@@ -18,16 +18,16 @@ typedef brush<color, vect2<fsize_t>> colorBrushSizeT;
 
 //template <typename, typename = void>
 //constexpr bool is_brush_v = false;
-//template <typename t, typename = t::resultingType>
+//template <typename T, typename = T::resultingType>
 //constexpr bool is_brush_v = true;
 
 //https://devblogs.microsoft.com/oldnewthing/20190710-00/?p=102678
 template<typename, typename = void>
 constexpr bool is_brush_v = false;
 
-template<typename t>
+template<typename T>
 constexpr bool is_brush_v
-<t, std::void_t<typename t::resultingType>> = true;
+<T, std::void_t<typename T::resultingType>> = true;
   
 //template<typename r, typename i>
 //constexpr bool is_brush_v<brush<r, i>> = std::is_base_of<brush<r, i>>;

@@ -52,7 +52,7 @@
 #include "dimension.h"
 #include "renderBrush.h"
 #include "nbt/nbtSerializer.h"
-#include "nbt/serializeColor.h"
+#include "nbt/serializeVector.h"
 void blockContainer::setBlockRange(cveci2 &pos0, cveci2 &pos1, const blockID &block, const chunkLoadLevel &minimalLoadLevel)
 {
 	cveci2 pos00 = cveci2(math::minimum(pos0.x, pos1.x), math::minimum(pos0.y, pos1.y));
@@ -141,7 +141,7 @@ void blockContainer::removeBlock(cveci2 &position, const blockID &oldBlockID, bl
 
 			bool shouldBreakOtherBlock = true;
 
-			// make sure pistons don't break their bottom block when they retract
+			// make sure pistons don'T break their bottom block when they retract
 			if (isPiston(oldBlockID) && isPiston(getBlockID(otherPos)))
 			{
 				pistonData *part0Data = dynamic_cast<pistonData *>(oldDoubleBlockData->isPart0 ? (oldDoubleBlockData) : getBlockData(otherPos, minimalLoadLevel));
@@ -350,7 +350,7 @@ void blockContainer::addOres(cveci2 &pos, const blockID &b, cint &oreCount, std:
 				}
 			}
 		}
-		if (expansionPossibilitiesCount < 2) // won't be able to expand from this anymore
+		if (expansionPossibilitiesCount < 2) // won'T be able to expand from this anymore
 		{
 			orePositionsToCheck.erase(iterator);
 		}
@@ -515,7 +515,7 @@ int blockContainer::getDecayStrengthExitingFrom(cveci2 &positionFrom, cveci2 &po
 		}
 		else if (blockFrom == blockID::tnt)
 		{
-			// don't let it blow up all at once
+			// don'T let it blow up all at once
 			return maxStrength;
 		}
 	}
@@ -814,7 +814,7 @@ vecb2 blockContainer::railTopConnection(cveci2 &pos)
 		}
 	}
 
-	// can't be both a top connection
+	// can'T be both a top connection
 	return (topConnection.x && topConnection.y) ? vecb2() : topConnection;
 }
 

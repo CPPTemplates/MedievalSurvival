@@ -4,7 +4,7 @@
 #include "attackOnCollideAI.h"
 #include "wanderAI.h"
 #include "hurtByTargetAI.h"
-zombie::zombie(dimension *dimensionIn, cvec2 &position, const entityID &entityType) : humanoid(dimensionIn, position, entityType)
+zombie::zombie(const entityID &entityType) : humanoid(entityType)
 {
 	tasks = new taskList(this, {
 								   new hurtByTargetAI(this),

@@ -18,16 +18,16 @@ void sapSpreadData::randomTick(tickableBlockContainer *containerIn, cveci2 &posi
 		blockID adjacentBlockID = containerIn->getBlockID(adjacentCheckPosition);
 		if (isTreeType(adjacentBlockID))
 		{
-			treeItemTypeID t = getTreeItemType(adjacentBlockID);
+			treeItemTypeID T = getTreeItemType(adjacentBlockID);
 			if (getWoodType(adjacentBlockID) == woodType)
 			{
-				if (t == treeItemTypeID::log)
+				if (T == treeItemTypeID::log)
 				{
 					// a lot of fluid flows into this leave
 					sapLevel = maxSapLevel;
 					return;
 				}
-				else if (t == treeItemTypeID::leaves)
+				else if (T == treeItemTypeID::leaves)
 				{
 					sapSpreadData *adjacentBlockData = dynamic_cast<sapSpreadData *>(containerIn->getBlockData(adjacentCheckPosition));
 					maxAdjacentSaplevel = math::maximum(maxAdjacentSaplevel, adjacentBlockData->sapLevel);

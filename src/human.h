@@ -78,14 +78,14 @@ struct human :public humanoid, public INamable
 	using humanoid::calculateHitBox;
 	virtual rectangle2 calculateHitBox(cvec2& position) const override;
 
-
 	//drop the itemstack as if the player dropped it
 	void drop(itemStack& s, cint& amount = 0);
 	vec2 getDropPosition();
 
 	void pickUpFloatingSlots();
+	void updateHeldItem();
 	bool canSleep() const;
-	human(dimension* dimensionIn, cvec2& position, gameControl& screen, const std::wstring& name);
+	human(gameControl& screen, const std::wstring& name);
 	virtual void tick() override;
 	virtual void applyStatusEffect(const statusEffect& effect) override;
 	virtual void onDeath() override;

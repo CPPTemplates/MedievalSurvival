@@ -9,7 +9,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<class keyType, class t, int MAXLEVEL>
+template<class keyType, class T, int MAXLEVEL>
 class skiplist_node
 {
 public:
@@ -27,7 +27,7 @@ public:
         }
     }
 
-    skiplist_node(const keyType& searchKey, const t& value) :key(searchKey), value(value)
+    skiplist_node(const keyType& searchKey, const T& value) :key(searchKey), value(value)
     {
         for (int i = 1; i <= MAXLEVEL; i++) {
             forwards[i] = nullptr;
@@ -39,19 +39,19 @@ public:
     }
 
     keyType key;
-    t value;
-    skiplist_node<keyType, t, MAXLEVEL>* forwards[MAXLEVEL + 1];
+    T value;
+    skiplist_node<keyType, T, MAXLEVEL>* forwards[MAXLEVEL + 1];
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<class keyType, class t, int MAXLEVEL = 16>
+template<class keyType, class T, int MAXLEVEL = 16>
 class skiplist
 {
 public:
     typedef keyType KeyType;
-    typedef t ValueType;
-    typedef skiplist_node<keyType, t, MAXLEVEL> NodeType;
+    typedef T ValueType;
+    typedef skiplist_node<keyType, T, MAXLEVEL> NodeType;
 
     skiplist(keyType minKey, keyType maxKey) :m_pHeader(nullptr), m_pTail(nullptr),
         max_curr_level(1), max_level(MAXLEVEL),
@@ -76,9 +76,9 @@ public:
         delete m_pTail;
     }
 
-    void insert(keyType searchKey, t newValue)
+    void insert(keyType searchKey, T newValue)
     {
-        skiplist_node<keyType, t, MAXLEVEL>* update[MAXLEVEL];
+        skiplist_node<keyType, T, MAXLEVEL>* update[MAXLEVEL];
         NodeType* currNode = m_pHeader;
         for (int level = max_curr_level; level >= 1; level--) {
             while (currNode->forwards[level]->key < searchKey) {
@@ -109,7 +109,7 @@ public:
 
     void erase(keyType searchKey)
     {
-        skiplist_node<keyType, t, MAXLEVEL>* update[MAXLEVEL];
+        skiplist_node<keyType, T, MAXLEVEL>* update[MAXLEVEL];
         NodeType* currNode = m_pHeader;
         for (int level = max_curr_level; level >= 1; level--) {
             while (currNode->forwards[level]->key < searchKey) {
@@ -180,6 +180,6 @@ protected:
     keyType m_minKey;
     keyType m_maxKey;
     int max_curr_level;
-    skiplist_node<keyType, t, MAXLEVEL>* m_pHeader;
-    skiplist_node<keyType, t, MAXLEVEL>* m_pTail;
+    skiplist_node<keyType, T, MAXLEVEL>* m_pHeader;
+    skiplist_node<keyType, T, MAXLEVEL>* m_pTail;
 };
