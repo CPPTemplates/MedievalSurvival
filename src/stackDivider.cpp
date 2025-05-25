@@ -9,33 +9,39 @@ bool stackDivider::addStack(itemStack& s) {
 	return true;
 }
 
-bool stackDivider::interactWith(itemStack* candicate) {
+bool stackDivider::interactWith(itemStack* candicate, cmb& button) {
 	if (originalStack.count
 		//candidate stack is empty or has the same items as the original stack
 		&& (!candicate->count || candicate->compare(originalStack))) {
 		cint& maxStackSize = itemList[originalStack.stackItemID]->maxStackSize;
-		cint& room = maxStackSize - candicate->count;
+		auto getRoom = [button, maxStackSize](itemStack* stack) {
+			return (button == mb::Left) ?
+				maxStackSize - stack->count :
+				//true converted to 1, false to 0
+				maxStackSize > stack->count;
+			};
+		cint& room = getRoom(candicate);
 		if (room <= 0) {
 			return false;
 		}
 
-
-		std::vector<size_t> roomPerStack = std::vector<size_t>(divideOver.size());
+		//how much to put in here at most
+		std::vector<int> roomPerStack = std::vector<int>(divideOver.size());
 		//divide evenly
 		for (size_t i = 0; i < divideOver.size(); i++) {
 			//check if the stack still has the same item type stored in it
 			if (divideOver[i]->compare(originalStack)) {
 				//retrieve stacks (add them back up to stackholding)
 				stackHolding.addStack(*divideOver[i], (int)amountsDivided[i]);
-				roomPerStack[i] = maxStackSize - divideOver[i]->count;
+				roomPerStack[i] = getRoom(divideOver[i]);
 			}
 		}
 		roomPerStack.push_back(room);
 		divideOver.push_back(candicate);
 
-		size_t total = stackHolding.count;
+		int total = stackHolding.count;
 
-		std::vector<size_t> newAmounts = divideOverArray(total, roomPerStack);
+		std::vector<int> newAmounts = divideOverArray(total, roomPerStack);
 		for (size_t i = 0; i < divideOver.size(); i++) {
 			divideOver[i]->addStack(stackHolding, (int)newAmounts[i]);
 		}

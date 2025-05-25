@@ -103,8 +103,8 @@ namespace math
 	}
 
 	// https://stackoverflow.com/questions/824118/why-is-floor-so-slow
-	template <typename outputType = int, typename inputType>
-	constexpr outputType floor(const inputType &x)
+	template <typename outputType = int, typename InputType>
+	constexpr outputType floor(const InputType &x)
 	{
 		if (std::is_integral_v<outputType>)
 		{
@@ -118,18 +118,18 @@ namespace math
 		}
 	}
 
-	template <typename outputType = int, typename inputType>
-	constexpr outputType ceil(const inputType &x)
+	template <typename outputType = int, typename InputType>
+	constexpr outputType ceil(const InputType &x)
 	{
 		if (std::is_integral_v<outputType>)
 		{
 			const outputType &i = (outputType)x;	   /* truncate */
-			return i + (outputType)((inputType)i < x); /* convert trunc to floor */
+			return i + (outputType)((InputType)i < x); /* convert trunc to floor */
 		}
 		else
 		{
 			int i = (int)x;									  /* truncate */
-			return (outputType)(i + (int)((inputType)i < x)); /* convert trunc to floor */
+			return (outputType)(i + (int)((InputType)i < x)); /* convert trunc to floor */
 		}
 	}
 

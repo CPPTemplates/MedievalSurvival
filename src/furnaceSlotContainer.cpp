@@ -19,8 +19,8 @@ furnaceSlotContainer::furnaceSlotContainer() {
 	containers.push_back(inventorySlots);
 }
 
-bool furnaceSlotContainer::addStack(itemStack& stack) {
-	return furnaceInputSlot->addStack(stack) || furnaceFuelSlot->addStack(stack);
+bool furnaceSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot) {
+	return furnaceInputSlot->addToEqualStacks(s, emptySlot) || furnaceFuelSlot->addToEqualStacks(s, emptySlot);
 }
 
 void furnaceSlotContainer::drawExtraData(cmat3x3& transform, const texture& renderTarget) {

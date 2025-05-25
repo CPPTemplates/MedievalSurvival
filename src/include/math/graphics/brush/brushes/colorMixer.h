@@ -2,10 +2,9 @@
 #include "math/graphics/color/color.h"
 #include "math/graphics/brush/brushes/combineBrush.h"
 #include "math/graphics/color/colorFunctions.h"
-template <typename brush0Type, typename brush1Type>
-struct colorMixer final : public combinebrush<brush0Type, brush1Type>
+template <typename brush0Type, typename brush1Type, typename base = combinebrush<brush0Type, brush1Type>>
+struct colorMixer final : public base
 {
-	typedef brush1Type::inputType inputType;
 	//top brush
 	const brush0Type& brush0;
 	//bottom brush
@@ -35,16 +34,16 @@ struct colorMixer final : public combinebrush<brush0Type, brush1Type>
 		}
 	}
 
-	inline color getValue(const inputType& pos) const
+	inline color getValue(const typename base::InputType& pos) const
 	{
-		ccolor& topColor = brush0.getValue((typename brush0Type::inputType)pos);
+		ccolor& topColor = brush0.getValue((typename brush0Type::InputType)pos);
 		if (topColor.a() == color::maxValue)
 		{
 			return topColor;
 		}
 		else
 		{
-			ccolor& bottomColor = brush1.getValue(pos);
+			ccolor& bottomColor = brush1.getValue((typename brush1Type::InputType)pos);
 			if (topColor.a())
 			{
 				return transitionColor(topColor, bottomColor);

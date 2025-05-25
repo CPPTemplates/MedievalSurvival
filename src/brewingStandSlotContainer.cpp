@@ -18,21 +18,21 @@ brewingStandSlotContainer::brewingStandSlotContainer()
 	containers.push_back(inventorySlots);
 }
 
-bool brewingStandSlotContainer::addStack(itemStack& stack)
+bool brewingStandSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	if (stack.count == 0)
+	if (s.count == 0)
 	{
 		return false;
 	}
-	if (stack.stackItemID == itemID::blaze_powder)
+	if (s.stackItemID == itemID::blaze_powder)
 	{
-		return blazePowderSlot->addStack(stack);
+		return blazePowderSlot->addToEqualStacks(s, emptySlot);
 	}
-	else if (stack.stackItemID == itemID::potion)
+	else if (s.stackItemID == itemID::potion)
 	{
 		for (int i = 0; i < brewingStandPotionCapacity; i++)
 		{
-			if (potionSlots[i]->addStack(stack))
+			if (potionSlots[i]->addToEqualStacks(s, emptySlot))
 			{
 				return true;
 			}
@@ -41,7 +41,7 @@ bool brewingStandSlotContainer::addStack(itemStack& stack)
 	}
 	else
 	{
-		return ingredientSlot->addStack(stack);
+		return ingredientSlot->addToEqualStacks(s, emptySlot);
 	}
 }
 

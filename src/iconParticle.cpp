@@ -1,8 +1,8 @@
 #include "iconParticle.h"
 
-std::vector<vec3> iconParticle::getFrictions() const
+vec2 iconParticle::applyNaturalForces(cvec2& speed) const
 {
-	return std::vector<vec3>();
+	return speed;
 }
 
 fp iconParticle::getGravityForce() const

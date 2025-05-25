@@ -19,6 +19,6 @@ struct dragonBeamBrush : colorBrush
 			(distanceToDragonSquared < whiteDistanceSquared) ?
 			lerpColor(dragonDyingBeamStartColor, dragonDyingBeamEndColor, (distanceToDragonSquared / whiteDistanceSquared)) :
 			dragonDyingBeamEndColor
-			, backgroundBrush->getValue((typename brush0Type::inputType)pos), math::minimum(distanceToDragonSquared / transparencyDistanceSquared, (fp)1));
+			, backgroundBrush->getValue((typename brush0Type::InputType)pos), math::minimum(distanceToDragonSquared / transparencyDistanceSquared, (fp)1));
 	}
 };

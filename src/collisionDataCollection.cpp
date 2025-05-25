@@ -83,13 +83,13 @@ collisionEdgeData collisionDataCollection::getEdges(cfp& location, const directi
 
 void collisionDataCollection::evaluate(crectangle2& hitboxToTest, cvec2& hitboxSpeed, cfp& maxDuration)
 {
-	for (collisionData& data : hitboxes)
+	for (collisionData& currentCollision : hitboxes)
 	{
-		data.evaluate(hitboxToTest, hitboxSpeed, maxDuration);
-		collisionData& currentData = firstCollisions[(size_t)data.type];
-		if (data < currentData)
+		currentCollision.evaluate(hitboxToTest, hitboxSpeed, maxDuration);
+		collisionData& firstCollision = firstCollisions[(size_t)currentCollision.type];
+		if (currentCollision < firstCollision)
 		{
-			currentData = data;
+			firstCollision = currentCollision;
 		}
 	}
 }

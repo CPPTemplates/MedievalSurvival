@@ -94,6 +94,10 @@ bool tickableBlockContainer::cropRelativeLineToContainer(vec2& p0, vec2& p1)
 }
 void tickableBlockContainer::setBlockWithData(cveci2& position, const blockID& block, blockData* const& data, const chunkLoadLevel& minimalLoadLevel)
 {
+	if ((block == blockID::fire) && fillNetherPortal(position))
+	{
+		return;
+	}
 	blockContainer::setBlockWithData(position, block, data, minimalLoadLevel);
 	if (minimalLoadLevel >= chunkLoadLevel::updateLoaded)
 	{
@@ -273,18 +277,6 @@ bool tickableBlockContainer::fillNetherPortal(cveci2& position)
 	}
 	return false;
 }
-void tickableBlockContainer::setBlockID(cveci2& pos, const blockID& block, const chunkLoadLevel& minimalLoadLevel)
-{
-	if ((block == blockID::fire) && fillNetherPortal(pos))
-	{
-		return;
-	}
-	else
-	{
-		blockContainer::setBlockID(pos, block, minimalLoadLevel);
-	}
-}
-
 
 void tickableBlockContainer::openDoorType(cveci2& position, cbool& open)
 {

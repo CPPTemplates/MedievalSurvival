@@ -32,7 +32,7 @@ enderDragon::enderDragon() :mob(entityID::ender_dragon)
 
 	flying = true;
 
-	collideLevel = collisionTypeID::willNotCollide;
+	collisionCheckLevel = collisionTypeID::willNotCollide;
 
 	//fill
 	dyingBeams = new vec3[dragonDyingBeamCount];

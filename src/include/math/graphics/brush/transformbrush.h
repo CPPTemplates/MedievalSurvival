@@ -37,7 +37,7 @@ struct transformBrush final : public colorBrush
 
 	inline color getValue(cvec2& pos) const
 	{
-		//if constexpr (std::is_integral_v<brush0Type::inputType>) {
+		//if constexpr (std::is_integral_v<brush0Type::InputType>) {
 		//vec2 baseBrushPos = transform.multPointMatrix(pos);
 		//for (int i = 0; i < 2; i++) {
 		//	baseBrushPos[i] -= (roundUp[i] & (baseBrushPos[i] == (int)baseBrushPos[i]));
@@ -55,6 +55,6 @@ struct transformBrush final : public colorBrush
 		//}
 	//}
 		//return baseBrush.getValue(baseBrushPos);
-		return baseBrush.getValue((typename brush0Type::inputType)modifiedTransform.multPointMatrix(pos));
+		return baseBrush.getValue((typename brush0Type::InputType)modifiedTransform.multPointMatrix(pos));
 	}
 };

@@ -6,7 +6,7 @@ struct enchantingTableSlotContainer :inventory
 	uiSlotContainer* enchantmentSlot = nullptr;
 	uiSlotContainer* lapisSlot = nullptr;
 	enchantingTableSlotContainer();
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~enchantingTableSlotContainer() override;
 	virtual void mouseDown(cveci2& pixelPosition, cmb& button, stackDivider& divider) override;
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;

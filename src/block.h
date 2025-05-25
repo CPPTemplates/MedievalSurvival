@@ -83,10 +83,8 @@ struct block : INamable, IDestructable
 	experienceDrop experienceWhenBroken = experienceDrop(); // experience given when this block is broken
 
 	bool correctTool(const itemID &tool) const;
-	bool canHarvest(const itemID &tool);
+	bool canHarvest(const itemID &tool) const;
 
-
-	virtual bool canPlace(tickableBlockContainer *containerIn, cveci2 position);
 	virtual void use();
 	/// <summary>
 	/// render a block

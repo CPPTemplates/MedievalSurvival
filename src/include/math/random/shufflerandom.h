@@ -25,8 +25,8 @@ struct shuffleRandom
 
 	// https://primes.utm.edu/curios/index.php?start=20&stop=24
 
-	static constexpr T reverseP0 = math::modInverse((signedBiggerType)randomPrimes[0], maxPlus1);
-	static constexpr T reverseP1 = math::modInverse((signedBiggerType)randomPrimes[1], maxPlus1);
+	static constexpr T reverseP0 = (T)math::modInverse((signedBiggerType)randomPrimes[0], maxPlus1);
+	static constexpr T reverseP1 = (T)math::modInverse((signedBiggerType)randomPrimes[1], maxPlus1);
 
 	inline T shiftAround(T in, int bits)
 	{

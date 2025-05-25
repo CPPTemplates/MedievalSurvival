@@ -12,10 +12,10 @@ struct colorMultiplier final : public combinebrush<brush0Type, brush1Type>
 	constexpr color combine(const color& original, const color& multiplyWith) const {
 		return color::multiplyColors<4>(original, multiplyWith);
 	}
-	constexpr color getValue(const typename base::inputType& pos) const
+	constexpr color getValue(const typename base::InputType& pos) const
 	{
-		const color& original = brush0.getValue((typename brush0Type::inputType)pos);
-		const color& multiplyWith = brush1.getValue((typename brush1Type::inputType)pos);
+		const color& original = brush0.getValue((typename brush0Type::InputType)pos);
+		const color& multiplyWith = brush1.getValue((typename brush1Type::InputType)pos);
 
 		return combine(original, multiplyWith);
 	}

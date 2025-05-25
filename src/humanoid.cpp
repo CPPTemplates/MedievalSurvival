@@ -30,7 +30,6 @@
 #include "armorType.h"
 #include "block.h"
 #include "blockData.h"
-#include "itemID.h"
 #include "chunkLoadLevel.h"
 #include "collisionTypeID.h"
 #include "constants.h"
@@ -60,7 +59,6 @@
 #include "itemID.h"
 #include "itemStack.h"
 #include "mob.h"
-#include "nbt/nbtSerializer.h"
 #include "gameRenderData.h"
 #include "slabType.h"
 #include "statusEffectID.h"
@@ -68,6 +66,7 @@
 #include "gameControl.h"
 #include "nbt/nbtSerializer.h"
 #include "world.h"
+#include <fluidData.h>
 void humanoid::resetDigProgress()
 {
 	selectedBlockDamage = 0;
@@ -84,9 +83,9 @@ bool humanoid::substractStack(itemStack& stack)
 	return armorSlots->substractStack(stack);
 }
 
-bool humanoid::addStack(itemStack& stack)
+bool humanoid::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return itemHolding->addStack(stack);
+	return itemHolding->addToEqualStacks(s, emptySlot);
 }
 
 void humanoid::updateBodyParts() const
@@ -408,7 +407,7 @@ int humanoid::getDefencePoints() const
 	}
 	return totalDefence;
 }
-int humanoid::getToughnessPoints()
+int humanoid::getToughnessPoints() const
 {
 	int totalToughness = 0;
 	for (int index = 0; index < armorTypeCount; index++)
@@ -736,157 +735,214 @@ bool humanoid::placeBlock(blockID blockToPlace)
 	dontExtinguish:;
 	}
 
-	block* posessingBlock = blockList[(int)selectedBlockContainer->getBlockID(adjacentBlockPosition)];
-	if (posessingBlock->canReplaceBlock)
+	const blockID& posessingBlockID = selectedBlockContainer->getBlockID(adjacentBlockPosition);
+	block* posessingBlock = blockList[(int)posessingBlockID];
+	if (blockToPlace != blockID::structure_void)
 	{
-		if (selectedBlockContainer->inBounds(adjacentBlockPosition) &&
-			blockList[(int)blockToPlace]->canPlace(selectedBlockContainer, adjacentBlockPosition))
+		//every block placed needs to be placed next to some other block. when placing it, it can't just float in the air randomly.
+
+		if (is_in(blockToPlace, blockID::cactus, blockID::sugar_cane))
 		{
-			if (blockList[(int)blockToPlace]->blockCollisionType == collisionTypeID::willCollide)
+			const blockID& blockBelow = selectedBlockContainer->getBlockID(adjacentBlockPosition + cveci2(0, -1));
+			if (!is_in(blockBelow, blockID::sand, blockToPlace) && (blockToPlace != blockID::sugar_cane || !is_in(blockBelow, blockID::dirt, blockID::grass_block)))return false;
+		}
+		else if (blockToPlace == blockID::kelp)
+		{
+			if (posessingBlock->identifier != blockID::water || fluidData::getFluidLevel(selectedBlockContainer, adjacentBlockPosition, blockID::water) < maxFluidLevel)
 			{
-				crectangle2 checkRect = selectedBlockContainer->containerToRootTransform.multRectMatrix(crectangle2(adjacentBlockPosition, vec2(1)));
-
-				std::vector<entity*> entityList = dimensionIn->findNearEntities(crectangle2(cvec2(adjacentBlockPosition), cvec2(1)).expanded(mobSizeMargin));
-
-				//check for all mobs if it collides
-				for (entity* e : entityList)
-				{
-					if ((e->entityType != entityID::item) && (e->entityType != entityID::particle) && (e->entityType != entityID::pollen))
-					{
-						if (collides2d(e->calculateHitBox(e->position), checkRect))
-						{
-							//entity in the way
-							return false;
-						}
-					}
-				}
+				return false;
 			}
-
-			//place one block
-			blockData* placedBlockData = createBlockData(blockToPlace);
-
-			cvec2 newBlockMiddle = cvec2(adjacentBlockPosition) + cvec2(0.5);
-			cvec2 relativePosition = exactBlockIntersection - getHeadPosition();
-			if (hasUpsideDownData(blockToPlace))
+			const blockID& blockBelow = selectedBlockContainer->getBlockID(adjacentBlockPosition + cveci2(0, -1));
+			if (!is_in(blockBelow, blockID::sand, blockID::gravel, blockID::kelp))return false;
+		}
+		else if (isCrop(blockToPlace)) {
+			//check if the block below is farmland
+			blockID blockBelow = selectedBlockContainer->getBlockID(adjacentBlockPosition + cveci2(0, -1));
+			if (blockToPlace == blockID::nether_wart)
 			{
-				bool upsideDown = exactBlockIntersection.y < newBlockMiddle.y;
-				if (isStairs(blockToPlace))
-				{
-					upsideDown = !upsideDown;
-				}
-				dynamic_cast<upsideDownData*>(placedBlockData)->upsideDown = upsideDown;
-			}
-			directionID direction;
-			if (hasFacingData(blockToPlace))
-			{
-				if (canFaceUp(blockToPlace))
-				{
-
-					if (relativePosition.x < 0)
-					{
-						direction = directionID::negativeX;
-					}
-					else
-					{
-						direction = directionID::positiveX;
-					}
-					if (abs(relativePosition.y) > abs(relativePosition.x))
-					{
-						if (relativePosition.y < 0)
-						{
-							direction = directionID::negativeY;
-						}
-						else
-						{
-							direction = directionID::positiveY;
-						}
-					}
-				}
-				else
-				{
-					if (exactBlockIntersection.x < newBlockMiddle.x)
-					{
-						direction = directionID::negativeX;
-					}
-					else
-					{
-						direction = directionID::positiveX;
-					}
-				}
-				if (invertPlacementDirection(blockToPlace))
-				{
-					direction = flipDirection(direction);
-				}
-				dynamic_cast<facingData*> (placedBlockData)->directionFacing = direction;
+				if (blockBelow != blockID::soul_sand)return false;
 			}
 			else
 			{
-				direction = standardUpFacingBlockDirection;
-			}
-
-			if (hasAttachmentDirectionData(blockToPlace))
-			{
-				int nearestAttachment = -1;
-				fp nearestAttachmentDistanceSquared = INFINITY;
-
-				cvec2 relativeAttachmentPosition = exactBlockIntersection - cvec2(adjacentBlockPosition);
-
-				//check which block to attach to
-				for (fsize_t i = 0; i < directionCount2D; i++)
+				if (blockBelow != blockID::farmland)
 				{
-					if ((!isTorch(blockToPlace)) || ((directionID)i != directionID::positiveY))
-					{
-						cveci2 attachmentPosition = adjacentBlockPosition + directionVectors2D[i];
-
-						if (selectedBlockContainer->canAttachTo(attachmentPosition, flipDirection((directionID)i)))
-						{
-							cvec2 currentRelativeAttachmentPosition = cvec2(0.5) + cvec2(directionVectors2D[i]) * 0.5;
-							cfp attachmentDistanceSquared = (currentRelativeAttachmentPosition - relativeAttachmentPosition).lengthSquared();
-
-							if (attachmentDistanceSquared < nearestAttachmentDistanceSquared)
-							{
-								nearestAttachment = i;
-								nearestAttachmentDistanceSquared = attachmentDistanceSquared;
-							}
-						}
-					}
-				}
-				if (nearestAttachment == -1)
-				{
-
-					//can'T place
 					return false;
+				}
+				//can plant at night
+				if (selectedBlockContainer->getMaximumInternalLightLevel(adjacentBlockPosition) <= glowInTheDarkLightLevel)return false;
+			}
+		}
+		else {
+			// find solid block adjacent
+			for (int i = 0; i < directionCount2D; i++)
+			{
+				const blockID& adjacentBlock = selectedBlockContainer->getBlockID(adjacentBlockPosition + directionVectors2D[i]);
+				if ((!blockList[adjacentBlock]->canReplaceBlock) || (adjacentBlock == blockID::structure_void))
+				{
+					goto foundAdjacentBlock;
+				}
+			}
+			return false;
+		}
+	}
+foundAdjacentBlock:
+
+	//check if block 'fits' here
+	if (posessingBlock->canReplaceBlock && selectedBlockContainer->inBounds(adjacentBlockPosition))
+	{
+		//calculate block data
+		blockData* newBlockData = createBlockData(blockToPlace);
+
+		cvec2 newBlockMiddle = cvec2(adjacentBlockPosition) + cvec2(0.5);
+		cvec2 relativePosition = exactBlockIntersection - getHeadPosition();
+		if (hasUpsideDownData(blockToPlace))
+		{
+			bool upsideDown = exactBlockIntersection.y < newBlockMiddle.y;
+			if (isStairs(blockToPlace))
+			{
+				upsideDown = !upsideDown;
+			}
+			dynamic_cast<upsideDownData*>(newBlockData)->upsideDown = upsideDown;
+		}
+		directionID direction;
+		if (hasFacingData(blockToPlace))
+		{
+			if (canFaceUp(blockToPlace))
+			{
+
+				if (relativePosition.x < 0)
+				{
+					direction = directionID::negativeX;
 				}
 				else
 				{
-					dynamic_cast<attachmentDirectionData*>(placedBlockData)->attachmentDirection = (directionID)nearestAttachment;
+					direction = directionID::positiveX;
 				}
-			}
-
-			if (isDoubleBlockWhenPlaced(blockToPlace))
-			{
-				blockData* otherPartData = createBlockData(blockToPlace);
-				dynamic_cast<doubleBlockData*>(placedBlockData)->isPart0 = true;
-				dynamic_cast<doubleBlockData*>(otherPartData)->isPart0 = false;
-
-				if (hasFacingData(blockToPlace))
+				if (abs(relativePosition.y) > abs(relativePosition.x))
 				{
-					dynamic_cast<facingData*>(otherPartData)->directionFacing = direction;
+					if (relativePosition.y < 0)
+					{
+						direction = directionID::negativeY;
+					}
+					else
+					{
+						direction = directionID::positiveY;
+					}
 				}
-
-				cveci2 part1Pos = adjacentBlockPosition + getOtherPartRelativeLocation(blockToPlace, true, direction);
-				selectedBlockContainer->setBlockWithData(part1Pos, blockToPlace, otherPartData, chunkLoadLevel::updateLoaded);
 			}
-			if (isSlab(blockToPlace))
+			else
 			{
-				dynamic_cast<slabData*> (placedBlockData)->type = exactBlockIntersection.y > newBlockMiddle.y ? slabType::topSlab : slabType::bottomSlab;
+				if (exactBlockIntersection.x < newBlockMiddle.x)
+				{
+					direction = directionID::negativeX;
+				}
+				else
+				{
+					direction = directionID::positiveX;
+				}
 			}
-			selectedBlockContainer->setBlockWithData(adjacentBlockPosition, blockToPlace, placedBlockData, chunkLoadLevel::updateLoaded);
-
-			blockList[(int)blockToPlace]->placeSound->playRandomSound(selectedBlockContainer, exactBlockIntersection);
-			return true;
+			if (invertPlacementDirection(blockToPlace))
+			{
+				direction = flipDirection(direction);
+			}
+			dynamic_cast<facingData*> (newBlockData)->directionFacing = direction;
 		}
+		else
+		{
+			direction = standardUpFacingBlockDirection;
+		}
+
+		if (hasAttachmentDirectionData(blockToPlace))
+		{
+			int nearestAttachment = -1;
+			fp nearestAttachmentDistanceSquared = INFINITY;
+
+			cvec2 relativeAttachmentPosition = exactBlockIntersection - cvec2(adjacentBlockPosition);
+
+			//check which block to attach to
+			for (fsize_t i = 0; i < directionCount2D; i++)
+			{
+				if ((!isTorch(blockToPlace)) || ((directionID)i != directionID::positiveY))
+				{
+					cveci2 attachmentPosition = adjacentBlockPosition + directionVectors2D[i];
+
+					if (selectedBlockContainer->canAttachTo(attachmentPosition, flipDirection((directionID)i)))
+					{
+						cvec2 currentRelativeAttachmentPosition = cvec2(0.5) + cvec2(directionVectors2D[i]) * 0.5;
+						cfp attachmentDistanceSquared = (currentRelativeAttachmentPosition - relativeAttachmentPosition).lengthSquared();
+
+						if (attachmentDistanceSquared < nearestAttachmentDistanceSquared)
+						{
+							nearestAttachment = i;
+							nearestAttachmentDistanceSquared = attachmentDistanceSquared;
+						}
+					}
+				}
+			}
+			if (nearestAttachment == -1)
+			{
+
+				//can'T place
+				return false;
+			}
+			else
+			{
+				dynamic_cast<attachmentDirectionData*>(newBlockData)->attachmentDirection = (directionID)nearestAttachment;
+			}
+		}
+		//set when it's a double block
+		veci2 part1Pos = adjacentBlockPosition;
+		rectangle2 blockHitboxRect = rectangle2(adjacentBlockPosition, vec2(1));
+		if (isDoubleBlockWhenPlaced(blockToPlace))
+		{
+			part1Pos = adjacentBlockPosition + getOtherPartRelativeLocation(blockToPlace, true, direction);
+			if (!selectedBlockContainer->getBlock(part1Pos)->canReplaceBlock)return false;
+			blockHitboxRect.expandToContain(rectangle2(part1Pos, vec2(1)));
+		}
+		else if (isSlab(blockToPlace))
+		{
+			dynamic_cast<slabData*> (newBlockData)->type = exactBlockIntersection.y > newBlockMiddle.y ? slabType::topSlab : slabType::bottomSlab;
+		}
+		//check if entities would collide with this block
+		if (blockList[(int)blockToPlace]->blockCollisionType == collisionTypeID::willCollide)
+		{
+			crectangle2& checkRect = selectedBlockContainer->containerToRootTransform.multRectMatrix(blockHitboxRect);
+
+			const std::vector<entity*>& entityList = dimensionIn->findNearEntities(checkRect.expanded(mobSizeMargin));
+
+			//check for all mobs if it collides
+			for (const entity* const& e : entityList)
+			{
+				if (!canPlaceInEntity(e->entityType))
+				{
+					if (collides2d(e->calculateHitBox(e->position), checkRect))
+					{
+						//entity in the way
+						return false;
+					}
+				}
+			}
+		}
+
+
+		selectedBlockContainer->setBlockWithData(adjacentBlockPosition, blockToPlace, newBlockData, chunkLoadLevel::updateLoaded);
+		if (isDoubleBlockWhenPlaced(blockToPlace)) {
+
+			blockData* otherPartData = createBlockData(blockToPlace);
+			dynamic_cast<doubleBlockData*>(newBlockData)->isPart0 = true;
+			dynamic_cast<doubleBlockData*>(otherPartData)->isPart0 = false;
+
+			if (hasFacingData(blockToPlace))
+			{
+				dynamic_cast<facingData*>(otherPartData)->directionFacing = direction;
+			}
+			selectedBlockContainer->setBlockWithData(part1Pos, blockToPlace, otherPartData, chunkLoadLevel::updateLoaded);
+		}
+
+		blockList[(int)blockToPlace]->placeSound->playRandomSound(selectedBlockContainer, exactBlockIntersection);
+		return true;
 	}
+
 	return false;
 }
 waveShaper getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle)
@@ -895,10 +951,10 @@ waveShaper getLegSwingSynchronizer(cfp& legHeight, cfp& maxLegAngle)
 	cfp distanceBetweenLegsSpread = sin(maxLegAngle) * legHeight * 2 * speedMultiplier;
 	return waveShaper(distanceBetweenLegsSpread, -maxLegAngle, maxLegAngle);
 }
-std::vector<vec3> humanoid::getFrictions() const
+vec2 humanoid::applyNaturalForces(cvec2& speed) const
 {
-	std::vector<vec3> frictions = mob::getFrictions();
+	vec2 newSpeed = mob::applyNaturalForces(speed);
 	if (climbing)
-		frictions.push_back(vec3(0, 0, ladderFrictionMultiplier));
-	return frictions;
+		newSpeed *= ladderFrictionMultiplier;
+	return newSpeed;
 }

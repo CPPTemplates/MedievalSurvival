@@ -1,10 +1,15 @@
 #include "slotContainer.h"
 #include "world.h"
 #include "include/optimization/handleError.h"
-bool slotContainer::addStack(itemStack& stack)
+bool slotContainer::addToEqualStacks(itemStack& stack, itemStack*& emptySlot)
 {
 	handleError(std::wstring(L"not implemented"));
 	return false;
+}
+bool slotContainer::addStack(itemStack& stack)
+{
+	itemStack* emptySlot = nullptr;
+	return addToEqualStacks(stack, emptySlot) || (emptySlot && emptySlot->addStack(stack));
 }
 
 bool slotContainer::substractStack(itemStack& stack)

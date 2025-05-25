@@ -3,6 +3,6 @@
 struct craftingTableSlotContainer : craftingGridSlotContainer
 {
 	craftingTableSlotContainer();
-	virtual bool addStack(itemStack& stack) override;
+	bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~craftingTableSlotContainer() override;
 };

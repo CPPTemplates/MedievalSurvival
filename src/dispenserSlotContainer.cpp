@@ -10,9 +10,9 @@ dispenserSlotContainer::dispenserSlotContainer()
 	containers.push_back(inventorySlots);
 }
 
-bool dispenserSlotContainer::addStack(itemStack& stack)
+bool dispenserSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return dispenserSlots->addStack(stack);
+	return dispenserSlots->addToEqualStacks(s, emptySlot);
 }
 
 dispenserSlotContainer::~dispenserSlotContainer()

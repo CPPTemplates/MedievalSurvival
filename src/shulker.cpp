@@ -62,9 +62,9 @@ fp shulker::getGravityForce() const
 	return attached() ? fp() : mob::getGravityForce();
 }
 
-std::vector<vec3> shulker::getFrictions() const
+vec2 shulker::applyNaturalForces(cvec2& speed) const
 {
-	return attached() ? std::vector<vec3>() : mob::getFrictions();
+	return attached() ? vec2() : mob::applyNaturalForces(speed);
 }
 
 bool shulker::attached() const

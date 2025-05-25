@@ -11,9 +11,9 @@ craftingTableSlotContainer::craftingTableSlotContainer() : craftingGridSlotConta
 	containers.push_back(inventorySlots);
 }
 
-bool craftingTableSlotContainer::addStack(itemStack& stack)
+bool craftingTableSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return craftingSlots->addStack(stack);
+	return craftingSlots->addToEqualStacks(s, emptySlot);
 }
 
 craftingTableSlotContainer::~craftingTableSlotContainer()

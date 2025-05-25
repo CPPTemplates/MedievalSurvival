@@ -539,9 +539,9 @@ bool human::compareSelector(const human& sender, const std::wstring& selectorStr
 		((&sender == this) && (selectorString == std::wstring(L"@p"))) || (selectorString == std::wstring(L"@a"));
 }
 
-bool human::addStack(itemStack& stack)
+bool human::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return hotbarSlots->addStack(stack) || inventorySlots->addStack(stack);
+	return hotbarSlots->addToEqualStacks(s, emptySlot) || inventorySlots->addToEqualStacks(s, emptySlot);
 }
 
 void human::addStackOrDrop(itemStack& stack)
@@ -557,9 +557,9 @@ bool human::substractStack(itemStack& stack)
 	return hotbarSlots->substractStack(stack) || inventorySlots->substractStack(stack);
 }
 
-std::vector<vec3> human::getFrictions() const
+vec2 human::applyNaturalForces(cvec2& speed) const
 {
-	return flying ? std::vector<vec3>({ noCollisionFriction }) : humanoid::getFrictions();
+	return flying ? speed * airFrictionMultiplier : humanoid::applyNaturalForces(speed);
 }
 
 void human::render(const gameRenderData& targetData) const
@@ -604,14 +604,14 @@ void human::setGameMode(const gameModeID& newGameMode)
 {
 	if (newGameMode == gameModeID::spectator)
 	{
-		collideLevel = collisionTypeID::willNotCollide;
+		collisionCheckLevel = collisionTypeID::willNotCollide;
 		// ensure to fly, to stop falling out of the world
 		flying = true;
 		speed = cvec2();
 	}
 	else if (currentGameMode == gameModeID::spectator)
 	{
-		collideLevel = collisionTypeID::willCollideTop;
+		collisionCheckLevel = collisionTypeID::willCollideTop;
 	}
 	flying = flying && gameModeDataList[(int)newGameMode]->canFly;
 
@@ -796,6 +796,10 @@ void human::onItemRightClick(itemStack& stackIn)
 	}
 	else if (wantsToStartUsing)
 	{
+		if (selectedBlock == blockID::composter)
+		{
+		
+		}
 		const blockID& blockToPlace = getBlockToPlace(stackIn.stackItemID);
 		if ((int)blockToPlace && placeBlock(blockToPlace))
 		{
@@ -841,10 +845,10 @@ void human::onItemRightClick(itemStack& stackIn)
 	{
 		if (selectedBlock == blockID::air)
 		{
-			if (blockList[(int)blockID::fire]->canPlace(selectedBlockContainer, selectedBlockPosition))
+			if (placeBlock(blockID::fire))
 			{
 				// set to fire
-				selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::fire, chunkLoadLevel::updateLoaded);
+				//selectedBlockContainer->setBlockID(selectedBlockPosition, blockID::fire, chunkLoadLevel::updateLoaded);
 
 				decreaseDurability(stackIn, 1, exactBlockIntersection);
 

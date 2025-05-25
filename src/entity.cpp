@@ -250,7 +250,7 @@ void entity::tick()
 			portalTicks = 0;
 		}
 	}
-	if (inBlocks())
+	if (stuck)
 	{
 		// suffocate
 		addDamageSource(1, std::make_shared<damageSource>(suffocationDamage));
@@ -337,13 +337,14 @@ void entity::physics()
 	cbool& oldOnGround = onGround;
 	vec2 positionAfterCollisions = newPosition;
 	axisCollided = vect2<bool>();
-	if (collideLevel != collisionTypeID::willNotCollide)
+	if (collisionCheckLevel != collisionTypeID::willNotCollide)
 	{
 		//cvec2 oldSpeed = speed;
 
 		fp secondsToCalculateLeft = secondsPerTick;
 		do
 		{
+			//we cannot reset newOnGround every time because when we hit the ground, we lose y speed, and so we'll not collide with the ground anymore
 			// newOnGround = false;
 			// check hitbox
 			// relative to speed on collision axis?
@@ -356,64 +357,62 @@ void entity::physics()
 			// get real values
 			constexpr fp maxStepHeight = 0.625;
 
-			if (collideLevel == collisionTypeID::willCollideTop)
+			//step up on for example stairs
+			if (collisionCheckLevel == collisionTypeID::willCollideTop && newOnGround)
 			{
-				if (newOnGround)
+				size_t index = std::wstring::npos;
+				fp firstCollisionTime = INFINITY;
+
+				// check if another hitbox collided
+				const fp hitbox00 = positionAfterCollisions.y + relativeHitbox.y;
+
+				for (size_t stepIndex = 0; stepIndex < data.hitboxes.size(); stepIndex++)
 				{
-					size_t index = std::wstring::npos;
-					fp firstCollisionTime = INFINITY;
-
-					// check if another hitbox collided
-					const fp hitbox00 = positionAfterCollisions.y + relativeHitbox.y;
-
-					for (size_t stepIndex = 0; stepIndex < data.hitboxes.size(); stepIndex++)
+					const collisionData& checkData = data.hitboxes[stepIndex];
+					if ((checkData.collisionTime > math::fpepsilon) && (checkData.collisionTime < firstCollisionTime))
 					{
-						const collisionData& checkData = data.hitboxes[stepIndex];
-						if ((checkData.collisionTime > math::fpepsilon) && (checkData.collisionTime < firstCollisionTime))
+						cfp collisionTop = checkData.hitboxCollidingWith.y + checkData.hitboxCollidingWith.h;
+						if ((checkData.type != collisionTypeID::willNotCollide) && (checkData.collisionTime > 0) && (checkData.collisionTime < secondsToCalculateLeft) && (collisionTop > hitbox00) && (collisionTop <= (hitbox00 + maxStepHeight)))
 						{
-							cfp collisionTop = checkData.hitboxCollidingWith.y + checkData.hitboxCollidingWith.h;
-							if ((checkData.type != collisionTypeID::willNotCollide) && (checkData.collisionTime > 0) && (checkData.collisionTime < secondsToCalculateLeft) && (collisionTop > hitbox00) && (collisionTop <= (hitbox00 + maxStepHeight)))
-							{
-								// check if covered
-								collisionEdgeData edgeToCheck = collisionEdgeData({ cvec2(checkData.hitboxCollidingWith.x, checkData.hitboxCollidingWith.w) });
-								edgeToCheck = edgeToCheck.substractCoveringEdges(data.getEdges(collisionTop, directionID::positiveY));
+							// check if covered
+							collisionEdgeData edgeToCheck = collisionEdgeData({ cvec2(checkData.hitboxCollidingWith.x, checkData.hitboxCollidingWith.w) });
+							edgeToCheck = edgeToCheck.substractCoveringEdges(data.getEdges(collisionTop, directionID::positiveY));
 
-								if (edgeToCheck.edgeInRange(cvec2((speed.x > checkData.speed.x) ? checkData.hitboxCollidingWith.x : ((checkData.hitboxCollidingWith.x + checkData.hitboxCollidingWith.w) - math::fpepsilon), math::fpepsilon)))
-								{
-									index = stepIndex;
-									firstCollisionTime = checkData.collisionTime;
-								}
+							if (edgeToCheck.edgeInRange(cvec2((speed.x > checkData.speed.x) ? checkData.hitboxCollidingWith.x : ((checkData.hitboxCollidingWith.x + checkData.hitboxCollidingWith.w) - math::fpepsilon), math::fpepsilon)))
+							{
+								index = stepIndex;
+								firstCollisionTime = checkData.collisionTime;
 							}
 						}
 					}
-					//cbool allowStepCollisionType[(size_t)collisionTypeID::count]{
-					//	false, true, true};
-					if (index != std::wstring::npos)
+				}
+				//cbool allowStepCollisionType[(size_t)collisionTypeID::count]{
+				//	false, true, true};
+				if (index != std::wstring::npos)
+				{
+					collisionData stepCollision = data.hitboxes[index];
+					// step up block
+					//cfp hitboxHeight = stepCollision.hitboxCollidingWith.y + stepCollision.hitboxCollidingWith.h;
+
+					// stepped up position should be positionaftercollisions
+
+					cvec2 steppedUpPosition = cvec2(speed.x < stepCollision.speed.x ? (stepCollision.hitboxCollidingWith.pos1() - relativeHitbox.pos0) : (stepCollision.hitboxCollidingWith.pos01()) - relativeHitbox.pos10()) + cvec2(0, math::fpepsilon);
+
+					crectangle2 stepHitbox = calculateHitBox(steppedUpPosition);
+
+					const collisionTypeID steppedCollisionType = dimensionIn->getHitboxCollisionType(stepHitbox);
+
+					if (steppedCollisionType != collisionTypeID::willCollide)
 					{
-						collisionData stepCollision = data.hitboxes[index];
-						// step up block
-						//cfp hitboxHeight = stepCollision.hitboxCollidingWith.y + stepCollision.hitboxCollidingWith.h;
-
-						// stepped up position should be positionaftercollisions
-
-						cvec2 steppedUpPosition = cvec2(speed.x < stepCollision.speed.x ? (stepCollision.hitboxCollidingWith.pos1() - relativeHitbox.pos0) : (stepCollision.hitboxCollidingWith.pos01()) - relativeHitbox.pos10()) + cvec2(0, math::fpepsilon);
-
-						crectangle2 stepHitbox = calculateHitBox(steppedUpPosition);
-
-						const collisionTypeID steppedCollisionType = dimensionIn->getHitboxCollisionType(stepHitbox);
-
-						if (steppedCollisionType != collisionTypeID::willCollide)
-						{
-							speed.y = stepCollision.speed.y;
-							newOnGround = true;
-							positionAfterCollisions = steppedUpPosition;
-							secondsToCalculateLeft -= stepCollision.collisionTime;
-							continue; // don'T change tickpartleft and evaluate the rest of the time at this new elevation
-						}
+						speed.y = stepCollision.speed.y;
+						newOnGround = true;
+						positionAfterCollisions = steppedUpPosition;
+						secondsToCalculateLeft -= stepCollision.collisionTime;
+						continue; // don'T change tickpartleft and evaluate the rest of the time at this new elevation
 					}
 				}
 			}
-
+			//handle basic collisions
 			cbool allowCollisionType[(size_t)collisionTypeID::count]{
 				false,
 				false,
@@ -423,12 +422,10 @@ void entity::physics()
 			if (firstCollision.collisionTime < secondsToCalculateLeft)
 			{
 				axisCollided = firstCollision.axisCollided;
-				if (firstCollision.axisCollided.y)
-				{
-					newOnGround = true;
-				}
+				stuck = firstCollision.stuck;
 			}
-			if (collideLevel == collisionTypeID::willCollideTop)
+			//collide with all top faces which aren't covered up by other hitboxes
+			if (collisionCheckLevel == collisionTypeID::willCollideTop)
 			{
 				const std::vector<collisionData> validCollisions = data.getCollisions(collisionTypeID::willCollideTop);
 				for (const collisionData& collision : validCollisions)
@@ -532,6 +529,20 @@ void entity::physics()
 					}
 				}
 			}
+			//corner case
+			if (firstCollision.axisCollided.x && firstCollision.axisCollided.y && !firstCollision.stuck) {
+				//square instead of ABS
+				cvec2& relativeSpeed = math::squared(speed - firstCollision.speed);
+				//choose one axis to go with. let's collide on the axis with the least speed. when no axis has the least speed (45 degrees hit on corner), collide on both
+				firstCollision.axisCollided.x = relativeSpeed.y > relativeSpeed.x;
+				firstCollision.axisCollided.y = relativeSpeed.x > relativeSpeed.y;
+			}
+
+			if (firstCollision.axisCollided.y)
+			{
+				newOnGround = true;
+			}
+
 			if (!newOnGround && sneaking && oldOnGround)
 			{
 				speed = vec2(); // prevent from going off the edge
@@ -548,7 +559,8 @@ void entity::physics()
 					onCollisionWithGround(speed.y - firstCollision.speed.y);
 				}
 				positionAfterCollisions += speed * firstCollision.collisionTime;
-				// multiply by friction
+
+
 				for (size_t axisIndex = 0; axisIndex < 2; axisIndex++)
 				{
 					if (firstCollision.axisCollided[axisIndex])
@@ -619,13 +631,13 @@ void entity::physics()
 	//
 	//	speed = getSpeedAfterFriction(cvect2<vec2>(speed, cvec2(0, gravityForce)), cvec2(getWeight(), fluidDisplaceWeight));
 	// }
-
-	const std::vector<vec3>& frictions = getFrictions();
-
-	for (vec3 fric : frictions)
-	{
-		speed = math::lerp(cvec2(fric), speed, fric.z); // getSpeedAfterFriction(cvect2<vec2>(speed, cvec2(fric)), cvec2(getWeight(), fric.z));
-	}
+	speed = applyNaturalForces(speed);
+	//const std::vector<vec3>& frictions = getFrictions();
+	//
+	//for (vec3 fric : frictions)
+	//{
+	//	speed = math::lerp(cvec2(fric), speed, fric.z); // getSpeedAfterFriction(cvect2<vec2>(speed, cvec2(fric)), cvec2(getWeight(), fric.z));
+	//}
 }
 bool entity::canTeleportTo(cvec2& position) const
 {
@@ -981,7 +993,7 @@ void entity::serializeValue(nbtSerializer& s)
 	s.serializeValue(std::wstring(L"in cobweb"), inCobweb);
 	s.serializeValue(std::wstring(L"sneaking"), sneaking);
 	s.serializeValue(std::wstring(L"onGround"), onGround);
-	s.serializeValue(std::wstring(L"collision type"), collideLevel);
+	s.serializeValue(std::wstring(L"collision type"), collisionCheckLevel);
 	serializeNBTValue(s, std::wstring(L"relative hitbox"), relativeHitbox);
 }
 
@@ -1015,7 +1027,7 @@ void entity::teleportTo(dimension* newDimension, cvec2& newPosition, cbool& play
 
 void entity::renderHitboxes(const gameRenderData& targetData) const
 {
-	renderBlockRect(calculateHitBox(), targetData);
+	renderBlockRect(calculateHitBox(), targetData, despawn ? colorPalette::red : colorPalette::white);
 	cvec2 pos0 = targetData.worldToRenderTargetTransform.multPointMatrix(position);
 	cvec2 pos1 = targetData.worldToRenderTargetTransform.multPointMatrix(newPosition);
 	fillLine(targetData.renderTarget, pos0, pos1, solidColorBrush(colorPalette::blue));
@@ -1054,54 +1066,52 @@ fp entity::getGravityForce() const
 	return gravityForce;
 }
 
-std::vector<vec3> entity::getFrictions() const
+vec2 entity::applyGroundForce(cvec2& speed) const
 {
-	std::vector<vec3> frictions = std::vector<vec3>();
+	//-added, * multiplier
+	const auto& sign = math::sign(speed.x);
+	//get x to zero 
+	fp xValue = math::maximum(speed.x * sign * groundFrictionMultiplier - groundFrictionAdder, (fp)0);
+	
+	return vec2(xValue * sign, speed.y);
+}
+
+vec2 entity::applyNaturalForces(cvec2& speed) const
+{
 	cfp& windArea = calculateHitBox().size.volume();
 	cfp& windWeight = blockList[blockID::air]->weightPerCubicMeter * windArea;
 
-	if (collideLevel == collisionTypeID::willNotCollide)
+	vec2 newSpeed = speed;
+
+	if (collisionCheckLevel == collisionTypeID::willNotCollide)
 	{
-		frictions.push_back(noCollisionFriction);
+		newSpeed *= airFrictionMultiplier;
 	}
 	else
 	{
 
 		if (inCobweb)
 		{
-			frictions.push_back(cvec3(cvec2(), 0.5));
+			newSpeed *= 0.5;
 		}
 
 		if (fluidArea > 0)
 		{
-			frictions.push_back(getFluidFriction());
+			newSpeed *= fluidFrictionMultiplier;
 		}
 
-		if (onGround)
-		{
-			frictions.push_back(getGroundFriction());
-		}
+		newSpeed = applyGroundForce(newSpeed);
+		newSpeed *= airFrictionMultiplier;
 
 		cvec2& windSpeed = dimensionIn->getWindSpeed(calculateHitBox().getCenter());
 
 		cfp& bodyWeight = getWeight();
 		if (bodyWeight != INFINITY)
 		{
-			frictions.push_back(cvec3(windSpeed,
-				bodyWeight == 0 ? bodyWeight : (bodyWeight / (windWeight + bodyWeight))));
+			newSpeed = math::lerp(windSpeed, newSpeed, bodyWeight == 0 ? bodyWeight : (bodyWeight / (windWeight + bodyWeight)));
 		}
 	}
-	return frictions;
-}
-
-vec3 entity::getGroundFriction() const
-{
-	return cvec3(cvec2(), groundFrictionMultiplier); // cvec3(cvec2(), frictionPerBlock * getLengthTouchingGround());
-}
-
-vec3 entity::getFluidFriction() const
-{
-	return cvec3(cvec2(), fluidFrictionMultiplier); // 16 * (fluidArea / calculateHitBox().size.volume()));
+	return newSpeed;
 }
 
 fp entity::getLengthTouchingGround() const
@@ -1119,10 +1129,25 @@ fp entity::getVolume() const
 	return entityDataList[entityType]->volume;
 }
 
-bool entity::inBlocks() const
+bool fitEntity(entity* e, tickableBlockContainer* containerIn, cvec2& idealPosition)
 {
-	return collideLevel != collisionTypeID::willNotCollide &&
-		dimensionIn->getHitboxCollisionType(calculateHitBox(position)) == collisionTypeID::willCollide;
+	vec2 resultPosition = vec2();
+	if (containerIn->fitExpandingHitbox(e->relativeHitbox, idealPosition, resultPosition)) {
+		summonEntity(e, containerIn, resultPosition);
+		return true;
+	}
+	return false;
+}
+entity* fitEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& idealPosition)
+{
+	entity* e = createEntity(entityType);
+	if (fitEntity(e, containerIn, idealPosition)) {
+		return e;
+	}
+	else {
+		delete e;
+		return nullptr;
+	}
 }
 int getEntityIDByName(const std::wstring& name)
 {
@@ -1139,6 +1164,7 @@ int getEntityIDByName(const std::wstring& name)
 bool collidesThisTick(const entity& e1, const entity& e2)
 {
 	vect2<bool> axisCollided = vect2<bool>();
-	collideTime2d(e1.calculateHitBox(), e2.calculateHitBox(), (e2.speed - e1.speed) * secondsPerTick, axisCollided);
+	bool stuck;
+	collideTime2d(e1.calculateHitBox(), e2.calculateHitBox(), (e2.speed - e1.speed) * secondsPerTick, axisCollided, stuck);
 	return axisCollided.x || axisCollided.y;
 }

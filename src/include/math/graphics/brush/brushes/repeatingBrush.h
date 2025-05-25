@@ -1,22 +1,22 @@
 #pragma once
 #include "math/graphics/brush/brush.h"
 #include "math/graphics/brush/brushes.h"
-template<typename brush0Type, typename resultingType = brush0Type::resultingType, typename inputType = brush0Type::inputType>
-struct repeatingBrush final : public brush<resultingType, inputType>
+template<typename brush0Type, typename resultingType = brush0Type::resultingType, typename InputType = brush0Type::InputType>
+struct repeatingBrush final : public brush<resultingType, InputType>
 {
 	//repeats the same brush
 	const brush0Type& brushToRepeat;
-	inputType repeatSize;
-	repeatingBrush(const brush0Type& brushToRepeat, const inputType& repeatSize) :brushToRepeat(brushToRepeat), repeatSize(repeatSize) {}
+	InputType repeatSize;
+	repeatingBrush(const brush0Type& brushToRepeat, const InputType& repeatSize) :brushToRepeat(brushToRepeat), repeatSize(repeatSize) {}
 	repeatingBrush(const brush0Type& textureToRepeat) :brushToRepeat(textureToRepeat), repeatSize(textureToRepeat.getClientRect().size) {}
-	inline resultingType getValue(const inputType& pos) const
+	inline resultingType getValue(const InputType& pos) const
 	{
-		if constexpr (std::is_same_v<inputType, vec2>) {
-			const inputType& remainderPos = vec2(math::mod(pos.x, repeatSize.x), math::mod(pos.y, repeatSize.y));
+		if constexpr (std::is_same_v<InputType, vec2>) {
+			const InputType& remainderPos = vec2(math::mod(pos.x, repeatSize.x), math::mod(pos.y, repeatSize.y));
 			return brushToRepeat.getValue(remainderPos);
 		}
 		else {
-			const inputType& remainderPos = inputType(pos.x % repeatSize.x, pos.y % repeatSize.y);
+			const InputType& remainderPos = InputType(pos.x % repeatSize.x, pos.y % repeatSize.y);
 			return brushToRepeat.getValue(remainderPos);
 		}
 	}

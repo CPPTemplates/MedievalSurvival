@@ -9,9 +9,9 @@
 #include "dispenserSlotContainer.h"
 #include "smithingTableSlotContainer.h"
 #include "anvilSlotContainer.h"
-bool uiSlotContainer::addStack(itemStack& stack)
+bool uiSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return linkedContainer->addStack(stack);
+	return linkedContainer->addToEqualStacks(s, emptySlot);
 }
 
 uiSlotContainer::~uiSlotContainer()

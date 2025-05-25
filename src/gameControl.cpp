@@ -66,6 +66,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include "math/graphics/brush/brushes/squareInterpolator.h"
 #include "math/graphics/brush/brushes/colorMultiplier.h"
+#include "math/graphics/brush/brushes/alphaMask.h"
 #include "include/math/graphics/brush/brushes/repeatingBrush.h"
 #include "include/math/graphics/brush/brushes/vignetteBrush.h"
 #include "rectangularSlotContainer.h"
@@ -427,6 +428,9 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 	constexpr int averageDistance2 = averageDistance * 2;
 	constexpr int averageDiametre = 1 + averageDistance2;
 
+	//the height in blocks at which the sky will start rendering. this to prevent being able to see the sky in unlit caves
+	constexpr int skyRenderHeight = 0;
+
 	crectanglei2 surroundingArrayRect = crectanglei2(blocksToBeDrawn.pos0 - averageDistance,
 		blocksToBeDrawn.size + averageDistance * 2);
 	// csize_t &surroundingArraySize = surroundingArrayRect.w * surroundingArrayRect.h;
@@ -448,12 +452,13 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 		chunkLoadLevel::worldGenerationLoaded);
 
 	enum LightState : byte {
-		shaded,//not completely unlit, but also not completely lit
-		black,//completely unlit
-		white//completely lit
+		shaded = 0b0,//not completely unlit, but also not completely lit
+		black = 0b1,//completely unlit
+		white = 0b10,//completely lit
+		cullBlock = 0b100//when set, this block should be culled from rendering. below y = 0, when the light level = 0, we don't render anything.
 	};
 	const auto& lightStates = array2d<LightState>(surroundingArrayRect.size);
-	const array2d<squareInterpolator>& interpolators = array2d<squareInterpolator>(
+	const array2d<squareInterpolator<true>>& interpolators = array2d<squareInterpolator<true>>(
 		surroundingArrayRect.size);
 
 	// this array specifies which coordinates on the x and y axis are going to be rendered. this optimizes rendering when zoomed out so far that blocks are smaller than one pixel.
@@ -516,14 +521,15 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 					}
 				notEnclosed:;
 
+					LightState& state = lightStates.getValueReferenceUnsafe(relativePosition);
 					if (enclosed)
 					{
-						lightStates.setValueUnsafe(relativePosition, LightState::black);
+						state = (LightState)(LightState::black | LightState::cullBlock);
 					}
 					else
 					{
-						lightStates.setValueUnsafe(relativePosition, LightState::shaded);
-						color* cornerColorPtr = interpolators.getValueReferenceUnsafe(
+						state = (LightState)(LightState::black | LightState::white);
+						colorf* cornerColorPtr = interpolators.getValueReferenceUnsafe(
 							cveci2(relativePosition))
 							.cornerColors;
 						// for each corner
@@ -533,7 +539,6 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 							for (int cornerX = relativePosition.x;
 								cornerX < relativePosition.x + 2; cornerX++, cornerColorPtr++)
 							{
-								LightState& state = lightStates.getValueReferenceUnsafe(relativePosition);
 								// for each light level around 'corner'
 								lightLevel maxLightLevel[(size_t)lightLevelID::count]{};
 								for (int cornerCornerY = cornerY;
@@ -556,12 +561,12 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 								}
 								*cornerColorPtr = dimensionIn->getColorMultiplier(maxLightLevel[0],
 									maxLightLevel[1]);
-								if (*cornerColorPtr != colorPalette::black)
+								if (*cornerColorPtr != colorfPalette::black)
 								{
 									//can'T be black anymore
 									state = (LightState)(state & ~LightState::black);
 								}
-								if (*cornerColorPtr != colorPalette::white)
+								if (*cornerColorPtr != colorfPalette::white)
 								{
 									//can'T be white anymore
 									state = (LightState)(state & ~LightState::white);
@@ -591,7 +596,6 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 			e->render(entityRenderData);
 		}
 	}
-
 	// draw blocks
 	for (cveci2& renderPosition : blocksToBeDrawn)
 	{
@@ -607,13 +611,18 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 
 				crectangle2& blockScreenRect = targetData.worldToRenderTargetTransform.multRectMatrix(
 					crectangle2(renderPosition, cveci2(1)));
-
-				if (lightStates.getValueUnsafe(relativePosition) != LightState::black)
+				LightState& state = lightStates.getValueReferenceUnsafe(relativePosition);
+				if (!(state & LightState::black) || (dimensionIn->identifier == dimensionID::overworld && renderPosition.y >= skyRenderHeight && !blockList[surroundingBlocks.getValueUnsafe(relativePosition + averageDistance)]->willFillSquare))
 				{
 					// render block
 					b->render(targetData, dimensionIn->getBlockData(renderPosition), dimensionIn,
 						renderPosition);
 				}
+				else {
+					//block not rendered
+					state = (LightState)(state | LightState::cullBlock);
+				}
+
 			}
 		}
 	}
@@ -667,7 +676,7 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 					crectangle2(cvec2(renderPosition), cvec2(1)));
 
 				LightState& state = lightStates.getValueReferenceUnsafe(relativePosition);
-				if (state == LightState::black)
+				if (state & LightState::cullBlock)
 				{
 					fillRectangle(targetData.renderTarget, blockScreenRect, brushes::black);
 				}
@@ -688,14 +697,22 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 						{
 							// all equal
 							const auto& solid = solidColorBrush(interpolator.cornerColors[0]);
-							const auto& multipier = colorMultiplier(targetData.renderTarget, solid);
+							if (solid.value == colorPalette::black) {
+								//when the color is just black, we'll convert everything to black, but keep the original alpha
+								const auto& multipier = alphaMask(targetData.renderTarget, solid);
+								fillRectangle(targetData.renderTarget, ceilRectangle(blockScreenRect),
+									multipier);
+							}
+							else {
+								const auto& multipier = colorMultiplier(targetData.renderTarget, solid);
 
-							fillRectangle(targetData.renderTarget, ceilRectangle(blockScreenRect),
-								multipier);
+								fillRectangle(targetData.renderTarget, ceilRectangle(blockScreenRect),
+									multipier);
+							}
 						}
 						else
 						{
-							const auto& transform = transformBrush(mat3x3::fromRectToRect(blockScreenRect, crectangle2(cvec2(0), cvec2(0xff))),
+							const auto& transform = transformBrush(mat3x3::fromRectToRect(blockScreenRect, crectangle2(cvec2(0), cvec2(1))),
 								interpolator);
 							const auto& multipier = colorMultiplier(targetData.renderTarget, transform);
 
@@ -984,8 +1001,9 @@ void gameControl::renderGame(crectanglei2& rect, const texture& renderTarget, cb
 			{
 				block* const& blockToCheck = blockList[(int)surroundingBlocks.getValue(
 					relativePosition + averageDistance)];
-				// TODO: only render sky when the block doesn'T completely cover
-				if (!blockToCheck->willFillSquare)
+				const LightState& state = lightStates.getValueUnsafe(relativePosition);
+				// only render sky when the block doesn'T completely cover
+				if (!blockToCheck->willFillSquare && !(state & LightState::cullBlock) && (dimensionIn->identifier != dimensionID::overworld || renderPosition.y >= skyRenderHeight))
 				{
 					// render sky
 					crectangle2& blockRect = crectangle2(renderPosition, cveci2(1));

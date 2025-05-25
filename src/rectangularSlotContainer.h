@@ -11,7 +11,7 @@ struct rectangularSlotContainer :public slotContainer, public IDestructable
 	inline itemStack* getSlot(cveci2& pos) { return slots + pos.x + pos.y * rowsAndColumns.x; }
 	void render(const gameRenderData& targetData, cvec2& pos, cfp& offset, cfp& itemDrawSize);
 	bool getSlot(cveci2& mousePos, cveci2& drawPos, cint& offset, cint& itemDrawSize, veci2& slotPosition) const;
-	bool addStack(itemStack& stack) override;
+	bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	int countAmount(const itemStack& stack) const;
 	bool substractStack(itemStack& stack) override;
 
@@ -25,4 +25,5 @@ struct rectangularSlotContainer :public slotContainer, public IDestructable
 	virtual void serializeValue(nbtSerializer& s) override;
 
 	virtual void clearData() override;
+
 };

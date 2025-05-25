@@ -6,6 +6,6 @@ struct dispenserSlotContainer : inventory
 	dispenserData* selectedDispenserData = nullptr;
 	uiSlotContainer* dispenserSlots = nullptr;
 	dispenserSlotContainer();
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~dispenserSlotContainer() override;
 };

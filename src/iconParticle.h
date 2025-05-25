@@ -7,6 +7,6 @@ struct iconParticle final : textureParticle {
 		//float 1 block up / second
 		speed.y = 1 * secondsPerTick;
 	}
-	virtual std::vector<vec3> getFrictions() const final;
+	virtual vec2 applyNaturalForces(cvec2& speed) const final;
 	virtual fp getGravityForce() const final;
 };

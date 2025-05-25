@@ -50,33 +50,36 @@
 //
 //}
 
-namespace colorPalette
+template<typename colorType>
+class colorPaletteTN
 {
-    
-    constexpr color transparent = color(0, 0);
-    
-    constexpr color black = color(0, 0, 0);
-    
-    constexpr color red = color(color::maxValue, 0, 0);
-    
-    constexpr color green = color(0, color::maxValue, 0);
-    
-    constexpr color blue = color(0, 0, color::maxValue);
-    
-    constexpr color yellow = color(color::maxValue, color::maxValue, 0);
-    
-    constexpr color magenta = color(color::maxValue, 0, color::maxValue);
-    
-    constexpr color cyan = color(0, color::maxValue, color::maxValue);
-    
-    constexpr color purple = color(color::halfMaxValue, 0, color::maxValue);
-    
-    constexpr color white = color(color::maxValue, color::maxValue, color::maxValue);
-    
-    constexpr color gray = color(color::halfMaxValue, color::halfMaxValue, color::halfMaxValue);
-    
-    constexpr color orange = color(color::maxValue, color::halfMaxValue, 0);
-    
-    constexpr color brown = color(color::halfMaxValue, color::quarterMaxValue, color::quarterMaxValue);
-//
-}
+public:
+    static constexpr colorType transparent = colorType(0, 0);
+
+    static constexpr colorType black = colorType(0, 0, 0);
+
+    static constexpr colorType red = colorType(colorType::maxValue, 0, 0);
+
+    static constexpr colorType green = colorType(0, colorType::maxValue, 0);
+
+    static constexpr colorType blue = colorType(0, 0, colorType::maxValue);
+
+    static constexpr colorType yellow = colorType(colorType::maxValue, colorType::maxValue, 0);
+
+    static constexpr colorType magenta = colorType(colorType::maxValue, 0, colorType::maxValue);
+
+    static constexpr colorType cyan = colorType(0, colorType::maxValue, colorType::maxValue);
+
+    static constexpr colorType purple = colorType(colorType::halfMaxValue, 0, colorType::maxValue);
+
+    static constexpr colorType white = colorType(colorType::maxValue, colorType::maxValue, colorType::maxValue);
+
+    static constexpr colorType gray = colorType(colorType::halfMaxValue, colorType::halfMaxValue, colorType::halfMaxValue);
+
+    static constexpr colorType orange = colorType(colorType::maxValue, colorType::halfMaxValue, 0);
+
+    static constexpr colorType brown = colorType(colorType::halfMaxValue, colorType::quarterMaxValue, colorType::quarterMaxValue);
+    //
+};
+typedef colorPaletteTN<color> colorPalette;
+typedef colorPaletteTN<colorf> colorfPalette;

@@ -13,7 +13,7 @@ ghast::ghast() :mob(entityID::ghast)
 
 	flying = true;
 
-	collideLevel = collisionTypeID::willCollide;
+	collisionCheckLevel = collisionTypeID::willCollide;
 
 	head = new bodyPart2D(ghastHeadTextureRect, nullptr, position, ghastHeadSize, ghastHeadRotationCenter);
 	mainBodyPart = head;

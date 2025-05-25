@@ -390,6 +390,7 @@ enum class itemID : int
 	kelp,
 	dried_kelp_block,
 
+	//plant blocks
 	wheat,
 	carrots,
 	potatoes,
@@ -507,10 +508,11 @@ enum class itemID : int
 
 	end_crystal,
 
+	//plantable (not the plant block)
 	wheat_seeds,
 	carrot,
 	potato,
-	beetroot,
+	beetroot_seeds,
 
 	melon_seeds,
 	pumpkin_seeds,

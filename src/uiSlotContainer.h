@@ -8,7 +8,7 @@ struct uiSlotContainer :slotContainer, IDestructable
 	rectangularSlotContainer* linkedContainer;
 	uiSlotContainer(veci2 containerPixelPosition, rectangularSlotContainer* linkedContainer = nullptr) :containerPixelPosition(containerPixelPosition), linkedContainer(linkedContainer) {}
 	inline itemStack* getSlot(cveci2& pos) { return linkedContainer->getSlot(pos); }
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	//virtual void clickedOnItem(cmb& button, itemStack& stackHolding, veci2 selectedSlot);
 	virtual ~uiSlotContainer() override;
 };

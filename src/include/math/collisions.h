@@ -22,9 +22,13 @@ bool pointleftofline(cvec2& point, cvec2& p0, cvec2& p1);
 /// <param name="box0">the moving hitbox</param>
 /// <param name="box1">the hitbox which stays still. substract distances to add the distance this hitbox moves</param>
 /// <param name="box0MoveDistance">the distance which hitbox 0 will move as a vector</param>
-/// <param name="axisCollided">a vector containing a boolean for each axis</param>
-/// <returns>a number in range 0 to 1. 0 means collided instantly, 1 means not collided at all.</returns>
-fp collideTime2d(crectangle2& box0, crectangle2& box1, cvec2& box0MoveDistance, vect2<bool>& axisCollided);
+/// <param name="axisCollided">a vector containing a boolean for each axis. 
+/// <param name="stuck">if box0 and box1 overlap at the start. this is to distinguish from collisiontime 0
+/// when an axis didn't collide, that means that if you'd set the speed of the other axis to 0, the collision would be solved.
+/// so both axes only collide when the hitboxes are stuck inside eachother.</param>
+/// <returns>a number in range -1 to 1. -1 means that they were inside eachother, 0 means collided instantly, 0.5 means collided after half a timestep, 1 means not collided at all.
+/// you should be able to safely multiply speed of the collided axes by this number</returns>
+fp collideTime2d(crectangle2& box0, crectangle2& box1, cvec2& box0MoveDistance, vect2<bool>& axisCollided, bool& stuck);
 crectangle2 getBoxContaining(crectangle2& box, cvec2& boxSpeed);
 
 bool collides2d(cvec2& a0, cvec2& a1, cvec2& b0, cvec2& b1);
@@ -99,9 +103,34 @@ constexpr fp getFrictionMultiplier(cfp& weight, cfp& frictionWeight) noexcept
 	return weight / (weight + frictionWeight);
 }
 
+//multiply this with the terminal velocity to get the adder.
+//each step: y = a + xy where:
+//y = terminal velocity
+//x = terminal velocity multiplier
+//a = friction multiplier
+//we need to know x
+// xy = y - a
+// x = (y - a) / y
+// x = 1 - a / y
+//when y is 1 then x = 1 - a
 constexpr fp getTerminalVelocityMultiplier(cfp& frictionMultiplier)
 {
 	return 1 - frictionMultiplier;
+}
+
+//add this to the speed to achieve terminal velocity after infinite iterations.
+//each step: y = a - b + xy where:
+// y = terminal velocity
+// x = terminal velocity multiplier
+// a = friction multiplier
+// b = substractor
+//we need to know x
+// xy = y + b - a
+// x = (y + b - a) / y
+// x = 1 + (b - a) / y
+constexpr fp getTerminalVelocityAdder(cfp& frictionMultiplier, cfp& substractor, cfp& terminalVelocity)
+{
+	return 1 + (substractor - frictionMultiplier) / terminalVelocity;
 }
 
 //watch out! velocities being modified

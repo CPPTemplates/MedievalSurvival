@@ -49,45 +49,32 @@ bool rectangularSlotContainer::getSlot(cveci2& mousePos, cveci2& drawPos, cint& 
 
 //returns true if the itemStack is fully added.
 //returns false if there are items left in this itemStack.
-bool rectangularSlotContainer::addStack(itemStack& stack)
+bool rectangularSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	if (stack.count == 0)
+	if (s.count > 0)
 	{
-		return false;
-	}
-	itemStack* slotptr = this->slots;
-	itemStack* endptr = slotptr + rowsAndColumns.x * rowsAndColumns.y;
-	//use this if there is not enough room in the slots with the same item 
-	itemStack* emptySlot = nullptr;
-	while (slotptr < endptr)
-	{
-		//check for room
-		//will go wrong at instances, so only use pointers
-		if (slotptr->count)
+		itemStack* slotptr = this->slots;
+		itemStack* endptr = slotptr + rowsAndColumns.x * rowsAndColumns.y;
+		//use this if there is not enough room in the slots with the same item 
+		while (slotptr < endptr)
 		{
-			if (slotptr->addStack(stack))
+			//check for room
+			//will go wrong at instances, so only use pointers
+			if (slotptr->count)
 			{
-				return true;
+				if (slotptr->addStack(s))
+				{
+					return true;
+				}
 			}
+			else if (!emptySlot)
+			{
+				emptySlot = slotptr;
+			}
+			slotptr++;
 		}
-		else if (!emptySlot)
-		{
-			emptySlot = slotptr;
-		}
-		slotptr++;
 	}
-	//no blocks, use this slot as new slot
-
-	if (emptySlot)
-	{
-		*emptySlot = stack;
-		stack.clearData();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 int rectangularSlotContainer::countAmount(const itemStack& s) const
@@ -230,3 +217,4 @@ void rectangularSlotContainer::clearData()
 		}
 	}
 }
+

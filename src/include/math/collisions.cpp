@@ -138,59 +138,55 @@ bool pointleftofline(cvec2& point, cvec2& p0, cvec2& p1)
 		(point.x <= (p1.x - p0.x) * (point.y - p0.y) / (p1.y - p0.y) + p0.x);//check x
 }
 //https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
-fp collideTime2d(crectangle2& box0, crectangle2& box1, cvec2& box0MoveDistance, vect2<bool>& axisCollided)
+fp collideTime2d(crectangle2& box0, crectangle2& box1, cvec2& box0MoveDistance, vect2<bool>& axisCollided, bool& stuck)
 {
-	vec2 invEntry;
-	vec2 invExit;
+	//store entry and exit time and distance for each axis
+	vec2 axisEntryDistance = vec2();
+	vec2 axisExitDistance = vec2();
 
-	vec2 entry = invEntry / box0MoveDistance,
-		exit = invExit / box0MoveDistance;
+	vec2 axisEntryTime = axisEntryDistance / box0MoveDistance,
+		axisExitTime = axisExitDistance / box0MoveDistance;
 
 	cvec2 box0Pos11 = box0.pos1();
 	cvec2 box1Pos11 = box1.pos1();
 
+	stuck = false;
 	axisCollided = vect2<bool>();
 	for (int axisIndex = 0; axisIndex < 2; axisIndex++)
 	{
 		// find the distance between the objects on the near and far sides for both x and y 
 		if (box0MoveDistance.axis[axisIndex] > 0)
 		{
-			invEntry.axis[axisIndex] = box1.pos0.axis[axisIndex] - box0Pos11.axis[axisIndex];
-			invExit.axis[axisIndex] = box1Pos11.axis[axisIndex] - box0.pos0.axis[axisIndex];
+			axisEntryDistance.axis[axisIndex] = box1.pos0.axis[axisIndex] - box0Pos11.axis[axisIndex];
+			axisExitDistance.axis[axisIndex] = box1Pos11.axis[axisIndex] - box0.pos0.axis[axisIndex];
 		}
 		else if (box0MoveDistance.axis[axisIndex] < 0)
 		{
-			invEntry.axis[axisIndex] = box1Pos11.axis[axisIndex] - box0.pos0.axis[axisIndex];
-			invExit.axis[axisIndex] = box1.pos0.axis[axisIndex] - box0Pos11.axis[axisIndex];
+			axisEntryDistance.axis[axisIndex] = box1Pos11.axis[axisIndex] - box0.pos0.axis[axisIndex];
+			axisExitDistance.axis[axisIndex] = box1.pos0.axis[axisIndex] - box0Pos11.axis[axisIndex];
 		}
 		else
 		{
 			//not moving
 		}
-		//collides instantly
+		//the boxes overlap eachother AT THIS AXIS at the start. set time to 0. not to -1, because one should be able to safely multiply speed by this value
 		if (box0.pos0.axis[axisIndex] < box1Pos11.axis[axisIndex] &&
 			box1.pos0.axis[axisIndex] < box0Pos11.axis[axisIndex])
 		{
 			axisCollided.axis[axisIndex] = true;
-			entry.axis[axisIndex] = 0;
+			axisEntryTime.axis[axisIndex] = 0;
 		}
 		else
 		{
-			entry.axis[axisIndex] = box0MoveDistance.axis[axisIndex] == 0 ? INFINITY : invEntry.axis[axisIndex] / box0MoveDistance.axis[axisIndex];
+			axisEntryTime.axis[axisIndex] = box0MoveDistance.axis[axisIndex] == 0 ? INFINITY : axisEntryDistance.axis[axisIndex] / box0MoveDistance.axis[axisIndex];
 		}
-		if (box0MoveDistance.axis[axisIndex] == 0)
-		{
-			exit.axis[axisIndex] = INFINITY;
-		}
-		else
-		{
-			exit.axis[axisIndex] = invExit.axis[axisIndex] / box0MoveDistance.axis[axisIndex];
-		}
+		axisExitTime.axis[axisIndex] = box0MoveDistance.axis[axisIndex] == 0 ? INFINITY : axisExitDistance.axis[axisIndex] / box0MoveDistance.axis[axisIndex];
 	}
-	cfp entryTime = math::maximum(entry.x, entry.y);
-	cfp exitTime = math::minimum(exit.x, exit.y);
-	if (entryTime > exitTime || entry.x < 0 || entry.y < 0 || entry.x > 1 || entry.y > 1)
+	cfp entryTime = math::maximum(axisEntryTime.x, axisEntryTime.y);
+	cfp exitTime = math::minimum(axisExitTime.x, axisExitTime.y);
+	if (entryTime > exitTime || axisEntryTime.x < 0 || axisEntryTime.y < 0 || axisEntryTime.x > 1 || axisEntryTime.y > 1)
 	{
+		//didn't collide
 		axisCollided = vect2<bool>();
 		return 1;
 	}
@@ -199,24 +195,26 @@ fp collideTime2d(crectangle2& box0, crectangle2& box1, cvec2& box0MoveDistance, 
 		if (axisCollided.x && axisCollided.y)
 		{
 			//stuck in hitbox
-			return entryTime;
+			stuck = true;
+			return 0;
 		}
 		//the last one collides
 		//one of the axes was in the hitbox, but will never be there, because the other axis collided immediately
-		else if (entry.x > entry.y ||
-			(entry.x == entry.y && axisCollided.y))
+		else if (axisEntryTime.x > axisEntryTime.y ||
+			(axisEntryTime.x == axisEntryTime.y && axisCollided.y))
 		{
 			axisCollided.x = true;
 			axisCollided.y = false;
 		}
-		else if (entry.y > entry.x ||
-			(entry.x == entry.y && axisCollided.x))
+		else if (axisEntryTime.y > axisEntryTime.x ||
+			(axisEntryTime.x == axisEntryTime.y && axisCollided.x))
 		{
 			axisCollided.y = true;
 			axisCollided.x = false;
 		}
 		else
 		{
+			//collided at corner
 			axisCollided.x = true;
 			axisCollided.y = true;
 		}

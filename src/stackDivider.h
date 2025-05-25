@@ -9,7 +9,7 @@ struct stackDivider {
     itemStack stackHolding = itemStack();
     itemStack originalStack = itemStack();
     bool pickingUp = false;
-    std::vector<size_t> amountsDivided = std::vector<size_t>();
+    std::vector<int> amountsDivided = std::vector<int>();
     bool addStack(itemStack& s);
-    bool interactWith(itemStack* candicate);
+    bool interactWith(itemStack* candicate, cmb& button);
 };

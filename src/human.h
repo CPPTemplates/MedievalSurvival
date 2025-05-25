@@ -94,10 +94,10 @@ struct human :public humanoid, public INamable
 	bool serialize(cbool& write);
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source) override;
 	virtual bool compareSelector(const human& sender, const std::wstring& selectorString) const override;
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	void addStackOrDrop(itemStack& stack);
 	virtual bool substractStack(itemStack& stack) override;
-	virtual std::vector<vec3> getFrictions() const override;
+	virtual vec2 applyNaturalForces(cvec2& speed) const override;
 	virtual void render(const gameRenderData& targetData) const override;
 	void setGameMode(const gameModeID& newGameMode);
 	void closeBlockGUI();

@@ -15,10 +15,14 @@ struct decisions;
 constexpr fp airFrictionMultiplier = 0.95;
 constexpr fp airTerminalVelocityMultiplier = getTerminalVelocityMultiplier(airFrictionMultiplier);
 constexpr fp groundFrictionMultiplier = 0.9;
-constexpr fp groundTerminalVelocityMultiplier = getTerminalVelocityMultiplier(groundFrictionMultiplier);
+//force has to pull at least this amount of blocks / second to get something moving
+constexpr fp groundFrictionSpeedReductionPerSecond = 0.5f;
+constexpr fp groundFrictionAdder = groundFrictionSpeedReductionPerSecond * secondsPerTick;
+//this will get the human walking speed perfectly.
+constexpr fp groundTerminalVelocityMultiplier = getTerminalVelocityAdder(groundFrictionMultiplier, groundFrictionAdder, humanWalkingSpeed) / humanWalkingSpeed;
 constexpr fp fluidFrictionMultiplier = 0.8;
 constexpr fp ladderFrictionMultiplier = 0.5;
-constexpr vec3 noCollisionFriction = vec3(cvec2(), airFrictionMultiplier);
+
 #pragma once
 struct entity :IDestructable, nbtSerializable
 {
@@ -29,6 +33,7 @@ struct entity :IDestructable, nbtSerializable
 	entityID entityType = (entityID)0;
 	uuid identifier;
 	dimension* dimensionIn = nullptr;
+	//the current position of a mob. use this in tick() functions of other mobs and entities to prevent any advantage
 	vec2 position = vec2();
 	vec2 speed = vec2();//represented in blocks per real life second (per 20 ticks)
 	int portalTicks = 0;
@@ -47,10 +52,12 @@ struct entity :IDestructable, nbtSerializable
 	bool inCobweb = false;
 	bool sneaking = false;
 	bool onGround = false;
+	//wether the entity is stuck in blocks, making it unable to move and take suffocation damage.
+	bool stuck = false;
 
 	vect2<bool> axisCollided = vect2<bool>();
 
-	collisionTypeID collideLevel = collisionTypeID::willCollideTop;
+	collisionTypeID collisionCheckLevel = collisionTypeID::willCollideTop;
 	rectangle2 relativeHitbox = rectangle2();//the hitbox relative to its position (if it stood at 0,0)
 
 	//remembers damage sources for 5 seconds
@@ -97,20 +104,17 @@ struct entity :IDestructable, nbtSerializable
 	virtual fp getMaxHealth() const;
 
 	virtual fp getGravityForce() const;
-
-	//x, y : speed of friction
-	//z : weight of friction
-	virtual std::vector<vec3> getFrictions() const;
-
-	virtual vec3 getGroundFriction() const;
-	virtual vec3 getFluidFriction() const;
+	virtual vec2 applyGroundForce(cvec2& speed) const;
+	/// <summary>
+	/// applies natural forces to the current speed of the player
+	/// </summary>
+	/// <returns>the modified speed when natural forces are applied</returns>
+	virtual vec2 applyNaturalForces(cvec2& speed) const;
 
 	virtual fp getLengthTouchingGround() const;
 
 	virtual fp getWeight() const;
 	virtual fp getVolume() const;
-
-	bool inBlocks() const;
 
 	virtual bool canTeleportTo(cvec2& position) const;
 	void teleportRandomly();
@@ -125,5 +129,8 @@ entity* createEntity(const entityID& entityType, tickableBlockContainer* contain
 entity* summonEntity(entity* e, tickableBlockContainer* containerIn, cvec2& position);
 entity* summonEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position);
 entity* trySummonEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& position);
+//fit this entity at this position. we guarantee that its hitbox will contain the position
+bool fitEntity(entity* e, tickableBlockContainer* containerIn, cvec2& idealPosition);
+entity* fitEntity(const entityID& entityType, tickableBlockContainer* containerIn, cvec2& idealPosition);
 int getEntityIDByName(const std::wstring& name);
 bool collidesThisTick(const entity& e1, const entity& e2);

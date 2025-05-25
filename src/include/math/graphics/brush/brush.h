@@ -6,10 +6,10 @@
 template<typename r, typename i>
 struct brush
 {
-	typedef i inputType;
+	typedef i InputType;
 	typedef r resultingType;
 	//non-virtual!!
-	//virtual resultingType getValue(const inputType& pos) const = 0;
+	//virtual resultingType getValue(const InputType& pos) const = 0;
 	//virtual ~brush() {};
 };
 
@@ -35,7 +35,7 @@ constexpr bool is_brush_v
 
 //struct colorBrushSizeT : public brush<color, vect2<fsize_t>>
 //{
-//	//typedef vect2<fsize_t> inputType;
+//	//typedef vect2<fsize_t> InputType;
 //	//typedef color resultingType;
 //	//inline virtual color getValue(cvect2<fsize_t>& pos) const override = 0;
 //

@@ -8,7 +8,7 @@ struct brewingStandSlotContainer :inventory
 	uiSlotContainer* ingredientSlot = nullptr;
 	uiSlotContainer* potionSlots[brewingStandPotionCapacity]{};
 	brewingStandSlotContainer();
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;
 	virtual void clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot) override;
 	virtual ~brewingStandSlotContainer() override;

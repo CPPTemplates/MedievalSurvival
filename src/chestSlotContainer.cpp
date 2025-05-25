@@ -10,9 +10,9 @@ chestSlotContainer::chestSlotContainer()
 	containers.push_back(inventorySlots);
 }
 
-bool chestSlotContainer::addStack(itemStack& stack)
+bool chestSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return chestSlots->addStack(stack);
+	return chestSlots->addToEqualStacks(s, emptySlot);
 }
 
 chestSlotContainer::~chestSlotContainer()

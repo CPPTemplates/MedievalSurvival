@@ -3,8 +3,8 @@
 #include "math/vector/vectorfunctions.h"
 #include "math/random/random.h"
 // DONT USE THIS TO CONVERT TO PIXEL RECTANGLES; USE CEILRECT
-template <typename outputType = int, typename inputType, fsize_t axisCount>
-inline rectangletn<outputType, axisCount> floorRectangle(crectangletn<inputType, axisCount> &rect)
+template <typename outputType = int, typename InputType, fsize_t axisCount>
+inline rectangletn<outputType, axisCount> floorRectangle(crectangletn<InputType, axisCount> &rect)
 {
     const auto &pos0 = floorVector<outputType>(rect.pos0);
 
@@ -12,8 +12,8 @@ inline rectangletn<outputType, axisCount> floorRectangle(crectangletn<inputType,
 
     return crectangletn<outputType, axisCount>(pos0, pos1 - pos0);
 }
-template <typename outputType = int, typename inputType, fsize_t axisCount>
-inline rectangletn<outputType, axisCount> ceilRectangle(crectangletn<inputType, axisCount> &rect)
+template <typename outputType = int, typename InputType, fsize_t axisCount>
+inline rectangletn<outputType, axisCount> ceilRectangle(crectangletn<InputType, axisCount> &rect)
 {
     const auto &pos0 = ceilVector<outputType>(rect.pos0);
 

@@ -26,18 +26,21 @@ inline static constexpr colortn<T, channelCount> interpolateColorBilinear(const 
 	}
 	return colortn<T, channelCount>(std::array<T, channelCount>({ (T)result[0], (T)result[1], (T)result[2], colortn<T, channelCount>::maxValue }));
 }
-
-template <typename T, fsize_t channelCount, typename WeightType = decltype(std::declval<T>()* std::declval<T>())>
 // https://en.wikipedia.org/wiki/Bilinear_interpolation
+template <typename T, fsize_t channelCount, typename WeightType = decltype(std::declval<T>()* std::declval<T>())>
 inline static constexpr colortn<T, channelCount> interpolateColorBilinear(const colortn<T, channelCount>(&colorsToInterpolate)[4], cvect2<WeightType>& weights)
 {
 	constexpr WeightType maxWeight = std::is_integral_v<T> ? (WeightType)std::numeric_limits<T>::max() + (WeightType)1 : (T)1;
 	constexpr WeightType maxWeightSquared = maxWeight * maxWeight;
 	cvect2<WeightType>& invertedWeigths = maxWeight - weights;
-	const decltype(std::declval<T>() * std::declval<T>())(&weightArray)[4] {
+	const WeightType (&weightArray)[4] {
+		//0 0
 		invertedWeigths.x* invertedWeigths.y,
+			//1 0
 			weights.x* invertedWeigths.y,
+			//0 1
 			invertedWeigths.x* weights.y,
+			//1 1
 			weights.x* weights.y,
 	};
 

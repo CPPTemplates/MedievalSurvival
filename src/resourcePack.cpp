@@ -1852,7 +1852,7 @@ static void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"sea_lantern.png")), std::wstring(L"sea_lantern"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, withPickaxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"glowstone.png")), std::wstring(L"glowstone"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, withPickaxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"glowstone.png")), std::wstring(L"glowstone"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, withPickaxe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"shroomlight.png")), std::wstring(L"shroomlight"), stepShroomLight, stepShroomLight, stepShroomLight, digShroomLight, digShroomLight, lightBlocking, withHoe, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, moodyLightSource);
 	identifier++;
@@ -3029,7 +3029,7 @@ static void loadEntityData()
 	currentEntityID++;
 	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"item"), 5, crectangle2(vec2(itemSize * -0.5, 0), vec2(itemSize, 0.9)), 1.0 / 8, 8));
 	currentEntityID++;
-	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"experience_orb"), 5, relativeExperienceHitbox, 0.01, 0.02));
+	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"experience_orb"), 5, relativeExperienceHitbox, 0.01, 2));
 	currentEntityID++;
 
 	for (size_t i = 0; i < (size_t)particleID::count; i++)

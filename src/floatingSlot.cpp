@@ -14,7 +14,7 @@ void floatingSlot::tick()
 		despawn = true;
 	}
 
-	if (inBlocks())
+	if (stuck)
 	{
 		//teleport out of block
 		vec2 teleportPosition;

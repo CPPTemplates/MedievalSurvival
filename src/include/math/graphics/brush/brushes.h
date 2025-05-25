@@ -12,22 +12,22 @@
 
 
 
-//template<typename inputType>
-//struct repeatingBrush final : public brush<color, inputType>
+//template<typename InputType>
+//struct repeatingBrush final : public brush<color, InputType>
 //{
 //	//repeats the same brush
-//	const brush<color, inputType>& brushToRepeat = nullptr;
-//	const inputType& repeatSize = inputType();
-//	repeatingBrush(const brush0Type& brushToRepeat, const inputType& repeatSize) :brushToRepeat(brushToRepeat), repeatSize(repeatSize) {}
+//	const brush<color, InputType>& brushToRepeat = nullptr;
+//	const InputType& repeatSize = InputType();
+//	repeatingBrush(const brush0Type& brushToRepeat, const InputType& repeatSize) :brushToRepeat(brushToRepeat), repeatSize(repeatSize) {}
 //	repeatingBrush(const brush0Type& textureToRepeat) :brushToRepeat(textureToRepeat), repeatSize(textureToRepeat.getClientRect().size) {}
-//	inline color getValue(const inputType& pos) const
+//	inline color getValue(const InputType& pos) const
 //	{
-//		if constexpr (std::is_same_v<inputType, vec2>) {
-//			const inputType& remainderPos = vec2(math::mod(pos.x, repeatSize.x), math::mod(pos.y, repeatSize.y));
+//		if constexpr (std::is_same_v<InputType, vec2>) {
+//			const InputType& remainderPos = vec2(math::mod(pos.x, repeatSize.x), math::mod(pos.y, repeatSize.y));
 //			return brushToRepeat.getValue(remainderPos);
 //		}
 //		else {
-//			const inputType& remainderPos = inputType(pos.x % repeatSize.x, pos.y % repeatSize.y);
+//			const InputType& remainderPos = InputType(pos.x % repeatSize.x, pos.y % repeatSize.y);
 //			return brushToRepeat.getValue(remainderPos);
 //		}
 //	}

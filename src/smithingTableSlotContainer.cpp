@@ -22,15 +22,15 @@ smithingTableSlotContainer::smithingTableSlotContainer()
 	craftingInputContainers.push_back(netheriteIngotSlot);
 }
 
-bool smithingTableSlotContainer::addStack(itemStack& stack)
+bool smithingTableSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	if (isMaterialArmor(stack.stackItemID))
+	if (isMaterialArmor(s.stackItemID))
 	{
-		return smithingInputSlot->addStack(stack);
+		return smithingInputSlot->addToEqualStacks(s, emptySlot);
 	}
-	else if (stack.stackItemID == itemID::netherite_ingot)
+	else if (s.stackItemID == itemID::netherite_ingot)
 	{
-		return netheriteIngotSlot->addStack(stack);
+		return netheriteIngotSlot->addToEqualStacks(s, emptySlot);
 	}
 	return false;
 }

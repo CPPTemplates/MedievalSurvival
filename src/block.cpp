@@ -103,52 +103,9 @@ bool block::correctTool(const itemID &tool) const
 	return bestTool == withHand || ((int)tool && bestTool == itemList[(int)tool]->harvestType);
 }
 
-bool block::canHarvest(const itemID &tool)
+bool block::canHarvest(const itemID &tool) const
 {
 	return (int)tool ? itemTier <= itemList[(int)tool]->harvestTier && (itemTier == noHarvestTier || correctTool(tool)) : itemTier == noHarvestTier;
-}
-bool block::canPlace(tickableBlockContainer *containerIn, cveci2 position)
-{
-	if (identifier == blockID::structure_void)
-	{
-		return true;
-	}
-	// find solid block adjacent
-	cint checkPositionCount = 0x4;
-	cveci2 relativeCheckpositions[checkPositionCount]{
-		cveci2(-1, 0),
-		cveci2(1, 0),
-		cveci2(0, -1),
-		cveci2(0, 1)};
-	if (identifier == blockID::cactus)
-	{
-		const blockID below = containerIn->getBlockID(position + cveci2(0, -1));
-		return below == blockID::sand || below == blockID::cactus;
-	}
-	else if (identifier == blockID::sugar_cane)
-	{
-		const blockID below = containerIn->getBlockID(position + cveci2(0, -1));
-		return below == blockID::sand || below == blockID::sugar_cane;
-	}
-	else if (identifier == blockID::kelp)
-	{
-		blockID blockIn = containerIn->getBlockID(position);
-		if (blockIn != blockID::water || fluidData::getFluidLevel(containerIn, position, blockID::water) < maxFluidLevel)
-		{
-			return false;
-		}
-		blockID blockBelow = containerIn->getBlockID(position + cveci2(0, -1));
-		return blockBelow == blockID::sand || blockBelow == blockID::gravel || blockBelow == blockID::kelp;
-	}
-	for (int i = 0; i < checkPositionCount; i++)
-	{
-		const blockID &adjacentBlock = containerIn->getBlockID(position + relativeCheckpositions[i]);
-		if ((!blockList[adjacentBlock]->canReplaceBlock) || (adjacentBlock == blockID::structure_void))
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 void block::use()

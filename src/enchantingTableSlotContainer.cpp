@@ -27,9 +27,9 @@ enchantingTableSlotContainer::enchantingTableSlotContainer()
 	containers.push_back(inventorySlots);
 }
 
-bool enchantingTableSlotContainer::addStack(itemStack& stack)
+bool enchantingTableSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
-	return stack.stackItemID == itemID::lapis_lazuli ? lapisSlot->addStack(stack) : enchantmentSlot->addStack(stack);
+	return s.stackItemID == itemID::lapis_lazuli ? lapisSlot->addToEqualStacks(s, emptySlot) : enchantmentSlot->addToEqualStacks(s, emptySlot);
 }
 
 enchantingTableSlotContainer::~enchantingTableSlotContainer()

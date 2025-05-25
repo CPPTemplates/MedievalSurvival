@@ -23,7 +23,7 @@ struct minecart : public hollowRidableEntity
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void tick() override;
 	virtual void onDeath() override;
-	virtual vec3 getGroundFriction() const override;
+	virtual vec2 applyGroundForce(cvec2& speed) const override;
 	virtual vec2 getRelativeSeatPosition(csize_t& seatIndex) const override;
 	const vect2<blockID> getBlockWheelsOn() const;
 	const vect2<veci2> getwheelPositions() const;

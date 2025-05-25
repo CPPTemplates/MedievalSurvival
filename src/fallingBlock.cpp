@@ -20,7 +20,10 @@ void fallingBlock::render(const gameRenderData& targetData) const
 
 void fallingBlock::tick()
 {
-	if (onGround)
+	// don't 'land' when stuck inside of a block,
+	// because that can create an infinite loop of two falling blocks stuck inside of eachother and one of the two being 'onground',
+	// which makes them switch back and forth to blocks in the air constantly.
+	if (onGround && !stuck)
 	{
 		//try to create a block where it landed
 		cveci2 blockPos = floorVector(position);

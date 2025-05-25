@@ -69,7 +69,6 @@ struct tickableBlockContainer : blockContainer, IDestructable
 	void reCalculateLevels();
 	bool fillNetherPortal(cveci2& position);
 
-	virtual void setBlockID(cveci2& pos, const blockID& block, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded) override;
 	virtual void setBlockWithData(cveci2& position, const blockID& block, blockData* const& data, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded) override;
 
 	void openDoorType(cveci2& position, cbool& open);

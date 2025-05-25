@@ -38,7 +38,7 @@ anvilSlotContainer::anvilSlotContainer()
 	containers.push_back(inventorySlots);
 }
 
-bool anvilSlotContainer::addStack(itemStack& stack)
+bool anvilSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 {
 	return false;
 }

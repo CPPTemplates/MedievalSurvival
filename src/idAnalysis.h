@@ -1305,12 +1305,14 @@ constexpr bool isBreedItem(const entityID& mobType, const itemID& itemType) {
 	switch (mobType)
 	{
 	case entityID::pig:
-		return itemType == itemID::carrot || itemType == itemID::beetroot || itemType == itemID::potato;
+		return itemType == itemID::carrot || itemType == itemID::beetroots || itemType == itemID::potato;
 	case entityID::cow:
 	case entityID::sheep:
-		return itemType == itemID::wheat;
+		return itemType == itemID::wheat || isGrass(itemType);
 	case entityID::chicken:
 		return itemType == itemID::beetroots || itemType == itemID::wheat_seeds;
+	case entityID::wolf:
+		return itemType == itemID::bone;
 	default:
 		return false;
 		break;
@@ -1320,6 +1322,59 @@ constexpr bool isBreedItem(const entityID& mobType, const itemID& itemType) {
 constexpr bool isIconParticle(const particleID& particleType) {
 	return is_in(particleType, particleID::heart, particleID::angry_villager);
 }
+//returns true if a block can placed in this type of entity.
+constexpr bool canPlaceInEntity(const entityID& entityType) {
+	return isParticle(entityType) || 
+		is_in(entityType, entityID::item, entityID::arrow, entityID::pollen) || 
+		isFireBall(entityType);
+}
+
+//constexpr fp getCompostLevel(const blockID& compostable)
+//{
+//	return is_in(compostable, blockID::beetroots,
+//		blockID::dried_kelp,
+//		blockID::short_grass,
+//		blockID::grass_block,
+//		blockID::kelp,
+//		blockID::melon_seeds,
+//		blockID::pumpkin_seeds,
+//		blockID::sweet_berries,
+//		blockID::wheat_seeds
+//
+//
+//		)||isTreeType(compostable)&&is_in(getTreeItemType(compostable), treeItemTypeID::leaves) || isSapling(compostable)?
+//		0.375:
+//		is_in(compostable, blockID::cactus,
+//			blockID::dried_kelp_block,
+//			blockID::melon_slice,
+//			blockID::sugar_cane,
+//			blockID::tall_grass,
+//			blockID::vine,
+//			blockID::twisting_vines,
+//			blockID::weeping_vines
+//		)?
+//		0.625:
+//		is_in(compostable, blockID::apple,
+//			blockID::beetroot,
+//			blockID::carrot,
+//			blockID::fern,
+//			blockID::melon,
+//			blockID::mushroom_stem,
+//			blockID::nether_wart,
+//			blockID::potato,
+//			blockID::carved_pumpkin,
+//			blockID::pumpkin,
+//			blockID::warped_roots,
+//			blockID::crimson_roots,
+//			blockID::shroomlight,
+//			blockID::wheat)
+//
+//
+//}
+
+
+
+
 
 // dynamic functions
 

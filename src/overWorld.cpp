@@ -191,7 +191,7 @@ vec2 overWorld::getWindSpeed(cvec2 &position)
     return vec2();
 }
 
-biomeID getBiomeByColor(const color &c)
+static biomeID getBiomeByColor(const color &c)
 {
     for (size_t i = 0; i < biomeDataList.size; i++)
     {
@@ -500,11 +500,11 @@ void overWorld::generateStructures(chunk &generateIn)
                         // check if the cave intersects itself
                         if (j > 0)
                         {
-                            cvec2 caveNewStart = caveSegments[j - 1];
+                            cvec2 caveNewStart = caveSegments[(size_t)j - 1];
                             for (int index = 0; index < j - 2; index++)
                             {
                                 cvec2 caveOldStart = caveSegments[index];
-                                cvec2 caveOldEnd = caveSegments[index + 1];
+                                cvec2 caveOldEnd = caveSegments[(size_t)index + 1];
                                 if (collides2d(caveOldStart, caveOldEnd, caveNewStart,
                                                caveCenter))
                                 {

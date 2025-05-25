@@ -4,7 +4,7 @@
 #include "include/optimization/handleError.h"
 void collisionData::evaluate(crectangle2& hitboxToTest, cvec2& hitboxSpeed, cfp& maxDuration)
 {
-	collisionTime = collideTime2d(hitboxToTest, hitboxCollidingWith, (hitboxSpeed - speed) * maxDuration, axisCollided) * maxDuration;
+	collisionTime = collideTime2d(hitboxToTest, hitboxCollidingWith, (hitboxSpeed - speed) * maxDuration, axisCollided, stuck) * maxDuration;
 	if (std::isnan(collisionTime))
 	{
 		handleError(std::wstring(L"error"));

@@ -53,7 +53,7 @@ struct humanoid : public mob, public slotContainer
 
 
 	virtual int getDefencePoints() const override;
-	int getToughnessPoints();
+	int getToughnessPoints() const;
 
 	fp selectedBlockDamage = 0;
 	int timeWaitingToDig = waitTime;
@@ -77,7 +77,7 @@ struct humanoid : public mob, public slotContainer
 	virtual fp getAttackDamage() const override;
 
 	virtual bool substractStack(itemStack& stack) override;
-	virtual bool addStack(itemStack& stack) override;
+	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 
 	virtual fp getGravityForce() const override;
 
@@ -89,7 +89,7 @@ struct humanoid : public mob, public slotContainer
 	virtual void tick() override;
 
 	virtual bool placeBlock(blockID blockToPlace);
-	std::vector<vec3> getFrictions() const override;
+	vec2 applyNaturalForces(cvec2& speed) const override;
 	void launchItem(const itemID& itemType);
 
 	vec2 getHandPosition() const;

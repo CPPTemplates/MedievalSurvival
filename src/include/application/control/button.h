@@ -1,5 +1,6 @@
 #include "control.h"
 #include "math/timemath.h"
+#include "math/graphics/color/colorPalette.h"
 #pragma once
 struct button :public control 
 {

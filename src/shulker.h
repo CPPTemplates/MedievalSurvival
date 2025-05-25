@@ -29,7 +29,7 @@ struct shulker : public mob
 
 	virtual void updateBodyParts() const override;
 	virtual fp getGravityForce() const override;
-	virtual std::vector<vec3> getFrictions() const override;
+	virtual vec2 applyNaturalForces(cvec2& speed) const override;
 	bool attached() const;
 	bool canAttachTo(cveci2& testPosition, const directionID& testDirection) const;
 

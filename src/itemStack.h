@@ -19,6 +19,7 @@ struct itemStack : IDestructable, nbtSerializable
 	void add(cint& count);
 	bool addStack(itemStack& s, int amount);
 	bool addStack(itemStack& s);
+	bool addToEqualStacks(itemStack& s, itemStack*& emptySlot);
 
 	inline itemStack& operator=(itemStack copy)
 	{

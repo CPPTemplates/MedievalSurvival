@@ -24,6 +24,9 @@ struct colortn : public vectn<T, channelCount>
 	addMemberName(s, this->axis[1], channelCount > 1);
 	addMemberName(h, this->axis[2], channelCount > 2);
 
+	using base::begin;
+	using base::end;
+
 	static constexpr size_t byteSize = sizeof(T) * channelCount;
 
 	static constexpr size_t bitSize = byteSize * ByteToBits;
@@ -182,6 +185,11 @@ struct colortn : public vectn<T, channelCount>
 			math::maximum(color1.g(), color2.g()),
 			math::maximum(color1.b(), color2.b()));
 	}
+	#define newMacro(type, copySize) colortn<type COMMA channelCount> result = colortn<type COMMA channelCount>();
+	
+		addOperators(newMacro, colortn, wrap(colortn<t2, channelCount>), constexpr)
+	
+	#undef newMacro
 };
 typedef byte colorChannel;
 

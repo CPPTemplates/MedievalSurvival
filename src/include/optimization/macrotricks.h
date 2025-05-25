@@ -48,6 +48,7 @@
 	addTemplateSizes(shortenedTemplateName)                                             \
 		addTemplateSizes(c##shortenedTemplateName)                                      \
 			addTemplateType(shortenedTemplateName, , fp)                                \
+			addTemplateType(shortenedTemplateName, f, float)                                \
 				addTemplateType(shortenedTemplateName, i, int)                          \
 					addTemplateType(shortenedTemplateName, l, long)                     \
 						addTemplateType(shortenedTemplateName, b, bool)                 \
@@ -62,8 +63,8 @@
 
 // newexpression should be a macro that creates a new instance with the same size as the argument
 #define addOperator(o, newExpression, structType, otherStructType, functionType)                                                               \
-	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<T>() o std::declval<t2>())>> \
-	functionType decltype(auto) operator o(const t2 &b) const                                                                                  \
+	template <typename t2, typename resultType = decltype(std::declval<T>() o std::declval<t2>())>\
+	functionType decltype(auto) operator o(const t2 &b) const requires (std::is_arithmetic_v<t2>)                                                                                 \
 	{                                                                                                                                          \
 		newExpression(resultType, (*this)) auto resultPtr = result.begin();                                                                    \
 		auto const &endPtr = end();                                                                                                            \
@@ -85,8 +86,8 @@
 		}                                                                                                                                      \
 		return result;                                                                                                                         \
 	}                                                                                                                                          \
-	template <typename t2, typename resultType = std::enable_if_t<std::is_arithmetic_v<t2>, decltype(std::declval<T>() o std::declval<t2>())>> \
-	functionType friend decltype(auto) operator o(const t2 &a, const structType &b)                                                            \
+	template <typename t2, typename resultType = decltype(std::declval<T>() o std::declval<t2>())>\
+	functionType friend decltype(auto) operator o(const t2 &a, const structType &b)  requires (std::is_arithmetic_v<t2>)                                                           \
 	{                                                                                                                                          \
 		newExpression(resultType, b) auto resultPtr = result.begin();                                                                          \
 		auto const &endPtr = b.end();                                                                                                          \
@@ -97,7 +98,7 @@
 		return result;                                                                                                                         \
 	}                                                                                                                                          \
 	template <typename t2>                                                                                                                     \
-	functionType structType operator o##=(const otherStructType &b)                                                                            \
+	functionType structType& operator o##=(const otherStructType &b)                                                                            \
 	{                                                                                                                                          \
 		auto const &endPtr = end();                                                                                                            \
 		auto bPtr = b.begin();                                                                                                                 \
@@ -108,12 +109,13 @@
 		return *this;                                                                                                                       \
 	}                                                                                                                                          \
 	template <typename t2>                                                                                                                     \
-	functionType typename std::enable_if<std::is_arithmetic_v<t2>, void>::type operator o##=(const t2 &b)                                      \
+	functionType structType& operator o##=(const t2 &b) requires (std::is_arithmetic_v<t2>)                                      \
 	{                                                                                                                                          \
 		for (T & val : (*this))                                                                                                                \
 		{                                                                                                                                      \
 			val o## = b;                                                                                                                       \
-		}                                                                                                                                      \
+		}\
+		return *this; \
 	}
 
 #define addOperators(newExpression, structType, otherStructType, functionType)             \

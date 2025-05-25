@@ -9,7 +9,7 @@ void inventory::clickedOnItem(cmb& button, stackDivider& divider,
 		selectedSlot);
 	if (canAddStack(selectedSlotContainer, divider))
 	{
-		divider.interactWith(occupyingSlot);
+		divider.interactWith(occupyingSlot, button);
 	}
 
 	// if (divider.originalStack.count) {

@@ -51,7 +51,6 @@
 #include "gameRenderData.h"
 #include "dimension.h"
 #include "renderBrush.h"
-#include "nbt/nbtSerializer.h"
 #include "nbt/serializeVector.h"
 void blockContainer::setBlockRange(cveci2 &pos0, cveci2 &pos1, const blockID &block, const chunkLoadLevel &minimalLoadLevel)
 {

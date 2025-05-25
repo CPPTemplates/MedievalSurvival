@@ -10,18 +10,17 @@ you pick a double stack, even when clicking once with right mouse button
 make textures load only when used
 
 prio:
-right mouse button takes whole stack
+shift click -> craft, move items
 
-
+add climbing (more important because 2d)
+spiders -> string
+effects not visible on hunger bar
 add respawn screen with spectator mode after death
-xp orbs get influenced by wind too much
 rename mob::serializeValue to serialize
 add wind sound back
-add treshold when (wind) force exceeds pushing limit
 block updates not working properly with leaves
 giant mushrooms don't drop items
 fences don't burn as fuel
-improve baby mob spawning by using fitexpandinghitbox
 make top part of door transparent for light, bottom part not
 settings screen at start menu
 placing bed still breaks block. luckily, chests drop their loot.
@@ -29,34 +28,69 @@ a zombie spawned a few blocks next to a torch in a cave.
 stack grabbing outside of creative mode
 back to title screen -> no music
 charachter not rendered in inventory
-do flowers spread pollen?
 do mobs get in boats when touching one?
-lag
-shift click -> craft
-movement is weird on stairs, and when leaving them you get launched off
+movement is weird on ladders, and when leaving them you get launched off
 sheep and cows should be able to eat grass
 composter not usable
-items seem to remain in inventory crafting grid sometimes
+items remain in inventory crafting grid sometimes
+items following you, even when you can't pick them up
 crops should need water
-copper (smaller amounts)
 explosion knockback?
 hoeing a block works from below too
 digging blocks below you when sneaking can make you float
 when placing blocks, the whole block get checked for collision, not the hitbox of the block to place
-luring mobs with food
+falling blocks can be stuck in the air and 'colliding with the ground' somehow and instantly turning back into falling blocks. 2 falling blocks are stuck inside eachother. speed builds up to crazy amounts.
+eggs should be heavier
+zooming out using f + scroll also makes inventory slots change
+respawn point not set when clicking on a bed at daytime
+furnace still smelting when another item is in the smelting slot
+mipmapping not working 100% (when zooming out, it darkens, which probably means more transparency)
+caves should spawn more often and different types of caves should spawn
+enderman getting angry sound playing like 5 ticks in a row 
+feather falling should reduce falling speed
+
 nights seem to be very long when sleeping
-you can fly out of your bed when the wind blows upward fast enough
 rails are invisible
 chest are rare in mineshafts
 spawners spawn without chests in mineshafts
+anvil addstack not implemented?
+left hand slot
+baby mobs should play sound at higher pitch
+double chest
+armor textures aren't transparent: iron helmet, iron boots
+but iron leggings are.
+food isn't displayed in halfs
+sounds cut out when outside hearing range, which means that falloff isn't correct
+pollen stuck at chunk border
+teleportondamageai should not make the enderman stand still
+landing gravel sound
+
+join server: didn't ask for internet permissions -> lag for some time -> crash
+ip + port: can't convert to valid ip adress
+dropping items should be dragging outside of inventory
+better sounds using equalizing and other audio tricks (for example in caves)
+icon not showing
+
+very low prio:
+copper (smaller amounts)
 
 done:
+add treshold when (wind) force exceeds pushing limit
+you can fly out of your bed when the wind blows upward fast enough
+glowstone doesn't glow
+eggs should spawn chickens
+do flowers spread pollen?
+lag
+xp orbs get influenced by wind too much
+improve baby mob spawning by using fitexpandinghitbox
 furnace doesn't render burning process
 rename tooldrop to tooldropcondition
 mobs should stay at one spot for longer
 change particle size based on type
 why does every entity constructor have to take dimension and position arguments?
 when we don't take dimension and position, we can add a particle argument without much cost.
+right mouse button takes whole stack
+luring mobs with food
 
 optimization ideas for shadow brush:
 - calculate weight difference per step somehow
@@ -65,3 +99,5 @@ interpolators -> one array
 maybe byte manipulation? for bilinear interpolation
 or colorf
 we don't store references to positions for now, because the type of input might change
+
+with a certain command, you can enable each mob to tell what it's doing

@@ -66,14 +66,14 @@ void minecart::onDeath()
 	lootTable::dropLoot({ itemStack(itemID::minecart, 1) }, dimensionIn, position, maxFloatingSlotSpeed);
 }
 
-vec3 minecart::getGroundFriction() const
+vec2 minecart::applyGroundForce(cvec2& speed) const
 {
 	const vect2<blockID> wheelsOn = getBlockWheelsOn();
 
 	cbool& hasRail = isRail(wheelsOn.x) || isRail(wheelsOn.y);
 
 	//better calculation
-	return hasRail ? vec3(cvec2(), railsFrictionPerBlock * getLengthTouchingGround()) : entity::getGroundFriction();
+	return hasRail ? speed * railsFrictionPerBlock * getLengthTouchingGround() : entity::applyGroundForce(speed);
 }
 
 vec2 minecart::getRelativeSeatPosition(csize_t& seatIndex) const

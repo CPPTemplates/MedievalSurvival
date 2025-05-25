@@ -15,9 +15,9 @@ fp fireBall::getGravityForce() const
 	return 0;
 }
 
-std::vector<vec3> fireBall::getFrictions() const
+vec2 fireBall::applyNaturalForces(cvec2& speed) const
 {
-	return std::vector<vec3>();
+	return speed;
 }
 
 void fireBall::tick()

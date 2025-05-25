@@ -94,9 +94,9 @@ void mob::tick()
 	fp MovementSpeed;
 	// the power of this step
 
-	if (collideLevel != collisionTypeID::willNotCollide)
+	if (collisionCheckLevel != collisionTypeID::willNotCollide)
 	{
-		collideLevel = wantsToGoDown ? collisionTypeID::willCollide : collisionTypeID::willCollideTop;
+		collisionCheckLevel = wantsToGoDown ? collisionTypeID::willCollide : collisionTypeID::willCollideTop;
 	}
 
 	if (wantsToHit)
