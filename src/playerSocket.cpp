@@ -161,7 +161,8 @@ void renderAsync(playerSocket* socket)
 	fp hearingRange2D = getHearingRange2D(socket->screen->visibleRange.x);
 	serializeNBTValue(*outSerializer, L"hearingRange2D", hearingRange2D);
 
-	vec3 earPosition = vec3(socket->screen->cameraPosition.x, socket->screen->cameraPosition.y, settings::soundSettings::headScreenDistance * socket->screen->visibleRange.x);
+	socket->screen->addSounds();
+	vec3 earPosition = vec3(socket->screen->cameraPosition.x, socket->screen->cameraPosition.y, settings::soundSettings::headScreenDistance * (socket->screen->visibleRange.x * 2));
 	// vec2 earPosition = socket->screen->player->getHeadPosition();
 	serializeNBTValue(*outSerializer, L"earPosition", earPosition);
 	// ear speed doesn'T take into account that the ear can move closer and farther from the screen when zooming out
@@ -170,11 +171,12 @@ void renderAsync(playerSocket* socket)
 
 	if (outSerializer->push<nbtDataTag::tagList>(L"sounds"))
 	{
-		for (auto& data : socket->screen->dataToSend)
+		for (auto& data : socket->screen->soundPacketsToSend)
 		{
 			if (outSerializer->push())
 			{
-				data.serialize(*outSerializer);
+				data->serialize(*outSerializer);
+				delete data;
 				outSerializer->pop();
 			}
 		}
@@ -184,7 +186,7 @@ void renderAsync(playerSocket* socket)
 	socket->screen->serializeMusicPreference(*outSerializer);
 	delete outSerializer;
 
-	socket->screen->dataToSend.clear();
+	socket->screen->soundPacketsToSend.clear();
 
 	// newRenderResult.setActive(false);
 	socket->buffer.swap();

@@ -16,9 +16,10 @@ struct audio2d
 	fp volume = 1;
 	fp pitch = 1;
 	bool isSpatial = true;
+	bool shouldLoop = true;
 	microseconds startedPlaying = 0; // will be set by the first next update
 
-	audio2d(cvec2& pos, cfp& volume, cfp& pitch, cbool& isSpatial) : pos(pos), volume(volume), pitch(pitch), isSpatial(isSpatial), startedPlaying(0) {}
+	audio2d(cvec2& pos, cfp& volume, cfp& pitch, cbool& isSpatial, cbool& shouldLoop) : pos(pos), volume(volume), pitch(pitch), isSpatial(isSpatial), shouldLoop(shouldLoop), startedPlaying(0) {}
 
 	virtual microseconds getDuration() = 0;
 	virtual bool audioLoaded() const = 0;
@@ -51,7 +52,7 @@ struct audio2dt : audio2d, IDestructable
 	virtual void setPlayingOffset(const microseconds& offset) override;
 	virtual microseconds getPlayingOffset() override;
 	virtual void setPosition(cvec2& newPosition) override;
-	inline void setSpeed(cvec2& newSpeed) const
+	inline void setVelocity(cvec2& newSpeed) const
 	{
 		playingAudio->setVelocity({ (float)newSpeed.x, (float)newSpeed.y, 0.f });
 	}
@@ -59,7 +60,7 @@ struct audio2dt : audio2d, IDestructable
 	virtual void play() override;
 	virtual void stop() override;
 
-	audio2dt(cvec2& pos, cfp& volume, cfp& pitch, cbool& isSpatial) : audio2d(pos, volume, pitch, isSpatial) {}
+	audio2dt(cvec2& pos, cfp& volume, cfp& pitch, cbool& isSpatial, cbool& shouldLoop) : audio2d(pos, volume, pitch, isSpatial, shouldLoop) {}
 
 	inline ~audio2dt() override
 	{
@@ -154,10 +155,12 @@ inline void audio2dt<T>::play()
 		playingAudio->setPitch((float)pitch);
 	}
 	playingAudio->setVolume((float)volume * 100.0f);
+	playingAudio->setLooping(shouldLoop);
+	playingAudio->setSpatializationEnabled(isSpatial);
 	if (isSpatial)
 	{
 		playingAudio->setPosition({ (float)pos.x, (float)pos.y, 0 });
-		setSpeed(speed);
+		setVelocity(speed);
 	}
 }
 

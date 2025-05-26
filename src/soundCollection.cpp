@@ -23,6 +23,8 @@
 #include <regex>
 #include "resourcePack.h"
 #include "math/sound/sound.h"
+#include "StartSoundPacket.h"
+#include "math/uuid.h"
 
 std::unordered_map<std::wstring, audioCollection *> globalSoundCollectionList = std::unordered_map<std::wstring, audioCollection *>();
 
@@ -106,9 +108,9 @@ void soundCollection::addAudioFile(const stdPath &path)
 	audioToChooseFrom.push_back(buffer);
 }
 
-std::shared_ptr<audio2d> soundCollection::playRandomSound(tickableBlockContainer *containerIn, cvec2 &position, cfp &volume, cfp &pitch)
+uuid soundCollection::playRandomSound(tickableBlockContainer *containerIn, cvec2 &position, cfp &volume, cfp &pitch, cbool& shouldLoop)
 {
-	return playSound(randIndex(currentRandom, audioToChooseFrom.size()), containerIn, position, volume, pitch);
+	return playSound(randIndex(currentRandom, audioToChooseFrom.size()), containerIn, position, volume, pitch, shouldLoop);
 }
 
 std::shared_ptr<audio2d> soundCollection::playRandomSound(cfp &volume, cfp &pitch)
@@ -116,14 +118,14 @@ std::shared_ptr<audio2d> soundCollection::playRandomSound(cfp &volume, cfp &pitc
 	return playSound(randIndex(currentRandom, audioToChooseFrom.size()), volume, pitch);
 }
 
-std::shared_ptr<sound2d> soundCollection::playSound(csize_t &index, tickableBlockContainer *containerIn, cvec2 &position, cfp &volume, cfp &pitch)
+uuid soundCollection::playSound(csize_t &index, tickableBlockContainer *containerIn, cvec2 &position, cfp &volume, cfp &pitch, cbool& shouldLoop)
 {
 	const dimension *soundDimension = containerIn->rootDimension;
 	cvec2 &absolutePosition = containerIn->containerToRootTransform.multPointMatrix(position);
+	uuid id = randomUUID(currentRandom);
 
 	// get all players from soundDimension
 	//check their new position. this is very important, because for example they should hear the portal arrive sound when they go through a portal!
-	const soundPacket &packet = soundPacket(position, key, (int)index, volume, pitch);
 	for (const auto* const &c : currentServer->clients)
 	{
 		const human* const& p = c->player;
@@ -131,16 +133,33 @@ std::shared_ptr<sound2d> soundCollection::playSound(csize_t &index, tickableBloc
 		{
 			// now check for each player if they can hear it (players have different hearing ranges, for example when zoomed out)
 			if ((p->newPosition - absolutePosition).lengthSquared() < math::squared(getHearingRange2D(p->visibleRangeXWalk)))
-				p->screen.dataToSend.push_back(packet);
+				p->screen.soundPacketsToSend.push_back(new StartSoundPacket(id, position, key, (int)index, volume, pitch, shouldLoop));
 		}
 	}
 
-	return nullptr;
+	return id;
+}
+
+void soundCollection::updateSound(tickableBlockContainer* containerIn, const UpdateSoundPacket& packet)
+{
+	const dimension* soundDimension = containerIn->rootDimension;
+
+	// get all players from soundDimension
+	//check their new position. this is very important, because for example they should hear the portal arrive sound when they go through a portal!
+	for (const auto* const& c : currentServer->clients)
+	{
+		const human* const& p = c->player;
+		if (p->newDimension == soundDimension)
+		{
+			//copy
+			p->screen.soundPacketsToSend.push_back(new UpdateSoundPacket(packet));
+		}
+	}
 }
 
 std::shared_ptr<sound2d> soundCollection::playSound(csize_t &index, cfp &volume, cfp &pitch)
 {
-	std::shared_ptr<sound2d> soundToPlay = std::make_shared<sound2d>(audioToChooseFrom[index], cvec2(), volume, pitch, false);
+	std::shared_ptr<sound2d> soundToPlay = std::make_shared<sound2d>(audioToChooseFrom[index], cvec2(), volume, pitch, false, false);
 	handler.playAudio(soundToPlay);
 	return soundToPlay;
 }

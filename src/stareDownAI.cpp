@@ -13,7 +13,7 @@ bool stareDownAI::shouldExecute()
 	for (const entity* e : l) {
 		if (isHumanoid(e->entityType) && e->entityType != entityID::enderman) {
 
-			const mob* m = (mob*)e;
+			mob* m = (mob*)e;
 			m->updateBodyParts();
 			cvec2& mobHeadPos = m->getHeadPosition();
 			if (m->lookingAt == mobHeadPos) continue;//to prevent normalisation issues. the mob is probably stuck inside a block or something
@@ -29,7 +29,7 @@ bool stareDownAI::shouldExecute()
 				if (canSeeTarget(m)) {
 					target = m->identifier;
 					ticksAngry = maxTicksAngry;
-					endermanStareSound->playRandomSound(connectedEntity->dimensionIn, endermanHeadPos);
+					((mob*)connectedEntity)->playSoundAtHead(endermanStareSound);
 					return true;
 				}
 			}

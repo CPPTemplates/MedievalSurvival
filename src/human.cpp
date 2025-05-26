@@ -113,7 +113,8 @@
 #include "include/filesystem/fileFunctions.h"
 #include "gameTime.h"
 #include "iconParticle.h"
-// std::shared_ptr<audio2d> currentWindSound;
+#include "StartSoundPacket.h"
+//std::shared_ptr<audio2d> currentWindSound;
 
 void human::tick()
 {
@@ -292,14 +293,14 @@ void human::tick()
 					bedData* data = dynamic_cast<bedData*>(selectedBlockData);
 					if (dimensionIn->identifier == dimensionID::overworld)
 					{
+						cvec2 middlePosition = cvec2(selectedBlockPosition.x + getOtherPartRelativeLocation(selectedBlockID, data->isPart0, data->directionFacing).x * 0.5 + 0.5, selectedBlockPosition.y + bedHitboxHeight + math::fpepsilon);
+						cvec2& absolute = selectedBlockContainer->containerToRootTransform.multPointMatrix(middlePosition);
+						// set respawn point, even if we can't sleep
+						currentWorld->worldSpawnPoint = absolute;
+						currentWorld->worldSpawnDimension = dimensionIn->identifier;
 						if (canSleep())
 						{
 							sleeping = true;
-							cvec2 middlePosition = cvec2(selectedBlockPosition.x + getOtherPartRelativeLocation(selectedBlockID, data->isPart0, data->directionFacing).x * 0.5 + 0.5, selectedBlockPosition.y + bedHitboxHeight + math::fpepsilon);
-							cvec2& absolute = selectedBlockContainer->containerToRootTransform.multPointMatrix(middlePosition);
-							// set respawn point
-							currentWorld->worldSpawnPoint = absolute;
-							currentWorld->worldSpawnDimension = dimensionIn->identifier;
 							teleportTo(dimensionIn, absolute, false);
 							goto rightClickUsed;
 						}
@@ -389,29 +390,6 @@ rightClickUsed:;
 	}
 
 	calculateFood();
-
-	// if (currentWindSound)
-	//{
-	//	if (currentWindSound->getStatus() == sf::SoundSource::Stopped) {
-	//		currentWindSound->play();
-	//	}
-	// }
-	// else {
-	//	currentWindSound = windSound->playRandomSound();
-	// }
-
-	// cfp& windSpeed = dimensionIn->getWindSpeed(getHeadPosition()).length();
-	// static const transition<fp> speedToVolume = transition<fp>({
-	//	keyFrame<fp>(2,0),
-	//	keyFrame<fp>(20,1),
-	//	});
-	// currentWindSound->setVolume(math::lerp(currentWindSound->volume, speedToVolume.getValue(windSpeed), 0.2));
-	// static const transition<fp> speedToPitch = transition<fp>({
-	//	keyFrame<fp>(6,1),
-	//	keyFrame<fp>(15,2),
-	//	});
-	//
-	// currentWindSound->setPitch(math::lerp(currentWindSound->pitch, speedToPitch.getValue(windSpeed), 0.2));
 }
 
 void human::applyStatusEffect(const statusEffect& effect)
@@ -746,6 +724,7 @@ screen(screen)
 	tasks = new playerControlledAI(this);
 	//point to 1st slot
 	itemHolding = hotbarSlots->slots;
+
 	// enchantmentSlots->enchantmentSeed = rand(worldRandom);
 }
 void human::onItemRightClick(itemStack& stackIn)
@@ -798,7 +777,7 @@ void human::onItemRightClick(itemStack& stackIn)
 	{
 		if (selectedBlock == blockID::composter)
 		{
-		
+
 		}
 		const blockID& blockToPlace = getBlockToPlace(stackIn.stackItemID);
 		if ((int)blockToPlace && placeBlock(blockToPlace))

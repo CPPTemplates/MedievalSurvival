@@ -2,12 +2,42 @@
 #include <string>
 #include "nbt/nbtSerializer.h"
 #include "nbt/serializeVector.h"
+#include "nbt/serializeUUID.h"
+#include "StartSoundPacket.h"
+#include "UpdateSoundPacket.h"
+#include "StopSoundPacket.h"
 
-bool soundPacket::serialize(nbtSerializer& s)
+bool SoundPacket::serialize(nbtSerializer& s)
 {
-	serializeNBTValue(s, L"position", position);
-	s.serializeValue(L"key", key);
-	s.serializeValue(L"sound index", soundIndex);
-	s.serializeValue(L"volume", volume);
-	return s.serializeValue(L"pitch", pitch);
+	s.serializeValue(L"type", type);
+	return serializeNBTValue(s, L"id", id);
+}
+
+SoundPacket* getPacket(nbtSerializer& s)
+{
+	SoundPacketType type;
+	s.serializeValue(L"type", type);
+	SoundPacket* r;
+	uuid id;
+	serializeNBTValue(s, L"id", id);
+	switch (type)
+	{
+	case start:
+		r = new StartSoundPacket(id);
+		break;
+	case update:
+		r = new UpdateSoundPacket(id);
+		break;
+	case stop:
+		r = new StopSoundPacket(id);
+		break;
+	default:
+		return nullptr;
+		break;
+	}
+	if (r->serialize(s)) {
+		return r;
+	}
+	delete r;
+	return nullptr;
 }

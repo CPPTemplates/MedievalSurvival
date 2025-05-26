@@ -73,15 +73,15 @@ itemStack smithingTableSlotContainer::calculateRecipeResult()
 	return resultingStack;
 }
 
-bool smithingTableSlotContainer::canAddStack(uiSlotContainer* containerToAddTo, stackDivider& s)
+bool smithingTableSlotContainer::canAddStack(uiSlotContainer* containerToAddTo, itemStack& s)
 {
 	if (containerToAddTo == smithingInputSlot)
 	{
-		return isMaterialArmor(s.originalStack.stackItemID) || isMaterialTool(s.originalStack.stackItemID);
+		return isMaterialArmor(s.stackItemID) || isMaterialTool(s.stackItemID);
 	}
 	else if (containerToAddTo == netheriteIngotSlot)
 	{
-		return s.originalStack.stackItemID == itemID::netherite_ingot;
+		return s.stackItemID == itemID::netherite_ingot;
 	}
 	return true;
 }

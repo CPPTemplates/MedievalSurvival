@@ -303,12 +303,6 @@ void soundHandler2d::playAudio(const std::shared_ptr<audio2d>& audioToPlay)
 	currentlyPlayIngAudio.push_back(audioToPlay);
 }
 
-void soundHandler2d::stopAudio(const std::shared_ptr<audio2d>& audioToStop)
-{
-	// this way, the handler will do all the logic, like calculating how many sounds are playing and unloading the audio
-	audioToStop->stop();
-}
-
 void soundHandler2d::visualize(const texture& renderTarget)
 {
 	crectangle2& screenRect = rectangle2(renderTarget.getClientRect().getCenter(), vec2()).expanded((fp)renderTarget.size.maximum() / 4);
@@ -329,6 +323,7 @@ void soundHandler2d::visualize(const texture& renderTarget)
 	}
 	// draw circle with hearing distance
 	fillEllipse(renderTarget, screenRect, colorMixer(solidColorBrush(color(color::quarterMaxValue, color::maxValue, color::maxValue, color::maxValue)), renderTarget));
+	fp offset = 0;
 	for (const auto& audio : currentlyPlayIngAudio)
 	{
 		color c;
@@ -340,15 +335,16 @@ void soundHandler2d::visualize(const texture& renderTarget)
 		{
 			c = colorPalette::red;
 		}
-		cvec2& screenPos = worldToScreen.multPointMatrix(drawSideView ? vec2(audio->pos.x, 0) : audio->pos);
 		auto mixer = colorMixer(solidColorBrush(color(c, color::quarterMaxValue)), renderTarget);
 		if (audio->isSpatial)
 		{
+			cvec2& screenPos = worldToScreen.multPointMatrix(drawSideView ? vec2(audio->pos.x, 0) : audio->pos);
 			fillEllipse(renderTarget, crectangle2(screenPos, vec2()).expanded(maxBlobRadius), mixer);
 		}
 		else
 		{
-			fillRectangle(renderTarget, crectangle2(screenPos, vec2()).expanded(maxBlobRadius), mixer);
+			fillRectangle(renderTarget, crectangle2(vec2(0, offset), vec2(maxBlobRadius)), mixer);
+			offset += maxBlobRadius + 2;
 		}
 	}
 }

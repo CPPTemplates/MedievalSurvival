@@ -70,6 +70,7 @@ ip + port: can't convert to valid ip adress
 dropping items should be dragging outside of inventory
 better sounds using equalizing and other audio tricks (for example in caves)
 icon not showing
+mushroom grows into big mushroom without dirt below it
 
 very low prio:
 copper (smaller amounts)

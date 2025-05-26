@@ -245,7 +245,7 @@ static resolutionTexture* loadDragonEggTexture()
 	const texture& dragonEggGraphics = texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size));
 	rectangle2 dragonEggTextureRect = crectangle2(0, dragonEggGraphics.size.x * -cutOffPart, dragonEggGraphics.size.x, dragonEggGraphics.size.y * (1 + cutOffPart));
 
-	fillEllipse(dragonEggGraphics, dragonEggTextureRect, *dragonEggSurfaceTexture);
+	fillEllipse(dragonEggGraphics, dragonEggTextureRect, *dragonEggSurfaceTexture->scaledTextures[0]);
 	auto dragonEggTex = new resolutionTexture(dragonEggGraphics, vec2(blockTextureSize));
 	loadedTextures.push_back(dragonEggTex);
 	return dragonEggTex;
@@ -2979,9 +2979,9 @@ static void loadEntityData()
 	fillTransparentRectangle(crectangle2(slimeEyeTextureRect), crectangle2(cvec2(0xb, 0x8), slimeEyeTextureRect.size), *unEditedSlimeTexture, *editedSlimeTexture);
 	fillTransparentRectangle(crectangle2(slimeOuterBodyTextureRect), crectangle2(editedSlimeTextureRect), *unEditedSlimeTexture, *editedSlimeTexture);
 
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"slime"), 0, crectangle2()), editedSlimeTexture, nullptr, nullptr, nullptr, nullptr, humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::lime], rgbColorValues[(int)colorID::green], 2, 0, new experienceDrop(0, 0)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"slime"), 0, crectangle2()), editedSlimeTexture, nullptr, nullptr, nullptr, nullptr, humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::lime], rgbColorValues[(int)colorID::green], 2, 0, new experienceDrop(1, 2)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"magma_cube"), 0, crectangle2()), loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"magmacube.png"), nullptr, nullptr, nullptr, nullptr, humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::yellow], 2, 0, new experienceDrop(0, 0)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"magma_cube"), 0, crectangle2()), loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"magmacube.png"), nullptr, nullptr, nullptr, nullptr, humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::yellow], 2, 0, new experienceDrop(1, 3)));
 	currentEntityID++;
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"creeper"), 20, creeperHitbox, humanVolume, 160), loadTextureFromResourcePack(entityTextureFolder / L"creeper" / L"creeper.png"), nullptr, nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"creeper" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"creeper" / L"death"), 2, getLegSwingSynchronizer(creeperLegSize.y), rgbColorValues[(int)colorID::green], rgbColorValues[(int)colorID::black], 0, 0, new experienceDrop(5, 5)));
 	currentEntityID++;

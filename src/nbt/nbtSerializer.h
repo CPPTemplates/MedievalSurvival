@@ -414,3 +414,9 @@ struct nbtSerializer : iSerializer
 	//	return serializeValue(memberName, (uint&)value);
 	// }
 };
+//fallback function
+//make sure to have instantiated the templates by for example #include "nbt/serializeVector.h"!
+template<typename T>
+inline bool serializeNBTValue(nbtSerializer& s, const std::wstring& memberName, T& value) {
+	return s.serializeValue(memberName, value);
+}

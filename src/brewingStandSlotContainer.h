@@ -12,5 +12,5 @@ struct brewingStandSlotContainer :inventory
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;
 	virtual void clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot) override;
 	virtual ~brewingStandSlotContainer() override;
-	virtual bool canAddStack(uiSlotContainer* containerToAddTo, stackDivider& s) override;
+	virtual bool canAddStack(uiSlotContainer* containerToAddTo, itemStack& s) override;
 };

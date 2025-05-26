@@ -54,6 +54,7 @@
 #include "nbt/serializeRectangle.h"
 #include "rectangularSlotContainer.h"
 #include "EntityAI.h"
+#include "AttachedSound.h"
 
 constexpr veci2 endBlockSpawningOn = cveci2(mainEndIslandMaxRadius / 2, 0);
 constexpr vec2 endSpawningLocation = cvec2(endBlockSpawningOn.getX() + 0.5, endBlockSpawningOn.getY() + 1 + math::fpepsilon);
@@ -325,6 +326,17 @@ void entity::tick()
 	if (health <= 0)
 	{
 		onDeath();
+	}
+	for (auto it = attachedSounds.begin(); it != attachedSounds.end();) {
+		AttachedSound* sound = *it;
+		auto oldPtr = it++;
+		if (--sound->ticksLeft >= 0) {
+			sound->update(this);
+		}
+		else {
+			attachedSounds.erase(oldPtr);
+			delete sound;
+		}
 	}
 }
 void entity::onDeath()

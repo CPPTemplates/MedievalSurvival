@@ -11,6 +11,7 @@ struct enchantingTableSlotContainer :inventory
 	virtual void mouseDown(cveci2& pixelPosition, cmb& button, stackDivider& divider) override;
 	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;
 	bool hasEnchantableItem() const;
+	virtual bool canAddStack(uiSlotContainer* containerToAddTo, itemStack& s) override;
 	ull enchantmentSeed = 0;
 	//the enchantment options, from bottom to top
 	std::vector<enchantment> enchantmentOptions[enchantmentOptionCount]{};

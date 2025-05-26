@@ -1,15 +1,26 @@
 #include "inventory.h"
 #include "human.h"
 #include "stackDivider.h"
+#include "gameControl.h"
 
 void inventory::clickedOnItem(cmb& button, stackDivider& divider,
 	uiSlotContainer* selectedSlotContainer, veci2 selectedSlot)
 {
 	itemStack* occupyingSlot = selectedSlotContainer->linkedContainer->getSlot(
 		selectedSlot);
-	if (canAddStack(selectedSlotContainer, divider))
-	{
-		divider.interactWith(occupyingSlot, button);
+	if (linkedPlayer->screen.mostRecentInput.holdingDownKey(vk::LShift) || linkedPlayer->screen.mostRecentInput.holdingDownKey(vk::RShift) && button == mb::Left) {
+		for (uiSlotContainer* destContainer : containers) {
+			if (destContainer != selectedSlotContainer && canAddStack(destContainer, *occupyingSlot)) {
+				//move stack to other container
+				addStack(destContainer, *occupyingSlot);
+			}
+		}
+	}
+	else {
+		if (divider.originalStack.count == 0 || canAddStack(selectedSlotContainer, selectedSlot, divider.originalStack))
+		{
+			divider.interactWith(occupyingSlot, button);
+		}
 	}
 
 	// if (divider.originalStack.count) {
@@ -98,9 +109,22 @@ void inventory::drawToolTips(cveci2& mouseTexturePosition, cveci2& mousePosition
 	}
 }
 
-bool inventory::canAddStack(uiSlotContainer* containerToAddTo, stackDivider& s)
+bool inventory::canAddStack(uiSlotContainer* containerToAddTo, itemStack& s)
 {
 	return true;
+}
+
+bool inventory::canAddStack(uiSlotContainer* containerToAddTo, cveci2& position, itemStack& s)
+{
+	return canAddStack(containerToAddTo, s);
+}
+
+bool inventory::addStack(uiSlotContainer* containerToAddTo, itemStack& s)
+{
+	if (canAddStack(containerToAddTo, s)) {
+		return containerToAddTo->addStack(s);
+	}
+	return false;
 }
 
 uiSlotContainer* inventory::getSlotContainer(cveci2& mousePositionPixels, veci2& slotPosition)

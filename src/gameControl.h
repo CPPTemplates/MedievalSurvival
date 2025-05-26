@@ -24,6 +24,9 @@ struct gameControl : form, clientInput {
     gameControl(playerSocket &socket);
 
     seconds currentFrameStartSeconds = 0;
+    uuid windSoundID = uuid();
+    fp windSoundVolume = 0;
+    fp windSoundPitch = 0;
 
     //controls
     settingsForm *options = new settingsForm();
@@ -72,7 +75,8 @@ struct gameControl : form, clientInput {
 
     mat3x3 worldToRenderTargetTransform = mat3x3();
 
-    std::vector<soundPacket> dataToSend = std::vector<soundPacket>();
+    //keep a reference to keep virtuality
+    std::vector<SoundPacket*> soundPacketsToSend = std::vector<SoundPacket*>();
     touchJoystick *moveJoystick = nullptr;
     touchJoystick *interactJoystick = nullptr;
     pictureBox* chatButton = nullptr;
@@ -86,6 +90,7 @@ struct gameControl : form, clientInput {
     //overrides
     //virtual void render(cveci2& position, const texture& renderTarget) override;
     void render(cveci2 &position, const texture &renderTarget) override;
+    void addSounds();
 
     virtual void layout(crectanglei2 &newRect) override;
 

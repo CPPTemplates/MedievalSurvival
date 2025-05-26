@@ -8,7 +8,7 @@ struct music2d : audio2dt<sf::Music>
 	stdPath path;
 	sfmlInputStream *stream = nullptr;
 
-	inline music2d(const stdPath &path, cvec2 &pos, cfp &volume, cfp &pitch, cbool &isSpatial) : audio2dt(pos, volume, pitch, isSpatial), path(path)
+	inline music2d(const stdPath &path, cvec2 &pos, cfp &volume, cfp &pitch, cbool &isSpatial, cbool& shouldLoop) : audio2dt(pos, volume, pitch, isSpatial, shouldLoop), path(path)
 	{
 	}
 

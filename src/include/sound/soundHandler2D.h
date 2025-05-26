@@ -19,7 +19,6 @@ struct soundHandler2d : IDestructable
 	soundHandler2d();
 
 	void playAudio(const std::shared_ptr<audio2d> &audioToPlay);
-	void stopAudio(const std::shared_ptr<audio2d> &audioToStop);
 	void visualize(const struct texture& renderTarget);
 	~soundHandler2d();
 };

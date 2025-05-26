@@ -8,15 +8,16 @@
 #include "dimension.h"
 #include "stackDivider.h"
 #include <resourceLoader.h>
+#include <itemData.h>
 
 furnaceSlotContainer::furnaceSlotContainer() {
 	uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"furnace.png"));
-	containers.push_back(furnaceInputSlot = new uiSlotContainer(cveci2(56, 133), nullptr));
-	containers.push_back(furnaceOutputSlot = new uiSlotContainer(cveci2(116, 116), nullptr));
 	containers.push_back(furnaceFuelSlot = new uiSlotContainer(cveci2(56, 97), nullptr));
+	containers.push_back(furnaceInputSlot = new uiSlotContainer(cveci2(56, 133), nullptr));
 	//hotbar and inventory will be linked up
 	containers.push_back(hotbarSlots);
 	containers.push_back(inventorySlots);
+	containers.push_back(furnaceOutputSlot = new uiSlotContainer(cveci2(116, 116), nullptr));
 }
 
 bool furnaceSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot) {
@@ -45,10 +46,9 @@ void furnaceSlotContainer::clickedOnItem(cmb& button, stackDivider& divider,
 	veci2 selectedSlot) {
 	human* currentHuman = (human*)linkedPlayer;
 	if (selectedSlotContainer == furnaceOutputSlot) {
-		if (divider.divideOver.empty()) {
-
-			itemStack* s = selectedSlotContainer->getSlot(selectedSlot);
-			divider.addStack(*s);
+		itemStack* s = selectedSlotContainer->getSlot(selectedSlot);
+		if (divider.addStack(*s)) {
+			//got all items
 			currentHuman->addExperience(
 				roundRandom(currentRandom, selectedFurnaceData->collectedExperience));
 			selectedFurnaceData->collectedExperience = 0;
@@ -57,16 +57,35 @@ void furnaceSlotContainer::clickedOnItem(cmb& button, stackDivider& divider,
 	else {
 		inventory::clickedOnItem(button, divider, selectedSlotContainer, selectedSlot);
 		if (selectedSlotContainer == furnaceInputSlot) {
-			furnaceRecipe* newRecipe = findRecipe(furnaceRecipes,
-				furnaceInputSlot->linkedContainer);  // getFurnaceRecipe(furnaceInputSlot->linkedContainer);
-			if (selectedFurnaceData->currentRecipe != newRecipe) {
-				selectedFurnaceData->currentRecipe = newRecipe;
-				selectedFurnaceData->ticksCooked = 0;
-			}
+			updateRecipe();
 		}
 	}
 	currentHuman->selectedContainerContainer->addUpdatePosition(
 		currentHuman->selectedContainerPosition);
+}
+
+bool furnaceSlotContainer::canAddStack(uiSlotContainer* containerToAddTo, itemStack& s)
+{
+	return containerToAddTo != furnaceFuelSlot || itemList[s.stackItemID]->fuelTicks;
+}
+
+bool furnaceSlotContainer::addStack(uiSlotContainer* containerToAddTo, itemStack& s)
+{
+	if (inventory::addStack(containerToAddTo, s)) {
+		updateRecipe();
+		return true;
+	}
+	return  false;
+}
+
+void furnaceSlotContainer::updateRecipe()
+{
+	furnaceRecipe* newRecipe = findRecipe(furnaceRecipes,
+		furnaceInputSlot->linkedContainer);  // getFurnaceRecipe(furnaceInputSlot->linkedContainer);
+	if (selectedFurnaceData->currentRecipe != newRecipe) {
+		selectedFurnaceData->currentRecipe = newRecipe;
+		selectedFurnaceData->ticksCooked = 0;
+	}
 }
 
 furnaceSlotContainer::~furnaceSlotContainer() {

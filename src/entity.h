@@ -8,6 +8,7 @@
 #include "itemID.h"
 #include "math/collisions.h"
 #include <list>
+struct AttachedSound;
 struct dimension;
 
 struct entityAI;
@@ -62,6 +63,7 @@ struct entity :IDestructable, nbtSerializable
 
 	//remembers damage sources for 5 seconds
 	std::list<std::shared_ptr<damageSource>> lastDamageSources;
+	std::list<AttachedSound*> attachedSounds;
 
 	std::vector<statusEffect> activeEffects;
 

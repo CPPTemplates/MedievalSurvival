@@ -1,12 +1,6 @@
 #pragma once
 #include "nbt/nbtSerializer.h"
-//fallback function
-//make sure to have instantiated the templates by for example #include "nbt/serializeVector.h"!
-template<typename T>
-inline bool serializeNBTValue(nbtSerializer&s,  const std::wstring &memberName, T &value)
-{
-    return s.serializeValue(memberName, value);
-}
+
 // for basic lists, use the serializeVariableArray function
 template <typename T>
 inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, std::vector<T> &value)

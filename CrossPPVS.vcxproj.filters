@@ -16,6 +16,18 @@
     <Filter Include="Source Files\include">
       <UniqueIdentifier>{0cd6dadd-2c9e-4ae8-981b-c78482d1fab6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AttachedSound">
+      <UniqueIdentifier>{074e55a5-ba51-4839-bf58-600798460b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Server">
+      <UniqueIdentifier>{6c6fe952-f60f-4cd5-87e2-277b7a72700e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Server\Packet">
+      <UniqueIdentifier>{f6ba1e4c-7d7b-4da5-bb68-893d47260d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{d3d1842e-a3e0-4cb4-ad3a-0bf9f834967b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -313,9 +325,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\chunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cod.cpp">
@@ -798,9 +807,6 @@
     <ClCompile Include="src\playerData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\playerSocket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\pollen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -859,9 +865,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\saveFileControl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\serverControl.cpp">
@@ -934,9 +937,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\soundList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\soundPacket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\soundSettingsForm.cpp">
@@ -1117,6 +1117,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\composterData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server.cpp">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\playerSocket.cpp">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\soundPacket.cpp">
+      <Filter>Source Files\Server\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StartSoundPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UpdateSoundPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AttachedSound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BodyPartSound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HitboxSound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1746,9 +1773,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\chunkLoadLevel.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\client.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cod.h">
@@ -2399,9 +2423,6 @@
     <ClInclude Include="src\playerData.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\playerSocket.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\pollen.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2477,9 +2498,6 @@
     <ClInclude Include="src\serializeClientInput.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\server.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\serverControl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2546,9 +2564,6 @@
     <ClInclude Include="src\snowyTundra.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\socketContainer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\soulSandValley.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2556,9 +2571,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\soundList.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\soundPacket.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\soundSettingsForm.h">
@@ -2803,6 +2815,45 @@
     </ClInclude>
     <ClInclude Include="src\composterData.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\server.h">
+      <Filter>Source Files\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\playerSocket.h">
+      <Filter>Source Files\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\socketContainer.h">
+      <Filter>Source Files\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soundPacket.h">
+      <Filter>Source Files\Server\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client.h">
+      <Filter>Source Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SoundReference.h">
+      <Filter>Source Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HitboxSound.h">
+      <Filter>Source Files\AttachedSound</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BodyPartSound.h">
+      <Filter>Source Files\AttachedSound</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AttachedSound.h">
+      <Filter>Source Files\AttachedSound</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nbt\serializeOptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StartSoundPacket.h">
+      <Filter>Source Files\Server\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StopSoundPacket.h">
+      <Filter>Source Files\Server\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UpdateSoundPacket.h">
+      <Filter>Source Files\Server\Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

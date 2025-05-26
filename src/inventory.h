@@ -12,6 +12,7 @@ struct inventory : slotContainer, IDestructable
 	resolutionTexture* uiTexture = nullptr;
 	rectanglei2 uiTexturePartToDraw = defaultUIRectangle;//default
 
+	//containers in order of what to send to first when shift clicking on an item
 	std::vector<uiSlotContainer*> containers = std::vector<uiSlotContainer*>();
 	uiSlotContainer* hotbarSlots = new uiSlotContainer(cveci2(0x8, 0x8), nullptr);
 	uiSlotContainer* inventorySlots = new uiSlotContainer(cveci2(0x8, 30), nullptr);
@@ -28,7 +29,10 @@ struct inventory : slotContainer, IDestructable
     virtual void mouseMove(cveci2& pixelPosition, cmb& button, stackDivider& divider);
 	virtual void drawToolTips(cveci2& mouseTexturePosition, cveci2& mousePositionPixels, const texture& renderTarget);
 	//returns true if the stack we're holding is a proper stack for the container we're going to interact with
-	virtual bool canAddStack(uiSlotContainer* containerToAddTo, stackDivider& s);
+	virtual bool canAddStack(uiSlotContainer* containerToAddTo, itemStack& s);
+	//for armor slots, it'll only return true if it's the right armor piece
+	virtual bool canAddStack(uiSlotContainer* containerToAddTo, cveci2& position, itemStack& s);
+	virtual bool addStack(uiSlotContainer* containerToAddTo, itemStack& s);
 
 	uiSlotContainer* getSlotContainer(cveci2& mousePositionPixels, veci2& slotPosition);
 };

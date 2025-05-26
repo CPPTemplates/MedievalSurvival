@@ -314,7 +314,7 @@ std::vector<human *> server::getPlayersInRadius(const dimension *dimensionIn, cv
 
 void server::closeAllPorts()
 {
-	for (auto l : listeners)
+	for (const auto& l : listeners)
 	{
 		l.second->close();
 		delete l.second;

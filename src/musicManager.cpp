@@ -19,7 +19,7 @@ void stopMusic()
 {
 	if (currentlyPlayingMusic)
 	{
-		handler.stopAudio(currentlyPlayingMusic);
+		currentlyPlayingMusic->stop();
 		//delete this reference
 		currentlyPlayingMusic = nullptr;
 	}

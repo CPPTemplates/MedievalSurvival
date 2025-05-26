@@ -67,6 +67,7 @@ struct human :public humanoid, public INamable
 	fp spectatorSpeed = humanFlyingSpeed;
 
 	fp visibleRangeXWalk = defaultVisibleRangeXWalk;
+
 	
 	//hands
 	int rightHandSlotIndex = 0;

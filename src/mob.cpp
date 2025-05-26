@@ -21,6 +21,7 @@
 #include "effectParticle.h"
 #include "nbt/serializeUUID.h"
 #include "nbt/serializeVector.h"
+#include "BodyPartSound.h"
 
 constexpr fp verticalSwimSpeedSeconds = 1.0f;
 constexpr fp verticalSwimSpeed = verticalSwimSpeedSeconds;
@@ -76,7 +77,7 @@ void mob::tick()
 	{
 		if (ambientSoundCoolDown <= 0)
 		{
-			((mobData*)entityDataList[(int)entityType])->ambientSound->playRandomSound(dimensionIn, getHeadPosition());
+			playSoundAtHead(((mobData*)entityDataList[(int)entityType])->ambientSound);
 			resetAmbientSoundCoolDown();
 		}
 		else
@@ -442,6 +443,16 @@ void mob::tick()
 		}
 	}
 	setAge(age + 1);
+}
+
+BodyPartSound* mob::playSoundAtHead(std::shared_ptr<soundCollection> collection)
+{
+	size_t index = randIndex(currentRandom, collection->audioToChooseFrom.size());
+	BodyPartSound* sound = new BodyPartSound(collection->playSound(index, dimensionIn, getHeadPosition()),
+		collection->audioToChooseFrom[index]->getDuration().asMilliseconds() * ticksPerRealLifeSecond / 1000,
+		head, vec2());
+	attachedSounds.push_back(sound);
+	return sound;
 }
 
 void mob::onDeath()

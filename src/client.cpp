@@ -34,6 +34,9 @@
 #include "musicManager.h"
 #include "keyID.h"
 #include "serializeClientInput.h"
+#include <StartSoundPacket.h>
+#include "SoundReference.h"
+#include <UpdateSoundPacket.h>
 
 miliseconds lastScreenshotTime = 0;
 
@@ -289,33 +292,60 @@ void client::processIncomingPackets(const texture& renderTarget)
 			{
 				if (inSerializer->push(serializedSoundData))
 				{
-
-					soundPacket sp = soundPacket();
-
-					if (!sp.serialize(*inSerializer))
+					SoundPacket* sp = getPacket(*inSerializer);
+					if (!sp)
 					{
 						inSerializer->pop();
 						break;
 					}
+					uuid id = sp->id;
 
-					if (globalSoundCollectionList.contains(sp.key))
-					{
-						// we assume that the sound is a soundCollection, not a musicCollection
-						const soundCollection* collection = (soundCollection*)globalSoundCollectionList[sp.key];
-						// make sure that the sound index is in the right range.
-						// we might have added or removed sounds in the mean time
-						// by using %, we make every sound that sounds the same for other clients also sound the same for this client
-						sp.soundIndex = sp.soundIndex % (int)collection->audioToChooseFrom.size();
-
-						const std::shared_ptr<sf::SoundBuffer>& buffer = collection->audioToChooseFrom[sp.soundIndex];
-						if (!buffer)
+					if (sp->type == SoundPacketType::start) {
+						StartSoundPacket* startPacket = (StartSoundPacket*)sp;
+						if (globalSoundCollectionList.contains(startPacket->key))
 						{
-							handleError(L"audio not loaded properly");
+							// we assume that the sound is a soundCollection, not a musicCollection
+							const soundCollection* collection = (soundCollection*)globalSoundCollectionList[startPacket->key];
+							// make sure that the sound index is in the right range.
+							// we might have added or removed sounds in the mean time
+							// by using %, we make every sound that sounds the same for other clients also sound the same for this client
+							startPacket->soundIndex = startPacket->soundIndex % (int)collection->audioToChooseFrom.size();
+
+							const std::shared_ptr<sf::SoundBuffer>& buffer = collection->audioToChooseFrom[startPacket->soundIndex];
+							if (!buffer)
+							{
+								handleError(L"audio not loaded properly");
+							}
+
+							std::shared_ptr<SoundReference<sound2d>> soundToPlay = startPacket->position.has_value() ?
+								std::make_shared<SoundReference<sound2d>>(buffer, *startPacket->position, startPacket->volume, startPacket->pitch, true, startPacket->shouldLoop) :
+								std::make_shared<SoundReference<sound2d>>(buffer, vec2(), startPacket->volume, startPacket->pitch, false, startPacket->shouldLoop);
+							soundToPlay->id = id;
+							handler.playAudio(soundToPlay);
 						}
-						std::shared_ptr<sound2d> soundToPlay = std::make_shared<sound2d>(
-							buffer,
-							sp.position, sp.volume, sp.pitch, true);
-						handler.playAudio(soundToPlay);
+					}
+					else {
+						csize_t& index = handler.currentlyPlayIngAudio.findFunction([id](const auto& ref) {return std::static_pointer_cast<SoundReference<sound2d>>(ref)->id == id; });
+						if (index != std::wstring::npos) {
+							const std::shared_ptr< SoundReference<sound2d>>& ref = std::static_pointer_cast<SoundReference<sound2d>>(
+								handler.currentlyPlayIngAudio[index]);
+							if (sp->type == SoundPacketType::stop) {
+								ref->stop();
+							}
+							else if (ref->audioLoaded()) {
+								if (sp->type == SoundPacketType::update) {
+									UpdateSoundPacket& updatePacket = *(UpdateSoundPacket*)sp;
+									if (updatePacket.newVelocity)
+										ref->setVelocity(*updatePacket.newVelocity);
+									if (updatePacket.newPosition)
+										ref->setPosition(*updatePacket.newPosition);
+									if (updatePacket.newVolume)
+										ref->setVolume(*updatePacket.newVolume);
+									if (updatePacket.newPitch)
+										ref->setPitch(*updatePacket.newPitch);
+								}
+							}
+						}
 					}
 
 					inSerializer->pop();
@@ -381,6 +411,10 @@ void client::processIncomingPackets(const texture& renderTarget)
 	// while (selector.wait(sf::microseconds(1))); // pop off all packets on the chain and catch up
 	if (status != sf::TcpSocket::Status::Done)
 	{
+		for (const auto& audio : handler.currentlyPlayIngAudio) {
+			if (audio->audioLoaded())
+				audio->stop();
+		}
 		// auto f = std::bind(&client::addEvent, this, std::placeholders::_1);
 		//  std::function{f}.target_type();
 		currentApplication->listener.unhook(&client::addEvent, this);
@@ -402,11 +436,6 @@ void client::processIncomingPackets(const texture& renderTarget)
 
 void client::addEvent(const sf::Event& e)
 {
-	if (e.is<sf::Event::KeyPressed>()) {
-		handler.playAudio(std::make_shared<sound2d>(
-			((soundCollection*)globalSoundCollectionList[L"item.bottle.fill"])->audioToChooseFrom[0],
-			vec2(), 1, 1, false));
-	}
 	currentInput.eventHistory.push_back(e);
 }
 

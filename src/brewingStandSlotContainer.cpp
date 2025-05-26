@@ -86,11 +86,11 @@ brewingStandSlotContainer::~brewingStandSlotContainer()
 	delete inventorySlots;
 }
 
-bool brewingStandSlotContainer::canAddStack(uiSlotContainer* containerToAddTo, stackDivider& s)
+bool brewingStandSlotContainer::canAddStack(uiSlotContainer* containerToAddTo, itemStack& s)
 {
 	if (containerToAddTo == blazePowderSlot)
 	{
-		return s.originalStack.stackItemID == itemID::blaze_powder;
+		return s.stackItemID == itemID::blaze_powder;
 	}
 	else
 	{

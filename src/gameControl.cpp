@@ -74,6 +74,8 @@
 #include "end.h"
 #include "application/control/eventTranslator.h"
 #include "resourceLoader.h"
+#include "StartSoundPacket.h"
+#include <soundList.h>
 
 constexpr rectangle2 crosshairTextureRect = crectangle2(0, 0, 15, 15);
 constexpr rectangle2 iconTextureRect = rectangle2(0, 0, 9, 9);
@@ -213,6 +215,46 @@ void gameControl::render(cveci2& position, const texture& renderTarget)
 		fillTransparentRectangle(crosshairTextureRect,
 			crectangle2(cvec2(mousePositionPixels), cvec2()).expanded((fp)crosshairTextureRect.size.x * settings::videoSettings::guiScale), globalLoader[hudTextureFolder / "crosshair.png"],
 			renderTarget);
+	}
+}
+
+void gameControl::addSounds()
+{
+	if (windSoundID) {
+		//update wind sound
+	//attachedSounds.push_back(new AttachedSound(randomUUID(), ));
+	//playSoundAtHead(windSound);
+	//if (currentWindSound)
+	//{
+	//	if (currentWindSound->getStatus() == sf::SoundSource::Stopped) {
+	//		currentWindSound->play();
+	//	}
+	//}
+	//else {
+	//	currentWindSound = windSound->playRandomSound();
+	//}
+	//
+		cfp& windSpeed = player->dimensionIn->getWindSpeed(player->getHeadPosition()).length();
+		static const transition<fp> speedToVolume = transition<fp>({
+		   keyFrame<fp>(2,0),
+		   keyFrame<fp>(20,1),
+			});
+		static const transition<fp> speedToPitch = transition<fp>({
+		   keyFrame<fp>(6,1),
+		   keyFrame<fp>(15,2),
+			});
+
+		windSoundVolume = math::lerp(windSoundVolume, speedToVolume.getValue(windSpeed), 0.2);
+		windSoundPitch = math::lerp(windSoundPitch, speedToPitch.getValue(windSpeed), 0.2);
+		UpdateSoundPacket* updatePacket = new UpdateSoundPacket(windSoundID);
+		updatePacket->newVolume = windSoundVolume;
+		updatePacket->newPitch = windSoundPitch;
+		soundPacketsToSend.push_back(updatePacket);
+	}
+	else {
+		//create wind sound
+		windSoundID = randomUUID(currentRandom);
+		soundPacketsToSend.push_back(new StartSoundPacket(windSoundID, std::nullopt, windSound->key, 0, 1, 1, true));
 	}
 }
 

@@ -204,6 +204,7 @@
     <ClCompile Include="src\arrowAttackAI.cpp" />
     <ClCompile Include="src\attachedBlockData.cpp" />
     <ClCompile Include="src\attachedData.cpp" />
+    <ClCompile Include="src\AttachedSound.cpp" />
     <ClCompile Include="src\attachmentDirectionData.cpp" />
     <ClCompile Include="src\attackOnCollideAI.cpp" />
     <ClCompile Include="src\avoidEntityAI.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="src\blockParticle.cpp" />
     <ClCompile Include="src\blockStateCondition.cpp" />
     <ClCompile Include="src\boat.cpp" />
+    <ClCompile Include="src\BodyPartSound.cpp" />
     <ClCompile Include="src\boidsAI.cpp" />
     <ClCompile Include="src\breedableMob.cpp" />
     <ClCompile Include="src\brewingStandData.cpp" />
@@ -330,6 +332,7 @@
     <ClCompile Include="src\ghastFireBall.cpp" />
     <ClCompile Include="src\ghastFireBallAI.cpp" />
     <ClCompile Include="src\grassBlockData.cpp" />
+    <ClCompile Include="src\HitboxSound.cpp" />
     <ClCompile Include="src\hollowRidableEntity.cpp" />
     <ClCompile Include="src\human.cpp" />
     <ClCompile Include="src\humanoid.cpp" />
@@ -562,8 +565,13 @@
     <ClCompile Include="src\worldSelector.cpp" />
     <ClCompile Include="src\zombie.cpp" />
     <ClCompile Include="src\zombifiedPiglin.cpp" />
+    <ClCompile Include="src\StartSoundPacket.cpp" />
+    <ClCompile Include="src\UpdateSoundPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AttachedSound.h" />
+    <ClInclude Include="src\BodyPartSound.h" />
+    <ClInclude Include="src\HitboxSound.h" />
     <ClInclude Include="src\accountEditor.h" />
     <ClInclude Include="src\additiveDrop.h" />
     <ClInclude Include="src\ageData.h" />
@@ -970,6 +978,7 @@
     <ClInclude Include="src\nbt\nbtSerializable.h" />
     <ClInclude Include="src\nbt\nbtSerializer.h" />
     <ClInclude Include="src\nbt\nbtValue.h" />
+    <ClInclude Include="src\nbt\serializeOptional.h" />
     <ClInclude Include="src\nbt\serializeVector.h" />
     <ClInclude Include="src\nbt\serializeDirection.h" />
     <ClInclude Include="src\nbt\serializeList.h" />
@@ -1063,6 +1072,7 @@
     <ClInclude Include="src\soundCollection.h" />
     <ClInclude Include="src\soundList.h" />
     <ClInclude Include="src\soundPacket.h" />
+    <ClInclude Include="src\SoundReference.h" />
     <ClInclude Include="src\soundSettingsForm.h" />
     <ClInclude Include="src\spawnerData.h" />
     <ClInclude Include="src\spongeData.h" />
@@ -1125,6 +1135,9 @@
     <ClInclude Include="src\worldSelector.h" />
     <ClInclude Include="src\zombie.h" />
     <ClInclude Include="src\zombifiedPiglin.h" />
+    <ClInclude Include="src\StartSoundPacket.h" />
+    <ClInclude Include="src\StopSoundPacket.h" />
+    <ClInclude Include="src\UpdateSoundPacket.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
