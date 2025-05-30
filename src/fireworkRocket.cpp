@@ -3,9 +3,9 @@
 #include "nbt/nbtSerializer.h"
 #include "constants/vectorConstants.h"
 #include "include/math/graphics/brush/brushes.h"
-void fireworkRocket::serializeValue(nbtSerializer& s)
+void fireworkRocket::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"ticks to exist"), ticksToExist);
+	s.serializeMembers(std::wstring(L"ticks to exist"), ticksToExist);
 	data.serialize(s, std::wstring(L"item data"));
 }
 void fireworkRocket::render(const gameRenderData& targetData) const

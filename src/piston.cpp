@@ -44,7 +44,7 @@ fp piston::getGravityForce() const
 	return 0;
 }
 
-void piston::serializeValue(nbtSerializer& s)
+void piston::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"connected piston position"), connectedPistonPosition);
 	if (!s.write)
@@ -53,8 +53,8 @@ void piston::serializeValue(nbtSerializer& s)
 	}
 	if (s.push(L"moving blocks"))
 	{
-		movingBlocks->serializeValue(s);
+		movingBlocks->serializeMembers(s);
 		s.pop();
 	}
-	entity::serializeValue(s);
+	entity::serializeMembers(s);
 }

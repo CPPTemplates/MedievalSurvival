@@ -1,9 +1,9 @@
 #include "sapSpreadData.h"
 #include "tickableBlockContainer.h"
 #include "nbt/nbtSerializer.h"
-void sapSpreadData::serializeValue(nbtSerializer &s)
+void sapSpreadData::serializeMembers(nbtSerializer &s)
 {
-	s.serializeValue(std::wstring(L"sap level"), sapLevel);
+	s.serializeMembers(std::wstring(L"sap level"), sapLevel);
 }
 
 void sapSpreadData::randomTick(tickableBlockContainer *containerIn, cveci2 &position)

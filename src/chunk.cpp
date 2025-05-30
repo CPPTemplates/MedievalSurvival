@@ -259,7 +259,7 @@ void chunk::generateStructures()
 	addLightUpdates();
 }
 
-void chunk::serializeValue(nbtSerializer& s)
+void chunk::serializeMembers(nbtSerializer& s)
 {
 	serializeBlocks(s, blockIDArray, blockDataArray, powerLevels);
 
@@ -268,9 +268,9 @@ void chunk::serializeValue(nbtSerializer& s)
 	s.serializeArray(std::wstring(L"blocklight levels"), blockLightLevels.baseArray,
 		chunkArraySize);
 
-	s.serializeValue(std::wstring(L"load level"), loadLevel);
-	s.serializeValue(std::wstring(L"ticks since player"), ticksSincePlayer);
-	s.serializeValue(std::wstring(L"spawn cooldown"), spawnCooldown);
+	s.serializeMembers(std::wstring(L"load level"), loadLevel);
+	s.serializeMembers(std::wstring(L"ticks since player"), ticksSincePlayer);
+	s.serializeMembers(std::wstring(L"spawn cooldown"), spawnCooldown);
 	if (loadLevel == chunkLoadLevel::worldGenerationLoaded)
 	{
 		if (!s.write)
@@ -310,10 +310,10 @@ void chunk::serializeValue(nbtSerializer& s)
 				{
 					if (s.push<nbtDataTag::tagCompound>())
 					{
-						s.serializeValue(std::wstring(L"entity id"),
+						s.serializeMembers(std::wstring(L"entity id"),
 							entityList[i]->entityType);
 						serializeNBTValue(s, std::wstring(L"position"), entityList[i]->position);
-						entityList[i]->serializeValue(s);
+						entityList[i]->serializeMembers(s);
 						s.pop();
 					}
 				}
@@ -340,7 +340,7 @@ void chunk::serializeValue(nbtSerializer& s)
 							if (isSerializable(entityType))
 							{
 
-								e->serializeValue(s);
+								e->serializeMembers(s);
 								if (!e->identifier)
 								{
 									e->identifier = randomUUID(currentRandom);
@@ -359,7 +359,7 @@ void chunk::serializeValue(nbtSerializer& s)
 
 								gameControl* fakeControl = nullptr;
 								human h = human(*fakeControl, L"joe");
-								h.serializeValue(s);
+								h.serializeMembers(s);
 								h.hotbarSlots->dropContent(dimensionIn, position);
 								h.inventorySlots->dropContent(dimensionIn, position);
 								h.leftHandSlot->dropContent(dimensionIn, position);

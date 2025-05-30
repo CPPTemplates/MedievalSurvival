@@ -54,8 +54,8 @@ bool attackOnCollideAI::continueExecuting()
 	return randChance(worldRandom, reactionTimeSeconds * ticksPerRealLifeSecond) ? shouldExecute() : true;
 }
 
-void attackOnCollideAI::serializeValue(nbtSerializer& s)
+void attackOnCollideAI::serializeMembers(nbtSerializer& s)
 {
-	targetAI::serializeValue(s);
+	targetAI::serializeMembers(s);
 	idConverter::serializeID(s, std::wstring(L"entity type to attack"), entityTypeToAttack, s.converter ? &s.converter->entityIDConverter : nullptr);
 }

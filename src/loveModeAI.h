@@ -6,5 +6,5 @@ struct loveModeAI : taskAI
 	virtual void updateTask() final;
 	//virtual void updateTask();
 	loveModeAI(entity* const& connectedEntity) : taskAI(connectedEntity) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -48,7 +48,7 @@ struct chicken : public passiveMob
 	bodyPart2D *leftLowerLeg = nullptr;
 	bodyPart2D *rightLowerLeg = nullptr;
 	virtual void updateBodyParts() const override;
-	virtual void serializeValue(nbtSerializer &s) override;
+	virtual void serializeMembers(nbtSerializer &s) override;
 	virtual fp getGravityForce() const override;
 	virtual bool goToPosition(cvec2 &destination) override;
 	virtual void tick() override;

@@ -840,7 +840,7 @@ void serializeBlocks(nbtSerializer &s, const array2d<blockID> &blockIDArray, con
 							veci2 position = veci2(relativeX, relativeY);
 							serializeNBTValue(s, std::wstring(L"position"), position);
 
-							(*it)->serializeValue(s);
+							(*it)->serializeMembers(s);
 							s.pop();
 						}
 					}
@@ -870,7 +870,7 @@ void serializeBlocks(nbtSerializer &s, const array2d<blockID> &blockIDArray, con
 
 					if (data)
 					{
-						data->serializeValue(s);
+						data->serializeMembers(s);
 					}
 					s.pop();
 				}

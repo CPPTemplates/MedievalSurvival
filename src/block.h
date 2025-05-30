@@ -20,7 +20,7 @@
 
 struct blockContainer;
 
-extern resolutionTexture *grassOverlay;
+extern resolutionTexture* grassOverlay;
 
 constexpr int noEmittance[(size_t)levelID::count]{
 
@@ -28,20 +28,20 @@ constexpr int noEmittance[(size_t)levelID::count]{
 
 struct block : INamable, IDestructable
 {
-	block(blockID identifier, fp hardness, fp blastResistance, cfp &weightPerCubicMeter, resolutionTexture *tex, std::wstring name,
-		  std::shared_ptr<soundCollection> fallSound,
-		  std::shared_ptr<soundCollection> stepSound,
-		  std::shared_ptr<soundCollection> hitSound,
-		  std::shared_ptr<soundCollection> breakSound,
-		  std::shared_ptr<soundCollection> placeSound, cint (&filterStrength)[(size_t)levelID::count], harvestTypeID bestTool = withHand, harvestTierID itemTier = noHarvestTier, collisionTypeID collisiontype = collisionTypeID::willCollide,
-		  cint &fireEncouragement = 0, cint &flammability = 0, cbool &canCatchFireFromLava = false,
-		  cbool &canReplaceBlock = false, cint (&emittanceLevel)[(size_t)levelID::count] = noEmittance, const experienceDrop &experienceWhenBroken = experienceDrop(), std::shared_ptr<soundCollection> ambientSound = nullptr);
+	block(blockID identifier, fp hardness, fp blastResistance, cfp& weightPerCubicMeter, resolutionTexture* tex, std::wstring name,
+		std::shared_ptr<soundCollection> fallSound,
+		std::shared_ptr<soundCollection> stepSound,
+		std::shared_ptr<soundCollection> hitSound,
+		std::shared_ptr<soundCollection> breakSound,
+		std::shared_ptr<soundCollection> placeSound, cint(&filterStrength)[(size_t)levelID::count], std::vector<harvestTypeID> tools = { withHand }, harvestTierID itemTier = noHarvestTier, collisionTypeID collisiontype = collisionTypeID::willCollide,
+		cint& fireEncouragement = 0, cint& flammability = 0, cbool& canCatchFireFromLava = false,
+		cbool& canReplaceBlock = false, cint(&emittanceLevel)[(size_t)levelID::count] = noEmittance, const experienceDrop& experienceWhenBroken = experienceDrop(), std::shared_ptr<soundCollection> ambientSound = nullptr);
 	blockID identifier;
 
 	// breaking data
 
 	harvestTierID itemTier = noHarvestTier;
-	harvestTypeID bestTool = withHand;
+	std::vector<harvestTypeID> tools = {};
 
 	fp hardness = 0;
 	fp blastResistance = 0;
@@ -61,7 +61,7 @@ struct block : INamable, IDestructable
 
 	// texture
 
-	resolutionTexture *tex;
+	resolutionTexture* tex;
 
 	// sound
 
@@ -82,8 +82,8 @@ struct block : INamable, IDestructable
 	std::shared_ptr<lootTable> dropsWhenHarvested = std::make_shared<lootTable>();
 	experienceDrop experienceWhenBroken = experienceDrop(); // experience given when this block is broken
 
-	bool correctTool(const itemID &tool) const;
-	bool canHarvest(const itemID &tool) const;
+	bool correctTool(const itemID& tool) const;
+	bool canHarvest(const itemID& tool) const;
 
 	virtual void use();
 	/// <summary>
@@ -96,30 +96,30 @@ struct block : INamable, IDestructable
 	/// <param name="data"></param>
 	/// <param name="containerIn"></param>
 	/// <param name="blockPosition"></param>
-	virtual void render(const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cveci2 &blockPosition) const;
+	virtual void render(const gameRenderData& targetData, blockData* const data, blockContainer* containerIn, cveci2& blockPosition) const;
 	template <typename brush0Type>
-	void render(const brush0Type &b, rectangle2 brushRect, crectangle2 &blockRect, const gameRenderData &targetData, blockData *const data, blockContainer *containerIn, cbool &renderAnimation = false, const std::optional<vec2> &rotationCenterWorld = std::nullopt) const;
+	void render(const brush0Type& b, rectangle2 brushRect, crectangle2& blockRect, const gameRenderData& targetData, blockData* const data, blockContainer* containerIn, cbool& renderAnimation = false, const std::optional<vec2>& rotationCenterWorld = std::nullopt) const;
 
-	static mat3x3 getTextureToWorldTransform(cvec2 &textureSize, cmat3x3 &blockToRenderTargetTransform, cvec2 &blockPosition);
-	static mat3x3 getBrushRectToWorldTransform(crectangle2 &brushRect, cmat3x3 &blockToRenderTargetTransform, cvec2 &blockPosition);
+	static mat3x3 getTextureToWorldTransform(cvec2& textureSize, cmat3x3& blockToRenderTargetTransform, cvec2& blockPosition);
+	static mat3x3 getBrushRectToWorldTransform(crectangle2& brushRect, cmat3x3& blockToRenderTargetTransform, cvec2& blockPosition);
 
-	virtual collisionDataCollection getCollisionData(blockContainer *containerIn, cveci2 &position) const;
+	virtual collisionDataCollection getCollisionData(blockContainer* containerIn, cveci2& position) const;
 };
 
-void renderTorch(cveci2 &blockPosition, cvec2 &relativeRotationCenter, cfp &angle, const resolutionTexture &tex, const gameRenderData &targetData);
-void renderTexture(crectangle2 &rectangleToTransform, cmat3x3 &transform, cbool &hasTransparency, const directionID &directionFacing, const resolutionTexture &tex, const texture &renderTarget, cbool &renderAnimation);
-void renderTexture(crectangle2 &drawRect, cbool &hasTransparency, const directionID &directionFacing, const resolutionTexture &tex, const texture &renderTarget, cbool &renderAnimation);
-void renderBlockRect(crectangle2 &blockRect, const gameRenderData &targetData);
-void renderBlockRect(crectangle2 &blockRect, const gameRenderData &targetData, const color &c);
+void renderTorch(cveci2& blockPosition, cvec2& relativeRotationCenter, cfp& angle, const resolutionTexture& tex, const gameRenderData& targetData);
+void renderTexture(crectangle2& rectangleToTransform, cmat3x3& transform, cbool& hasTransparency, const directionID& directionFacing, const resolutionTexture& tex, const texture& renderTarget, cbool& renderAnimation);
+void renderTexture(crectangle2& drawRect, cbool& hasTransparency, const directionID& directionFacing, const resolutionTexture& tex, const texture& renderTarget, cbool& renderAnimation);
+void renderBlockRect(crectangle2& blockRect, const gameRenderData& targetData);
+void renderBlockRect(crectangle2& blockRect, const gameRenderData& targetData, const color& c);
 
 // template<typename targetType>
 // void renderBrewingStand(crectangle2& drawRect, cbool hasBottle[brewingStandPotionCapacity], const targetType& renderTarget);
 
 template <typename brush0Type>
-void renderCollisionData(blockContainer *containerIn, cveci2 &position, crectangle2 &brushRect, const brush0Type &b, const gameRenderData &targetData);
-void renderCollisionData(blockContainer *containerIn, cveci2 &position, const resolutionTexture &tex, const gameRenderData &targetData);
-void renderCollisionData(blockContainer *containerIn, cveci2 &position, const gameRenderData &targetData);
+void renderCollisionData(blockContainer* containerIn, cveci2& position, crectangle2& brushRect, const brush0Type& b, const gameRenderData& targetData);
+void renderCollisionData(blockContainer* containerIn, cveci2& position, const resolutionTexture& tex, const gameRenderData& targetData);
+void renderCollisionData(blockContainer* containerIn, cveci2& position, const gameRenderData& targetData);
 
-extern idList<biomeData *, biomeID> biomeDataList;
+extern idList<biomeData*, biomeID> biomeDataList;
 
-extern idList<block *, blockID> blockList;
+extern idList<block*, blockID> blockList;

@@ -61,12 +61,12 @@ playerSocket::playerSocket(sf::TcpSocket* socket)
 	uuid playerUUID;
 	serializeNBTValue(inNBTSerializer, L"uuid", playerUUID);
 	std::wstring playerName;
-	inNBTSerializer.serializeValue(L"name", playerName);
+	inNBTSerializer.serializeMembers(L"name", playerName);
 	screen->player = player = new human(*screen, playerName);
 	player->setInitialPosition(currentWorld->dimensions[(int)currentWorld->worldSpawnDimension], vec2());
 
 	std::wstring clientOSName;
-	inNBTSerializer.serializeValue(L"OS", clientOSName);
+	inNBTSerializer.serializeMembers(L"OS", clientOSName);
 	if (clientOSName == L"Android")
 	{
 		screen->addTouchInput();
@@ -149,13 +149,13 @@ void renderAsync(playerSocket* socket)
 
 	// always serialize. the target client may be on android or need an on-screen keyboard in another way
 	bool wantsTextInput = socket->screen->wantsTextInput();
-	outSerializer->serializeValue(L"wantsTextInput", wantsTextInput);
+	outSerializer->serializeMembers(L"wantsTextInput", wantsTextInput);
 
-	outSerializer->serializeValue(L"paste", socket->screen->wantsClipboardInput);
+	outSerializer->serializeMembers(L"paste", socket->screen->wantsClipboardInput);
 	socket->screen->wantsClipboardInput = false;
 	if (socket->screen->copyToClipboard.length())
 	{
-		outSerializer->serializeValue(L"copy", socket->screen->copyToClipboard);
+		outSerializer->serializeMembers(L"copy", socket->screen->copyToClipboard);
 		socket->screen->copyToClipboard.clear();
 	}
 	fp hearingRange2D = getHearingRange2D(socket->screen->visibleRange.x);
@@ -231,7 +231,7 @@ void renderAsync(playerSocket* socket)
 			socket->screen->addClientInput(socket->screen->mostRecentInput);
 			socket->screen->processInput();
 			std::wstring clientClipboardText;
-			if (currentNBTSerializer.serializeValue(L"clipboard", clientClipboardText))
+			if (currentNBTSerializer.serializeMembers(L"clipboard", clientClipboardText))
 			{
 				socket->screen->paste(clientClipboardText);
 			}

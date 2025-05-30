@@ -82,8 +82,8 @@ void panicAI::resetTask()
 	ticksSinceLookingBack = 0;
 }
 
-void panicAI::serializeValue(nbtSerializer& s)
+void panicAI::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"uuid fleeing from"), uuidFleeingFrom);
-	s.serializeValue(std::wstring(L"ticks since looking back"), ticksSinceLookingBack);
+	s.serializeMembers(std::wstring(L"ticks since looking back"), ticksSinceLookingBack);
 }

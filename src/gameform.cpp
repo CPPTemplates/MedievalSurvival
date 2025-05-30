@@ -167,5 +167,5 @@ void gameForm::render(cveci2 &position, const texture &renderTarget)
 	renderChildren(position, renderTarget);
 	// don'T draw self
 	// form::render(position, renderTarget);
-	//handler.visualize(renderTarget);
+	handler.visualize(renderTarget);
 }

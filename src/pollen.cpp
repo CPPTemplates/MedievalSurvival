@@ -43,8 +43,8 @@ void pollen::tick()
 	}
 }
 
-void pollen::serializeValue(nbtSerializer& s)
+void pollen::serializeMembers(nbtSerializer& s)
 {
 	idConverter::serializeID(s, std::wstring(L"block to spread"), (itemID&)blockToSpread, s.converter ? &s.converter->itemIDConverter : nullptr);
-	s.serializeValue(std::wstring(L"ticks to exist"), ticksToExist);
+	s.serializeMembers(std::wstring(L"ticks to exist"), ticksToExist);
 }

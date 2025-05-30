@@ -61,7 +61,7 @@ inline bool serializeListOfSerializables(nbtSerializer &s, const std::wstring &m
         {
             if (s.push())
             {
-                it.serializeValue(s);
+                it.serializeMembers(s);
                 s.pop();
             }
         }

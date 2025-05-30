@@ -67,8 +67,8 @@ void fireData::randomTick(tickableBlockContainer* containerIn, cveci2& position)
 	}
 }
 
-void fireData::serializeValue(nbtSerializer& s)
+void fireData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	ageData::serializeValue(s);
+	blockData::serializeMembers(s);
+	ageData::serializeMembers(s);
 }

@@ -1,7 +1,7 @@
 #include "openData.h"
 #include "nbt/nbtSerializer.h"
-void openData::serializeValue(nbtSerializer& s)
+void openData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	s.serializeValue(std::wstring(L"is open"), isOpen);
+	blockData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"is open"), isOpen);
 }

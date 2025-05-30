@@ -12,5 +12,5 @@ struct particle :public entity
 	particle(const particleID& particleType);
 	void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -18,7 +18,7 @@ bool slotContainer::substractStack(itemStack& stack)
 	return false;
 }
 
-void slotContainer::serializeValue(nbtSerializer& s)
+void slotContainer::serializeMembers(nbtSerializer& s)
 {
 	handleError(std::wstring(L"not implemented"));
 }

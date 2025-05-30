@@ -48,5 +48,5 @@ struct itemStack : IDestructable, nbtSerializable
 
 	int getEnchantmentLevel(const enchantmentID& identifier) const;
 	void drawToolTips(cveci2& position, const texture& renderTarget) const;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

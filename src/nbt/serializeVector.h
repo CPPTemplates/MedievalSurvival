@@ -9,7 +9,7 @@ inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, 
     {
         for (fsize_t i = 0; i < axisCount; i++)
         {
-            s.serializeValue(axisNames[i], vector[i]);
+            s.serializeMembers(axisNames[i], vector[i]);
         }
 
         s.pop();

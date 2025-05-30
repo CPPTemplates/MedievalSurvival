@@ -12,8 +12,8 @@ void cropData::randomTick(tickableBlockContainer* containerIn, cveci2& position)
 	}
 }
 
-void cropData::serializeValue(nbtSerializer& s)
+void cropData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	ageData::serializeValue(s);
+	blockData::serializeMembers(s);
+	ageData::serializeMembers(s);
 }

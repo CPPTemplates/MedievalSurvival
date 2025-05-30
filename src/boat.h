@@ -12,7 +12,7 @@ struct boat :public hollowRidableEntity
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void tick() override;
 	virtual void onDeath() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual vec2 getRelativeSeatPosition(csize_t& seatIndex) const override;
 	virtual fp getHollowVolume() const final;
 	virtual fp getWeightPerCubicMeter() const final;

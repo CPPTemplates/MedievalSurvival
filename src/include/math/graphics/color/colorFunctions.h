@@ -33,7 +33,7 @@ inline static constexpr colortn<T, channelCount> interpolateColorBilinear(const 
 	constexpr WeightType maxWeight = std::is_integral_v<T> ? (WeightType)std::numeric_limits<T>::max() + (WeightType)1 : (T)1;
 	constexpr WeightType maxWeightSquared = maxWeight * maxWeight;
 	cvect2<WeightType>& invertedWeigths = maxWeight - weights;
-	const WeightType (&weightArray)[4] {
+	const WeightType(&weightArray)[4] {
 		//0 0
 		invertedWeigths.x* invertedWeigths.y,
 			//1 0
@@ -114,11 +114,12 @@ inline static colortn<T, channelCount> averageColor(const colortn<T, channelCoun
 	}
 	else
 	{
+		//convert to gamma rgb to linear rgb and back
 		return colortn<T, channelCount>(
-			(T)((c1.a() + c2.a() + c3.a() + c4.a()) / 4),
-			(T)((c1.r() * c1.a() + c2.r() * c2.a() + c3.r() * c3.a() + c4.r() * c4.a()) / totalA),
-			(T)((c1.g() * c1.a() + c2.g() * c2.a() + c3.g() * c3.a() + c4.g() * c4.a()) / totalA),
-			(T)((c1.b() * c1.a() + c2.b() * c2.a() + c3.b() * c3.a() + c4.b() * c4.a()) / totalA));
+			(T)(totalA / 4),
+				(T)sqrt((c1.r() * c1.r() * c1.a() + c2.r() * c2.r() * c2.a() + c3.r() * c3.r() * c3.a() + c4.r() * c4.r() * c4.a()) / totalA),
+				(T)sqrt((c1.g() * c1.g() * c1.a() + c2.g() * c2.g() * c2.a() + c3.g() * c3.g() * c3.a() + c4.g() * c4.g() * c4.a()) / totalA),
+				(T)sqrt((c1.b() * c1.b() * c1.a() + c2.b() * c2.b() * c2.a() + c3.b() * c3.b() * c3.a() + c4.b() * c4.b() * c4.a()) / totalA));
 	}
 }
 

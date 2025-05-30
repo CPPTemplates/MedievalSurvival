@@ -182,12 +182,12 @@ bool pistonData::tick(tickableBlockContainer* containerIn, cveci2& position)
 	return false;
 }
 
-void pistonData::serializeValue(nbtSerializer& s)
+void pistonData::serializeMembers(nbtSerializer& s)
 {
-	facingData::serializeValue(s);
-	doubleBlockData::serializeValue(s);
-	s.serializeValue(std::wstring(L"last power level behind"), lastPowerLevelBehind);
-	s.serializeValue(std::wstring(L"push progress"), pushProgress);
+	facingData::serializeMembers(s);
+	doubleBlockData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"last power level behind"), lastPowerLevelBehind);
+	s.serializeMembers(std::wstring(L"push progress"), pushProgress);
 	serializeNBTValue(s, std::wstring(L"blocks moving"), blocksMoving);
 }
 void pistonData::onBlockRemove(tickableBlockContainer* containerIn, cveci2& position)

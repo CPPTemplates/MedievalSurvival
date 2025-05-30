@@ -21,6 +21,6 @@ constexpr rectangle2 endermanHitbox = crectangle2(-endermanHitboxSize.getX() * 0
 struct enderman : public humanoid
 {
 	enderman();
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source) override;
 };

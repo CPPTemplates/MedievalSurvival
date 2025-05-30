@@ -1,5 +1,5 @@
 #include "endGenerationData.h"
-void endGenerationData::serializeValue(nbtSerializer& s)
+void endGenerationData::serializeMembers(nbtSerializer& s)
 {
 }
 

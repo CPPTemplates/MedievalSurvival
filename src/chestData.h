@@ -8,6 +8,6 @@ struct chestData :blockData
 	rectangularSlotContainer* slots = nullptr;
 	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual ~chestData() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	void generateChestLoot();
 };

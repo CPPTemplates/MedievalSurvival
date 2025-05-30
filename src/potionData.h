@@ -4,6 +4,6 @@
 struct potionData :itemTag
 {
 	std::vector<statusEffect> effectsToAdd;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	potionData(const std::vector<statusEffect>& effectsToAdd = std::vector<statusEffect>()) :effectsToAdd(effectsToAdd) {}
 };

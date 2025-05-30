@@ -2,10 +2,10 @@
 #include "blockParticle.h"
 #include "nbt/nbtSerializer.h"
 
-void blockParticle::serializeValue(nbtSerializer& s)
+void blockParticle::serializeMembers(nbtSerializer& s)
 {
-	rectParticle::serializeValue(s);
-	s.serializeValue(std::wstring(L"brush block id"), brushBlockID);
+	rectParticle::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"brush block id"), brushBlockID);
 }
 
 const resolutionTexture& blockParticle::getTexture() const

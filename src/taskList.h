@@ -13,6 +13,6 @@ struct taskList : entityAI
 	taskList(entity* connectedEntity = nullptr, std::vector<taskAI*> tasks = {}) : entityAI(connectedEntity), tasks(tasks) {}
 
 	void execute() final;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual ~taskList();
 };

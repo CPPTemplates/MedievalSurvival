@@ -6,9 +6,9 @@ snowLayerData::snowLayerData(cfp& layerThickness)
 	this->layerThickness = layerThickness;
 }
 
-void snowLayerData::serializeValue(nbtSerializer& s)
+void snowLayerData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	fallingBlockData::serializeValue(s);
-	s.serializeValue(std::wstring(L"layer thickness"), layerThickness);
+	blockData::serializeMembers(s);
+	fallingBlockData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"layer thickness"), layerThickness);
 }

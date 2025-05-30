@@ -23,10 +23,10 @@ bool inputData::tick(tickableBlockContainer* containerIn, cveci2& position)
 	}
 }
 
-void inputData::serializeValue(nbtSerializer& s)
+void inputData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	facingData::serializeValue(s);
-	s.serializeValue(std::wstring(L"last power level behind"), (int&)lastPowerLevelBehind);
-	s.serializeValue(std::wstring(L"last power level below"), (int&)lastPowerLevelBelow);
+	blockData::serializeMembers(s);
+	facingData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"last power level behind"), (int&)lastPowerLevelBehind);
+	s.serializeMembers(std::wstring(L"last power level below"), (int&)lastPowerLevelBelow);
 }

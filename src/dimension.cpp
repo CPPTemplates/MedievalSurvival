@@ -53,6 +53,7 @@
 #include "include/filesystem/fileFunctions.h"
 #include "nbt/serializeVector.h"
 #include "gameTime.h"
+#include "math/vector/vectorrandom.h"
 
 color dimension::getColorMultiplier(cfp& sunLight, cfp& blockLight) const
 {
@@ -94,15 +95,14 @@ veci2 dimension::searchPortal(cveci2& positionNear)
 	else
 	{
 		//create new portal
-		//check random positions if it is a good place for a nether portal
+		//check random positions if it is a good place for a nether portal. when no good position is found, we build the portal at the transformed coordinates
 
 		cint portalTryCount = 0x100;
 		veci2 portalPos = positionNear;
 		cint netherSpawnSearchRange = (int)(netherPortalSearchRange * 0.8);
 		for (int i = 0; i < portalTryCount; i++)
 		{
-			cveci2 pos = veci2(positionNear.x + rand(currentRandom, -netherSpawnSearchRange, netherSpawnSearchRange),
-				rand(currentRandom, netherLavaLevel, netherCeilingStart));
+			cveci2 pos = floorVector(getRandomPointOnEllipse(currentRandom, rectangle2(vec2(positionNear - netherSpawnSearchRange), vec2(netherSpawnSearchRange * 2))));// veci2(positionNear.x + rand(currentRandom, -netherSpawnSearchRange, netherSpawnSearchRange),
 			if (getBlockID(pos + cveci2(0, -1), chunkLoadLevel::updateLoaded) == blockID::air &&
 				getBlock(pos + cveci2(0, -2), chunkLoadLevel::updateLoaded)->blockCollisionType == collisionTypeID::willCollide)
 			{
@@ -145,7 +145,7 @@ bool dimension::serialize(cbool& write)
 		}
 	}
 	nbtSerializer s = nbtSerializer(*compound, write);
-	serializeValue(s);
+	serializeMembers(s);
 	if (write)
 	{
 		if (!nbtCompound::serialize(compound, write, path))
@@ -160,7 +160,7 @@ bool dimension::serialize(cbool& write)
 	return true;
 }
 
-void dimension::serializeValue(nbtSerializer& s)
+void dimension::serializeMembers(nbtSerializer& s)
 {
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"portal positions")))
 	{

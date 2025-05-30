@@ -91,8 +91,6 @@ constexpr bool isBoatOrMinecart(const itemID& item) noexcept;
 
 constexpr bool hasFacingData(const blockID& identifier) noexcept;
 
-constexpr bool attachedToBottomBlock(const blockID& identifier) noexcept;
-
 constexpr bool hasAttachedBlockData(const blockID& identifier) noexcept;
 
 constexpr bool hasPollenData(const blockID& identifier) noexcept;
@@ -811,16 +809,21 @@ constexpr bool hasFacingData(const blockID& identifier) noexcept
 		(identifier == blockID::end_portal_frame) || (identifier == blockID::lectern);
 }
 
-constexpr bool attachedToBottomBlock(const blockID& identifier) noexcept
-{
+constexpr directionID getStaticAttachmentDirection(const blockID& identifier) noexcept {
+	//bottom
 	return isFarmlandCrop(identifier) || isFlower(identifier) || isGrass(identifier) ||
 		isSapling(identifier) || isMushroom(identifier) ||
-		is_in(identifier, blockID::repeater, blockID::comparator, blockID::redstone_wire, blockID::sugar_cane, blockID::cactus);
+		is_in(identifier, blockID::repeater, blockID::comparator, blockID::redstone_wire, blockID::sugar_cane, blockID::cactus, blockID::twisting_vines) ?
+		directionID::negativeY :
+		//top
+		is_in(identifier, blockID::weeping_vines, blockID::vine) ?
+		directionID::positiveY
+		: (directionID)-1;
 }
 
 constexpr bool hasAttachedBlockData(const blockID& identifier) noexcept
 {
-	return hasAttachmentDirectionData(identifier) || attachedToBottomBlock(identifier) || isFire(identifier);
+	return hasAttachmentDirectionData(identifier) || getStaticAttachmentDirection(identifier) != (directionID)-1 || isFire(identifier);
 }
 
 constexpr bool hasPollenData(const blockID& identifier) noexcept
@@ -1324,8 +1327,8 @@ constexpr bool isIconParticle(const particleID& particleType) {
 }
 //returns true if a block can placed in this type of entity.
 constexpr bool canPlaceInEntity(const entityID& entityType) {
-	return isParticle(entityType) || 
-		is_in(entityType, entityID::item, entityID::arrow, entityID::pollen) || 
+	return isParticle(entityType) ||
+		is_in(entityType, entityID::item, entityID::arrow, entityID::pollen) ||
 		isFireBall(entityType);
 }
 

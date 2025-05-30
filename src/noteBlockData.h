@@ -8,7 +8,7 @@ struct noteBlockData : lastPowerLevelData
 	int note = 0;
 
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	void playNote(tickableBlockContainer* containerIn, cveci2& position);
 	
 };

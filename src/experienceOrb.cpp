@@ -98,9 +98,9 @@ void experienceOrb::render(const gameRenderData& targetData) const
 	entity::render(targetData);
 }
 
-void experienceOrb::serializeValue(nbtSerializer& s)
+void experienceOrb::serializeMembers(nbtSerializer& s)
 {
-	entity::serializeValue(s);
-	s.serializeValue(std::wstring(L"value"), value);
-	s.serializeValue(std::wstring(L"ticks floating"), ticksFloating);
+	entity::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"value"), value);
+	s.serializeMembers(std::wstring(L"ticks floating"), ticksFloating);
 }

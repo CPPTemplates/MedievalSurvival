@@ -32,12 +32,12 @@ dispenserData::~dispenserData()
 	delete slots;
 }
 
-void dispenserData::serializeValue(nbtSerializer& s)
+void dispenserData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	facingData::serializeValue(s);
+	blockData::serializeMembers(s);
+	facingData::serializeMembers(s);
 	slots->serialize(s, std::wstring(L"slots"));
-	s.serializeValue(std::wstring(L"was powered"), wasPowered);
+	s.serializeMembers(std::wstring(L"was powered"), wasPowered);
 }
 
 bool dispenserData::tick(tickableBlockContainer* containerIn, cveci2& position)

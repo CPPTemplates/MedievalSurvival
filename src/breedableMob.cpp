@@ -5,7 +5,7 @@ void breedableMob::tick()
 	age++;
 }
 
-void breedableMob::serializeValue(nbtSerializer& s)
+void breedableMob::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"age"), age);
+	s.serializeMembers(std::wstring(L"age"), age);
 }

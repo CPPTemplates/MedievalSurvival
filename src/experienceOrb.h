@@ -13,7 +13,7 @@ struct experienceOrb : public entity
 	experienceOrb();
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };
 
 constexpr int experienceSizeCount = 11;

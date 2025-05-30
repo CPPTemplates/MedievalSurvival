@@ -1,8 +1,8 @@
 #include "statusEffect.h"
 #include "idConverter.h"
-void statusEffect::serializeValue(nbtSerializer& s)
+void statusEffect::serializeMembers(nbtSerializer& s)
 {
 	idConverter::serializeID(s, std::wstring(L"id"), identifier, s.converter ? &s.converter->statusEffectIDConverter : nullptr);
-	s.serializeValue(std::wstring(L"duration"), ticksDuration);
-	s.serializeValue(std::wstring(L"potency"), (int&)potency);
+	s.serializeMembers(std::wstring(L"duration"), ticksDuration);
+	s.serializeMembers(std::wstring(L"potency"), (int&)potency);
 }

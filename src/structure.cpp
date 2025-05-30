@@ -104,7 +104,7 @@ bool structure::serialize(const stdPath& path, cbool& write) {
 					if (data) {
 						if (s.push<nbtDataTag::tagCompound>()) {
 							serializeNBTValue(s, std::wstring(L"relative position"), relativePosition);
-							data->serializeValue(s);
+							data->serializeMembers(s);
 							s.pop();
 						}
 					}
@@ -119,7 +119,7 @@ bool structure::serialize(const stdPath& path, cbool& write) {
 					veci2 position;
 					serializeNBTValue(s, std::wstring(L"relative position"), position);
 					blockData* data = blockDataArray.getValue(position);
-					data->serializeValue(s);
+					data->serializeMembers(s);
 					s.pop();
 				}
 			}
@@ -131,9 +131,9 @@ bool structure::serialize(const stdPath& path, cbool& write) {
 		if (write) {
 			for (entity* e : entities) {
 				if (s.push<nbtDataTag::tagCompound>()) {
-					s.serializeValue(std::wstring(L"entity id"), e->entityType);
+					s.serializeMembers(std::wstring(L"entity id"), e->entityType);
 					serializeNBTValue(s, std::wstring(L"position"), e->position);
-					e->serializeValue(s);
+					e->serializeMembers(s);
 					s.pop();
 				}
 			}
@@ -151,7 +151,7 @@ bool structure::serialize(const stdPath& path, cbool& write) {
 						serializeNBTValue(s, std::wstring(L"position"), position);
 						entity* const& e = createEntity(entityType);
 						e->setInitialPosition(nullptr, position);
-						e->serializeValue(s);
+						e->serializeMembers(s);
 						entities.push_back(e);
 					}
 					s.pop();

@@ -460,27 +460,27 @@ human::~human()
 	itemHolding = nullptr;
 }
 
-void human::serializeValue(nbtSerializer& s)
+void human::serializeMembers(nbtSerializer& s)
 {
-	humanoid::serializeValue(s);
+	humanoid::serializeMembers(s);
 
 	hotbarSlots->serialize(s, std::wstring(L"hotbar slots"));
 	inventorySlots->serialize(s, std::wstring(L"inventory slots"));
 	leftHandSlot->serialize(s, std::wstring(L"left hand slot"));
 
-	s.serializeValue(std::wstring(L"experience"), experience);
-	s.serializeValue(std::wstring(L"score"), score);
-	s.serializeValue(std::wstring(L"food level"), foodlevel);
-	s.serializeValue(std::wstring(L"food exhaustion level"), foodExhaustionlevel);
-	s.serializeValue(std::wstring(L"food saturation level"), foodsaturationlevel);
-	s.serializeValue(std::wstring(L"food tick timer"), foodticktimer);
-	s.serializeValue(std::wstring(L"food animation ticks"), foodAnimationTime);
-	s.serializeValue(std::wstring(L"right hand slot index"), rightHandSlotIndex);
+	s.serializeMembers(std::wstring(L"experience"), experience);
+	s.serializeMembers(std::wstring(L"score"), score);
+	s.serializeMembers(std::wstring(L"food level"), foodlevel);
+	s.serializeMembers(std::wstring(L"food exhaustion level"), foodExhaustionlevel);
+	s.serializeMembers(std::wstring(L"food saturation level"), foodsaturationlevel);
+	s.serializeMembers(std::wstring(L"food tick timer"), foodticktimer);
+	s.serializeMembers(std::wstring(L"food animation ticks"), foodAnimationTime);
+	s.serializeMembers(std::wstring(L"right hand slot index"), rightHandSlotIndex);
 	updateHeldItem();
-	s.serializeValue(std::wstring(L"gamemode"), currentGameMode);
-	s.serializeValue(std::wstring(L"has seen credits"), seenCredits);
-	s.serializeValue(std::wstring(L"spectator speed"), spectatorSpeed);
-	s.serializeValue(std::wstring(L"visible range"), visibleRangeXWalk);
+	s.serializeMembers(std::wstring(L"gamemode"), currentGameMode);
+	s.serializeMembers(std::wstring(L"has seen credits"), seenCredits);
+	s.serializeMembers(std::wstring(L"spectator speed"), spectatorSpeed);
+	s.serializeMembers(std::wstring(L"visible range"), visibleRangeXWalk);
 }
 
 bool human::serialize(cbool& write)
@@ -491,7 +491,7 @@ bool human::serialize(cbool& write)
 		createFoldersIfNotExists(playersFolder);
 	}
 	const stdPath& path = playersFolder / (std::wstring)identifier;
-	// to point out which 'serialize' function to use. this might cause errors. is mob::serialize calling human::serializeValue?
+	// to point out which 'serialize' function to use. this might cause errors. is mob::serialize calling human::serializeMembers?
 	return mob::serialize(L"player", path, write);
 }
 

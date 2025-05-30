@@ -169,11 +169,11 @@ fluidLevel fluidData::getFluidLevel(blockContainer* containerIn, cveci2& positio
 	return containerIn->getBlockID(position) == fluid ? ((fluidData*)containerIn->getBlockData(position))->currentFluidLevel : 0;
 }
 
-void fluidData::serializeValue(nbtSerializer& s)
+void fluidData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
+	blockData::serializeMembers(s);
 	fluidLevel serializedFluidLevel = currentFluidLevel;
-	s.serializeValue(std::wstring(L"fluid level"), serializedFluidLevel);
+	s.serializeMembers(std::wstring(L"fluid level"), serializedFluidLevel);
 
 	if ((!s.write) && (serializedFluidLevel > 0) && (serializedFluidLevel <= maxFluidLevel))
 	{

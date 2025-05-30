@@ -7,6 +7,6 @@ struct stemPlantData : cropData
 	stemPlantData(cint& age = 0, cveci2& relativeFruitPosition = cveci2()) : cropData(age), relativeFruitPosition(relativeFruitPosition) {}
 	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	void attemptToGrowFruit(tickableBlockContainer* containerIn, cveci2& position);
 };

@@ -15,5 +15,5 @@ constexpr vec2 skeletonArmSize = cvec2(skeletonLeftLegTextureRect.size) * skelet
 struct skeleton : public humanoid
 {
 	skeleton(const entityID& entityType);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

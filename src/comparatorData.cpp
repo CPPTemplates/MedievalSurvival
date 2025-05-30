@@ -2,10 +2,10 @@
 #include "tickableBlockContainer.h"
 #include "jukeBoxData.h"
 #include "nbt/nbtSerializer.h"
-void comparatorData::serializeValue(nbtSerializer& s)
+void comparatorData::serializeMembers(nbtSerializer& s)
 {
-	inputData::serializeValue(s);
-	s.serializeValue(std::wstring(L"substraction mode"), substractionMode);
+	inputData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"substraction mode"), substractionMode);
 }
 
 bool comparatorData::tick(tickableBlockContainer* containerIn, cveci2& position)

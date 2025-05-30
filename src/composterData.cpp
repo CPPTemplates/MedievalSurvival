@@ -1,7 +1,7 @@
 #include "composterData.h"
 #include "nbt/nbtSerializer.h"
 
-void composterData::serializeValue(nbtSerializer& s)
+void composterData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(L"compostLevel", fillLevel); 
+	s.serializeMembers(L"compostLevel", fillLevel); 
 }

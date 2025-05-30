@@ -7,5 +7,5 @@ struct statusEffect :nbtSerializable
 	int ticksDuration = 0;
 	int potency = 1;
 	statusEffect(const statusEffectID& identifier = statusEffectID(), cint& ticksDuration = 0, cint& potency = 1) :identifier(identifier), ticksDuration(ticksDuration), potency(potency) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -37,9 +37,9 @@ bool repeaterData::tick(tickableBlockContainer* containerIn, cveci2& position)
 	}
 }
 
-void repeaterData::serializeValue(nbtSerializer& s)
+void repeaterData::serializeMembers(nbtSerializer& s)
 {
-	inputData::serializeValue(s);
-	s.serializeValue(std::wstring(L"delay array index"), delayArrayIndex);
+	inputData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"delay array index"), delayArrayIndex);
 	s.serializeArray(std::wstring(L"delayed powerlevels"), delayedPowerLevels, delayedPowerLevelArraySize);
 }

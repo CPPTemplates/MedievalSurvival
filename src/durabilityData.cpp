@@ -1,6 +1,6 @@
 #include "durabilityData.h"
 #include "nbt/nbtSerializer.h"
-void durabilityData::serializeValue(nbtSerializer& s)
+void durabilityData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"durability"), durability);
+	s.serializeMembers(std::wstring(L"durability"), durability);
 }

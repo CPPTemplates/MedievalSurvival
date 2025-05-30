@@ -12,5 +12,5 @@ struct floatingSlot : public entity
 	virtual void tick() override;
 	virtual void render(const gameRenderData &targetData) const override;
 	virtual ~floatingSlot() override;
-	virtual void serializeValue(nbtSerializer &s) override;
+	virtual void serializeMembers(nbtSerializer &s) override;
 };

@@ -1,8 +1,8 @@
 #include "endPortalFrameData.h"
 #include "nbt/nbtSerializer.h"
-void endPortalFrameData::serializeValue(nbtSerializer& s)
+void endPortalFrameData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	facingData::serializeValue(s);
-	s.serializeValue(std::wstring(L"has eye"), hasEye);
+	blockData::serializeMembers(s);
+	facingData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"has eye"), hasEye);
 }

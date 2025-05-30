@@ -1,9 +1,9 @@
 #include "rectParticle.h"
 #include "nbt/serializeRectangle.h"
 #include "math/graphics/brush/brushes.h"
-void rectParticle::serializeValue(nbtSerializer& s)
+void rectParticle::serializeMembers(nbtSerializer& s)
 {
-	particle::serializeValue(s);
+	particle::serializeMembers(s);
 	serializeNBTValue(s, std::wstring(L"brush rect"), brushRect);
 }
 

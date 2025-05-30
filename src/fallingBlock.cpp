@@ -45,9 +45,9 @@ void fallingBlock::tick()
 	}
 }
 
-void fallingBlock::serializeValue(nbtSerializer& s)
+void fallingBlock::serializeMembers(nbtSerializer& s)
 {
-	entity::serializeValue(s);
+	entity::serializeMembers(s);
 	idConverter::serializeID(s, std::wstring(L"linked block"), (itemID&)linkedBlockID, s.converter ? &s.converter->itemIDConverter : nullptr);
 }
 

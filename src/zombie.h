@@ -12,5 +12,5 @@ constexpr rectangle2 zombieLeftArmTextureRect = crectangle2(48, 32, 4, 12);
 struct zombie : public humanoid
 {
 	zombie(const entityID& entityType);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

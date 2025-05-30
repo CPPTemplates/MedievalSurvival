@@ -7,5 +7,5 @@ struct enderDragonCirclingAI : taskAI
 	void startExecuting() override;
 	void updateTask() override;
 	void chooseTargetPoint();
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -5,8 +5,8 @@ struct doubleAttachedBlockPollenData : pollenData, doubleAttachedBlockData
 {
 	doubleAttachedBlockPollenData(cbool& isPart0 = false) : pollenData(), doubleAttachedBlockData(isPart0) {}
 
-	virtual void serializeValue(nbtSerializer& s) override {
-		return doubleAttachedBlockData::serializeValue(s);
+	virtual void serializeMembers(nbtSerializer& s) override {
+		return doubleAttachedBlockData::serializeMembers(s);
 	}
 	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position) override {
 		return pollenData::randomTick(containerIn, position);

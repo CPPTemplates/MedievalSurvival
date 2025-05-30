@@ -527,7 +527,7 @@ void chat::say(human& sender, std::wstring line)
 							{
 								nbtCompound compound = nbtCompound::fromString(getWord(lines, wordOffset));
 								nbtSerializer s = nbtSerializer(compound, false, false);
-								selectedSerializable->serializeValue(s);
+								selectedSerializable->serializeMembers(s);
 							}
 							else
 							{

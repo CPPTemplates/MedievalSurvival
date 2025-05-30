@@ -12,5 +12,5 @@ struct piston : public entity
 
 	virtual ~piston() override;
 	virtual fp getGravityForce() const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

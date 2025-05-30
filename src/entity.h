@@ -97,7 +97,7 @@ struct entity :IDestructable, nbtSerializable
 
 	rectangle2 calculateHitBox() const;
 	virtual rectangle2 calculateHitBox(const cvec2& pos) const;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual bool compareSelector(const human& sender, const std::wstring& selectorString) const;
 	void teleportTo(dimension* newDimension, cvec2& newPosition, cbool& playTeleportSounds, cvec2& speedAfterTeleportation = cvec2());
 	virtual void renderHitboxes(const gameRenderData& targetData) const;

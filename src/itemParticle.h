@@ -9,6 +9,6 @@ struct itemParticle : rectParticle
 	itemParticle(const particleID& particleType, const blockID& brushItemID = itemID()) :
 		rectParticle(particleType, getParticleBrushRect(*itemList[brushItemID]->tex)), brushItemID(brushItemID) {
 	}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual const resolutionTexture& getTexture() const final;
 };

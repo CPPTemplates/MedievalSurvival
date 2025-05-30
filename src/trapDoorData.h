@@ -6,5 +6,5 @@ struct trapDoorData : virtual facingData, virtual upsideDownData, virtual openDa
 {
 	trapDoorData(const directionID& directionFacing = directionID::negativeX, cbool& upsideDown = false, cbool& isOpen = false) :
 		facingData(directionFacing), upsideDownData(upsideDown), openData(isOpen) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

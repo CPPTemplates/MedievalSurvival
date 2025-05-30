@@ -3,8 +3,8 @@
 #include "pollenData.h"
 struct leavesData : sapSpreadData, pollenData
 {
-	virtual void serializeValue(nbtSerializer& s) override {
-		sapSpreadData::serializeValue(s);
+	virtual void serializeMembers(nbtSerializer& s) override {
+		sapSpreadData::serializeMembers(s);
 	}
 	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position) override {
 		pollenData::randomTick(containerIn, position);

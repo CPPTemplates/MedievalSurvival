@@ -2,10 +2,10 @@
 #include "idConverter.h"
 #include "enchantmentData.h"
 #include "nbt/nbtSerializer.h"
-void enchantment::serializeValue(nbtSerializer& s)
+void enchantment::serializeMembers(nbtSerializer& s)
 {
 	idConverter::serializeID(s, std::wstring(L"id"), identifier, s.converter ? &s.converter->enchantmentIDConverter : nullptr);
-	s.serializeValue(std::wstring(L"power"), power);
+	s.serializeMembers(std::wstring(L"power"), power);
 }
 
 std::wstring enchantment::toWString() const

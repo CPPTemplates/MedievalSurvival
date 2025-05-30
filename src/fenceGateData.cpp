@@ -1,7 +1,7 @@
 #include "fenceGateData.h"
-void fenceGateData::serializeValue(nbtSerializer& s)
+void fenceGateData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	facingData::serializeValue(s);
-	openData::serializeValue(s);
+	blockData::serializeMembers(s);
+	facingData::serializeMembers(s);
+	openData::serializeMembers(s);
 }

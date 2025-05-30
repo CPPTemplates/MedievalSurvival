@@ -8,6 +8,6 @@ struct slotContainer :public nbtSerializable
 	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot);
 	bool addStack(itemStack& s);
 	virtual bool substractStack(itemStack& stack);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual void clearData();
 };

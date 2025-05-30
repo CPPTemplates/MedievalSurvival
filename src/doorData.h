@@ -6,5 +6,5 @@
 struct doorData : virtual doubleBlockData, virtual facingData, virtual openData
 {
 	doorData(cbool& isBottomPart = false) :doubleBlockData(isBottomPart), facingData(directionID::negativeX), openData(false) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

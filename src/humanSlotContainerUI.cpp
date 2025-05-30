@@ -71,7 +71,6 @@ bool humanSlotContainerUI::addStack(uiSlotContainer* containerToAddTo, itemStack
 {
 	if (containerToAddTo == armorSlots) {
 		if (getArmorTier(s.stackItemID) != noArmorTier) {
-			playEquipSound(s);
 			if (containerToAddTo->getSlot(veci2(0, getArmorType(s.stackItemID) - bootsArmorType))->addStack(s))
 				playEquipSound(s);
 		}

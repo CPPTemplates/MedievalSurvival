@@ -52,11 +52,11 @@ struct idConverter
 	{
 		if (s.write)
 		{
-			return s.serializeValue(memberName, (int&)value);
+			return s.serializeMembers(memberName, (int&)value);
 		}
 		else
 		{
-			if (s.serializeValue(memberName, (int&)value))
+			if (s.serializeMembers(memberName, (int&)value))
 			{
 				if ((!converter) || convertID<idType>(value, *converter))
 				{
@@ -78,7 +78,7 @@ struct idConverter
 			{
 				std::wstring name;
 				//*serializedIDList[i]
-				s.serializeValue(std::wstring(), name);
+				s.serializeMembers(std::wstring(), name);
 				conversionList[i] = dataList.getIDByName(name);
 			}
 			s.pop();
@@ -96,7 +96,7 @@ struct idConverter
 		{
 			for (fsize_t i = 0; i < dataList.size; i++)
 			{
-				s.serializeValue(std::wstring(), dataList[i]->name);
+				s.serializeMembers(std::wstring(), dataList[i]->name);
 			}
 			s.pop();
 		}

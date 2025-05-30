@@ -11,6 +11,6 @@ struct blockParticle : rectParticle
 	blockParticle(const particleID& particleType) :
 		rectParticle(particleType), brushBlockID(blockID::air) {
 	}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual const resolutionTexture& getTexture() const final;
 };

@@ -26,13 +26,13 @@ namespace math
 	constexpr T sqrt(const T& x)
 	{
 		return x >= (T)0 && x < std::numeric_limits<T>::infinity()
-				   ? sqrt(x, x, (T)0)
-				   : std::numeric_limits<T>::quiet_NaN();
+			? sqrt(x, x, (T)0)
+			: std::numeric_limits<T>::quiet_NaN();
 	}
 	constexpr fp sqrt2 = sqrt(2.0);
 
 	template <typename T = fsize_t>
-	constexpr T getNextPowerOf2Multiplied(const T &n)
+	constexpr T getNextPowerOf2Multiplied(const T& n)
 	{
 		T i = 1;
 		for (; i < n; i *= 2)
@@ -40,7 +40,7 @@ namespace math
 		return i;
 	}
 	template <typename T = fsize_t>
-	constexpr T getNextPowerOf2(const T &n)
+	constexpr T getNextPowerOf2(const T& n)
 	{
 		T power = 1;
 		for (T i = 1; i < n; i *= 2)
@@ -51,7 +51,7 @@ namespace math
 	}
 
 	// degrees can be 0, 90, 180 or 270
-	constexpr int sinDegrees(cint &degrees)
+	constexpr int sinDegrees(cint& degrees)
 	{
 		switch (degrees)
 		{
@@ -75,15 +75,15 @@ namespace math
 		}
 	}
 	// degrees can be 0, 90, 180 or 270
-	inline int cosDegrees(cint &degrees)
+	inline int cosDegrees(cint& degrees)
 	{
-		cint &sinusEquivalentDegrees = degrees + 90;
+		cint& sinusEquivalentDegrees = degrees + 90;
 		return sinDegrees(sinusEquivalentDegrees == 360 ? 0 : sinusEquivalentDegrees);
 	}
 	template <typename testFunction>
-	inline bool isSummitBetween(cfp &min, cfp &max, testFunction func)
+	inline bool isSummitBetween(cfp& min, cfp& max, testFunction func)
 	{
-		cfp &valueMin = func(min);
+		cfp& valueMin = func(min);
 		return func(min - fpepsilon) < valueMin && valueMin > func(max);
 	}
 	inline fp Log(cfp value, cfp base)
@@ -91,20 +91,20 @@ namespace math
 		return std::log(value) / std::log(base);
 	}
 	template <typename T>
-	constexpr T squared(const T &value)
+	constexpr decltype(std::declval<T>()* std::declval<T>()) squared(const T& value)
 	{
 		return value * value;
 	}
 
 	template <typename T>
-	constexpr T absolute(const T &value)
+	constexpr T absolute(const T& value)
 	{
 		return value < 0 ? -value : value;
 	}
 
 	// https://stackoverflow.com/questions/824118/why-is-floor-so-slow
 	template <typename outputType = int, typename InputType>
-	constexpr outputType floor(const InputType &x)
+	constexpr outputType floor(const InputType& x)
 	{
 		if (std::is_integral_v<outputType>)
 		{
@@ -119,11 +119,11 @@ namespace math
 	}
 
 	template <typename outputType = int, typename InputType>
-	constexpr outputType ceil(const InputType &x)
+	constexpr outputType ceil(const InputType& x)
 	{
 		if (std::is_integral_v<outputType>)
 		{
-			const outputType &i = (outputType)x;	   /* truncate */
+			const outputType& i = (outputType)x;	   /* truncate */
 			return i + (outputType)((InputType)i < x); /* convert trunc to floor */
 		}
 		else
@@ -151,7 +151,7 @@ namespace math
 	// returns a when w = 0
 	// returns b when w = 1
 	template <typename T>
-	constexpr T lerp(const T &a, const T &b, cfp &w)
+	constexpr T lerp(const T& a, const T& b, cfp& w)
 	{
 		return (T)(a + (b - a) * w);
 	}
@@ -159,10 +159,10 @@ namespace math
 	// 1 0 1 2 4
 
 	template <typename T>
-	constexpr T mapValue(const T &in, const T &imin, const T &imax, const T &omin, const T &omax)
+	constexpr T mapValue(const T& in, const T& imin, const T& imax, const T& omin, const T& omax)
 	{
-		const T &mult = (omax - omin) / (imax - imin);
-		const T &plus = omin - (imin * mult);
+		const T& mult = (omax - omin) / (imax - imin);
+		const T& plus = omin - (imin * mult);
 		return in * mult + plus;
 	}
 
@@ -170,18 +170,18 @@ namespace math
 
 	// steepness: 0 =
 	template <typename T>
-	constexpr T mapValueExponentiallyMinCurve(const T &in, const T &imin, const T &imax, const T &omin, const T &omax, const T &steepness)
+	constexpr T mapValueExponentiallyMinCurve(const T& in, const T& imin, const T& imax, const T& omin, const T& omax, const T& steepness)
 	{
 		// imin: 1
 		// imax: 0
-		const T &inRange0To1Inverted = (imax - in) / (imax - imin);
+		const T& inRange0To1Inverted = (imax - in) / (imax - imin);
 
-		const T &maxPow = 1;
-		const T &minPow = pow(0.5, steepness);
+		const T& maxPow = 1;
+		const T& minPow = pow(0.5, steepness);
 
-		const T &outputInverted = pow(0.5, inRange0To1Inverted * steepness);
+		const T& outputInverted = pow(0.5, inRange0To1Inverted * steepness);
 
-		const T &outputInRange0To1Inverted = (outputInverted - minPow) / (maxPow - minPow);
+		const T& outputInRange0To1Inverted = (outputInverted - minPow) / (maxPow - minPow);
 
 		// invert
 		return omin + (omax - omin) * outputInRange0To1Inverted;
@@ -190,27 +190,27 @@ namespace math
 	// creates an exponential curve, steeper at the max side.
 	// swapped order
 	template <typename T>
-	constexpr T mapValueExponentiallyMaxCurve(const T &in, const T &imin, const T &imax, const T &omin, const T &omax, const T &steepness)
+	constexpr T mapValueExponentiallyMaxCurve(const T& in, const T& imin, const T& imax, const T& omin, const T& omax, const T& steepness)
 	{
 		return mapValueExponentiallyMinCurve(in, imax, imin, omax, omin, steepness);
 	}
 
 	// to limit a value between bounds
 	template <typename T>
-	constexpr T clamp(const T &value, const T &min, const T &max)
+	constexpr T clamp(const T& value, const T& min, const T& max)
 	{
 		return value < min ? min : value > max ? max
-											   : value;
+			: value;
 	}
 	template <typename T>
-	constexpr int GetSign(const T &value)
+	constexpr int GetSign(const T& value)
 	{
 		return value > 0 ? 1 : value < 0 ? -1
-										 : 0;
+			: 0;
 	}
 
 	template <typename T>
-	constexpr T powSizeTSimple(const T &value, cfsize_t &power)
+	constexpr T powSizeTSimple(const T& value, cfsize_t& power)
 	{
 		if (power)
 		{
@@ -221,7 +221,7 @@ namespace math
 			{
 				fsize_t doubleRaisedPower = raisedPower + raisedPower;
 
-				cbool &fastMethod = doubleRaisedPower <= power;
+				cbool& fastMethod = doubleRaisedPower <= power;
 
 				result *= fastMethod ? result : value;
 				raisedPower = fastMethod ? doubleRaisedPower : raisedPower + 1;
@@ -241,7 +241,7 @@ namespace math
 		{
 			ldiv_t res = ldiv(a, b);
 			return (res.rem) ? res.quot - 1
-							 : res.quot;
+				: res.quot;
 		}
 		else
 		{
@@ -256,16 +256,16 @@ namespace math
 	{
 		constexpr float threehalfs = 1.5F;
 
-		const float &x2 = number * 0.5F;
+		const float& x2 = number * 0.5F;
 #if __cplusplus >= 202002L
 		std::uint32_t i = std::bit_cast<std::uint32_t>(number);
 		i = 0x5f3759df - (i >> 1);
 		number = std::bit_cast<float>(i);
 #else
 		// can be dangerous!
-		std::uint32_t *i = reinterpret_cast<std::uint32_t *>(&number);
+		std::uint32_t* i = reinterpret_cast<std::uint32_t*>(&number);
 		*i = 0x5f3759df - (*i >> 1);
-		number = *reinterpret_cast<float *>(&i);
+		number = *reinterpret_cast<float*>(&i);
 #endif
 		number *= threehalfs - (x2 * math::squared(number));
 		return number;
@@ -273,7 +273,7 @@ namespace math
 
 	// https://www.gamedev.net/forums/topic/704525-3-quick-ways-to-calculate-the-square-root-in-c/
 	// returns 1 / sqrt(number) * number
-	inline constexpr20 float fastSqrt(const float &number) noexcept
+	inline constexpr20 float fastSqrt(const float& number) noexcept
 	{
 		return number * fastInverseSqrt(number);
 	}
@@ -287,38 +287,38 @@ namespace math
 		return (c - a) / (b - a);
 	}
 	template <typename T>
-	constexpr T maximum(const T &left, const T &right)
+	constexpr T maximum(const T& left, const T& right)
 	{
 		return left > right ? left : right;
 	}
 	template <typename T>
-	constexpr T minimum(const T &left, const T &right)
+	constexpr T minimum(const T& left, const T& right)
 	{
 		return left < right ? left : right;
 	}
 
 	// same slope = 0
-	inline fp calculateAngle(cfp &slope0, cfp &slope1)
+	inline fp calculateAngle(cfp& slope0, cfp& slope1)
 	{
 		return math::absolute(atan((slope1 - slope0) / ((fp)1 + slope1 * slope0)));
 	}
-	inline fp Remainder1(cfp &value)
+	inline fp Remainder1(cfp& value)
 	{
 		return value - floor(value);
 	}
 	template <typename T>
-	inline int sign(const T &value)
+	inline int sign(const T& value)
 	{
 		return value > 0 ? 1 : value < 0 ? -1
-										 : 0;
+			: 0;
 	}
 	// simulates 1 + 2 + 3 + 4 + 5...
-	inline fp calculateIterativeAddition(cfp &iterationCount)
+	inline fp calculateIterativeAddition(cfp& iterationCount)
 	{
 		return iterationCount * (iterationCount + 1) * 0.5;
 	}
 
-	inline int floorToBase(cint &val, cint &base)
+	inline int floorToBase(cint& val, cint& base)
 	{
 		int floored = 1;
 		while (floored * base < val)

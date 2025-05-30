@@ -22,8 +22,8 @@ void zombifiedPiglin::render(const gameRenderData& targetData) const
 	humanoid::render(targetData);
 }
 
-void zombifiedPiglin::serializeValue(nbtSerializer& s)
+void zombifiedPiglin::serializeMembers(nbtSerializer& s)
 {
-	humanoid::serializeValue(s);
+	humanoid::serializeMembers(s);
 	itemHolding->serialize(s, std::wstring(L"item holding"));
 }

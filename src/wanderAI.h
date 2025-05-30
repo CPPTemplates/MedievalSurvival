@@ -8,5 +8,5 @@ struct wanderAI : taskAI
 	virtual void updateTask() override;
 	virtual void resetTask() override;
 	wanderAI(entity* connectedEntity);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

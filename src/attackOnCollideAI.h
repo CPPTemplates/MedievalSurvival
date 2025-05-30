@@ -7,5 +7,5 @@ struct attackOnCollideAI : targetAI
 	virtual bool shouldExecute() override;
 	virtual bool continueExecuting() override;
 	attackOnCollideAI(entity* const& connectedEntity, const entityID& entityTypeToAttack, cfp& proximity = standardDetectionRange) :targetAI(connectedEntity, proximity), entityTypeToAttack(entityTypeToAttack) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

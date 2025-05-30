@@ -247,10 +247,10 @@ void playerControlledAI::execute()
 	connectedPlayer->flipBodyToLookingDirection();
 }
 
-void playerControlledAI::serializeValue(nbtSerializer& s)
+void playerControlledAI::serializeMembers(nbtSerializer& s)
 {
 	// we don'T have to serialize tickssincestoppedjumping, that would only cause surprise moments where you f.e. stop flying when you reconnect because you're holding space
 
-	// s.serializeValue(std::wstring(L"visible range x"), visibleRange.x);
-	// s.serializeValue(std::wstring(L"visible range when walking"), visibleRangeXWalk);
+	// s.serializeMembers(std::wstring(L"visible range x"), visibleRange.x);
+	// s.serializeMembers(std::wstring(L"visible range when walking"), visibleRangeXWalk);
 }

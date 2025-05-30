@@ -4,5 +4,5 @@ struct openData : virtual blockData
 {
 	bool isOpen = false;
 	openData(cbool& isOpen = false) :isOpen(isOpen) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

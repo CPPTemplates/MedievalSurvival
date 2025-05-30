@@ -23,7 +23,7 @@ struct pistonData : virtual facingData, virtual doubleBlockData
 	pistonData(const directionID& directionFacing = standardUpFacingBlockDirection, cbool& isPart0 = true, const powerLevel& lastPowerLevelBehind = 0, cint& pushProgress = 0) 
 	: facingData(directionFacing), doubleBlockData(isPart0), lastPowerLevelBehind(lastPowerLevelBehind), pushProgress(pushProgress) {}
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual fp getPushDistancePerTick() const;
 	void dropBlocksMoving(tickableBlockContainer* containerIn, cveci2& position);

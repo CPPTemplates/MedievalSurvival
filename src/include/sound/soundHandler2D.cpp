@@ -91,6 +91,7 @@ void soundHandler2d::update()
 
 	cfp& attenuation = getAttenuation(minDistance, hearingRange3d, minimalVolume);
 	cfp& volumeFactorAtMinDistance = getVolumeFactor(minDistance, attenuation, closestDistance);
+	cfp& volumeMultiplier = 100.0f / volumeFactorAtMinDistance;
 
 	sf::Listener::setGlobalVolume((float)globalVolume * 100.0f);
 
@@ -165,10 +166,10 @@ void soundHandler2d::update()
 					// Set the Doppler factor (how pronounced the effect is)
 
 					//sf::Sound::setDopplerFactor(1.0f); // Default value
-					
+
 					// Set the reference velocity for Doppler calculations
 					//alDopplerVelocity(1.0f); // Typically 1.0, but can be adjusted
-					
+
 					// Set the speed of sound (default is 343.3 m/s in air at 20°C)
 					//alSpeedOfSound(343.3f);
 				}
@@ -182,8 +183,8 @@ void soundHandler2d::update()
 		{
 			//s->setVolume(1.0f);
 			if (s->startedPlaying && s->isSpatial && s->audioLoaded())
-				s->setVolume(1.f / (float)volumeFactorAtMinDistance);
-			// s->playingSound->setVolume(s->volume * volumeMultiplier * 100);
+				s->setVolumeMultiplier(volumeMultiplier);
+			//s->playingSound->setVolume(s->volume * volumeMultiplier * 100);
 		}
 	}
 }
@@ -335,15 +336,20 @@ void soundHandler2d::visualize(const texture& renderTarget)
 		{
 			c = colorPalette::red;
 		}
+		cfp& blobradius = audio->volume * maxBlobRadius;
 		auto mixer = colorMixer(solidColorBrush(color(c, color::quarterMaxValue)), renderTarget);
 		if (audio->isSpatial)
 		{
 			cvec2& screenPos = worldToScreen.multPointMatrix(drawSideView ? vec2(audio->pos.x, 0) : audio->pos);
-			fillEllipse(renderTarget, crectangle2(screenPos, vec2()).expanded(maxBlobRadius), mixer);
+			fillEllipse(renderTarget, crectangle2(screenPos, vec2()).expanded(blobradius), mixer);
+			cfp& miniAudioMultiplier = getVolumeFactor(audio->minDistance, audio->attenuation, (earPosition - vec3(audio->pos.x, audio->pos.y, 0)).length());
+			cfp& soundHandlerMultiplier = audio->volume * audio->volumeMultiplier;
+			cfp& finalVolume = miniAudioMultiplier * soundHandlerMultiplier * 0.01;
+			fillEllipse(renderTarget, crectangle2(screenPos, vec2()).expanded(finalVolume * maxBlobRadius), mixer);
 		}
 		else
 		{
-			fillRectangle(renderTarget, crectangle2(vec2(0, offset), vec2(maxBlobRadius)), mixer);
+			fillRectangle(renderTarget, crectangle2(vec2(0, offset), vec2(blobradius)), mixer);
 			offset += maxBlobRadius + 2;
 		}
 	}

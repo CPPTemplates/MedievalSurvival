@@ -180,12 +180,12 @@ bool client::connectToServer(const serverData& server)
 	nbtCompound authPacket = nbtCompound(L"auth");
 	nbtSerializer outSerializer = nbtSerializer(authPacket, true);
 	serializeNBTValue(outSerializer, L"uuid", data.id);
-	outSerializer.serializeValue(L"name", data.name);
+	outSerializer.serializeMembers(L"name", data.name);
 	std::wstring osName = onAndroid ? L"Android" : onWindows ? L"Windows"
 		: onMac ? L"Mac"
 		: onLinux ? L"Linux"
 		: L"Other";
-	outSerializer.serializeValue(L"OS", osName);
+	outSerializer.serializeMembers(L"OS", osName);
 	serializeNBTValue(outSerializer, L"screenSize", this->rect.size);
 	streamSerializer streamS = streamSerializer(s, true, std::endian::big);
 	authPacket.serialize(streamS);
@@ -210,7 +210,7 @@ void client::sendPacket(const texture& renderTarget)
 	if (socketWantsClipboardInput)
 	{
 		std::wstring clipboardString = sf::Clipboard::getString().toWideString();
-		outSerializer.serializeValue(L"clipboard", clipboardString);
+		outSerializer.serializeMembers(L"clipboard", clipboardString);
 	}
 
 	streamSerializer streamS = streamSerializer(s, true, std::endian::big);
@@ -271,11 +271,11 @@ void client::processIncomingPackets(const texture& renderTarget)
 
 		if constexpr (onAndroid)
 		{
-			inSerializer->serializeValue(L"wantsTextInput", socketWantsTextInput);
+			inSerializer->serializeMembers(L"wantsTextInput", socketWantsTextInput);
 		}
-		inSerializer->serializeValue(L"paste", socketWantsClipboardInput);
+		inSerializer->serializeMembers(L"paste", socketWantsClipboardInput);
 		std::wstring copiedText;
-		if (inSerializer->serializeValue(L"copy", copiedText))
+		if (inSerializer->serializeMembers(L"copy", copiedText))
 		{
 			sf::Clipboard::setString(WStringToString(copiedText));
 		}
@@ -302,10 +302,10 @@ void client::processIncomingPackets(const texture& renderTarget)
 
 					if (sp->type == SoundPacketType::start) {
 						StartSoundPacket* startPacket = (StartSoundPacket*)sp;
-						if (globalSoundCollectionList.contains(startPacket->key))
+						if (globalAudioCollectionList.contains(startPacket->key))
 						{
 							// we assume that the sound is a soundCollection, not a musicCollection
-							const soundCollection* collection = (soundCollection*)globalSoundCollectionList[startPacket->key];
+							const soundCollection* collection = (soundCollection*)globalAudioCollectionList[startPacket->key];
 							// make sure that the sound index is in the right range.
 							// we might have added or removed sounds in the mean time
 							// by using %, we make every sound that sounds the same for other clients also sound the same for this client
@@ -356,14 +356,14 @@ void client::processIncomingPackets(const texture& renderTarget)
 		if (inSerializer->push(L"music"))
 		{
 			std::wstring newMusicKey;
-			if (inSerializer->serializeValue(L"replace", newMusicKey))
+			if (inSerializer->serializeMembers(L"replace", newMusicKey))
 			{
-				const musicCollection* collection = (musicCollection*)globalSoundCollectionList[newMusicKey];
+				const musicCollection* collection = (musicCollection*)globalAudioCollectionList[newMusicKey];
 				replaceMusic(collection);
 			}
-			else if (inSerializer->serializeValue(L"prefer", newMusicKey))
+			else if (inSerializer->serializeMembers(L"prefer", newMusicKey))
 			{
-				const musicCollection* collection = (musicCollection*)globalSoundCollectionList[newMusicKey];
+				const musicCollection* collection = (musicCollection*)globalAudioCollectionList[newMusicKey];
 				updateMusic(collection);
 			}
 		}

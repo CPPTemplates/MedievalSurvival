@@ -4,8 +4,8 @@
 struct attachedCropData : cropData, attachedBlockData
 {
 	attachedCropData(cint& age = 0) : cropData(age), attachedBlockData() {}
-	virtual void serializeValue(nbtSerializer& s) override {
-		return cropData::serializeValue(s);
+	virtual void serializeMembers(nbtSerializer& s) override {
+		return cropData::serializeMembers(s);
 	}
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override {
 		return attachedBlockData::tick(containerIn, position);

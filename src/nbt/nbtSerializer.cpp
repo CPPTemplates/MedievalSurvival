@@ -44,7 +44,7 @@ nbtSerializer::nbtSerializer(nbtCompound& compound, cbool& write, cbool& convert
 	if (convert)
 	{
 		int version = currentFileVersionID;
-		serializeValue(std::wstring(L"version"), version);
+		serializeMembers(std::wstring(L"version"), version);
 		converter = getConverter(version);
 	}
 }

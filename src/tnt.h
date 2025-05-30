@@ -6,5 +6,5 @@ struct tnt : public entity
 	int ticksUntilFuse = 0;
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -4,6 +4,6 @@
 struct playerData : nbtSerializable {
 	uuid id;
 	std::wstring name;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	bool serialize(cbool& write);
 };

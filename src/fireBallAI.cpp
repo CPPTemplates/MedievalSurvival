@@ -24,8 +24,8 @@ void fireBallAI::shootFireBall(const entity* shootFireBallAt) const
 	fireBallShootSound->playRandomSound(connectedMob->dimensionIn, headPos);
 }
 
-void fireBallAI::serializeValue(nbtSerializer& s)
+void fireBallAI::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"fireball type"), fireBallType);
+	s.serializeMembers(std::wstring(L"fireball type"), fireBallType);
 	serializeNBTValue(s, std::wstring(L"target"), target);
 }

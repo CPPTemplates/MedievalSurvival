@@ -203,7 +203,7 @@ blockData* createBlockData(const blockID& block)
 	}
 	else if (isCrop(block))
 	{
-		if (attachedToBottomBlock(block))
+		if (getStaticAttachmentDirection(block) != (directionID)-1)
 		{
 			return new attachedCropData();
 		}
@@ -297,7 +297,7 @@ void blockData::onBlockRemove(tickableBlockContainer* containerIn, cveci2& posit
 {
 }
 
-void blockData::serializeValue(nbtSerializer& s)
+void blockData::serializeMembers(nbtSerializer& s)
 {
 	//position will be serialized in the chunk::serialize functions
 	//some blocks do not store block data, but use it for random ticks or normal ticks

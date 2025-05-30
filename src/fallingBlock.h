@@ -6,5 +6,5 @@ struct fallingBlock : public entity
 	fallingBlock(const blockID& linkedBlockID = blockID::sand);
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void tick() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

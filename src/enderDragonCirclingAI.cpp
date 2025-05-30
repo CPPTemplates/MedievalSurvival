@@ -41,7 +41,7 @@ void enderDragonCirclingAI::chooseTargetPoint()
 	targetPoint += getRandomPointOnEllipse(currentRandom, randomRect);
 }
 
-void enderDragonCirclingAI::serializeValue(nbtSerializer& s)
+void enderDragonCirclingAI::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"target point"), targetPoint);
 }

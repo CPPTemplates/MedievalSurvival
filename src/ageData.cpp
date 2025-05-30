@@ -1,6 +1,6 @@
 #include "ageData.h"
 #include "nbt/nbtSerializer.h"
-void ageData::serializeValue(nbtSerializer& s)
+void ageData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"age"), age);
+	s.serializeMembers(std::wstring(L"age"), age);
 }

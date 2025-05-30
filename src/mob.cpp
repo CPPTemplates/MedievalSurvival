@@ -558,16 +558,16 @@ void mob::onCollisionWithGround(cfp& verticalSpeed)
 		}
 	}
 }
-void mob::serializeValue(nbtSerializer& s)
+void mob::serializeMembers(nbtSerializer& s)
 {
 	// body parts are not serialized, as they change shape
-	entity::serializeValue(s);
-	s.serializeValue(std::wstring(L"ambient sound cooldown"), ambientSoundCoolDown);
-	s.serializeValue(std::wstring(L"flying"), flying);
-	s.serializeValue(std::wstring(L"walking"), walking);
-	s.serializeValue(std::wstring(L"jump stamina"), jumpStamina);
-	s.serializeValue(std::wstring(L"total leg distance"), totalLegDistance);
-	s.serializeValue(std::wstring(L"age"), age);
+	entity::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"ambient sound cooldown"), ambientSoundCoolDown);
+	s.serializeMembers(std::wstring(L"flying"), flying);
+	s.serializeMembers(std::wstring(L"walking"), walking);
+	s.serializeMembers(std::wstring(L"jump stamina"), jumpStamina);
+	s.serializeMembers(std::wstring(L"total leg distance"), totalLegDistance);
+	s.serializeMembers(std::wstring(L"age"), age);
 	if (!s.write && age < adultAge)
 		updateBodyPartSize(mainBodyPart, (fp)0.5);
 	serializeNBTValue(s, std::wstring(L"uuid riding on"), UUIDRidingOn);
@@ -577,7 +577,7 @@ void mob::serializeValue(nbtSerializer& s)
 	serializeNBTValue(s, std::wstring(L"adjacent block position"), adjacentBlockPosition);
 	serializeNBTValue(s, std::wstring(L"exact block intersection"), exactBlockIntersection);
 	serializeNBTValue(s, std::wstring(L"exact entity intersection"), exactEntityIntersection);
-	s.serializeValue(std::wstring(L"ticks since tool used"), ticksSinceToolUsed);
+	s.serializeMembers(std::wstring(L"ticks since tool used"), ticksSinceToolUsed);
 	serializeNBTValue(s, std::wstring(L"partner found"), partnerFound);
 }
 void mob::render(const gameRenderData& targetData) const

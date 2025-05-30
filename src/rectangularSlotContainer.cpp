@@ -175,7 +175,7 @@ void rectangularSlotContainer::transfer(slotContainer* const containerTo, tickab
 	}
 }
 
-void rectangularSlotContainer::serializeValue(nbtSerializer& s)
+void rectangularSlotContainer::serializeMembers(nbtSerializer& s)
 {
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"slots")))
 	{
@@ -185,7 +185,7 @@ void rectangularSlotContainer::serializeValue(nbtSerializer& s)
 			{
 				if (s.push<nbtDataTag::tagCompound>())
 				{
-					slots[i].serializeValue(s);
+					slots[i].serializeMembers(s);
 					s.pop();
 				}
 			}
@@ -197,7 +197,7 @@ void rectangularSlotContainer::serializeValue(nbtSerializer& s)
 			{
 				if (s.push())
 				{
-					slots[i].serializeValue(s);
+					slots[i].serializeMembers(s);
 					s.pop();
 				}
 			}

@@ -9,5 +9,5 @@ struct blazeFireBallAI : fireBallAI
 	virtual bool continueExecuting() override;
 	blazeFireBallAI(entity* connectedEntity) : fireBallAI(connectedEntity, entityID::small_Fireball, fireBallRange) {}
 	virtual void updateTask() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

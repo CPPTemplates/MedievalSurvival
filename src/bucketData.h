@@ -4,5 +4,5 @@ struct bucketData :itemTag
 {
 	fluidLevel fillLevel = 0;
 	bucketData(fluidLevel fillLevel = maxFluidLevel) :fillLevel(fillLevel) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

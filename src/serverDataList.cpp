@@ -4,7 +4,7 @@
 #include "include/filesystem/fileFunctions.h"
 #include "nbt/serializeList.h"
 
-void serverDataList::serializeValue(nbtSerializer& s)
+void serverDataList::serializeMembers(nbtSerializer& s)
 {
 	serializeListOfSerializables(s, L"servers", servers);
 }

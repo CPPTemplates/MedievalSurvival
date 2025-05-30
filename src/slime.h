@@ -11,7 +11,7 @@ struct slime : public mob
 	fp size = 0;
 	slime(const entityID& entityType = entityID::slime);
 	virtual void updateBodyParts() const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	void resize();
 	virtual void createBodyParts();
 	virtual bool goToPosition(cvec2& destination) override;

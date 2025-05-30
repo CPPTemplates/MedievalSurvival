@@ -84,7 +84,7 @@ struct humanoid : public mob, public slotContainer
 	//sound synchronisation:
 	//hand swings + block break sounds
 	virtual ~humanoid() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 
 	virtual void tick() override;
 

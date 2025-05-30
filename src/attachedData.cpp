@@ -1,6 +1,6 @@
 #include "attachedData.h"
 #include "nbt/nbtSerializer.h"
-void attachedData::serializeValue(nbtSerializer& s)
+void attachedData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"attached"), attached);
+	s.serializeMembers(std::wstring(L"attached"), attached);
 }

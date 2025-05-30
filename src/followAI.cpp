@@ -42,7 +42,7 @@ bool followAI::canSeeTarget(const entity* targetEntity, fp proximity) const
 	return false;
 }
 
-void followAI::serializeValue(nbtSerializer& s)
+void followAI::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"target"), target);
 }

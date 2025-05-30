@@ -9,7 +9,7 @@ struct followAI : taskAI {
 	bool canSeeTarget(const entity* targetEntity, fp proximity = 0) const;
 	followAI(entity* connectedEntity, fp proximity) : taskAI(connectedEntity), proximity(proximity) {}
 	virtual bool shouldExecute() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual void updateTask() override;
 	entity* findTarget() const;
 };

@@ -13,5 +13,5 @@ struct structureBlockData : blockData
 	ull structureSeed = 0;
 	bool showBoundingBox = false;
 	structureBlockMode mode = structureBlockMode::saveMode;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

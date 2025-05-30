@@ -52,8 +52,8 @@ void ghastFireBallAI::updateTask()
 	}
 }
 
-void ghastFireBallAI::serializeValue(nbtSerializer& s)
+void ghastFireBallAI::serializeMembers(nbtSerializer& s)
 {
-	fireBallAI::serializeValue(s);
-	s.serializeValue(std::wstring(L"fireball ticks"), fireBallTicks);
+	fireBallAI::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"fireball ticks"), fireBallTicks);
 }

@@ -29,7 +29,6 @@
 #include "biomeData.h"
 #include "blockContainer.h"
 #include "blockData.h"
-#include "itemID.h"
 #include "collisionData.h"
 #include "collisionDataCollection.h"
 #include "collisionTypeID.h"
@@ -66,11 +65,11 @@
 #include "include/math/graphics/brush/brushes/colorMultiplier.h"
 #include "gameColors.h"
 
-block::block(blockID identifier, fp hardness, fp blastResistance, cfp &weightPerCubicMeter, resolutionTexture *tex, std::wstring name, std::shared_ptr<soundCollection> fallSound, std::shared_ptr<soundCollection> stepSound, std::shared_ptr<soundCollection> hitSound, std::shared_ptr<soundCollection> breakSound, std::shared_ptr<soundCollection> placeSound, cint (&filterStrength)[(size_t)levelID::count], harvestTypeID bestTool, harvestTierID itemTier, collisionTypeID collisiontype, cint &fireEncouragement, cint &flammability, cbool &canCatchFireFromLava, cbool &canReplaceBlock, cint (&emittanceLevel)[(size_t)levelID::count], const experienceDrop &experienceWhenBroken, std::shared_ptr<soundCollection> ambientSound)
+block::block(blockID identifier, fp hardness, fp blastResistance, cfp &weightPerCubicMeter, resolutionTexture *tex, std::wstring name, std::shared_ptr<soundCollection> fallSound, std::shared_ptr<soundCollection> stepSound, std::shared_ptr<soundCollection> hitSound, std::shared_ptr<soundCollection> breakSound, std::shared_ptr<soundCollection> placeSound, cint (&filterStrength)[(size_t)levelID::count], std::vector<harvestTypeID> tools, harvestTierID itemTier, collisionTypeID collisiontype, cint &fireEncouragement, cint &flammability, cbool &canCatchFireFromLava, cbool &canReplaceBlock, cint (&emittanceLevel)[(size_t)levelID::count], const experienceDrop &experienceWhenBroken, std::shared_ptr<soundCollection> ambientSound)
 	: INamable(name),
 	  identifier(identifier),
 	  itemTier(itemTier),
-	  bestTool(bestTool),
+	  tools(tools),
 	  hardness(hardness),
 	  blastResistance(blastResistance),
 	  fireEncouragement(fireEncouragement),
@@ -100,7 +99,10 @@ block::block(blockID identifier, fp hardness, fp blastResistance, cfp &weightPer
 }
 bool block::correctTool(const itemID &tool) const
 {
-	return bestTool == withHand || ((int)tool && bestTool == itemList[(int)tool]->harvestType);
+	//can be harvested by hand
+	return arrayContains(tools, withHand) || 
+		//or the tools is in the tools list
+		((int)tool && arrayContains(tools, itemList[(int)tool]->harvestType));
 }
 
 bool block::canHarvest(const itemID &tool) const

@@ -26,7 +26,7 @@
 #include "StartSoundPacket.h"
 #include "math/uuid.h"
 
-std::unordered_map<std::wstring, audioCollection *> globalSoundCollectionList = std::unordered_map<std::wstring, audioCollection *>();
+std::unordered_map<std::wstring, audioCollection *> globalAudioCollectionList = std::unordered_map<std::wstring, audioCollection *>();
 
 soundCollection::soundCollection()
 {
@@ -50,7 +50,7 @@ void audioCollection::addAudioFileName(const stdPath &path)
 	key = std::regex_replace(key, std::wregex(L"\\/|\\\\"), L".");
 	// key.replace(key.begin(), key.end(), stdPath::preferred_separator, L'.');
 
-	globalSoundCollectionList[key] = this;
+	globalAudioCollectionList[key] = this;
 	bool loaded = false;
 	stdPath defaultPath = path;
 	defaultPath += L".ogg";

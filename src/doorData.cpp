@@ -1,8 +1,8 @@
 #include "doorData.h"
-void doorData::serializeValue(nbtSerializer& s)
+void doorData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	doubleBlockData::serializeValue(s);
-	facingData::serializeValue(s);
-	openData::serializeValue(s);
+	blockData::serializeMembers(s);
+	doubleBlockData::serializeMembers(s);
+	facingData::serializeMembers(s);
+	openData::serializeMembers(s);
 }

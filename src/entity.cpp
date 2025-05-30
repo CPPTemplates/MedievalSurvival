@@ -196,7 +196,7 @@ void entity::tick()
 					break;
 					case dimensionID::nether:
 					{
-						dimensionPosition = floorVector(floorVector(position / netherToOverWorldScale));
+						dimensionPosition = floorVector(position / netherToOverWorldScale);
 					}
 					break;
 					default:
@@ -363,7 +363,7 @@ void entity::physics()
 
 			crectangle2 hitboxAfterCollisions = calculateHitBox(positionAfterCollisions);
 			// cvec2 distanceTillEndOfTick = speed * secondsToCalculateLeft;
-			collisionDataCollection data = dimensionIn->getRecursiveHitboxCollisionData(hitboxAfterCollisions, speed);
+			collisionDataCollection data = newDimension->getRecursiveHitboxCollisionData(hitboxAfterCollisions, speed);
 			data.evaluate(hitboxAfterCollisions, speed, secondsToCalculateLeft);
 
 			// get real values
@@ -412,7 +412,7 @@ void entity::physics()
 
 					crectangle2 stepHitbox = calculateHitBox(steppedUpPosition);
 
-					const collisionTypeID steppedCollisionType = dimensionIn->getHitboxCollisionType(stepHitbox);
+					const collisionTypeID steppedCollisionType = newDimension->getHitboxCollisionType(stepHitbox);
 
 					if (steppedCollisionType != collisionTypeID::willCollide)
 					{
@@ -436,6 +436,7 @@ void entity::physics()
 				axisCollided = firstCollision.axisCollided;
 				stuck = firstCollision.stuck;
 			}
+			else stuck = false;
 			//collide with all top faces which aren't covered up by other hitboxes
 			if (collisionCheckLevel == collisionTypeID::willCollideTop)
 			{
@@ -501,7 +502,7 @@ void entity::physics()
 						{
 							cveci2& checkPosition = cveci2(checkX, checkYLevel);
 
-							collisionDataCollection collection = dimensionIn->getBlockCollisionData(checkPosition);
+							collisionDataCollection collection = newDimension->getBlockCollisionData(checkPosition);
 							collection.evaluate(hitboxAfterCollisions, speed, secondsToCalculateLeft);
 
 							for (size_t hitboxIndex = 0; hitboxIndex < collection.hitboxes.size(); hitboxIndex++)
@@ -515,7 +516,7 @@ void entity::physics()
 
 									if (edgeData.edges.size())
 									{
-										const blockID& blockBottom = dimensionIn->getBlockID(checkPosition);
+										const blockID& blockBottom = newDimension->getBlockID(checkPosition);
 
 										// collides
 										if (blockBottom == blockID::cactus)
@@ -530,7 +531,7 @@ void entity::physics()
 										{
 											if (isMob(entityType) || (!isStonePressurePlate(blockBottom)))
 											{
-												((pressurePlateData*)(dimensionIn->getBlockData(checkPosition)))->addEntityStandingOn(dimensionIn, checkPosition, this);
+												((pressurePlateData*)(newDimension->getBlockData(checkPosition)))->addEntityStandingOn(newDimension, checkPosition, this);
 											}
 										}
 										break;
@@ -622,14 +623,13 @@ void entity::physics()
 	newPosition = positionAfterCollisions;
 	onGround = newOnGround;
 
-	inCobweb = dimensionIn->blockRangeContains(cveci2((int)floor(blockCheckHitbox.x), (int)floor(blockCheckHitbox.y)),
+	inCobweb = newDimension->blockRangeContains(cveci2((int)floor(blockCheckHitbox.x), (int)floor(blockCheckHitbox.y)),
 		cveci2((int)floor(blockCheckHitbox.x + blockCheckHitbox.w), (int)floor(blockCheckHitbox.y + blockCheckHitbox.h)),
 		{ blockID::cobweb });
 
 	// check for fluids at the new position, BEFORE friction is applied, so you can jump out of low water streams with ease
 	fluidArea = getFluidArea(blockCheckHitbox, std::vector<blockID>(fluidList, fluidList + fluidCount));
 
-	speed.y -= getGravityForce();
 
 	// if (fluidArea > 0)
 	//{
@@ -933,7 +933,7 @@ rectangle2 entity::calculateHitBox(const cvec2& pos) const
 	return crectangle2(relativeHitbox.pos0 + pos, relativeHitbox.size);
 }
 
-void entity::serializeValue(nbtSerializer& s)
+void entity::serializeMembers(nbtSerializer& s)
 {
 	// writing *this to the stream would be too risky
 	// dont write despawn, type and position to the stream
@@ -943,11 +943,11 @@ void entity::serializeValue(nbtSerializer& s)
 		dimensionID newDimensionID = newDimension->identifier;
 		if (s.write)
 		{
-			s.serializeValue(std::wstring(L"new dimension"), newDimensionID);
+			s.serializeMembers(std::wstring(L"new dimension"), newDimensionID);
 		}
 		else
 		{
-			if (s.serializeValue(std::wstring(L"new dimension"), newDimensionID))
+			if (s.serializeMembers(std::wstring(L"new dimension"), newDimensionID))
 			{
 				newDimension = currentWorld->dimensions[(int)newDimensionID];
 			}
@@ -962,7 +962,7 @@ void entity::serializeValue(nbtSerializer& s)
 			{
 				if (s.push<nbtDataTag::tagCompound>())
 				{
-					activeEffects[i].serializeValue(s);
+					activeEffects[i].serializeMembers(s);
 					s.pop();
 				}
 			}
@@ -977,7 +977,7 @@ void entity::serializeValue(nbtSerializer& s)
 				if (s.push(serializedEffect))
 				{
 					statusEffect effect = statusEffect();
-					effect.serializeValue(s);
+					effect.serializeMembers(s);
 					activeEffects.push_back(effect);
 					s.pop();
 				}
@@ -988,24 +988,24 @@ void entity::serializeValue(nbtSerializer& s)
 	}
 	if (tasks && s.push<nbtDataTag::tagCompound>(std::wstring(L"tasks")))
 	{
-		tasks->serializeValue(s);
+		tasks->serializeMembers(s);
 		s.pop();
 	}
 
 	serializeNBTValue(s, std::wstring(L"identifier"), identifier);
-	s.serializeValue(std::wstring(L"ticks standing in portal"), portalTicks);
-	s.serializeValue(std::wstring(L"portal cooldown"), portalCoolDown);
+	s.serializeMembers(std::wstring(L"ticks standing in portal"), portalTicks);
+	s.serializeMembers(std::wstring(L"portal cooldown"), portalCoolDown);
 	serializeNBTValue(s, std::wstring(L"new position"), newPosition);
 	serializeNBTValue(s, std::wstring(L"speed"), speed);
-	s.serializeValue(std::wstring(L"fire ticks"), fireTicks);
-	s.serializeValue(std::wstring(L"immunity frame count"), immunityFrameCount);
-	s.serializeValue(std::wstring(L"last hit damage"), lastHitDamage);
-	s.serializeValue(std::wstring(L"health"), health);
-	s.serializeValue(std::wstring(L"fluid area"), fluidArea);
-	s.serializeValue(std::wstring(L"in cobweb"), inCobweb);
-	s.serializeValue(std::wstring(L"sneaking"), sneaking);
-	s.serializeValue(std::wstring(L"onGround"), onGround);
-	s.serializeValue(std::wstring(L"collision type"), collisionCheckLevel);
+	s.serializeMembers(std::wstring(L"fire ticks"), fireTicks);
+	s.serializeMembers(std::wstring(L"immunity frame count"), immunityFrameCount);
+	s.serializeMembers(std::wstring(L"last hit damage"), lastHitDamage);
+	s.serializeMembers(std::wstring(L"health"), health);
+	s.serializeMembers(std::wstring(L"fluid area"), fluidArea);
+	s.serializeMembers(std::wstring(L"in cobweb"), inCobweb);
+	s.serializeMembers(std::wstring(L"sneaking"), sneaking);
+	s.serializeMembers(std::wstring(L"onGround"), onGround);
+	s.serializeMembers(std::wstring(L"collision type"), collisionCheckLevel);
 	serializeNBTValue(s, std::wstring(L"relative hitbox"), relativeHitbox);
 }
 
@@ -1094,6 +1094,7 @@ vec2 entity::applyNaturalForces(cvec2& speed) const
 	cfp& windWeight = blockList[blockID::air]->weightPerCubicMeter * windArea;
 
 	vec2 newSpeed = speed;
+	newSpeed.y -= getGravityForce();
 
 	if (collisionCheckLevel == collisionTypeID::willNotCollide)
 	{

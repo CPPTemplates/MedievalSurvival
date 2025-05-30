@@ -15,5 +15,5 @@ struct furnaceData :blockData
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual ~furnaceData() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

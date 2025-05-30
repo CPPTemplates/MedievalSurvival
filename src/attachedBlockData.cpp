@@ -12,14 +12,7 @@ directionID attachedBlockData::getAttachmentDirection(tickableBlockContainer *co
 {
 	const blockID &block = containerIn->getBlockID(position);
 
-	if (attachedToBottomBlock(block))
-	{
-		return directionID::negativeY;
-	}
-	else
-	{
-		return (directionID)-1;
-	}
+	return getStaticAttachmentDirection(block);
 }
 
 bool attachedBlockData::tick(tickableBlockContainer *containerIn, cveci2 &position)

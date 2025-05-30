@@ -68,6 +68,6 @@ void loveModeAI::updateTask()
 	((mob*)connectedEntity)->ticksInLove--;
 }
 
-void loveModeAI::serializeValue(nbtSerializer& s)
+void loveModeAI::serializeMembers(nbtSerializer& s)
 {
 }

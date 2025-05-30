@@ -44,11 +44,11 @@ void creeper::render(const gameRenderData& targetData) const
 	}
 }
 
-void creeper::serializeValue(nbtSerializer& s)
+void creeper::serializeMembers(nbtSerializer& s)
 {
-	fourLeggedMob::serializeValue(s);
-	s.serializeValue(std::wstring(L"powered"), powered);
-	s.serializeValue(std::wstring(L"explosion strength"), explosionStrength);
-	s.serializeValue(std::wstring(L"ticks until fuse"), ticksUntilFuse);
-	s.serializeValue(std::wstring(L"ignited"), ignited);
+	fourLeggedMob::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"powered"), powered);
+	s.serializeMembers(std::wstring(L"explosion strength"), explosionStrength);
+	s.serializeMembers(std::wstring(L"ticks until fuse"), ticksUntilFuse);
+	s.serializeMembers(std::wstring(L"ignited"), ignited);
 }

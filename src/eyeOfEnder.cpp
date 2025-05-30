@@ -5,10 +5,14 @@
 #include "structureID.h"
 #include "nbt/nbtSerializer.h"
 #include "math/random/random.h"
-constexpr fp maxEyeVelocity = 10;
+constexpr fp maxEyeVelocity = 3;
 void eyeOfEnder::tick()
 {
-	if (ticksToFloat >= 0x20)
+	if (floatTicksLeft == enderEyeFloatTicks) {
+		//calculate distance to the nearest stronghold
+		dimensionIn->locateStructure(structureID::stronghold, position, strongholdPosition);
+	}
+	if (floatTicksLeft >= 0x20)
 	{
 		cfp dx = strongholdPosition.x - position.x;
 		cfp distance = abs(dx);
@@ -22,11 +26,11 @@ void eyeOfEnder::tick()
 		//float faster if it is farther away
 		cfp sideVelocity = math::maximum((1.0 - (digDistance / distance)) * maxEyeVelocity, (fp)0.0);
 		cfp signedSideVelocity = dx < 0 ? -sideVelocity : sideVelocity;
-		speed += cvec2(signedSideVelocity, upwardsVelocity);
+		speed = cvec2(signedSideVelocity, upwardsVelocity);
 	}
 	else
 	{
-		if (ticksToFloat >= 0x18)
+		if (floatTicksLeft >= 0x18)
 		{
 			//brake
 			cfp brakeFriction = 0.9;
@@ -34,10 +38,10 @@ void eyeOfEnder::tick()
 		}
 		else
 		{
-			if (ticksToFloat > 0)
+			if (floatTicksLeft > 0)
 			{
 				//wobble in the air down, up, down
-				if (ticksToFloat % 0x10 >= 0x8)
+				if (floatTicksLeft % 0x10 >= 0x8)
 				{
 					speed.y += maxEyeVelocity;
 				}
@@ -60,23 +64,21 @@ void eyeOfEnder::tick()
 		}
 	}
 
-	ticksToFloat--;
+	floatTicksLeft--;
 }
 
-void eyeOfEnder::serializeValue(nbtSerializer& s)
+void eyeOfEnder::serializeMembers(nbtSerializer& s)
 {
 	//the stronghold direction will be calculated
-	s.serializeValue(std::wstring(L"ticks to float"), ticksToFloat);
+	s.serializeMembers(std::wstring(L"ticks to float"), floatTicksLeft);
 }
 
-fp eyeOfEnder::getGravityForce() const
+vec2 eyeOfEnder::applyNaturalForces(cvec2& speed) const
 {
-	return 0;
+	return speed;
 }
 eyeOfEnder::eyeOfEnder() : throwable(entityID::ender_eye)
 {
-	//calculate distance to the nearest stronghold
-	dimensionIn->locateStructure(structureID::stronghold, position, strongholdPosition);
 }
 
 void eyeOfEnder::onCollision(const std::vector<entity*>& collidingEntities)

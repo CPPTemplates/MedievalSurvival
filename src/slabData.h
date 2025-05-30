@@ -5,6 +5,6 @@ struct slabData : blockData
 {
 	slabType type = slabType::bottomSlab;
 	slabData(const slabType& type = slabType::bottomSlab) :type(type) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 
 };

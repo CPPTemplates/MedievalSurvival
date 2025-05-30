@@ -14,5 +14,5 @@ struct panicAI : taskAI
 	virtual void updateTask() override;
 	virtual void resetTask() override;
 	panicAI(entity* connectedEntity) :taskAI(connectedEntity) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -1,6 +1,6 @@
 #include "avoidEntityAI.h"
 #include "idConverter.h"
-void avoidEntityAI::serializeValue(nbtSerializer& s)
+void avoidEntityAI::serializeMembers(nbtSerializer& s)
 {
 	idConverter::serializeID<entityID>(s, std::wstring(L"entity to avoid"), entityTypeToAvoid, &s.converter->entityIDConverter);
 }

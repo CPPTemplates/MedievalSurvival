@@ -33,5 +33,5 @@ struct creeper : public fourLeggedMob
 	bool ignited = false;
 	creeper();
 	virtual void render(const gameRenderData& targetData) const override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

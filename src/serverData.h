@@ -6,7 +6,7 @@ struct serverData : nbtSerializable {
 	std::wstring serverName = L"local";
 	port serverPort = defaultPort;
 	sf::IpAddress serverIPAddress = sf::IpAddress::LocalHost;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 
 	inline bool operator==(const serverData& other) const {
 		return serverName == other.serverName && serverPort == other.serverPort && serverIPAddress == other.serverIPAddress;

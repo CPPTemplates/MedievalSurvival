@@ -31,9 +31,9 @@ void taskList::execute()
 	}
 }
 
-void taskList::serializeValue(nbtSerializer& s)
+void taskList::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"executing task index"), executingTaskIndex);
+	s.serializeMembers(std::wstring(L"executing task index"), executingTaskIndex);
 	if (s.push<nbtDataTag::tagCompound>(std::wstring(L"tasks")))
 	{
 		//won'T mess up that much when tasks are shuffeled
@@ -41,7 +41,7 @@ void taskList::serializeValue(nbtSerializer& s)
 		{
 			if (s.push<nbtDataTag::tagCompound>(getClassName(*task)))
 			{
-				task->serializeValue(s);
+				task->serializeMembers(s);
 				s.pop();
 			}
 		}

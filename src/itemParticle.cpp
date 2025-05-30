@@ -7,8 +7,8 @@ const resolutionTexture& itemParticle::getTexture() const
 	return *itemList[brushItemID]->tex;
 }
 
-void itemParticle::serializeValue(nbtSerializer& s)
+void itemParticle::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"brush item id"), brushItemID);
-	rectParticle::serializeValue(s);
+	s.serializeMembers(std::wstring(L"brush item id"), brushItemID);
+	rectParticle::serializeMembers(s);
 }

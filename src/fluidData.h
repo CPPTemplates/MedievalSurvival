@@ -10,5 +10,5 @@ struct fluidData : blockData
 
 	//returns 0 if there is none of that fluid there, else the level
 	static fluidLevel getFluidLevel(blockContainer* containerIn, cveci2& position, const blockID& fluid);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

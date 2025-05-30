@@ -1,6 +1,6 @@
 #include "bucketData.h"
 #include "nbt/nbtSerializer.h"
-void bucketData::serializeValue(nbtSerializer& s)
+void bucketData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"fluid level"), fillLevel);
+	s.serializeMembers(std::wstring(L"fluid level"), fillLevel);
 }

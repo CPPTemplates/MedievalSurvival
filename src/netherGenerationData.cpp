@@ -1,5 +1,5 @@
 #include "netherGenerationData.h"
-void netherGenerationData::serializeValue(nbtSerializer& s)
+void netherGenerationData::serializeMembers(nbtSerializer& s)
 {
 }
 

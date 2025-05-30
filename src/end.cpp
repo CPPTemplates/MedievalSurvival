@@ -89,21 +89,21 @@ void end::generateStructures(chunk& generateIn)
 	}
 }
 
-void end::serializeValue(nbtSerializer& s)
+void end::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"dragon alive"), dragonAlive);
-	s.serializeValue(std::wstring(L"exit portal level"), exitPortalLevel);
+	s.serializeMembers(std::wstring(L"dragon alive"), dragonAlive);
+	s.serializeMembers(std::wstring(L"exit portal level"), exitPortalLevel);
 
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"obsidian pillar levels")))
 	{
 		for (size_t i = 0; i < obsidianPillarCount; i++)
 		{
-			s.serializeValue(std::wstring(), obsidianPillarLevel[i]);
+			s.serializeMembers(std::wstring(), obsidianPillarLevel[i]);
 		}
 		s.pop();
 	}
 
-	dimension::serializeValue(s);
+	dimension::serializeMembers(s);
 }
 
 void end::renderSky(crectangle2& blockRect, crectangle2 & drawRect, const gameRenderData& targetData) const

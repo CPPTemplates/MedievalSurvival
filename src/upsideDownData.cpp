@@ -1,6 +1,6 @@
 #include "upsideDownData.h"
 #include "nbt/nbtSerializer.h"
-void upsideDownData::serializeValue(nbtSerializer& s)
+void upsideDownData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"upside down"), upsideDown);
+	s.serializeMembers(std::wstring(L"upside down"), upsideDown);
 }

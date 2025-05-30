@@ -25,7 +25,7 @@ itemTag* createItemTag(const itemID& id)
 		return nullptr;
 	}
 }
-void itemTag::serializeValue(nbtSerializer& s)
+void itemTag::serializeMembers(nbtSerializer& s)
 {
 	handleError(std::wstring(L"not implemented"));
 }

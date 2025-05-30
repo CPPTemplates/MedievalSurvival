@@ -1,7 +1,7 @@
 #include "trapDoorData.h"
-void trapDoorData::serializeValue(nbtSerializer& s)
+void trapDoorData::serializeMembers(nbtSerializer& s)
 {
-	facingData::serializeValue(s);
-	upsideDownData::serializeValue(s);
-	openData::serializeValue(s);
+	facingData::serializeMembers(s);
+	upsideDownData::serializeMembers(s);
+	openData::serializeMembers(s);
 }

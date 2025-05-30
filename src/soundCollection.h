@@ -23,4 +23,4 @@ struct soundCollection : audioCollection
 	static void updateSound(tickableBlockContainer* containerIn, const UpdateSoundPacket& packet);
 	std::shared_ptr<sound2d> playSound(csize_t& index, cfp& volume = 1, cfp& pitch = 1);
 };
-extern std::unordered_map<std::wstring, audioCollection*> globalSoundCollectionList;
+extern std::unordered_map<std::wstring, audioCollection*> globalAudioCollectionList;

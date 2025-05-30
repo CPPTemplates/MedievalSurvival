@@ -4,10 +4,10 @@
 #include "nbt/serializeUUID.h"
 #include "filesystem/fileFunctions.h"
 #include "nbt/serializeUUID.h"
-void playerData::serializeValue(nbtSerializer& s)
+void playerData::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, L"uuid", id);
-	s.serializeValue(L"name", name);
+	s.serializeMembers(L"name", name);
 }
 
 bool playerData::serialize(cbool& write)

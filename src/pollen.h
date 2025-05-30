@@ -10,5 +10,5 @@ struct pollen : public entity
 	virtual void render(const gameRenderData& targetData) const override;
 	pollen() : entity(entityID::pollen) {}
 	virtual void tick() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -23,14 +23,14 @@ chestData::~chestData()
 	delete slots;
 }
 
-void chestData::serializeValue(nbtSerializer& s)
+void chestData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
+	blockData::serializeMembers(s);
 	((nbtSerializable*)slots)->serialize(s, std::wstring(L"chest slots"));
 
-	if ((s.write ? (lootTableName != std::wstring()) : true) && s.serializeValue(std::wstring(L"loot table name"), lootTableName))
+	if ((s.write ? (lootTableName != std::wstring()) : true) && s.serializeMembers(std::wstring(L"loot table name"), lootTableName))
 	{
-		s.serializeValue(std::wstring(L"loot table seed"), lootTableSeed);
+		s.serializeMembers(std::wstring(L"loot table seed"), lootTableSeed);
 	}
 }
 

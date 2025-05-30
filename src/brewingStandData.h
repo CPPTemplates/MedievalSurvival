@@ -13,6 +13,6 @@ struct brewingstandData :blockData
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position) override;
 	virtual ~brewingstandData() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 
 };

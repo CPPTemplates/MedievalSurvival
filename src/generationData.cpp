@@ -1,4 +1,4 @@
 #include "generationData.h"
-void generationData::serializeValue(nbtSerializer& s)
+void generationData::serializeMembers(nbtSerializer& s)
 {
 }

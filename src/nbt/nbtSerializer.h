@@ -125,7 +125,7 @@ struct nbtSerializer : iSerializer
 	// string can only store short.maxValue amount of charachters!!!
 	// can'T be static, because it's checking the write member
 	template <nbtType T>
-	inline bool serializeValue(nbtData &data, T &value) const
+	inline bool serializeMembers(nbtData &data, T &value) const
 	{
 		static_assert(std::is_same<T, std::string>::value || std::is_arithmetic<T>::value, "can'T convert to this type");
 
@@ -346,11 +346,11 @@ struct nbtSerializer : iSerializer
 		return serializeVariableArray(memberName, (std::make_signed_t<T> *&)value, count);
 	}
 	template <nbtType T>
-	inline bool serializeValue(const std::wstring &memberName, T &value)
+	inline bool serializeMembers(const std::wstring &memberName, T &value)
 	{
 		if (nbtData *currentChild = getOrCreateNBTData<T>(memberName))
 		{
-			return serializeValue(*currentChild, value);
+			return serializeMembers(*currentChild, value);
 		}
 		else
 		{
@@ -368,36 +368,36 @@ struct nbtSerializer : iSerializer
 	{
 		return serializeVariableArray(memberName, value, count);
 	}
-	// inline bool serializeValue(const std::wstring& memberName, byte& value)
+	// inline bool serializeMembers(const std::wstring& memberName, byte& value)
 	//{
-	//	return serializeValue(memberName, (sbyte&)value);
+	//	return serializeMembers(memberName, (sbyte&)value);
 	// }
 
 	template <enumType T>
-	inline bool serializeValue(const std::wstring &memberName, T &value)
+	inline bool serializeMembers(const std::wstring &memberName, T &value)
 	{
-		return serializeValue(memberName, (std::underlying_type_t<T> &)value);
+		return serializeMembers(memberName, (std::underlying_type_t<T> &)value);
 	}
-	inline bool serializeValue(const std::wstring &memberName, bool &value)
+	inline bool serializeMembers(const std::wstring &memberName, bool &value)
 	{
-		return serializeValue(memberName, (sbyte &)value);
+		return serializeMembers(memberName, (sbyte &)value);
 	}
 	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
-	inline bool serializeValue(const std::wstring &memberName, T &value)
+	inline bool serializeMembers(const std::wstring &memberName, T &value)
 	{
-		return serializeValue(memberName, (std::make_signed_t<T> &)value);
+		return serializeMembers(memberName, (std::make_signed_t<T> &)value);
 	}
-	inline bool serializeValue(const std::wstring &memberName, std::wstring &value)
+	inline bool serializeMembers(const std::wstring &memberName, std::wstring &value)
 	{
 		if (write)
 		{
 			std::string str = WStringToString(value);
-			return serializeValue(memberName, str);
+			return serializeMembers(memberName, str);
 		}
 		else
 		{
 			std::string str;
-			cbool &success = serializeValue(memberName, str);
+			cbool &success = serializeMembers(memberName, str);
 			if (success)
 			{
 				value = stringToWString(str);
@@ -405,18 +405,18 @@ struct nbtSerializer : iSerializer
 			return success;
 		}
 	}
-	// inline bool serializeValue(const std::wstring& memberName, ushort& value)
+	// inline bool serializeMembers(const std::wstring& memberName, ushort& value)
 	//{
-	//	return serializeValue(memberName, (short&)value);
+	//	return serializeMembers(memberName, (short&)value);
 	// }
-	// inline bool serializeValue(const std::wstring& memberName, uint& value)
+	// inline bool serializeMembers(const std::wstring& memberName, uint& value)
 	//{
-	//	return serializeValue(memberName, (uint&)value);
+	//	return serializeMembers(memberName, (uint&)value);
 	// }
 };
 //fallback function
 //make sure to have instantiated the templates by for example #include "nbt/serializeVector.h"!
 template<typename T>
 inline bool serializeNBTValue(nbtSerializer& s, const std::wstring& memberName, T& value) {
-	return s.serializeValue(memberName, value);
+	return s.serializeMembers(memberName, value);
 }

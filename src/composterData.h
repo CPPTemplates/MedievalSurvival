@@ -3,5 +3,5 @@
 struct composterData : blockData
 {
 	fp fillLevel = 0;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -91,7 +91,7 @@ struct human :public humanoid, public INamable
 	virtual void applyStatusEffect(const statusEffect& effect) override;
 	virtual void onDeath() override;
 	virtual ~human() override;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	bool serialize(cbool& write);
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source) override;
 	virtual bool compareSelector(const human& sender, const std::wstring& selectorString) const override;

@@ -1,6 +1,6 @@
 #include "stairsData.h"
-void stairsData::serializeValue(nbtSerializer& s)
+void stairsData::serializeMembers(nbtSerializer& s)
 {
-	facingData::serializeValue(s);
-	upsideDownData::serializeValue(s);
+	facingData::serializeMembers(s);
+	upsideDownData::serializeMembers(s);
 }

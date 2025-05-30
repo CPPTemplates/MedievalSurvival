@@ -7,7 +7,7 @@ bool lastPowerLevelData::tick(tickableBlockContainer* containerIn, cveci2& posit
 	return false;
 }
 
-void lastPowerLevelData::serializeValue(nbtSerializer& s)
+void lastPowerLevelData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"last power level"), (int&)lastPowerLevel);
+	s.serializeMembers(std::wstring(L"last power level"), (int&)lastPowerLevel);
 }

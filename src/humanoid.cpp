@@ -558,14 +558,14 @@ humanoid::~humanoid()
 
 	delete armorSlots;
 }
-void humanoid::serializeValue(nbtSerializer& s)
+void humanoid::serializeMembers(nbtSerializer& s)
 {
-	mob::serializeValue(s);
-	s.serializeValue(std::wstring(L"selected block damage"), selectedBlockDamage);
-	s.serializeValue(std::wstring(L"time waiting to dig"), timeWaitingToDig);
-	s.serializeValue(std::wstring(L"digging"), digging);
-	s.serializeValue(std::wstring(L"sleeping"), sleeping);
-	s.serializeValue(std::wstring(L"climbing"), climbing);
+	mob::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"selected block damage"), selectedBlockDamage);
+	s.serializeMembers(std::wstring(L"time waiting to dig"), timeWaitingToDig);
+	s.serializeMembers(std::wstring(L"digging"), digging);
+	s.serializeMembers(std::wstring(L"sleeping"), sleeping);
+	s.serializeMembers(std::wstring(L"climbing"), climbing);
 	armorSlots->serialize(s, std::wstring(L"armor slots"));
 }
 void humanoid::tick()
@@ -606,7 +606,7 @@ void humanoid::tick()
 					//tool tier multipliers
 					const int toolTierMultipliers[]{ 1,2,12,4,6,8,9 };
 
-					cbool& increaseMiningSpeed = canHarvest && itemHolding->count && itemList[(int)itemHolding->stackItemID]->harvestType == b->bestTool;
+					cbool& increaseMiningSpeed = canHarvest && itemHolding->count && arrayContains(b->tools, itemList[(int)itemHolding->stackItemID]->harvestType);
 					if (increaseMiningSpeed)
 					{
 						fp speedMultiplier = toolTierMultipliers[itemList[(int)itemHolding->stackItemID]->harvestTier];
@@ -685,7 +685,7 @@ void humanoid::tick()
 							}
 						}
 
-						if (increaseMiningSpeed && (b->bestTool != withHand))
+						if (increaseMiningSpeed && !arrayContains(b->tools, withHand))
 						{
 							fp durabilityDecrease = breakingBlock ? 1 * secondsPerTick : 0.5 * secondsPerTick;
 
@@ -889,6 +889,12 @@ foundAdjacentBlock:
 			{
 				dynamic_cast<attachmentDirectionData*>(newBlockData)->attachmentDirection = (directionID)nearestAttachment;
 			}
+		}
+		directionID attachmentDirection = getStaticAttachmentDirection(blockToPlace);
+		if (attachmentDirection != (directionID)-1) {
+			if (!selectedBlockContainer->canAttachTo(adjacentBlockPosition + directionVectors2D[(int)attachmentDirection], flipDirection(attachmentDirection)))
+				//cannot attach to this block
+				return false;
 		}
 		//set when it's a double block
 		veci2 part1Pos = adjacentBlockPosition;

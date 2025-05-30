@@ -18,9 +18,9 @@ bool ridableEntity::addPassenger(mob* m)
 	return false;
 }
 
-void ridableEntity::serializeValue(nbtSerializer& s)
+void ridableEntity::serializeMembers(nbtSerializer& s)
 {
-	entity::serializeValue(s);
+	entity::serializeMembers(s);
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"riding uuids")))
 	{
 		if (s.write)

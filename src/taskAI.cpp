@@ -26,6 +26,6 @@ void taskAI::execute()
 {
 }
 
-void taskAI::serializeValue(nbtSerializer& s)
+void taskAI::serializeMembers(nbtSerializer& s)
 {
 }

@@ -27,6 +27,6 @@ struct movableBlockContainer : tickableBlockContainer, public blockArrayContaine
 	bool cropRelativeLineToContainer(vec2& p0, vec2& p1) override;
 
 	movableBlockContainer(cvect2<fsize_t>& size) :blockArrayContainer(size) {}
-	void serializeValue(nbtSerializer& s) override;
+	void serializeMembers(nbtSerializer& s) override;
 	~movableBlockContainer() override;
 };

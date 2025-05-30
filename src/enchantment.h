@@ -7,6 +7,6 @@ struct enchantment :itemTag
 	enchantment(const enchantmentID& identifier, cint& power) :identifier(identifier), power(power) {}
 	enchantmentID identifier = (enchantmentID)0;
 	int power = 0;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	std::wstring toWString() const;
 };

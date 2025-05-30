@@ -356,11 +356,11 @@ void itemStack::drawToolTips(cveci2& position, const texture& renderTarget) cons
 	defaultTheme().font->DrawString(enchantmentsString, enchantmentsStringrect, renderTarget);
 }
 
-void itemStack::serializeValue(nbtSerializer& s)
+void itemStack::serializeMembers(nbtSerializer& s)
 {
 	if (s.write)
 	{
-		s.serializeValue(std::wstring(L"item id"), stackItemID);
+		s.serializeMembers(std::wstring(L"item id"), stackItemID);
 	}
 	else
 	{
@@ -371,7 +371,7 @@ void itemStack::serializeValue(nbtSerializer& s)
 	}
 	if ((int)stackItemID) // only store additional data of filled slots
 	{
-		s.serializeValue(std::wstring(L"amount"), count);
+		s.serializeMembers(std::wstring(L"amount"), count);
 		if (s.push<nbtDataTag::tagList>(std::wstring(L"enchantments")))
 		{
 			if (s.write)
@@ -380,7 +380,7 @@ void itemStack::serializeValue(nbtSerializer& s)
 				{
 					if (s.push<nbtDataTag::tagCompound>())
 					{
-						e->serializeValue(s);
+						e->serializeMembers(s);
 						s.pop();
 					}
 				}
@@ -394,7 +394,7 @@ void itemStack::serializeValue(nbtSerializer& s)
 					if (s.push(serializedEnchantmentData[i]))
 					{
 						enchantments[i] = new enchantment();
-						enchantments[i]->serializeValue(s);
+						enchantments[i]->serializeMembers(s);
 						s.pop();
 					}
 				}

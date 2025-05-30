@@ -15,8 +15,8 @@ zombie::zombie(const entityID &entityType) : humanoid(entityType)
 	initializeBodyParts(zombieHeadTextureRect, zombieBodyTextureRect, zombieLeftLegTextureRect, zombieRightLegTextureRect, zombieLeftArmTextureRect, zombieRightArmTextureRect, zombiePixelSize);
 	itemHolding = new itemStack();
 }
-void zombie::serializeValue(nbtSerializer &s)
+void zombie::serializeMembers(nbtSerializer &s)
 {
-	humanoid::serializeValue(s);
+	humanoid::serializeMembers(s);
 	itemHolding->serialize(s, std::wstring(L"item holding"));
 }

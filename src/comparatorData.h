@@ -3,6 +3,6 @@
 struct comparatorData : inputData
 {
 	bool substractionMode = false;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
 };

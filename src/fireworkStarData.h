@@ -10,5 +10,5 @@ struct fireWorkStarData : itemTag
 
 	std::vector<colorb> colors = std::vector<colorb>();
 	std::vector<colorb> fadeColors = std::vector<colorb>();
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

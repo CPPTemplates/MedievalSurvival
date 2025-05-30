@@ -4,5 +4,5 @@ struct avoidEntityAI :taskAI
 {
 	entityID entityTypeToAvoid;
 	avoidEntityAI(entity* connectedEntity, const entityID& entityTypeToAvoid) : taskAI(connectedEntity), entityTypeToAvoid(entityTypeToAvoid) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

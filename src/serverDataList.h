@@ -5,7 +5,7 @@
 struct serverDataList: nbtSerializable {
 	std::vector<serverData> servers = std::vector<serverData>();
 
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	bool serialize(cbool& write);
 
 };

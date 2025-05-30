@@ -24,10 +24,10 @@ void slime::updateBodyParts() const
 	mainBodyPart->changed = true;
 }
 
-void slime::serializeValue(nbtSerializer& s)
+void slime::serializeMembers(nbtSerializer& s)
 {
-	mob::serializeValue(s);
-	s.serializeValue(std::wstring(L"size"), size);
+	mob::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"size"), size);
 	if (!s.write)
 	{
 		resize();

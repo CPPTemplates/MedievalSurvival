@@ -1,7 +1,7 @@
 #include "bedData.h"
-void bedData::serializeValue(nbtSerializer& s)
+void bedData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
-	doubleBlockData::serializeValue(s);
-	facingData::serializeValue(s);
+	blockData::serializeMembers(s);
+	doubleBlockData::serializeMembers(s);
+	facingData::serializeMembers(s);
 }

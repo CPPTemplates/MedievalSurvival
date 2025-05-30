@@ -1,6 +1,6 @@
 #include "potionData.h"
 #include "nbt/nbtSerializer.h"
-void potionData::serializeValue(nbtSerializer& s)
+void potionData::serializeMembers(nbtSerializer& s)
 {
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"active effects")))
 	{
@@ -10,7 +10,7 @@ void potionData::serializeValue(nbtSerializer& s)
 			{
 				if (s.push<nbtDataTag::tagCompound>())
 				{
-					effectsToAdd[i].serializeValue(s);
+					effectsToAdd[i].serializeMembers(s);
 					s.pop();
 				}
 			}
@@ -25,7 +25,7 @@ void potionData::serializeValue(nbtSerializer& s)
 				if (s.push(serializedEffect))
 				{
 					statusEffect effect = statusEffect();
-					effect.serializeValue(s);
+					effect.serializeMembers(s);
 					effectsToAdd.push_back(effect);
 					s.pop();
 				}

@@ -10,14 +10,15 @@ you pick a double stack, even when clicking once with right mouse button
 make textures load only when used
 
 prio:
-shift click -> craft, move items
 
+hovering over item in inventory + q = drop
+
+shift double click: move all items of a type to another inventory
+add berry bushes and berries
 add climbing (more important because 2d)
 spiders -> string
 effects not visible on hunger bar
 add respawn screen with spectator mode after death
-rename mob::serializeValue to serialize
-add wind sound back
 block updates not working properly with leaves
 giant mushrooms don't drop items
 fences don't burn as fuel
@@ -34,12 +35,11 @@ sheep and cows should be able to eat grass
 composter not usable
 items remain in inventory crafting grid sometimes
 items following you, even when you can't pick them up
+you keep the item in the stackdivider when closing the inventory
 crops should need water
 explosion knockback?
-hoeing a block works from below too
 digging blocks below you when sneaking can make you float
 when placing blocks, the whole block get checked for collision, not the hitbox of the block to place
-falling blocks can be stuck in the air and 'colliding with the ground' somehow and instantly turning back into falling blocks. 2 falling blocks are stuck inside eachother. speed builds up to crazy amounts.
 eggs should be heavier
 zooming out using f + scroll also makes inventory slots change
 respawn point not set when clicking on a bed at daytime
@@ -48,6 +48,9 @@ mipmapping not working 100% (when zooming out, it darkens, which probably means 
 caves should spawn more often and different types of caves should spawn
 enderman getting angry sound playing like 5 ticks in a row 
 feather falling should reduce falling speed
+dogs hit you back instantly when you crit kill them
+use biome.json files to determine spawn chances and music
+add ambient sounds using biome.json https://minecraft.fandom.com/wiki/Ambience
 
 nights seem to be very long when sleeping
 rails are invisible
@@ -57,7 +60,6 @@ anvil addstack not implemented?
 left hand slot
 baby mobs should play sound at higher pitch
 double chest
-armor textures aren't transparent: iron helmet, iron boots
 but iron leggings are.
 food isn't displayed in halfs
 sounds cut out when outside hearing range, which means that falloff isn't correct
@@ -71,11 +73,20 @@ dropping items should be dragging outside of inventory
 better sounds using equalizing and other audio tricks (for example in caves)
 icon not showing
 mushroom grows into big mushroom without dirt below it
+arrows change direction after hitting the wall for a tick
+damaged iron helmet not smelting
 
 very low prio:
+hoeing a block works from below too
 copper (smaller amounts)
 
 done:
+shift click -> craft, move items
+falling blocks can be stuck in the air and 'colliding with the ground' somehow and instantly turning back into falling blocks. 2 falling blocks are stuck inside eachother. speed builds up to crazy amounts.
+rename mob::serializeValue to serializeMembers
+add wind sound back
+armor textures aren't transparent: iron helmet, iron boots
+when coming out of a portal, you get damage
 add treshold when (wind) force exceeds pushing limit
 you can fly out of your bed when the wind blows upward fast enough
 glowstone doesn't glow

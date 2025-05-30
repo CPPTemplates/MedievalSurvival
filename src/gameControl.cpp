@@ -1357,7 +1357,7 @@ void gameControl::serializeMusicPreference(nbtSerializer& serializer)
 	{
 		const auto& prefer = [&serializer](std::shared_ptr<musicCollection> music)
 			{
-				serializer.serializeValue(L"prefer", music->key);
+				serializer.serializeMembers(L"prefer", music->key);
 			};
 		bool boatInWater;
 		entity* entityRidingOn = player->dimensionIn->findUUID(player->position,
@@ -1378,7 +1378,7 @@ void gameControl::serializeMusicPreference(nbtSerializer& serializer)
 		cbool inEnd = player->dimensionIn->identifier == dimensionID::end;
 		if (inEnd && ((end*)currentWorld->dimensions[(int)dimensionID::end])->dragonAlive)
 		{
-			serializer.serializeValue(L"replace", bossMusic->key);
+			serializer.serializeMembers(L"replace", bossMusic->key);
 			// replaceMusic(bossMusic);
 		}
 		else

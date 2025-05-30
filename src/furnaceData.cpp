@@ -108,16 +108,16 @@ furnaceData::~furnaceData()
 	delete fuelSlot;
 }
 
-void furnaceData::serializeValue(nbtSerializer& s)
+void furnaceData::serializeMembers(nbtSerializer& s)
 {
-	blockData::serializeValue(s);
+	blockData::serializeMembers(s);
 	inputSlot->serialize(s, std::wstring(L"input slot"));
 	outputSlot->serialize(s, std::wstring(L"output slot"));
 	fuelSlot->serialize(s, std::wstring(L"fuel slot"));
-	s.serializeValue(std::wstring(L"ticks cooked"), ticksCooked);
-	s.serializeValue(std::wstring(L"ticks burned"), ticksFuelBurned);
-	s.serializeValue(std::wstring(L"ticks to burn"), ticksFuelToBurn);
-	s.serializeValue(std::wstring(L"collected experience"), collectedExperience);
+	s.serializeMembers(std::wstring(L"ticks cooked"), ticksCooked);
+	s.serializeMembers(std::wstring(L"ticks burned"), ticksFuelBurned);
+	s.serializeMembers(std::wstring(L"ticks to burn"), ticksFuelToBurn);
+	s.serializeMembers(std::wstring(L"collected experience"), collectedExperience);
 	if (!s.write)
 	{
 		this->currentRecipe = findRecipe(furnaceRecipes, inputSlot);

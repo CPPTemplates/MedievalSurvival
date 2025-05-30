@@ -29,9 +29,9 @@ void particle::render(const gameRenderData& targetData) const
 
 }
 
-void particle::serializeValue(nbtSerializer& s)
+void particle::serializeMembers(nbtSerializer& s)
 {
-	s.serializeValue(std::wstring(L"ticks to exist"), ticksToExist);
+	s.serializeMembers(std::wstring(L"ticks to exist"), ticksToExist);
 }
 
 rectangle2 getParticleBrushRect(const resolutionTexture& tex)

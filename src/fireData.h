@@ -7,5 +7,5 @@ struct fireData : ageData, attachedBlockData
 	fireData(cint& age = 0) : ageData(age) {}
 	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position) override;
 	using attachedBlockData::tick;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

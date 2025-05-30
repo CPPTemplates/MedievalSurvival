@@ -5,5 +5,5 @@ struct snowLayerData :fallingBlockData
 {
 	snowLayerData(cfp& layerThickness = minimalSnowLayerThickness);
 	fp layerThickness = 0;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

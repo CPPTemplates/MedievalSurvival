@@ -19,8 +19,8 @@ skeleton::skeleton(const entityID &entityType) : humanoid(entityType)
 	itemHolding = new itemStack(itemID::bow, 1);
 }
 
-void skeleton::serializeValue(nbtSerializer &s)
+void skeleton::serializeMembers(nbtSerializer &s)
 {
-	humanoid::serializeValue(s);
+	humanoid::serializeMembers(s);
 	itemHolding->serialize(s, std::wstring(L"item holding"));
 }

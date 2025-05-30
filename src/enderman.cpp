@@ -17,9 +17,9 @@ enderman::enderman() :humanoid(entityID::enderman)
 	itemHolding = new itemStack();
 }
 
-void enderman::serializeValue(nbtSerializer& s)
+void enderman::serializeMembers(nbtSerializer& s)
 {
-	humanoid::serializeValue(s);
+	humanoid::serializeMembers(s);
 	itemHolding->serialize(s, std::wstring(L"item holding"));
 }
 bool enderman::addDamageSource(cfp& damage, std::shared_ptr<damageSource> source)

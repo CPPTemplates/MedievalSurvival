@@ -6,7 +6,7 @@ struct throwable : public entity
 	virtual void tick() override;
 	virtual void render(const gameRenderData& targetData) const override;
 	virtual void onCollision(const std::vector<entity*>& collidingEntities);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	void addImpactDamage(const std::vector<entity*>& collidingEntities, cfp& damage);
 	uuid thrownFrom = uuid();
 	bool leftOwner = false;

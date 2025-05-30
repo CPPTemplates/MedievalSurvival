@@ -17,5 +17,5 @@ struct jigsawData :facingData
 	blockID turnsInto = blockID::air;
 
 	int levels = 0;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -3,5 +3,5 @@
 #include "nbt/nbtSerializable.h"
 struct generationData :IDestructable, nbtSerializable
 {
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

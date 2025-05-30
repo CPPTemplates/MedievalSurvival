@@ -10,6 +10,6 @@ struct blockData : itemTag
 	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position);
 	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position);
 	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position);
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };
 blockData* createBlockData(const blockID& block);

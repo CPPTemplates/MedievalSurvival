@@ -5,7 +5,7 @@ directionID attachmentDirectionData::getAttachmentDirection(tickableBlockContain
 	return attachmentDirection;
 }
 
-void attachmentDirectionData::serializeValue(nbtSerializer &s)
+void attachmentDirectionData::serializeMembers(nbtSerializer &s)
 {
-	s.serializeValue(std::wstring(L"attachment direction"), attachmentDirection);
+	s.serializeMembers(std::wstring(L"attachment direction"), attachmentDirection);
 }

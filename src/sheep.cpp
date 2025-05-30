@@ -48,12 +48,12 @@ sheep::sheep() :mob(entityID::sheep), fourLeggedPassiveMob(entityID::sheep)
 	head = new bodyPart2D(sheepHeadTextureRect, mainBodyPart, vec2(sheepBodySize.x - sheepBodyRotationCenter.x - sheepHeadOffset + sheepHeadRotationCenter.x, sheepBodySize.y + sheepHeadOffset - sheepHeadRotationCenter.y), sheepHeadSize, sheepHeadRotationCenter);
 	connectBodyParts();
 }
-void sheep::serializeValue(nbtSerializer& s)
+void sheep::serializeMembers(nbtSerializer& s)
 {
-	mob::serializeValue(s);
+	mob::serializeMembers(s);
 
-	s.serializeValue(std::wstring(L"has wool"), hasWool);
-	s.serializeValue(std::wstring(L"wool color"), woolColor);
+	s.serializeMembers(std::wstring(L"has wool"), hasWool);
+	s.serializeMembers(std::wstring(L"wool color"), woolColor);
 }
 void sheep::render(const gameRenderData& targetData) const
 {

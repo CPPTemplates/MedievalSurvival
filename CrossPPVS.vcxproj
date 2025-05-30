@@ -539,7 +539,6 @@
     <ClCompile Include="src\taskList.cpp" />
     <ClCompile Include="src\teleportOnDamageAI.cpp" />
     <ClCompile Include="src\teleportToAttachAI.cpp" />
-    <ClCompile Include="src\test.cpp" />
     <ClCompile Include="src\textureList.cpp" />
     <ClCompile Include="src\textureParticle.cpp" />
     <ClCompile Include="src\theEnd.cpp" />
@@ -1105,7 +1104,6 @@
     <ClInclude Include="src\taskList.h" />
     <ClInclude Include="src\teleportOnDamageAI.h" />
     <ClInclude Include="src\teleportToAttachAI.h" />
-    <ClInclude Include="src\test.h" />
     <ClInclude Include="src\textureList.h" />
     <ClInclude Include="src\textureParticle.h" />
     <ClInclude Include="src\theEnd.h" />

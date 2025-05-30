@@ -4,5 +4,5 @@ struct bambooData : ageData
 {
 	int leavesSize = 0;
 	int stalkThickness = 0;
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

@@ -235,17 +235,17 @@ brewingstandData::~brewingstandData() {
     }
 }
 
-void brewingstandData::serializeValue(nbtSerializer &s) {
-    blockData::serializeValue(s);
-    s.serializeValue(std::wstring(L"fuel left"), fuelLeft);
-    s.serializeValue(std::wstring(L"ticks brewed"), ticksBrewed);
+void brewingstandData::serializeMembers(nbtSerializer &s) {
+    blockData::serializeMembers(s);
+    s.serializeMembers(std::wstring(L"fuel left"), fuelLeft);
+    s.serializeMembers(std::wstring(L"ticks brewed"), ticksBrewed);
     blazePowderSlot->serialize(s, std::wstring(L"input slot"));
     ingredientSlot->serialize(s, std::wstring(L"output slot"));
     if (s.push<nbtDataTag::tagList>(std::wstring(L"potion slots"))) {
         if (s.write) {
             for (int i = 0; i < brewingStandPotionCapacity; i++) {
                 if (s.push<nbtDataTag::tagCompound>()) {
-                    potionSlots[i]->serializeValue(s);
+                    potionSlots[i]->serializeMembers(s);
                     s.pop();
                 }
             }
@@ -255,7 +255,7 @@ void brewingstandData::serializeValue(nbtSerializer &s) {
             //mob types
             for (nbtData *serializedPotionSlot: potionDataList) {
                 if (s.push(serializedPotionSlot)) {
-                    potionSlots[i]->serializeValue(s);
+                    potionSlots[i]->serializeMembers(s);
                     i++;
                     s.pop();
                 }

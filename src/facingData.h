@@ -5,5 +5,5 @@ struct facingData : virtual blockData
 {
 	directionID directionFacing = directionID::positiveY;
 	facingData(const directionID& directionFacing = directionID::positiveY) :directionFacing(directionFacing) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

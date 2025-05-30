@@ -22,7 +22,7 @@ struct rectangularSlotContainer :public slotContainer, public IDestructable
 	//transfer everything to 'containerTo' or convert it to a floating slot if it does not fit
 	void transfer(slotContainer* const containerTo, tickableBlockContainer* containerIn, cvec2& dropPos) const;
 	//does not serialize the size!
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 
 	virtual void clearData() override;
 

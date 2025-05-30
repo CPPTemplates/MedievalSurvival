@@ -11,5 +11,5 @@ struct ghastFireBallAI : fireBallAI
 	virtual bool continueExecuting() override;
 	virtual void updateTask() override;
 	ghastFireBallAI(entity* connectedEntity) : fireBallAI(connectedEntity, entityID::ghast_fireball, ghastSightRange) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

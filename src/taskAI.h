@@ -12,5 +12,5 @@ struct taskAI : entityAI
 	virtual void execute() final;
 
 	taskAI(entity* const& connectedEntity) :entityAI(connectedEntity) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

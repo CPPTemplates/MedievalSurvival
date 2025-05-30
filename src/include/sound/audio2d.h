@@ -14,7 +14,11 @@ struct audio2d
 	vec2 pos = vec2();
 	vec2 speed = vec2();
 	fp volume = 1;
+	//*100 to go to sfml volume. don't change this unless you know what you're doing!
+	fp volumeMultiplier = 100;
 	fp pitch = 1;
+	fp minDistance = 1;
+	fp attenuation = 1;
 	bool isSpatial = true;
 	bool shouldLoop = true;
 	microseconds startedPlaying = 0; // will be set by the first next update
@@ -27,6 +31,7 @@ struct audio2d
 	virtual void unLoadAudio() = 0;
 
 	virtual void setVolume(cfp& volume) = 0;
+	virtual void setVolumeMultiplier(cfp& mult) = 0;
 	virtual void setPitch(cfp& pitch) = 0;
 	virtual void setMinDistance(cfp& minDistance) = 0;
 	virtual void setAttenuation(cfp& attenuation) = 0;
@@ -38,7 +43,7 @@ struct audio2d
 };
 
 template <typename audioType>
-struct audio2dt : audio2d, IDestructable
+struct audio2dt : public audio2d, IDestructable
 {
 	audioType* playingAudio = nullptr;
 	virtual bool audioLoaded() const override;
@@ -48,6 +53,7 @@ struct audio2dt : audio2d, IDestructable
 	virtual void setMinDistance(cfp& minDistance) override;
 	virtual void setAttenuation(cfp& attenuation) override;
 	virtual void setVolume(cfp& volume) override;
+	virtual void setVolumeMultiplier(cfp& mult) override;
 	virtual void setPitch(cfp& pitch) override;
 	virtual void setPlayingOffset(const microseconds& offset) override;
 	virtual microseconds getPlayingOffset() override;
@@ -67,6 +73,8 @@ struct audio2dt : audio2d, IDestructable
 		delete playingAudio;
 		playingAudio = nullptr;
 	}
+private:
+	void updateVolume() const;
 };
 template <typename T>
 inline bool audio2dt<T>::audioLoaded() const
@@ -95,12 +103,14 @@ inline void audio2dt<T>::unLoadAudio()
 template <typename T>
 inline void audio2dt<T>::setMinDistance(cfp& minDistance)
 {
+	audio2d::minDistance = minDistance;
 	playingAudio->setMinDistance((float)minDistance);
 }
 
 template <typename T>
 inline void audio2dt<T>::setAttenuation(cfp& attenuation)
 {
+	audio2d::attenuation = attenuation;
 	playingAudio->setAttenuation((float)attenuation);
 }
 
@@ -111,10 +121,22 @@ inline void audio2dt<T>::setVolume(cfp& newVolume)
 	{
 
 		audio2d::volume = newVolume;
-		if (playingAudio)
-		{
-			playingAudio->setVolume((float)newVolume * 100.0f);
-		}
+		updateVolume();
+	}
+}
+template<typename audioType>
+inline void audio2dt<audioType>::setVolumeMultiplier(cfp& mult)
+{
+	if (audio2d::volumeMultiplier != mult) {
+		audio2d::volumeMultiplier = mult;
+		updateVolume();
+	}
+}
+template<typename audioType>
+inline void audio2dt<audioType>::updateVolume() const
+{
+	if (playingAudio) {
+		playingAudio->setVolume((float)(audio2d::volume * audio2d::volumeMultiplier));
 	}
 }
 template <typename T>

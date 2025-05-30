@@ -57,7 +57,7 @@ struct chunk :IDestructable, nbtSerializable
 	void generateArrays();
 	void generateTerrain();
 	void generateStructures();
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	bool serialize(cbool& write);
 	chunk(dimension* dimensionIn, cveci2& chunkCoordinates);
 	void changeEntityList();

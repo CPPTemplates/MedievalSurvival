@@ -86,11 +86,11 @@ void boat::onDeath()
 	lootTable::dropLoot({ itemStack((itemID)((int)itemID::wood_boat + (int)boatType), 1) }, dimensionIn, position, maxFloatingSlotSpeed);
 }
 
-void boat::serializeValue(nbtSerializer& s)
+void boat::serializeMembers(nbtSerializer& s)
 {
-	ridableEntity::serializeValue(s);
-	s.serializeValue(std::wstring(L"paddle rotations"), paddleRotations);
-	s.serializeValue(std::wstring(L"boat type"), boatType);
+	ridableEntity::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"paddle rotations"), paddleRotations);
+	s.serializeMembers(std::wstring(L"boat type"), boatType);
 }
 
 vec2 boat::getRelativeSeatPosition(csize_t& seatIndex) const

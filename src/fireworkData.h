@@ -6,5 +6,5 @@ struct fireWorkData : itemTag
 	std::vector<fireWorkStarData> fireworkStars = std::vector<fireWorkStarData>();
 	size_t flightDuration = 0;
 
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

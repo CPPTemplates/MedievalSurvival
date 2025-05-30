@@ -76,7 +76,7 @@ struct mob :public entity
 
 	virtual void onCollisionWithGround(cfp& verticalSpeed) override;
 	//does not initialize the head
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual void render(const gameRenderData& targetData) const override;
 	bool shouldJump(bool& wantsToGoLeft, bool& wantsToGoRight) const;
 	void lookForward();

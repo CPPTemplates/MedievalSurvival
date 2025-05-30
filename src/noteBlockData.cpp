@@ -17,10 +17,10 @@ bool noteBlockData::tick(tickableBlockContainer* containerIn, cveci2& position)
 	return false;
 }
 
-void noteBlockData::serializeValue(nbtSerializer& s)
+void noteBlockData::serializeMembers(nbtSerializer& s)
 {
-	lastPowerLevelData::serializeValue(s);
-	s.serializeValue(std::wstring(L"note"), note);
+	lastPowerLevelData::serializeMembers(s);
+	s.serializeMembers(std::wstring(L"note"), note);
 }
 
 void noteBlockData::playNote(tickableBlockContainer* containerIn, cveci2& position)

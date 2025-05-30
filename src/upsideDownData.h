@@ -4,5 +4,5 @@ struct upsideDownData : virtual blockData
 {
 	bool upsideDown = false;
 	upsideDownData(cbool& upsideDown = false) :upsideDown(upsideDown) {}
-	virtual void serializeValue(nbtSerializer& s) override;
+	virtual void serializeMembers(nbtSerializer& s) override;
 };

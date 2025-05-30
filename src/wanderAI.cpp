@@ -48,7 +48,7 @@ wanderAI::wanderAI(entity* connectedEntity) : taskAI(connectedEntity)
 	resetTask();
 }
 
-void wanderAI::serializeValue(nbtSerializer& s)
+void wanderAI::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, L"target position", targetPos);
 }

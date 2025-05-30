@@ -33,9 +33,9 @@ bool stemPlantData::tick(tickableBlockContainer* containerIn, cveci2& position)
 	return false;
 }
 
-void stemPlantData::serializeValue(nbtSerializer& s)
+void stemPlantData::serializeMembers(nbtSerializer& s)
 {
-	cropData::serializeValue(s);
+	cropData::serializeMembers(s);
 	serializeNBTValue(s, std::wstring(L"relative fruit position"), relativeFruitPosition);
 }
 

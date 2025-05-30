@@ -133,17 +133,17 @@ bool world::serialize(cbool& write)
 			//}
 		}
 	}
-	s.serializeValue(std::wstring(L"seed"), seed);
+	s.serializeMembers(std::wstring(L"seed"), seed);
 	serializeNBTValue(s, std::wstring(L"world spawnpoint"), worldSpawnPoint);
-	s.serializeValue(std::wstring(L"world spawn dimension"), worldSpawnDimension);
-	s.serializeValue(std::wstring(L"current time"), currentTime);
+	s.serializeMembers(std::wstring(L"world spawn dimension"), worldSpawnDimension);
+	s.serializeMembers(std::wstring(L"current time"), currentTime);
 	//settings
-	s.serializeValue(std::wstring(L"allow cheats"), allowCheats);
-	s.serializeValue(std::wstring(L"randomtickspeed"), randomTickSpeed);
-	s.serializeValue(std::wstring(L"spawn mobs"), spawnMobs);
-	s.serializeValue(std::wstring(L"keep inventory on death"), keepInventoryOnDeath);
-	s.serializeValue(std::wstring(L"xray"), xray);
-	s.serializeValue(std::wstring(L"day night cycle speed"), dayNightCycleSpeed);
+	s.serializeMembers(std::wstring(L"allow cheats"), allowCheats);
+	s.serializeMembers(std::wstring(L"randomtickspeed"), randomTickSpeed);
+	s.serializeMembers(std::wstring(L"spawn mobs"), spawnMobs);
+	s.serializeMembers(std::wstring(L"keep inventory on death"), keepInventoryOnDeath);
+	s.serializeMembers(std::wstring(L"xray"), xray);
+	s.serializeMembers(std::wstring(L"day night cycle speed"), dayNightCycleSpeed);
 	
 	if (!write)
 	{

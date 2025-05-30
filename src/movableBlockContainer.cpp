@@ -88,7 +88,7 @@ bool movableBlockContainer::cropRelativeLineToContainer(vec2& p0, vec2& p1)
 	return cropLine(p0, p1, crectangle2(getCurrentArrayRect()));
 }
 
-void movableBlockContainer::serializeValue(nbtSerializer& s)
+void movableBlockContainer::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"relative attachment position"), relativeAttachmentPosition);
 	serializeNBTValue(s, std::wstring(L"pos00 offset"), arrayPos00Offset);
