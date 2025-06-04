@@ -33,6 +33,7 @@ constexpr int waitTime = 5;//the time in ticks to wait before you actually start
 //convert seconds to relative arm angle
 constexpr waveShaper armSwingSynchronizer = waveShaper(1.0 / swingsPerSecond, -0.4 * math::PI, -0.2 * math::PI);
 
+constexpr fp humanoidPixelSize = humanPixelSize * 0.5;
 struct humanoid : public mob, public slotContainer
 {
 	bodyPart2D* rightArm = nullptr;
@@ -68,7 +69,7 @@ struct humanoid : public mob, public slotContainer
 
 	humanoid(const entityID& entityType);
 
-	void initializeBodyParts(crectangle2& headTextureRect, crectangle2& bodyTextureRect, crectangle2& leftLegTextureRect, crectangle2& rightLegTextureRect, crectangle2& leftArmTextureRect, crectangle2& rightArmTextureRect, cfp& pixelSize = humanPixelSize);
+	void initializeBodyParts(crectangle2& headTextureRect, crectangle2& bodyTextureRect, crectangle2& leftLegTextureRect, crectangle2& rightLegTextureRect, crectangle2& leftArmTextureRect, crectangle2& rightArmTextureRect, cfp& pixelSize = humanoidPixelSize);
 
 	virtual void updateBodyParts() const override;
 	void render(const gameRenderData& targetData) const override;

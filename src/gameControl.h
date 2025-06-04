@@ -7,7 +7,7 @@
 #include "settingsForm.h"
 #include "videoSettingsForm.h"
 #include "soundSettingsForm.h"
-#include "musicCollection.h"
+#include "audioCollection.h"
 #include "gameRenderData.h"
 #include "network/client/clientInput.h"
 #include "creditsForm.h"
@@ -75,8 +75,8 @@ struct gameControl : form, clientInput {
 
     mat3x3 worldToRenderTargetTransform = mat3x3();
 
-    //keep a reference to keep virtuality
-    std::vector<SoundPacket*> soundPacketsToSend = std::vector<SoundPacket*>();
+    //keep a reference to keep virtuality. multiple clients can be sent the same packet
+    std::vector<std::shared_ptr<SoundPacket>> soundPacketsToSend = std::vector<std::shared_ptr<SoundPacket>>();
     touchJoystick *moveJoystick = nullptr;
     touchJoystick *interactJoystick = nullptr;
     pictureBox* chatButton = nullptr;

@@ -35,6 +35,7 @@ struct human :public humanoid, public INamable
 	struct dispenserSlotContainer* dispenserSlots = nullptr;
 	struct smithingTableSlotContainer* smithingTableSlots = nullptr;
 	struct anvilSlotContainer* anvilSlots = nullptr;
+	struct TradingSlotContainerUI* tradingSlots = nullptr;
 
 	gameControl& screen;
 	rectangularSlotContainer* hotbarSlots = nullptr;

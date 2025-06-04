@@ -9,7 +9,7 @@
 #include "world.h"
 #include "math/hashing.h"
 #include "idAnalysis.h"
-#include "mobList.h"
+#include "include/type/EnumTricks.h"
 #include "mobData.h"
 #include "dimensionData.h"
 #include "block.h"
@@ -268,9 +268,9 @@ void chunk::serializeMembers(nbtSerializer& s)
 	s.serializeArray(std::wstring(L"blocklight levels"), blockLightLevels.baseArray,
 		chunkArraySize);
 
-	s.serializeMembers(std::wstring(L"load level"), loadLevel);
-	s.serializeMembers(std::wstring(L"ticks since player"), ticksSincePlayer);
-	s.serializeMembers(std::wstring(L"spawn cooldown"), spawnCooldown);
+	serializeNBTValue(s, std::wstring(L"load level"), loadLevel);
+	serializeNBTValue(s, std::wstring(L"ticks since player"), ticksSincePlayer);
+	serializeNBTValue(s, std::wstring(L"spawn cooldown"), spawnCooldown);
 	if (loadLevel == chunkLoadLevel::worldGenerationLoaded)
 	{
 		if (!s.write)
@@ -310,7 +310,7 @@ void chunk::serializeMembers(nbtSerializer& s)
 				{
 					if (s.push<nbtDataTag::tagCompound>())
 					{
-						s.serializeMembers(std::wstring(L"entity id"),
+						serializeNBTValue(s, std::wstring(L"entity id"),
 							entityList[i]->entityType);
 						serializeNBTValue(s, std::wstring(L"position"), entityList[i]->position);
 						entityList[i]->serializeMembers(s);
@@ -545,10 +545,10 @@ void chunk::spawnMobs()
 			continue;
 		}
 
-		fp spawnWeights[(int)entityID::count] = {};
+		fp spawnWeights[(int)entityID::EntityTypeCount] = {};
 		// get a random mob
 		fp totalWeight = 0;
-		for (const entityID& id : mobList)
+		for (const entityID& id : EnumArray((entityID)0, (entityID)mobTypeCount))
 		{
 			spawnWeights[(int)id] = ((mobData*)entityDataList[(int)id])->getSpawnWeight(dimensionIn, blockSpawningIn);
 			totalWeight += spawnWeights[(int)id];

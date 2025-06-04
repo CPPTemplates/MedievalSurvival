@@ -5,7 +5,7 @@
 #include "include/math/graphics/brush/brushes.h"
 void fireworkRocket::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"ticks to exist"), ticksToExist);
+	serializeNBTValue(s, std::wstring(L"ticks to exist"), ticksToExist);
 	data.serialize(s, std::wstring(L"item data"));
 }
 void fireworkRocket::render(const gameRenderData& targetData) const

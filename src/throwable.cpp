@@ -66,7 +66,7 @@ void throwable::onCollision(const std::vector<entity*>& collidingEntities)
 void throwable::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, std::wstring(L"thrown from"), thrownFrom);
-	s.serializeMembers(std::wstring(L"left owner"), leftOwner);
+	serializeNBTValue(s, std::wstring(L"left owner"), leftOwner);
 }
 
 void throwable::addImpactDamage(const std::vector<entity*>& collidingEntities, cfp& damage)

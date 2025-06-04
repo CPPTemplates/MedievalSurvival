@@ -377,8 +377,8 @@ void mob::tick()
 			block* b = blockList[(int)dimensionIn->getBlockID(veci2((int)floor(position.x), (int)floor(position.y - 0.05)))];
 			if (b->blockCollisionType != collisionTypeID::willNotCollide)
 			{
-				std::shared_ptr<soundCollection> mobStepSound = getMobData(entityType)->stepSound;
-				std::shared_ptr<soundCollection> stepSound = mobStepSound ? mobStepSound : b->stepSound;
+				std::shared_ptr<audioCollection> mobStepSound = getMobData(entityType)->stepSound;
+				std::shared_ptr<audioCollection> stepSound = mobStepSound ? mobStepSound : b->stepSound;
 				fp volume = mobStepSound ? 0.5 : 1;
 				if (walking)
 				{
@@ -445,11 +445,11 @@ void mob::tick()
 	setAge(age + 1);
 }
 
-BodyPartSound* mob::playSoundAtHead(std::shared_ptr<soundCollection> collection)
+BodyPartSound* mob::playSoundAtHead(std::shared_ptr<audioCollection> collection)
 {
 	size_t index = randIndex(currentRandom, collection->audioToChooseFrom.size());
 	BodyPartSound* sound = new BodyPartSound(collection->playSound(index, dimensionIn, getHeadPosition()),
-		collection->audioToChooseFrom[index]->getDuration().asMilliseconds() * ticksPerRealLifeSecond / 1000,
+		collection->audioToChooseFrom[index]->buffer->getDuration().asMilliseconds() * ticksPerRealLifeSecond / 1000,
 		head, vec2());
 	attachedSounds.push_back(sound);
 	return sound;
@@ -512,7 +512,7 @@ bool mob::addDamageSource(cfp& damage, std::shared_ptr<damageSource> source)
 			}
 			else
 			{
-				std::shared_ptr<soundCollection> hurtSound = getMobData(entityType)->hurtSound;
+				std::shared_ptr<audioCollection> hurtSound = getMobData(entityType)->hurtSound;
 				if (hurtSound)
 				{
 					hurtSound->playRandomSound(dimensionIn, position);
@@ -562,12 +562,12 @@ void mob::serializeMembers(nbtSerializer& s)
 {
 	// body parts are not serialized, as they change shape
 	entity::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"ambient sound cooldown"), ambientSoundCoolDown);
-	s.serializeMembers(std::wstring(L"flying"), flying);
-	s.serializeMembers(std::wstring(L"walking"), walking);
-	s.serializeMembers(std::wstring(L"jump stamina"), jumpStamina);
-	s.serializeMembers(std::wstring(L"total leg distance"), totalLegDistance);
-	s.serializeMembers(std::wstring(L"age"), age);
+	serializeNBTValue(s, std::wstring(L"ambient sound cooldown"), ambientSoundCoolDown);
+	serializeNBTValue(s, std::wstring(L"flying"), flying);
+	serializeNBTValue(s, std::wstring(L"walking"), walking);
+	serializeNBTValue(s, std::wstring(L"jump stamina"), jumpStamina);
+	serializeNBTValue(s, std::wstring(L"total leg distance"), totalLegDistance);
+	serializeNBTValue(s, std::wstring(L"age"), age);
 	if (!s.write && age < adultAge)
 		updateBodyPartSize(mainBodyPart, (fp)0.5);
 	serializeNBTValue(s, std::wstring(L"uuid riding on"), UUIDRidingOn);
@@ -577,7 +577,7 @@ void mob::serializeMembers(nbtSerializer& s)
 	serializeNBTValue(s, std::wstring(L"adjacent block position"), adjacentBlockPosition);
 	serializeNBTValue(s, std::wstring(L"exact block intersection"), exactBlockIntersection);
 	serializeNBTValue(s, std::wstring(L"exact entity intersection"), exactEntityIntersection);
-	s.serializeMembers(std::wstring(L"ticks since tool used"), ticksSinceToolUsed);
+	serializeNBTValue(s, std::wstring(L"ticks since tool used"), ticksSinceToolUsed);
 	serializeNBTValue(s, std::wstring(L"partner found"), partnerFound);
 }
 void mob::render(const gameRenderData& targetData) const

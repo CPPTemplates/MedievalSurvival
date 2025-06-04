@@ -85,9 +85,9 @@ void nether::generateStructures(chunk& generateIn)
 	{
 		const blockID currentOre = netherOreList[i];
 		csize_t& count = roundRandom(generateIn.chunkRandom, rarity[i]);
-		cveci2& depositPosition = generateIn.worldPos + veci2(randIndex(generateIn.chunkRandom, (int)chunkSize.x), randIndex(generateIn.chunkRandom, (int)chunkSize.y));
 		for (size_t j = 0; j < count; j++)
 		{
+			cveci2& depositPosition = generateIn.worldPos + veci2(randIndex(generateIn.chunkRandom, (int)chunkSize.x), randIndex(generateIn.chunkRandom, (int)chunkSize.y));
 			addOres(depositPosition, currentOre, rand(generateIn.chunkRandom, maxVeinSize[i]), generateIn.chunkRandom, { blockID::netherrack });
 		}
 	}

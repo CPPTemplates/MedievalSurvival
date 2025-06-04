@@ -10,12 +10,6 @@
 #include "enchantingTableSlotContainer.h"
 #include "craftableSlotContainer.h"
 
-void inventoryForm::linkUp(inventory *newInventoryToDisplay)
-{
-    inventoryToDisplay = newInventoryToDisplay;
-    newInventoryToDisplay->linkedPlayer = ((gameControl *)parent)->player;
-    updateScale();
-}
 
 void inventoryForm::unLink()
 {
@@ -113,7 +107,7 @@ void inventoryForm::render(cveci2 &position, const texture &renderTarget)
     inventoryToDisplay->drawExtraData(mat3x3::fromRectToRect(
                                           crectangle2(cvec2(0), cvec2(inventoryToDisplay->uiTexturePartToDraw.size)),
                                           crectangle2(rect)),
-                                      renderTarget);
+        targetData);
     // render the original stack, so you can see what you're dividing
     if (divider.originalStack.count)
     {

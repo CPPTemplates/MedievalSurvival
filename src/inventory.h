@@ -14,6 +14,7 @@ struct inventory : slotContainer, IDestructable
 
 	//containers in order of what to send to first when shift clicking on an item
 	std::vector<uiSlotContainer*> containers = std::vector<uiSlotContainer*>();
+	//the positions are default, but can be changed by for example the trading slot container
 	uiSlotContainer* hotbarSlots = new uiSlotContainer(cveci2(0x8, 0x8), nullptr);
 	uiSlotContainer* inventorySlots = new uiSlotContainer(cveci2(0x8, 30), nullptr);
 
@@ -21,9 +22,9 @@ struct inventory : slotContainer, IDestructable
 
 	virtual void clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot);
 	//void drawExtraData(crectanglei2& textureRect, cveci2& offset, cmat3x3& transform, const texture& renderTarget) const;
-	void drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const texture& renderTarget) const;
-	void drawExtraData(const resolutionTexture& sprite, crectangle2& textureRect, cvec2& position, cmat3x3& transform, const texture& renderTarget) const;
-	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget);
+	void drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const gameRenderData& targetData) const;
+	void drawExtraData(const resolutionTexture& sprite, crectangle2& textureRect, cvec2& position, cmat3x3& transform, const gameRenderData& targetData) const;
+	virtual void drawExtraData(cmat3x3& transform, const gameRenderData& targetData);
 	virtual ~inventory() override;
 	virtual void mouseDown(cveci2& pixelPosition, cmb& button, stackDivider& divider);
     virtual void mouseMove(cveci2& pixelPosition, cmb& button, stackDivider& divider);
@@ -33,6 +34,7 @@ struct inventory : slotContainer, IDestructable
 	//for armor slots, it'll only return true if it's the right armor piece
 	virtual bool canAddStack(uiSlotContainer* containerToAddTo, cveci2& position, itemStack& s);
 	virtual bool addStack(uiSlotContainer* containerToAddTo, itemStack& s);
+	virtual void linkUp(struct inventoryForm* form);
 
 	uiSlotContainer* getSlotContainer(cveci2& mousePositionPixels, veci2& slotPosition);
 };

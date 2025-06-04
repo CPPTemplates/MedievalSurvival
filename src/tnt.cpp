@@ -42,5 +42,5 @@ void tnt::render(const gameRenderData& targetData) const
 void tnt::serializeMembers(nbtSerializer& s)
 {
 	entity::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"ticks until fuse"), ticksUntilFuse);
+	serializeNBTValue(s, std::wstring(L"ticks until fuse"), ticksUntilFuse);
 }

@@ -2,5 +2,5 @@
 #include "nbt/nbtSerializer.h"
 void slabData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"slab type"), type);
+	serializeNBTValue(s, std::wstring(L"slab type"), type);
 }

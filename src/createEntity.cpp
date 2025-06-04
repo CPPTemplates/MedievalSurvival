@@ -45,6 +45,7 @@
 #include "world.h"
 #include "blockParticle.h"
 #include "itemParticle.h"
+#include "Villager.h"
 
 entity* createEntity(const entityID& entityType)
 {
@@ -118,6 +119,8 @@ entity* createEntity(const entityID& entityType)
 		return new fireworkRocket();
 	case entityID::pollen:
 		return new pollen();
+	case entityID::villager:
+		return new Villager();
 	default:
 		if (isZombie(entityType))
 		{

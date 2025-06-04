@@ -27,7 +27,7 @@ void slime::updateBodyParts() const
 void slime::serializeMembers(nbtSerializer& s)
 {
 	mob::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"size"), size);
+	serializeNBTValue(s, std::wstring(L"size"), size);
 	if (!s.write)
 	{
 		resize();

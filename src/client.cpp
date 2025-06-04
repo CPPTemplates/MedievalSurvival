@@ -1,7 +1,7 @@
 #include "client.h"
 #include "array/arrayFunctions/sortedArray.h"
 #include "soundPacket.h"
-#include "soundCollection.h"
+#include "audioCollection.h"
 #include <memory>
 #include "mainMenu.h"
 #include "server.h"
@@ -180,12 +180,12 @@ bool client::connectToServer(const serverData& server)
 	nbtCompound authPacket = nbtCompound(L"auth");
 	nbtSerializer outSerializer = nbtSerializer(authPacket, true);
 	serializeNBTValue(outSerializer, L"uuid", data.id);
-	outSerializer.serializeMembers(L"name", data.name);
+	serializeNBTValue(outSerializer, L"name", data.name);
 	std::wstring osName = onAndroid ? L"Android" : onWindows ? L"Windows"
 		: onMac ? L"Mac"
 		: onLinux ? L"Linux"
 		: L"Other";
-	outSerializer.serializeMembers(L"OS", osName);
+	serializeNBTValue(outSerializer, L"OS", osName);
 	serializeNBTValue(outSerializer, L"screenSize", this->rect.size);
 	streamSerializer streamS = streamSerializer(s, true, std::endian::big);
 	authPacket.serialize(streamS);
@@ -210,7 +210,7 @@ void client::sendPacket(const texture& renderTarget)
 	if (socketWantsClipboardInput)
 	{
 		std::wstring clipboardString = sf::Clipboard::getString().toWideString();
-		outSerializer.serializeMembers(L"clipboard", clipboardString);
+		serializeNBTValue(outSerializer, L"clipboard", clipboardString);
 	}
 
 	streamSerializer streamS = streamSerializer(s, true, std::endian::big);
@@ -271,11 +271,11 @@ void client::processIncomingPackets(const texture& renderTarget)
 
 		if constexpr (onAndroid)
 		{
-			inSerializer->serializeMembers(L"wantsTextInput", socketWantsTextInput);
+			serializeNBTValue(*inSerializer, L"wantsTextInput", socketWantsTextInput);
 		}
-		inSerializer->serializeMembers(L"paste", socketWantsClipboardInput);
+		serializeNBTValue(*inSerializer, L"paste", socketWantsClipboardInput);
 		std::wstring copiedText;
-		if (inSerializer->serializeMembers(L"copy", copiedText))
+		if (serializeNBTValue(*inSerializer, L"copy", copiedText))
 		{
 			sf::Clipboard::setString(WStringToString(copiedText));
 		}
@@ -304,30 +304,15 @@ void client::processIncomingPackets(const texture& renderTarget)
 						StartSoundPacket* startPacket = (StartSoundPacket*)sp;
 						if (globalAudioCollectionList.contains(startPacket->key))
 						{
-							// we assume that the sound is a soundCollection, not a musicCollection
-							const soundCollection* collection = (soundCollection*)globalAudioCollectionList[startPacket->key];
-							// make sure that the sound index is in the right range.
-							// we might have added or removed sounds in the mean time
-							// by using %, we make every sound that sounds the same for other clients also sound the same for this client
-							startPacket->soundIndex = startPacket->soundIndex % (int)collection->audioToChooseFrom.size();
-
-							const std::shared_ptr<sf::SoundBuffer>& buffer = collection->audioToChooseFrom[startPacket->soundIndex];
-							if (!buffer)
-							{
-								handleError(L"audio not loaded properly");
-							}
-
-							std::shared_ptr<SoundReference<sound2d>> soundToPlay = startPacket->position.has_value() ?
-								std::make_shared<SoundReference<sound2d>>(buffer, *startPacket->position, startPacket->volume, startPacket->pitch, true, startPacket->shouldLoop) :
-								std::make_shared<SoundReference<sound2d>>(buffer, vec2(), startPacket->volume, startPacket->pitch, false, startPacket->shouldLoop);
-							soundToPlay->id = id;
-							handler.playAudio(soundToPlay);
+							// we assume that the sound is a audioCollection, not a audioCollection
+							const audioCollection* collection = globalAudioCollectionList[startPacket->key];
+							collection->playSoundToClient(*startPacket);
 						}
 					}
 					else {
-						csize_t& index = handler.currentlyPlayIngAudio.findFunction([id](const auto& ref) {return std::static_pointer_cast<SoundReference<sound2d>>(ref)->id == id; });
+						csize_t& index = handler.currentlyPlayIngAudio.findFunction([id](const auto& ref) {return std::static_pointer_cast<SoundReference<audio2d>>(ref)->id == id; });
 						if (index != std::wstring::npos) {
-							const std::shared_ptr< SoundReference<sound2d>>& ref = std::static_pointer_cast<SoundReference<sound2d>>(
+							const std::shared_ptr< SoundReference<audio2d>>& ref = std::static_pointer_cast<SoundReference<audio2d>>(
 								handler.currentlyPlayIngAudio[index]);
 							if (sp->type == SoundPacketType::stop) {
 								ref->stop();
@@ -356,14 +341,14 @@ void client::processIncomingPackets(const texture& renderTarget)
 		if (inSerializer->push(L"music"))
 		{
 			std::wstring newMusicKey;
-			if (inSerializer->serializeMembers(L"replace", newMusicKey))
+			if (serializeNBTValue(*inSerializer, L"replace", newMusicKey))
 			{
-				const musicCollection* collection = (musicCollection*)globalAudioCollectionList[newMusicKey];
+				const audioCollection* collection = (audioCollection*)globalAudioCollectionList[newMusicKey];
 				replaceMusic(collection);
 			}
-			else if (inSerializer->serializeMembers(L"prefer", newMusicKey))
+			else if (serializeNBTValue(*inSerializer, L"prefer", newMusicKey))
 			{
-				const musicCollection* collection = (musicCollection*)globalAudioCollectionList[newMusicKey];
+				const audioCollection* collection = (audioCollection*)globalAudioCollectionList[newMusicKey];
 				updateMusic(collection);
 			}
 		}

@@ -52,8 +52,8 @@ void sheep::serializeMembers(nbtSerializer& s)
 {
 	mob::serializeMembers(s);
 
-	s.serializeMembers(std::wstring(L"has wool"), hasWool);
-	s.serializeMembers(std::wstring(L"wool color"), woolColor);
+	serializeNBTValue(s, std::wstring(L"has wool"), hasWool);
+	serializeNBTValue(s, std::wstring(L"wool color"), woolColor);
 }
 void sheep::render(const gameRenderData& targetData) const
 {

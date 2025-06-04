@@ -57,6 +57,8 @@
 #include "saplingData.h"
 #include "trapDoorData.h"
 #include "leavesData.h"
+#include <ProfessionID.h>
+#include "LinkableBlockData.h"
 blockData* createBlockData(const blockID& block)
 {
 	if (block == blockID::spawner)
@@ -279,6 +281,9 @@ blockData* createBlockData(const blockID& block)
 	else if (hasAttachedBlockData(block))
 	{
 		return new attachedBlockData();
+	}
+	else if (isJobBlock(block)) {
+		return new LinkableBlockData();
 	}
 	return nullptr;
 }

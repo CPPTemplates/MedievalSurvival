@@ -1,6 +1,7 @@
 #include "animatedParticleData.h"
 #include "folderList.h"
 #include "resourcePack.h"
+#include <resourceLoader.h>
 animatedParticleData::animatedParticleData(const std::wstring& name) :INamable(name)
 {
 	size_t i = 0;

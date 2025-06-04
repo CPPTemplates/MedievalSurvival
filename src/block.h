@@ -5,7 +5,7 @@
 #include "math/graphics/resolutiontexture.h"
 #include "itemID.h"
 #include "levelID.h"
-#include "soundCollection.h"
+#include "audioCollection.h"
 #include "harvestType.h"
 #include "harvestTier.h"
 #include "collisionTypeID.h"
@@ -29,13 +29,13 @@ constexpr int noEmittance[(size_t)levelID::count]{
 struct block : INamable, IDestructable
 {
 	block(blockID identifier, fp hardness, fp blastResistance, cfp& weightPerCubicMeter, resolutionTexture* tex, std::wstring name,
-		std::shared_ptr<soundCollection> fallSound,
-		std::shared_ptr<soundCollection> stepSound,
-		std::shared_ptr<soundCollection> hitSound,
-		std::shared_ptr<soundCollection> breakSound,
-		std::shared_ptr<soundCollection> placeSound, cint(&filterStrength)[(size_t)levelID::count], std::vector<harvestTypeID> tools = { withHand }, harvestTierID itemTier = noHarvestTier, collisionTypeID collisiontype = collisionTypeID::willCollide,
+		std::shared_ptr<audioCollection> fallSound,
+		std::shared_ptr<audioCollection> stepSound,
+		std::shared_ptr<audioCollection> hitSound,
+		std::shared_ptr<audioCollection> breakSound,
+		std::shared_ptr<audioCollection> placeSound, cint(&filterStrength)[(size_t)levelID::count], std::vector<harvestTypeID> tools = { withHand }, harvestTierID itemTier = noHarvestTier, collisionTypeID collisiontype = collisionTypeID::willCollide,
 		cint& fireEncouragement = 0, cint& flammability = 0, cbool& canCatchFireFromLava = false,
-		cbool& canReplaceBlock = false, cint(&emittanceLevel)[(size_t)levelID::count] = noEmittance, const experienceDrop& experienceWhenBroken = experienceDrop(), std::shared_ptr<soundCollection> ambientSound = nullptr);
+		cbool& canReplaceBlock = false, cint(&emittanceLevel)[(size_t)levelID::count] = noEmittance, const experienceDrop& experienceWhenBroken = experienceDrop(), std::shared_ptr<audioCollection> ambientSound = nullptr);
 	blockID identifier;
 
 	// breaking data
@@ -65,13 +65,13 @@ struct block : INamable, IDestructable
 
 	// sound
 
-	std::shared_ptr<soundCollection> fallSound = nullptr;
-	std::shared_ptr<soundCollection> stepSound = nullptr;
-	std::shared_ptr<soundCollection> hitSound = nullptr;
-	std::shared_ptr<soundCollection> breakSound = nullptr;
-	std::shared_ptr<soundCollection> placeSound = nullptr;
+	std::shared_ptr<audioCollection> fallSound = nullptr;
+	std::shared_ptr<audioCollection> stepSound = nullptr;
+	std::shared_ptr<audioCollection> hitSound = nullptr;
+	std::shared_ptr<audioCollection> breakSound = nullptr;
+	std::shared_ptr<audioCollection> placeSound = nullptr;
 
-	std::shared_ptr<soundCollection> ambientSound = nullptr;
+	std::shared_ptr<audioCollection> ambientSound = nullptr;
 
 	bool canReplaceBlock = false; // whether you can place another block inside this block to replace it
 

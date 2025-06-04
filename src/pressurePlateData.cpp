@@ -40,7 +40,7 @@ bool pressurePlateData::tick(tickableBlockContainer *containerIn, cveci2 &positi
 
 void pressurePlateData::serializeMembers(nbtSerializer &s)
 {
-	s.serializeMembers(std::wstring(L"last update tick"), lastUpdateTick);
+	serializeNBTValue(s, std::wstring(L"last update tick"), lastUpdateTick);
 	if (lastUpdateTick != -1)
 	{
 		if (s.push<nbtDataTag::tagList>(std::wstring(L"entities")))

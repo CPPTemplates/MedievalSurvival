@@ -24,12 +24,11 @@
 #include "recipe.h"
 #include "entityData.h"
 #include "block.h"
-#include "musicCollection.h"
+#include "audioCollection.h"
 #include "fireworkShapeID.h"
 #include "netherVineTypeID.h"
 #include "textureList.h"
 #include "folderList.h"
-#include "soundCollection.h"
 #include "colors.h"
 #include "musicList.h"
 #include "soundList.h"
@@ -63,7 +62,7 @@
 #include "endCrystal.h"
 #include "pollen.h"
 #include "tag.h"
-#include "mobList.h"
+
 #include "lootTable.h"
 #include "idConverter.h"
 #include "jigsawPool.h"
@@ -117,6 +116,7 @@
 #include "include/math/graphics/brush/brushes/solidColorBrush.h"
 #include "include/math/graphics/graphicsFunctions.h"
 #include "resourceLoader.h"
+#include <Trades.h>
 
 minecraftFont* currentMinecraftFont = nullptr;
 fontFamily* currentMinecraftFontFamily = nullptr;
@@ -237,7 +237,7 @@ resolutionTexture* loadRotatedTexture(const stdPath& path, cvec2& defaultSize, c
 
 static resolutionTexture* loadDragonEggTexture()
 {
-	resolutionTexture* dragonEggSurfaceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dragon_egg.png"));
+	resolutionTexture* dragonEggSurfaceTexture = loadTextureFromResourcePack(blockTextureFolder / L"dragon_egg.png");
 	// resolutionTexture *dragonEggGraphics = new resolutionTexture(texture(cvect2<fsize_t>(dragonEggSurfaceTexture->scaledTextures[0]->size)), cvec2(blockTextureSize));
 	//  fill oval which is cut off at the bottom
 
@@ -293,30 +293,7 @@ resolutionTexture* loadTexture(stdPath path, cvec2& defaultSize, cbool& addToTex
 	}
 	return result;
 }
-std::vector<stdPath> getResourceLocations(const stdPath& relativePath)
-{
-	std::vector<stdPath> foundLocations = std::vector<stdPath>();
-	for (const stdPath& resourcePackPath : resourcePackPaths)
-	{
-		const stdPath currentPath = resourcePackPath / relativePath;
-		if (std::filesystem::exists(currentPath))
-		{
-			foundLocations.push_back(currentPath);
-		}
-	}
-	return foundLocations;
-}
-bool getLastResourceLocation(const stdPath& relativePath, stdPath& result)
-{
-	const auto& locations = getResourceLocations(relativePath);
 
-	if (locations.size())
-	{
-		result = locations[locations.size() - 1];
-	}
-	// handleCrash(relativePath.wstring() + std::wstring(L" not found in any of the resource packs. working directory: ") + workingDirectory.wstring());
-	return locations.size();
-}
 static void loadDataLists()
 {
 	enchantmentDataList = idList<enchantmentData*, enchantmentID>(fastList<enchantmentData*>((int)enchantmentID::count));
@@ -775,31 +752,30 @@ static void addFuelProperties() {
 
 static void loadMusic()
 {
-	mainMenuBackgroundMusic = std::make_shared<musicCollection>(menuMusicFolder / L"menu");
-	overWorldBackgroundMusic = std::make_shared<musicCollection>(gameMusicFolder / L"calm");
+	mainMenuBackgroundMusic = std::make_shared<audioCollection>(menuMusicFolder / L"menu", music);
+	overWorldBackgroundMusic = std::make_shared<audioCollection>(gameMusicFolder / L"calm", music);
 	overWorldBackgroundMusic->addAudioFileName(gameMusicFolder / L"hal");
 	overWorldBackgroundMusic->addAudioFileName(gameMusicFolder / L"hal");
 	overWorldBackgroundMusic->addAudioFileName(gameMusicFolder / L"nuance");
 	overWorldBackgroundMusic->addAudioFileName(gameMusicFolder / L"piano");
-	netherMusic = std::make_shared<musicCollection>(netherMusicFolder / L"nether");
-	endMusic = std::make_shared<musicCollection>(endMusicFolder / L"end");
-	bossMusic = std::make_shared<musicCollection>(endMusicFolder / L"boss");
-	creditsMusic = std::make_shared<musicCollection>(endMusicFolder / L"credits");
-	creativeModeMusic = std::make_shared<musicCollection>(creativeModeMusicFolder / L"creative");
-	crimsonForestMusic = std::make_shared<musicCollection>(netherMusicFolder / L"crimson_forest" / L"chrysopoeia");
-	netherWastesMusic = std::make_shared<musicCollection>(netherMusicFolder / L"nether_wastes" / L"rubedo");
-	soulSandValleyMusic = std::make_shared<musicCollection>(netherMusicFolder / L"soulsand_valley" / L"so_below");
-	crimsonForestMusic->addMusic(netherMusic);
-	netherWastesMusic->addMusic(netherMusic);
-	soulSandValleyMusic->addMusic(netherMusic);
+	netherMusic = std::make_shared<audioCollection>(netherMusicFolder / L"nether", music);
+	endMusic = std::make_shared<audioCollection>(endMusicFolder / L"end", music);
+	bossMusic = std::make_shared<audioCollection>(endMusicFolder / L"boss", music);
+	creditsMusic = std::make_shared<audioCollection>(endMusicFolder / L"credits", music);
+	creativeModeMusic = std::make_shared<audioCollection>(creativeModeMusicFolder / L"creative", music);
+	crimsonForestMusic = std::make_shared<audioCollection>(netherMusicFolder / L"crimson_forest" / L"chrysopoeia", music);
+	netherWastesMusic = std::make_shared<audioCollection>(netherMusicFolder / L"nether_wastes" / L"rubedo", music);
+	soulSandValleyMusic = std::make_shared<audioCollection>(netherMusicFolder / L"soulsand_valley" / L"so_below", music);
+	crimsonForestMusic->addCollection(*netherMusic);
+	netherWastesMusic->addCollection(*netherMusic);
+	soulSandValleyMusic->addCollection(*netherMusic);
 
-	recordsMusic = std::make_shared<musicCollection>();
-	for (int i = 0; i < musicDiscTypeCount; i++)
+	for (size_t i = 0; i < musicDiscTypeCount; i++)
 	{
-		recordsMusic->addAudioFile(recordsMusicFolder / (musicDiscNames[i] + std::wstring(L".ogg")));
+		recordsMusic[i] = std::make_shared<audioCollection>(recordsMusicFolder / (musicDiscNames[i]), music);
 	}
-	waterMusic = std::make_shared<musicCollection>(waterMusicFolder / L"axolotl");
-	waterMusic->addAudioFileName(waterMusicFolder / std::wstring(L"dragon_fish"));
+	waterMusic = std::make_shared<audioCollection>(waterMusicFolder / L"axolotl", music);
+	waterMusic->addAudioFileName(waterMusicFolder / L"dragon_fish");
 	waterMusic->addAudioFileName(waterMusicFolder / L"shuniji");
 }
 static void loadTags()
@@ -1002,170 +978,172 @@ static void loadBlockPowerProperties()
 
 static void loadBlocks()
 {
-	std::shared_ptr<soundCollection> digGrass = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"grass");
-	std::shared_ptr<soundCollection> stepGrass = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"grass");
-	std::shared_ptr<soundCollection> digStone = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"stone");
-	std::shared_ptr<soundCollection> stepStone = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"stone");
-	std::shared_ptr<soundCollection> digWood = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"wood");
-	std::shared_ptr<soundCollection> stepWood = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"wood");
+	std::shared_ptr<audioCollection> digGrass = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"grass", AudioType::sound);
+	std::shared_ptr<audioCollection> stepGrass = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"grass", AudioType::sound);
+	std::shared_ptr<audioCollection> digStone = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"stone", AudioType::sound);
+	std::shared_ptr<audioCollection> stepStone = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"stone", AudioType::sound);
+	std::shared_ptr<audioCollection> digWood = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"wood", AudioType::sound);
+	std::shared_ptr<audioCollection> stepWood = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"wood", AudioType::sound);
 
-	std::shared_ptr<soundCollection> stepStem = std::make_shared<soundCollection>(blockSoundFolder / L"stem" / L"step");
-	std::shared_ptr<soundCollection> breakStem = std::make_shared<soundCollection>(blockSoundFolder / L"stem" / L"break");
+	std::shared_ptr<audioCollection> stepStem = std::make_shared<audioCollection>(blockSoundFolder / L"stem" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakStem = std::make_shared<audioCollection>(blockSoundFolder / L"stem" / L"break", AudioType::sound);
 
-	std::shared_ptr<soundCollection> digGravel = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"gravel");
-	std::shared_ptr<soundCollection> stepGravel = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"gravel");
-	std::shared_ptr<soundCollection> digSand = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"sand");
-	std::shared_ptr<soundCollection> stepSand = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"sand");
-	std::shared_ptr<soundCollection> breakSoulSand = std::make_shared<soundCollection>(blockSoundFolder / L"soul_sand" / L"break");
-	std::shared_ptr<soundCollection> stepSoulSand = std::make_shared<soundCollection>(blockSoundFolder / L"soul_sand" / L"step");
-	std::shared_ptr<soundCollection> breakGlass = std::make_shared<soundCollection>(generalSoundFolder / L"random" / L"glass");
-	std::shared_ptr<soundCollection> stepCloth = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"cloth");
-	std::shared_ptr<soundCollection> breakCrop = std::make_shared<soundCollection>(generalSoundFolder / L"item" / L"plant" / L"crop");
-	std::shared_ptr<soundCollection> stepLadder = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"ladder");
-	std::shared_ptr<soundCollection> stepSnow = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"snow");
-	std::shared_ptr<soundCollection> placeLantern = std::make_shared<soundCollection>(blockSoundFolder / L"lantern" / L"place");
-	std::shared_ptr<soundCollection> breakLantern = std::make_shared<soundCollection>(blockSoundFolder / L"lantern" / L"break");
-	std::shared_ptr<soundCollection> digWetGrass = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"wet_grass");
-	std::shared_ptr<soundCollection> stepWetGrass = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"wet_grass");
-	std::shared_ptr<soundCollection> stepNetherrack = std::make_shared<soundCollection>(blockSoundFolder / L"netherrack" / L"step");
-	std::shared_ptr<soundCollection> digNetherrack = std::make_shared<soundCollection>(blockSoundFolder / L"netherrack" / L"break");
-	std::shared_ptr<soundCollection> stepNylium = std::make_shared<soundCollection>(blockSoundFolder / L"nylium" / L"step");
-	std::shared_ptr<soundCollection> digNylium = std::make_shared<soundCollection>(blockSoundFolder / L"nylium" / L"break");
-	std::shared_ptr<soundCollection> stepShroomLight = std::make_shared<soundCollection>(blockSoundFolder / L"shroomlight" / L"step");
-	std::shared_ptr<soundCollection> digShroomLight = std::make_shared<soundCollection>(blockSoundFolder / L"shroomlight" / L"break");
-	std::shared_ptr<soundCollection> stepNetherBrick = std::make_shared<soundCollection>(blockSoundFolder / L"nether_bricks" / L"step");
-	std::shared_ptr<soundCollection> digNetherBrick = std::make_shared<soundCollection>(blockSoundFolder / L"nether_bricks" / L"break");
-	std::shared_ptr<soundCollection> breakFungus = std::make_shared<soundCollection>(blockSoundFolder / L"fungus" / L"break");
-	std::shared_ptr<soundCollection> stepNetherWart = std::make_shared<soundCollection>(blockSoundFolder / L"netherwart" / L"step");
-	std::shared_ptr<soundCollection> breakNetherWart = std::make_shared<soundCollection>(blockSoundFolder / L"netherwart" / L"break");
-	std::shared_ptr<soundCollection> stepBone = std::make_shared<soundCollection>(blockSoundFolder / L"bone_block" / L"step");
-	std::shared_ptr<soundCollection> digBone = std::make_shared<soundCollection>(blockSoundFolder / L"bone_block" / L"break");
-	std::shared_ptr<soundCollection> breakAncientDebris = std::make_shared<soundCollection>(blockSoundFolder / L"ancient_debris" / L"break");
-	std::shared_ptr<soundCollection> placeBerryBush = std::make_shared<soundCollection>(blockSoundFolder / L"sweet_berry_bush" / L"place");
-	std::shared_ptr<soundCollection> breakBerryBush = std::make_shared<soundCollection>(blockSoundFolder / L"sweet_berry_bush" / L"break");
-	std::shared_ptr<soundCollection> stepHoney = std::make_shared<soundCollection>(blockSoundFolder / L"honeyblock" / L"step");
-	std::shared_ptr<soundCollection> breakHoney = std::make_shared<soundCollection>(blockSoundFolder / L"honeyblock" / L"break");
-	std::shared_ptr<soundCollection> stepScaffolding = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"scaffold");
-	std::shared_ptr<soundCollection> placeScaffolding = std::make_shared<soundCollection>(blockSoundFolder / L"scaffold" / L"place");
-	std::shared_ptr<soundCollection> stepChain = std::make_shared<soundCollection>(blockSoundFolder / L"chain" / L"step");
-	std::shared_ptr<soundCollection> breakChain = std::make_shared<soundCollection>(blockSoundFolder / L"chain" / L"break");
-	std::shared_ptr<soundCollection> stepCoral = std::make_shared<soundCollection>(generalSoundFolder / L"step" / L"coral");
-	std::shared_ptr<soundCollection> breakCoral = std::make_shared<soundCollection>(generalSoundFolder / L"dig" / L"coral");
-	std::shared_ptr<soundCollection> stepRoots = std::make_shared<soundCollection>(blockSoundFolder / L"roots" / L"step");
-	std::shared_ptr<soundCollection> breakRoots = std::make_shared<soundCollection>(blockSoundFolder / L"roots" / L"break");
+	std::shared_ptr<audioCollection> digGravel = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"gravel", AudioType::sound);
+	std::shared_ptr<audioCollection> stepGravel = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"gravel", AudioType::sound);
+	std::shared_ptr<audioCollection> digSand = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"sand", AudioType::sound);
+	std::shared_ptr<audioCollection> stepSand = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"sand", AudioType::sound);
+	std::shared_ptr<audioCollection> breakSoulSand = std::make_shared<audioCollection>(blockSoundFolder / L"soul_sand" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepSoulSand = std::make_shared<audioCollection>(blockSoundFolder / L"soul_sand" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakGlass = std::make_shared<audioCollection>(generalSoundFolder / L"random" / L"glass", AudioType::sound);
+	std::shared_ptr<audioCollection> stepCloth = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"cloth", AudioType::sound);
+	std::shared_ptr<audioCollection> breakCrop = std::make_shared<audioCollection>(generalSoundFolder / L"item" / L"plant" / L"crop", AudioType::sound);
+	std::shared_ptr<audioCollection> stepLadder = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"ladder", AudioType::sound);
+	std::shared_ptr<audioCollection> stepSnow = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"snow", AudioType::sound);
+	std::shared_ptr<audioCollection> placeLantern = std::make_shared<audioCollection>(blockSoundFolder / L"lantern" / L"place", AudioType::sound);
+	std::shared_ptr<audioCollection> breakLantern = std::make_shared<audioCollection>(blockSoundFolder / L"lantern" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> digWetGrass = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"wet_grass", AudioType::sound);
+	std::shared_ptr<audioCollection> stepWetGrass = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"wet_grass", AudioType::sound);
+	std::shared_ptr<audioCollection> stepNetherrack = std::make_shared<audioCollection>(blockSoundFolder / L"netherrack" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> digNetherrack = std::make_shared<audioCollection>(blockSoundFolder / L"netherrack" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepNylium = std::make_shared<audioCollection>(blockSoundFolder / L"nylium" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> digNylium = std::make_shared<audioCollection>(blockSoundFolder / L"nylium" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepShroomLight = std::make_shared<audioCollection>(blockSoundFolder / L"shroomlight" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> digShroomLight = std::make_shared<audioCollection>(blockSoundFolder / L"shroomlight" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepNetherBrick = std::make_shared<audioCollection>(blockSoundFolder / L"nether_bricks" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> digNetherBrick = std::make_shared<audioCollection>(blockSoundFolder / L"nether_bricks" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> breakFungus = std::make_shared<audioCollection>(blockSoundFolder / L"fungus" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepNetherWart = std::make_shared<audioCollection>(blockSoundFolder / L"netherwart" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakNetherWart = std::make_shared<audioCollection>(blockSoundFolder / L"netherwart" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepBone = std::make_shared<audioCollection>(blockSoundFolder / L"bone_block" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> digBone = std::make_shared<audioCollection>(blockSoundFolder / L"bone_block" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> breakAncientDebris = std::make_shared<audioCollection>(blockSoundFolder / L"ancient_debris" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> placeBerryBush = std::make_shared<audioCollection>(blockSoundFolder / L"sweet_berry_bush" / L"place", AudioType::sound);
+	std::shared_ptr<audioCollection> breakBerryBush = std::make_shared<audioCollection>(blockSoundFolder / L"sweet_berry_bush" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepHoney = std::make_shared<audioCollection>(blockSoundFolder / L"honeyblock" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakHoney = std::make_shared<audioCollection>(blockSoundFolder / L"honeyblock" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepScaffolding = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"scaffold", AudioType::sound);
+	std::shared_ptr<audioCollection> placeScaffolding = std::make_shared<audioCollection>(blockSoundFolder / L"scaffold" / L"place", AudioType::sound);
+	std::shared_ptr<audioCollection> stepChain = std::make_shared<audioCollection>(blockSoundFolder / L"chain" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakChain = std::make_shared<audioCollection>(blockSoundFolder / L"chain" / L"break", AudioType::sound);
+	std::shared_ptr<audioCollection> stepCoral = std::make_shared<audioCollection>(generalSoundFolder / L"step" / L"coral", AudioType::sound);
+	std::shared_ptr<audioCollection> breakCoral = std::make_shared<audioCollection>(generalSoundFolder / L"dig" / L"coral", AudioType::sound);
+	std::shared_ptr<audioCollection> stepRoots = std::make_shared<audioCollection>(blockSoundFolder / L"roots" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakRoots = std::make_shared<audioCollection>(blockSoundFolder / L"roots" / L"break", AudioType::sound);
 
-	std::shared_ptr<soundCollection> stepBamboo = std::make_shared<soundCollection>(blockSoundFolder / L"bamboo" / L"step");
-	std::shared_ptr<soundCollection> placeBamboo = std::make_shared<soundCollection>(blockSoundFolder / L"bamboo" / L"place");
-	std::shared_ptr<soundCollection> hitBambooSapling = std::make_shared<soundCollection>(blockSoundFolder / L"bamboo" / L"sapling_hit");
-	std::shared_ptr<soundCollection> placeBambooSapling = std::make_shared<soundCollection>(blockSoundFolder / L"bamboo" / L"sapling_place");
+	std::shared_ptr<audioCollection> stepBamboo = std::make_shared<audioCollection>(blockSoundFolder / L"bamboo" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> placeBamboo = std::make_shared<audioCollection>(blockSoundFolder / L"bamboo" / L"place", AudioType::sound);
+	std::shared_ptr<audioCollection> hitBambooSapling = std::make_shared<audioCollection>(blockSoundFolder / L"bamboo" / L"sapling_hit", AudioType::sound);
+	std::shared_ptr<audioCollection> placeBambooSapling = std::make_shared<audioCollection>(blockSoundFolder / L"bamboo" / L"sapling_place", AudioType::sound);
 
-	std::shared_ptr<soundCollection> stepSoulSoil = std::make_shared<soundCollection>(blockSoundFolder / L"soul_soil" / L"step");
-	std::shared_ptr<soundCollection> breakSoulSoil = std::make_shared<soundCollection>(blockSoundFolder / L"soul_soil" / L"break");
+	std::shared_ptr<audioCollection> stepSoulSoil = std::make_shared<audioCollection>(blockSoundFolder / L"soul_soil" / L"step", AudioType::sound);
+	std::shared_ptr<audioCollection> breakSoulSoil = std::make_shared<audioCollection>(blockSoundFolder / L"soul_soil" / L"break", AudioType::sound);
 
-	noteSounds = std::make_shared<soundCollection>();
 	for (int i = 0; i < (int)noteTypeID::count; i++)
 	{
-		stdPath noteSoundPath;
-		if (getLastResourceLocation(noteSoundFolder / (noteDataList[i]->name + std::wstring(L".ogg")), noteSoundPath))
-			noteSounds->addAudioFile(noteSoundPath);
+		noteSounds[i] = std::make_shared<audioCollection>(noteSoundFolder / noteDataList[i]->name, AudioType::sound);
 	}
 
-	popSound = std::make_shared<soundCollection>(generalSoundFolder / L"random" / L"pop");
-	experienceSound = std::make_shared<soundCollection>(generalSoundFolder / L"random" / L"orb");
-	levelUpSound = std::make_shared<soundCollection>(generalSoundFolder / L"random" / L"levelup");
+	popSound = std::make_shared<audioCollection>(generalSoundFolder / L"random" / L"pop", AudioType::sound);
+	experienceSound = std::make_shared<audioCollection>(generalSoundFolder / L"random" / L"orb", AudioType::sound);
+	levelUpSound = std::make_shared<audioCollection>(generalSoundFolder / L"random" / L"levelup", AudioType::sound);
 
-	chestOpenSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"chestopen");
-	chestCloseSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"chestclosed");
+	chestOpenSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"chestopen", AudioType::sound);
+	chestCloseSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"chestclosed", AudioType::sound);
 
-	enderChestOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"enderchest" / L"open");
-	enderChestCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"enderchest" / L"close");
+	enderChestOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"enderchest" / L"open", AudioType::sound);
+	enderChestCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"enderchest" / L"close", AudioType::sound);
 
-	barrelOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"barrel" / L"open");
-	barrelCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"barrel" / L"close");
+	barrelOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"barrel" / L"open", AudioType::sound);
+	barrelCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"barrel" / L"close", AudioType::sound);
 
-	stripLogSound = std::make_shared<soundCollection>(itemSoundFolder / L"axe" / L"strip");
-	tillSound = std::make_shared<soundCollection>(itemSoundFolder / L"hoe" / L"till");
-	eatSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"eat");
-	burpSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"burp");
-	waterBucketFillSound = std::make_shared<soundCollection>(itemSoundFolder / L"bucket" / L"fill");
-	lavaBucketFillSound = std::make_shared<soundCollection>(itemSoundFolder / L"bucket" / L"fill_lava");
-	waterBucketEmptySound = std::make_shared<soundCollection>(itemSoundFolder / L"bucket" / L"empty");
-	lavaBucketEmptySound = std::make_shared<soundCollection>(itemSoundFolder / L"bucket" / L"empty_lava");
-	milkSound = std::make_shared<soundCollection>(entitySoundFolder / L"cow" / L"milk");
-	waterPaddleSound = std::make_shared<soundCollection>(entitySoundFolder / L"boat" / L"paddle_water");
-	weakAttackSound = std::make_shared<soundCollection>(entitySoundFolder / L"player" / L"attack" / L"weak");
-	strongAttackSound = std::make_shared<soundCollection>(entitySoundFolder / L"player" / L"attack" / L"strong");
-	criticalAttackSound = std::make_shared<soundCollection>(entitySoundFolder / L"player" / L"attack" / L"crit");
-	enchantSound = std::make_shared<soundCollection>(blockSoundFolder / L"enchantment_table" / L"enchant");
-	equipSound = std::make_shared<soundCollection>(itemSoundFolder / L"armor" / L"equip_generic");
+	stripLogSound = std::make_shared<audioCollection>(itemSoundFolder / L"axe" / L"strip", AudioType::sound);
+	tillSound = std::make_shared<audioCollection>(itemSoundFolder / L"hoe" / L"till", AudioType::sound);
+	eatSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"eat", AudioType::sound);
+	burpSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"burp", AudioType::sound);
+	waterBucketFillSound = std::make_shared<audioCollection>(itemSoundFolder / L"bucket" / L"fill", AudioType::sound);
+	lavaBucketFillSound = std::make_shared<audioCollection>(itemSoundFolder / L"bucket" / L"fill_lava", AudioType::sound);
+	waterBucketEmptySound = std::make_shared<audioCollection>(itemSoundFolder / L"bucket" / L"empty", AudioType::sound);
+	lavaBucketEmptySound = std::make_shared<audioCollection>(itemSoundFolder / L"bucket" / L"empty_lava", AudioType::sound);
+	milkSound = std::make_shared<audioCollection>(entitySoundFolder / L"cow" / L"milk", AudioType::sound);
+	waterPaddleSound = std::make_shared<audioCollection>(entitySoundFolder / L"boat" / L"paddle_water", AudioType::sound);
+	weakAttackSound = std::make_shared<audioCollection>(entitySoundFolder / L"player" / L"attack" / L"weak", AudioType::sound);
+	strongAttackSound = std::make_shared<audioCollection>(entitySoundFolder / L"player" / L"attack" / L"strong", AudioType::sound);
+	criticalAttackSound = std::make_shared<audioCollection>(entitySoundFolder / L"player" / L"attack" / L"crit", AudioType::sound);
+	enchantSound = std::make_shared<audioCollection>(blockSoundFolder / L"enchantment_table" / L"enchant", AudioType::sound);
+	equipSound = std::make_shared<audioCollection>(itemSoundFolder / L"armor" / L"equip_generic", AudioType::sound);
 
-	woodenDoorOpenSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / std::wstring(L"door_open"));
-	woodenDoorCloseSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / std::wstring(L"door_close"));
+	woodenDoorOpenSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"door_open", AudioType::sound);
+	woodenDoorCloseSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"door_close", AudioType::sound);
 
-	ironDoorOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"iron_door" / L"open");
-	ironDoorCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"iron_door" / L"close");
+	ironDoorOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"iron_door" / L"open", AudioType::sound);
+	ironDoorCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"iron_door" / L"close", AudioType::sound);
 
-	fenceGateOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"fence_gate" / L"open");
-	fenceGateCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"fence_gate" / L"close");
+	fenceGateOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"fence_gate" / L"open", AudioType::sound);
+	fenceGateCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"fence_gate" / L"close", AudioType::sound);
 
-	woodenTrapDoorOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"wooden_trapdoor" / L"open");
-	woodenTrapDoorCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"wooden_trapdoor" / L"close");
+	woodenTrapDoorOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"wooden_trapdoor" / L"open", AudioType::sound);
+	woodenTrapDoorCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"wooden_trapdoor" / L"close", AudioType::sound);
 
-	ironTrapDoorOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"iron_trapdoor" / L"open");
-	ironTrapDoorCloseSound = std::make_shared<soundCollection>(blockSoundFolder / L"iron_trapdoor" / L"close");
+	ironTrapDoorOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"iron_trapdoor" / L"open", AudioType::sound);
+	ironTrapDoorCloseSound = std::make_shared<audioCollection>(blockSoundFolder / L"iron_trapdoor" / L"close", AudioType::sound);
 
-	flintAndSteelSound = std::make_shared<soundCollection>(generalSoundFolder / L"fire" / L"ignite");
-	extinguishSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"fizz");
-	sheepShearingSound = std::make_shared<soundCollection>(mobSoundFolder / L"sheep" / L"shear");
-	burningDamageSound = std::make_shared<soundCollection>(entitySoundFolder / L"player" / L"hurt" / L"fire_hurt");
-	portalDepartSound = std::make_shared<soundCollection>(generalSoundFolder / L"portal" / L"trigger");
-	portalArriveSound = std::make_shared<soundCollection>(generalSoundFolder / L"portal" / L"travel");
-	teleportFromSound = std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"portal");
-	teleportToSound = std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"portal2");
-	shootSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"bow");
-	eyeOfEnderLaunchSound = std::make_shared<soundCollection>(entitySoundFolder / L"endereye" / L"endereye_launch");
-	eyeOfEnderDropSound = std::make_shared<soundCollection>(entitySoundFolder / L"endereye" / L"dead");
-	eyeOfEnderPlaceSound = std::make_shared<soundCollection>(blockSoundFolder / L"end_portal" / L"eyeplace");
-	endPortalOpenSound = std::make_shared<soundCollection>(blockSoundFolder / L"end_portal" / L"endportal");
-	fuseSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"fuse");
-	explosionSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"explode");
+	flintAndSteelSound = std::make_shared<audioCollection>(generalSoundFolder / L"fire" / L"ignite", AudioType::sound);
+	extinguishSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"fizz", AudioType::sound);
+	sheepShearingSound = std::make_shared<audioCollection>(mobSoundFolder / L"sheep" / L"shear", AudioType::sound);
+	burningDamageSound = std::make_shared<audioCollection>(entitySoundFolder / L"player" / L"hurt" / L"fire_hurt", AudioType::sound);
+	portalDepartSound = std::make_shared<audioCollection>(generalSoundFolder / L"portal" / L"trigger", AudioType::sound);
+	portalArriveSound = std::make_shared<audioCollection>(generalSoundFolder / L"portal" / L"travel", AudioType::sound);
+	teleportFromSound = std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"portal", AudioType::sound);
+	teleportToSound = std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"portal2", AudioType::sound);
+	shootSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"bow", AudioType::sound);
+	eyeOfEnderLaunchSound = std::make_shared<audioCollection>(entitySoundFolder / L"endereye" / L"endereye_launch", AudioType::sound);
+	eyeOfEnderDropSound = std::make_shared<audioCollection>(entitySoundFolder / L"endereye" / L"dead", AudioType::sound);
+	eyeOfEnderPlaceSound = std::make_shared<audioCollection>(blockSoundFolder / L"end_portal" / L"eyeplace", AudioType::sound);
+	endPortalOpenSound = std::make_shared<audioCollection>(blockSoundFolder / L"end_portal" / L"endportal", AudioType::sound);
+	fuseSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"fuse", AudioType::sound);
+	explosionSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"explode", AudioType::sound);
 
 	// ender dragon
-	enderDragonWingsSound = std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"wings");
-	enderDragonDeathSound = std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"end");
+	enderDragonWingsSound = std::make_shared<audioCollection>(mobSoundFolder / L"enderdragon" / L"wings", AudioType::sound);
+	enderDragonDeathSound = std::make_shared<audioCollection>(mobSoundFolder / L"enderdragon" / L"end", AudioType::sound);
 
 	// ghast
-	fireBallShootSound = std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"fireball4");
-	ghastWarningSound = std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"charge");
+	fireBallShootSound = std::make_shared<audioCollection>(mobSoundFolder / L"ghast" / L"fireball4", AudioType::sound);
+	ghastWarningSound = std::make_shared<audioCollection>(mobSoundFolder / L"ghast" / L"charge", AudioType::sound);
 
 	// enderman
-	endermanStareSound = std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"stare");
-	endermanScreamSound = std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"stare");
+	endermanStareSound = std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"stare", AudioType::sound);
+	endermanScreamSound = std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"stare", AudioType::sound);
 
-	fireSound = std::make_shared<soundCollection>(generalSoundFolder / L"fire" / L"fire");
-	brewingFinishSound = std::make_shared<soundCollection>(blockSoundFolder / L"brewing_stand" / L"brew");
-	bowHitSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"bowhit");
-	clickSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"click");
-	pistonExtendSound = std::make_shared<soundCollection>(tileSoundFolder / L"piston" / L"out");
-	pistonRetractSound = std::make_shared<soundCollection>(tileSoundFolder / L"piston" / L"in");
-	pumpkinCarveSound = std::make_shared<soundCollection>(blockSoundFolder / L"pumpkin" / L"carve");
-	toolBreakSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"break");
-	smithingTableUseSound = std::make_shared<soundCollection>(blockSoundFolder / L"smithing_table" / L"smithing_table");
-	anvilUseSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / std::wstring(L"anvil_use"));
-	anvilLandSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / std::wstring(L"anvil_land"));
-	anvilBreakSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / std::wstring(L"anvil_break"));
+	//villager
+	villagerNoSound = std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"no", AudioType::sound);
+	villagerYesSound = std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"yes", AudioType::sound);
+	villagerHaggleSound = std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"haggle", AudioType::sound);
 
-	smallSlimeSound = std::make_shared<soundCollection>(mobSoundFolder / L"slime" / L"small");
-	bigSlimeSound = std::make_shared<soundCollection>(mobSoundFolder / L"slime" / L"big");
-	slimeAttackSound = std::make_shared<soundCollection>(mobSoundFolder / L"slime" / L"attack");
+	fireSound = std::make_shared<audioCollection>(generalSoundFolder / L"fire" / L"fire", AudioType::sound);
+	brewingFinishSound = std::make_shared<audioCollection>(blockSoundFolder / L"brewing_stand" / L"brew", AudioType::sound);
+	bowHitSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"bowhit", AudioType::sound);
+	clickSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"click", AudioType::sound);
+	pistonExtendSound = std::make_shared<audioCollection>(tileSoundFolder / L"piston" / L"out", AudioType::sound);
+	pistonRetractSound = std::make_shared<audioCollection>(tileSoundFolder / L"piston" / L"in", AudioType::sound);
+	pumpkinCarveSound = std::make_shared<audioCollection>(blockSoundFolder / L"pumpkin" / L"carve", AudioType::sound);
+	toolBreakSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"break", AudioType::sound);
+	smithingTableUseSound = std::make_shared<audioCollection>(blockSoundFolder / L"smithing_table" / L"smithing_table", AudioType::sound);
+	anvilUseSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"anvil_use", AudioType::sound);
+	anvilLandSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"anvil_land", AudioType::sound);
+	anvilBreakSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"anvil_break", AudioType::sound);
 
-	windSound = std::make_shared<soundCollection>(weatherSoundFolder / L"wind");
+	smallSlimeSound = std::make_shared<audioCollection>(mobSoundFolder / L"slime" / L"small", AudioType::sound);
+	bigSlimeSound = std::make_shared<audioCollection>(mobSoundFolder / L"slime" / L"big", AudioType::sound);
+	slimeAttackSound = std::make_shared<audioCollection>(mobSoundFolder / L"slime" / L"attack", AudioType::sound);
 
-	drinkingSound = std::make_shared<soundCollection>(miscellaneousSoundFolder / L"drink");
-	honeyDrinkingSound = std::make_shared<soundCollection>(itemSoundFolder / L"bottle" / L"drink_honey");
-	bottleFillSound = std::make_shared<soundCollection>(itemSoundFolder / L"bottle" / L"fill");
-	bottleEmptySound = std::make_shared<soundCollection>(itemSoundFolder / L"bottle" / L"empty");
-	bottleFillDragonBreathSound = std::make_shared<soundCollection>(itemSoundFolder / L"bottle" / L"fill_dragonbreath");
+	windSound = std::make_shared<audioCollection>(weatherSoundFolder / L"wind", AudioType::sound);
+
+	drinkingSound = std::make_shared<audioCollection>(miscellaneousSoundFolder / L"drink", AudioType::sound);
+	honeyDrinkingSound = std::make_shared<audioCollection>(itemSoundFolder / L"bottle" / L"drink_honey", AudioType::sound);
+	bottleFillSound = std::make_shared<audioCollection>(itemSoundFolder / L"bottle" / L"fill", AudioType::sound);
+	bottleEmptySound = std::make_shared<audioCollection>(itemSoundFolder / L"bottle" / L"empty", AudioType::sound);
+	bottleFillDragonBreathSound = std::make_shared<audioCollection>(itemSoundFolder / L"bottle" / L"fill_dragonbreath", AudioType::sound);
 
 	// load blocks
 	blockList = idList<block*, blockID>(fastList<block*>(blockIDCount));
@@ -1174,22 +1152,22 @@ static void loadBlocks()
 
 	// beware that we are now creating a texture, and not an texture!
 
-	resolutionTexture* snowTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"snow.png"));
-	resolutionTexture* farmlandTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"farmland.png"));
+	resolutionTexture* snowTexture = loadTextureFromResourcePack(blockTextureFolder / L"snow.png");
+	resolutionTexture* farmlandTexture = loadTextureFromResourcePack(blockTextureFolder / L"farmland.png");
 	cfp farmlandPart = 0.75; // the part of the farmland that is not 'rotated' to the player
 
 	crectangle2 relativeDirtFarmlandRect = crectangle2(0, 0, 1, farmlandPart);
 
 	fillTransformedBrushRectangle(getAbsoluteRect(dirtTexture->getClientRect(), relativeDirtFarmlandRect), getAbsoluteRect(crectangle2(farmlandTexture->getClientRect()), relativeDirtFarmlandRect), *dirtTexture, *farmlandTexture);
 
-	resolutionTexture* unCroppedLanternTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lantern.png"));
+	resolutionTexture* unCroppedLanternTexture = loadTextureFromResourcePack(blockTextureFolder / L"lantern.png");
 	resolutionTexture* lanternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * unCroppedLanternTexture->getScaleModifier()))), cvec2(blockTextureSize));
 	crectangle2 lanternTextureRect = crectangle2(0, 39, 6, 9);
 	cvec2 lanternDrawOffset = cvec2((blockTextureSize - lanternTextureRect.w) * 0.5, 0);
 	fillTransformedBrushRectangle(lanternTextureRect, lanternDrawOffset, *unCroppedLanternTexture, *lanternGraphics);
-	auto tallGrassTopTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tall_grass_top.png"));
+	auto tallGrassTopTexture = loadTextureFromResourcePack(blockTextureFolder / L"tall_grass_top.png");
 
-	auto largeFernTopTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"large_fern_top.png"));
+	auto largeFernTopTexture = loadTextureFromResourcePack(blockTextureFolder / L"large_fern_top.png");
 
 	// auto brewingStandItemTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 	// cbool hasBottle[brewingStandPotionCapacity]
@@ -1200,7 +1178,7 @@ static void loadBlocks()
 	// };
 	// renderBrewingStand(crectangle2(blockTextureRect), hasBottle, *brewingStandItemTexture);
 
-	resolutionTexture* redStoneWireTopView = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_dust_line0.png"));
+	resolutionTexture* redStoneWireTopView = loadTextureFromResourcePack(blockTextureFolder / L"redstone_dust_line0.png");
 
 	resolutionTexture* redStoneWireTexture = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)blockTextureSize)), cvec2(blockTextureSize));
 
@@ -1250,9 +1228,9 @@ static void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, nullptr, std::wstring(L"air"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"structure_void.png")), std::wstring(L"structure_void"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"structure_void.png"), std::wstring(L"structure_void"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"barrier.png")), std::wstring(L"barrier"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, airWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"barrier.png"), std::wstring(L"barrier"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier);
 	identifier++;
 	cint waterLightRange = 0x20;
 
@@ -1367,8 +1345,8 @@ static void loadBlocks()
 		// ores
 		// const itemID oreDrop = (itemID)(smeltable[i] ? (int)oreBlockList[i] : ((int)itemID::coal + i));
 
-		std::shared_ptr<soundCollection> oreStepSound = nullptr;
-		std::shared_ptr<soundCollection> oreDigSound = nullptr;
+		std::shared_ptr<audioCollection> oreStepSound = nullptr;
+		std::shared_ptr<audioCollection> oreDigSound = nullptr;
 		if ((blockID)identifier == blockID::nether_gold_ore || (blockID)identifier == blockID::nether_quartz_ore)
 		{
 			oreStepSound = stepNetherrack;
@@ -1400,96 +1378,96 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 1.5, 6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"stone.png")), std::wstring(L"stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"stone.png"), std::wstring(L"stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cobblestone.png")), std::wstring(L"cobblestone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 2, 6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cobblestone.png"), std::wstring(L"cobblestone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"smooth_stone.png")), std::wstring(L"smooth_stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"smooth_stone.png"), std::wstring(L"smooth_stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"stone_bricks.png")), std::wstring(L"stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"stone_bricks.png"), std::wstring(L"stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chiseled_stone_bricks.png")), std::wstring(L"chiseled_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"end_stone.png")), std::wstring(L"end_stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"end_stone_bricks.png")), std::wstring(L"end_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"chiseled_stone_bricks.png"), std::wstring(L"chiseled_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 50, 1200, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"obsidian.png")), std::wstring(L"obsidian"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"end_stone.png"), std::wstring(L"end_stone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 50, 1200, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"crying_obsidian.png")), std::wstring(L"crying_obsidian"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bone_block_side.png")), std::wstring(L"bone_block"), stepBone, stepBone, stepBone, digBone, digBone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"end_stone_bricks.png"), std::wstring(L"end_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"netherrack.png")), std::wstring(L"netherrack"), stepNetherrack, stepNetherrack, stepNetherrack, digNetherrack, digNetherrack, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 50, 1200, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"obsidian.png"), std::wstring(L"obsidian"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 50, 1200, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"crying_obsidian.png"), std::wstring(L"crying_obsidian"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chiseled_quartz_block.png")), std::wstring(L"chiseled_quartz_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"quartz_pillar.png")), std::wstring(L"quartz_pillar"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"quartz_block_bottom.png")), std::wstring(L"smooth_quartz_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"quartz_bricks.png")), std::wstring(L"quartz_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"bone_block_side.png"), std::wstring(L"bone_block"), stepBone, stepBone, stepBone, digBone, digBone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"prismarine.png")), std::wstring(L"prismarine"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"prismarine_bricks.png")), std::wstring(L"prismarine_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dark_prismarine.png")), std::wstring(L"dark_prismarine"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"netherrack.png"), std::wstring(L"netherrack"), stepNetherrack, stepNetherrack, stepNetherrack, digNetherrack, digNetherrack, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 1.25, 1.25, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"basalt_side.png")), std::wstring(L"basalt"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"chiseled_quartz_block.png"), std::wstring(L"chiseled_quartz_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.25, 1.25, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"polished_basalt_side.png")), std::wstring(L"polished_basalt"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"quartz_pillar.png"), std::wstring(L"quartz_pillar"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"blackstone.png")), std::wstring(L"blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"quartz_block_bottom.png"), std::wstring(L"smooth_quartz_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"polished_blackstone.png")), std::wstring(L"polished_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chiseled_polished_blackstone.png")), std::wstring(L"chiseled_polished_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"gilded_blackstone.png")), std::wstring(L"gilded_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"quartz_bricks.png"), std::wstring(L"quartz_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"magma.png")), std::wstring(L"magma_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, glowingLightSource);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"prismarine.png"), std::wstring(L"prismarine"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 30, 30, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"ancient_debris_side.png")), std::wstring(L"ancient_debris"), breakAncientDebris, breakAncientDebris, breakAncientDebris, breakAncientDebris, breakAncientDebris, lightBlocking, { withPickaxe }, diamondHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"prismarine_bricks.png"), std::wstring(L"prismarine_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"polished_blackstone_bricks.png")), std::wstring(L"polished_blackstone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cracked_polished_blackstone_bricks.png")), std::wstring(L"cracked_polished_blackstone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"dark_prismarine.png"), std::wstring(L"dark_prismarine"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bricks.png")), std::wstring(L"bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.25, 1.25, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"basalt_side.png"), std::wstring(L"basalt"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 1.25, 1.25, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"polished_basalt_side.png"), std::wstring(L"polished_basalt"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"nether_bricks.png")), std::wstring(L"nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"blackstone.png"), std::wstring(L"blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"red_nether_bricks.png")), std::wstring(L"red_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"polished_blackstone.png"), std::wstring(L"polished_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cracked_nether_bricks.png")), std::wstring(L"cracked_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"chiseled_polished_blackstone.png"), std::wstring(L"chiseled_polished_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chiseled_nether_bricks.png")), std::wstring(L"chiseled_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"purpur_block.png")), std::wstring(L"purpur_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"purpur_pillar.png")), std::wstring(L"purpur_pillar"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"gilded_blackstone.png"), std::wstring(L"gilded_blackstone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"mossy_cobblestone.png")), std::wstring(L"mossy_cobblestone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"magma.png"), std::wstring(L"magma_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, glowingLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"mossy_stone_bricks.png")), std::wstring(L"mossy_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 30, 30, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"ancient_debris_side.png"), std::wstring(L"ancient_debris"), breakAncientDebris, breakAncientDebris, breakAncientDebris, breakAncientDebris, breakAncientDebris, lightBlocking, { withPickaxe }, diamondHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cracked_stone_bricks.png")), std::wstring(L"cracked_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"polished_blackstone_bricks.png"), std::wstring(L"polished_blackstone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cracked_polished_blackstone_bricks.png"), std::wstring(L"cracked_polished_blackstone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"bricks.png"), std::wstring(L"bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"nether_bricks.png"), std::wstring(L"nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"red_nether_bricks.png"), std::wstring(L"red_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cracked_nether_bricks.png"), std::wstring(L"cracked_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"chiseled_nether_bricks.png"), std::wstring(L"chiseled_nether_bricks"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"purpur_block.png"), std::wstring(L"purpur_block"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"purpur_pillar.png"), std::wstring(L"purpur_pillar"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"mossy_cobblestone.png"), std::wstring(L"mossy_cobblestone"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"mossy_stone_bricks.png"), std::wstring(L"mossy_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cracked_stone_bricks.png"), std::wstring(L"cracked_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
 	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, blockList[blockID::mossy_stone_bricks]->tex, std::wstring(L"infested_mossy_stone_bricks"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier);
@@ -1742,7 +1720,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"glass.png")), std::wstring(L"glass"), stepStone, stepStone, stepStone, breakGlass, digStone, noLightFilter, { withPickaxe }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"glass.png"), std::wstring(L"glass"), stepStone, stepStone, stepStone, breakGlass, digStone, noLightFilter, { withPickaxe }, noHarvestTier);
 	identifier++;
 	for (int i = 0; i < (int)colorID::count; i++)
 	{
@@ -1758,9 +1736,9 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"fire_0.png")), std::wstring(L"fire"), extinguishSound, extinguishSound, extinguishSound, extinguishSound, extinguishSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true, brightLightSource, experienceDrop(), fireSound);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"fire_0.png"), std::wstring(L"fire"), extinguishSound, extinguishSound, extinguishSound, extinguishSound, extinguishSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true, brightLightSource, experienceDrop(), fireSound);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"soul_fire_0.png")), std::wstring(L"soul_fire"), extinguishSound, extinguishSound, extinguishSound, extinguishSound, extinguishSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true, moodyLightSource, experienceDrop(), fireSound);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"soul_fire_0.png"), std::wstring(L"soul_fire"), extinguishSound, extinguishSound, extinguishSound, extinguishSound, extinguishSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, true, moodyLightSource, experienceDrop(), fireSound);
 	identifier++;
 
 	for (int coralStateIndex = 0; coralStateIndex < (int)coralStateID::count; coralStateIndex++)
@@ -1793,88 +1771,88 @@ static void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, frostedIceAgeTextures[0], std::wstring(L"frosted_ice"), stepStone, stepStone, stepStone, breakGlass, digStone, doubleFiltering, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"ice.png")), std::wstring(L"ice"), stepStone, stepStone, stepStone, breakGlass, digStone, doubleFiltering, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"ice.png"), std::wstring(L"ice"), stepStone, stepStone, stepStone, breakGlass, digStone, doubleFiltering, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"packed_ice.png")), std::wstring(L"packed_ice"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"packed_ice.png"), std::wstring(L"packed_ice"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2.8, 2.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"blue_ice.png")), std::wstring(L"blue_ice"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, glowingLightSource);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"sponge.png")), std::wstring(L"sponge"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"wet_sponge.png")), std::wstring(L"wet_sponge"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 2.8, 2.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"blue_ice.png"), std::wstring(L"blue_ice"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, glowingLightSource);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"slime_block.png")), std::wstring(L"slime_block"), smallSlimeSound, smallSlimeSound, smallSlimeSound, bigSlimeSound, bigSlimeSound, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"sponge.png"), std::wstring(L"sponge"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"honey_block_side.png")), std::wstring(L"honey_block"), stepHoney, stepHoney, stepHoney, breakHoney, breakHoney, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"mushroom_stem.png")), std::wstring(L"mushroom_stem"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"red_mushroom_block.png")), std::wstring(L"red_mushroom_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brown_mushroom_block.png")), std::wstring(L"brown_mushroom_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"red_mushroom.png")), std::wstring(L"red_mushroom"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brown_mushroom.png")), std::wstring(L"brown_mushroom"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, glowingLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"wet_sponge.png"), std::wstring(L"wet_sponge"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 1, 1, 0.35, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bamboo_stage0.png")), std::wstring(L"bamboo_shoot"), hitBambooSapling, hitBambooSapling, hitBambooSapling, placeBambooSapling, placeBambooSapling, lightBlocking, { withSwordOrShears }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"slime_block.png"), std::wstring(L"slime_block"), smallSlimeSound, smallSlimeSound, smallSlimeSound, bigSlimeSound, bigSlimeSound, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1, 1, 0.35, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bamboo_stalk.png")), std::wstring(L"bamboo"), stepBamboo, stepBamboo, stepBamboo, placeBamboo, placeBamboo, lightBlocking, { withSwordOrShears }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"honey_block_side.png"), std::wstring(L"honey_block"), stepHoney, stepHoney, stepHoney, breakHoney, breakHoney, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"clay.png")), std::wstring(L"clay"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"mushroom_stem.png"), std::wstring(L"mushroom_stem"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"red_mushroom_block.png"), std::wstring(L"red_mushroom_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"brown_mushroom_block.png"), std::wstring(L"brown_mushroom_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"red_mushroom.png"), std::wstring(L"red_mushroom"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"brown_mushroom.png"), std::wstring(L"brown_mushroom"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, glowingLightSource);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 1, 1, 0.35, loadTextureFromResourcePack(blockTextureFolder / L"bamboo_stage0.png"), std::wstring(L"bamboo_shoot"), hitBambooSapling, hitBambooSapling, hitBambooSapling, placeBambooSapling, placeBambooSapling, lightBlocking, { withSwordOrShears }, noHarvestTier, collisionTypeID::willNotCollide);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 1, 1, 0.35, loadTextureFromResourcePack(blockTextureFolder / L"bamboo_stalk.png"), std::wstring(L"bamboo"), stepBamboo, stepBamboo, stepBamboo, placeBamboo, placeBamboo, lightBlocking, { withSwordOrShears }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"clay.png"), std::wstring(L"clay"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, dirtTexture, std::wstring(L"dirt"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"coarse_dirt.png")), std::wstring(L"coarse_dirt"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"coarse_dirt.png"), std::wstring(L"coarse_dirt"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bonebed_dirt.png")), std::wstring(L"bonebed_dirt"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 0.65, 0.65, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grass_path_side.png")), std::wstring(L"grass_path"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, sunlightPermeable, { withShovel }, noHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grass_block_side.png")), std::wstring(L"grass_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, sunlightPermeable, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"bonebed_dirt.png"), std::wstring(L"bonebed_dirt"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"podzol_side.png")), std::wstring(L"podzol"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.65, 0.65, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"grass_path_side.png"), std::wstring(L"grass_path"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"mycelium_side.png")), std::wstring(L"mycelium"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"crimson_nylium_side.png")), std::wstring(L"crimson_nylium"), stepNylium, stepNylium, stepNylium, digNylium, digNylium, lightBlocking, { withPickaxe }, woodHarvestTier);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"warped_nylium_side.png")), std::wstring(L"warped_nylium"), stepNylium, stepNylium, stepNylium, digNylium, digNylium, lightBlocking, { withPickaxe }, woodHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"grass_block_side.png"), std::wstring(L"grass_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"sea_lantern.png")), std::wstring(L"sea_lantern"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"podzol_side.png"), std::wstring(L"podzol"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"glowstone.png")), std::wstring(L"glowstone"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"shroomlight.png")), std::wstring(L"shroomlight"), stepShroomLight, stepShroomLight, stepShroomLight, digShroomLight, digShroomLight, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, moodyLightSource);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_lamp.png")), std::wstring(L"redstone_lamp"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"mycelium_side.png"), std::wstring(L"mycelium"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"crafting_table_front.png")), std::wstring(L"crafting_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"crimson_nylium_side.png"), std::wstring(L"crimson_nylium"), stepNylium, stepNylium, stepNylium, digNylium, digNylium, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cartography_table_side2.png")), std::wstring(L"cartography_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"smithing_table_side.png")), std::wstring(L"smithing_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"loom_front.png")), std::wstring(L"loom"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"warped_nylium_side.png"), std::wstring(L"warped_nylium"), stepNylium, stepNylium, stepNylium, digNylium, digNylium, lightBlocking, { withPickaxe }, woodHarvestTier);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_front.png")), std::wstring(L"furnace"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"sea_lantern.png"), std::wstring(L"sea_lantern"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"blast_furnace_front.png")), std::wstring(L"blast_furnace"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"glowstone.png"), std::wstring(L"glowstone"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"smoker_front.png")), std::wstring(L"smoker"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"shroomlight.png"), std::wstring(L"shroomlight"), stepShroomLight, stepShroomLight, stepShroomLight, digShroomLight, digShroomLight, lightBlocking, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, moodyLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"barrel_side.png")), std::wstring(L"barrel"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.3, 0.3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"redstone_lamp.png"), std::wstring(L"redstone_lamp"), stepStone, stepStone, stepStone, breakGlass, digStone, lightBlocking, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"crafting_table_front.png"), std::wstring(L"crafting_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cartography_table_side2.png"), std::wstring(L"cartography_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"smithing_table_side.png"), std::wstring(L"smithing_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"loom_front.png"), std::wstring(L"loom"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"furnace_front.png"), std::wstring(L"furnace"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"blast_furnace_front.png"), std::wstring(L"blast_furnace"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"smoker_front.png"), std::wstring(L"smoker"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"barrel_side.png"), std::wstring(L"barrel"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadChestTexture(entityTextureFolder / L"chest" / L"normal.png"), std::wstring(L"chest"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
@@ -1883,8 +1861,8 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 22.5, 22.5, standardBlockWeightPerCubicMeter, loadChestTexture(entityTextureFolder / L"chest" / L"ender.png"), std::wstring(L"ender_chest"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, moodyLightSource);
 	identifier++;
 
-	resolutionTexture* furnaceSideImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_side.png"));
-	resolutionTexture* furnaceTopImage = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"furnace_top.png"));
+	resolutionTexture* furnaceSideImage = loadTextureFromResourcePack(blockTextureFolder / L"furnace_side.png");
+	resolutionTexture* furnaceTopImage = loadTextureFromResourcePack(blockTextureFolder / L"furnace_top.png");
 
 	const wstringContainer& dispenserNames = { std::wstring(L"dispenser"), std::wstring(L"dropper") };
 	for (size_t i = 0; i < dispenserNames.size(); i++)
@@ -1909,10 +1887,10 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"enchanting_table_side.png")), std::wstring(L"enchanting_table"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, diamondHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"enchanting_table_side.png"), std::wstring(L"enchanting_table"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, diamondHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	resolutionTexture* basicAnvilTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"anvil.png"));
+	resolutionTexture* basicAnvilTexture = loadTextureFromResourcePack(blockTextureFolder / L"anvil.png");
 
 	std::vector<rectangle2> relativeAnvilRects{
 		crectangle2(0.1, 0, 0.8, 0.2),
@@ -1954,8 +1932,8 @@ static void loadBlocks()
 
 	auto grindStoneTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
 
-	resolutionTexture* grindStoneSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_side.png"), false);
-	resolutionTexture* grindStonePivotTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grindstone_pivot.png"), false);
+	resolutionTexture* grindStoneSideTexture = loadTextureFromResourcePack(blockTextureFolder / L"grindstone_side.png", false);
+	resolutionTexture* grindStonePivotTexture = loadTextureFromResourcePack(blockTextureFolder / L"grindstone_pivot.png", false);
 
 	crectangle2 grindStoneSideTextureRect = crectangle2(0, 4, 12, 12);
 	crectangle2 grindStonePivotTopTextureRect = crectangle2(0, 10, 6, 6);
@@ -1979,10 +1957,10 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, grindStoneTexture, std::wstring(L"grindstone"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"fletching_table_side.png")), std::wstring(L"fletching_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"fletching_table_side.png"), std::wstring(L"fletching_table"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	resolutionTexture* innerBeaconTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"beacon.png"));
+	resolutionTexture* innerBeaconTexture = loadTextureFromResourcePack(blockTextureFolder / L"beacon.png");
 
 	constexpr rectangle2 innerBeaconTextureRect = crectangle2(2, 2, 28, 28);
 
@@ -2010,7 +1988,7 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, conduitTexture, std::wstring(L"conduit"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
 	identifier++;
 
-	resolutionTexture* lecternSidesTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lectern_sides.png"));
+	resolutionTexture* lecternSidesTexture = loadTextureFromResourcePack(blockTextureFolder / L"lectern_sides.png");
 
 	resolutionTexture* lecternGraphics = new resolutionTexture(texture(cvect2<fsize_t>((fsize_t)(blockTextureSize * lecternSidesTexture->getScaleModifier()))), cvec2(blockTextureSize));
 
@@ -2038,11 +2016,11 @@ static void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, 2.5, 2.5, standardBlockWeightPerCubicMeter, lecternGraphics, std::wstring(L"lectern"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"composter_side.png")), std::wstring(L"composter"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"composter_side.png"), std::wstring(L"composter"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cake_side.png")), std::wstring(L"cake"), stepCloth, stepCloth, stepCloth, stepCloth, stepCloth, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cake_side.png"), std::wstring(L"cake"), stepCloth, stepCloth, stepCloth, stepCloth, stepCloth, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"scaffolding_side.png")), std::wstring(L"scaffolding"), stepScaffolding, stepScaffolding, stepScaffolding, placeScaffolding, placeScaffolding, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"scaffolding_side.png"), std::wstring(L"scaffolding"), stepScaffolding, stepScaffolding, stepScaffolding, placeScaffolding, placeScaffolding, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
 	for (int i = 0; i <= respawnAnchorMaximumCharge; i++)
@@ -2052,17 +2030,17 @@ static void loadBlocks()
 
 	blockList[identifier] = new block((blockID)identifier, 50, 1200, standardBlockWeightPerCubicMeter, respawnAnchorTextures[0], std::wstring(L"respawn_anchor"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, diamondHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"target_side.png")), std::wstring(L"target"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"target_side.png"), std::wstring(L"target"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lodestone_side.png")), std::wstring(L"lodestone"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"lodestone_side.png"), std::wstring(L"lodestone"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bell.png")), std::wstring(L"bell"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"bell.png"), std::wstring(L"bell"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"torch.png")), std::wstring(L"torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, moodyLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"torch.png"), std::wstring(L"torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, moodyLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"soul_torch.png")), std::wstring(L"soul_torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, moodyLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"soul_torch.png"), std::wstring(L"soul_torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, moodyLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"ladder.png")), std::wstring(L"ladder"), stepLadder, stepLadder, stepLadder, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"ladder.png"), std::wstring(L"ladder"), stepLadder, stepLadder, stepLadder, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, farmlandTexture, std::wstring(L"farmland"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel });
 	identifier++;
@@ -2074,39 +2052,39 @@ static void loadBlocks()
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, lanternGraphics, std::wstring(L"soul_lantern"), placeLantern, placeLantern, breakLantern, breakLantern, placeLantern, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, moodyLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"sea_pickle.png")), std::wstring(L"sea_pickle"), smallSlimeSound, smallSlimeSound, smallSlimeSound, bigSlimeSound, bigSlimeSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"sea_pickle.png"), std::wstring(L"sea_pickle"), smallSlimeSound, smallSlimeSound, smallSlimeSound, bigSlimeSound, bigSlimeSound, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"flower_pot.png")), std::wstring(L"flower_pot"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"flower_pot.png"), std::wstring(L"flower_pot"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"chain.png")), std::wstring(L"chain"), stepChain, stepChain, stepChain, breakChain, breakChain, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"chain.png"), std::wstring(L"chain"), stepChain, stepChain, stepChain, breakChain, breakChain, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"turtle_egg.png")), std::wstring(L"turtle_egg"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"turtle_egg.png"), std::wstring(L"turtle_egg"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bookshelf.png")), std::wstring(L"bookshelf"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 1.5, 1.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"bookshelf.png"), std::wstring(L"bookshelf"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"hay_block_side.png")), std::wstring(L"hay_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 60, 20, false);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"hay_block_side.png"), std::wstring(L"hay_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 60, 20, false);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tnt_side.png")), std::wstring(L"tnt"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 60, 20, true);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"tnt_side.png"), std::wstring(L"tnt"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willCollideTop, 60, 20, true);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 4, 4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cobweb.png")), std::wstring(L"cobweb"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withSwordOrShears }, woodHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 4, 4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cobweb.png"), std::wstring(L"cobweb"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withSwordOrShears }, woodHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
 	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, brewingStandBaseTexture, std::wstring(L"brewing_stand"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cauldron.png")), std::wstring(L"cauldron"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"cauldron.png"), std::wstring(L"cauldron"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"hopper_outside.png")), std::wstring(L"hopper"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3, 3, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"hopper_outside.png"), std::wstring(L"hopper"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
 	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, redStoneWireTexture, std::wstring(L"redstone_wire"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_torch.png")), std::wstring(L"redstone_torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"redstone_torch.png"), std::wstring(L"redstone_torch"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"repeater.png")), std::wstring(L"repeater"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"repeater.png"), std::wstring(L"repeater"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"comparator.png")), std::wstring(L"comparator"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"comparator.png"), std::wstring(L"comparator"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
 	for (int i = 0; i < woodTypeCount; i++)
@@ -2133,29 +2111,29 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, blockList[blockID::iron_block]->tex, std::wstring(L"heavy_weighted_pressure_plate"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"lever.png")), std::wstring(L"lever"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withAxe }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"lever.png"), std::wstring(L"lever"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withAxe }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"daylight_detector_top.png")), std::wstring(L"daylight_detector"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"daylight_detector_top.png"), std::wstring(L"daylight_detector"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"observer_side.png")), std::wstring(L"observer"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"observer_side.png"), std::wstring(L"observer"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"note_block.png")), std::wstring(L"note_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop, 10, 10, true);
+	blockList[identifier] = new block((blockID)identifier, 0.8, 0.8, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"note_block.png"), std::wstring(L"note_block"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop, 10, 10, true);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"jukebox_side.png")), std::wstring(L"jukebox"), stepWood, stepWood, stepWood, digWood, digWood, lightBlocking, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop, 10, 10, true);
+	blockList[identifier] = new block((blockID)identifier, 2, 2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"jukebox_side.png"), std::wstring(L"jukebox"), stepWood, stepWood, stepWood, digWood, digWood, lightBlocking, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop, 10, 10, true);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tripwire.png")), std::wstring(L"tripwire"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"tripwire.png"), std::wstring(L"tripwire"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tripwire_hook.png")), std::wstring(L"tripwire_hook"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 3.5, 3.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"tripwire_hook.png"), std::wstring(L"tripwire_hook"), stepStone, stepStone, stepStone, digStone, digStone, noLightFilter, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
 	const wstringContainer pistonNames = { std::wstring(L"piston"), std::wstring(L"sticky_piston") };
 	const wstringContainer pistonTopTextureNames = { std::wstring(L"piston_top"), std::wstring(L"piston_top_sticky") };
 
-	resolutionTexture* pistonSideTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"piston_side.png"), false);
+	resolutionTexture* pistonSideTexture = loadTextureFromResourcePack(blockTextureFolder / L"piston_side.png", false);
 	for (int i = 0; i < 2; i++)
 	{
 		resolutionTexture* pistonTopTexture = loadTextureFromResourcePack(blockTextureFolder / (pistonTopTextureNames[i] + std::wstring(L".png")), false);
@@ -2178,33 +2156,33 @@ static void loadBlocks()
 	}
 	delete pistonSideTexture;
 
-	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / std::wstring(L"rail.png")), std::wstring(L"rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / L"rail.png"), std::wstring(L"rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / std::wstring(L"powered_rail.png")), std::wstring(L"powered_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / L"powered_rail.png"), std::wstring(L"powered_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / std::wstring(L"detector_rail.png")), std::wstring(L"detector_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / L"detector_rail.png"), std::wstring(L"detector_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / std::wstring(L"activator_rail.png")), std::wstring(L"activator_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
-	identifier++;
-
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"nether_portal.png")), std::wstring(L"nether_portal"), stepStone, stepStone, stepStone, breakGlass, digStone, noLightFilter, { withPickaxe }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"end_portal.png")), std::wstring(L"end_portal"), stepStone, stepStone, stepStone, breakGlass, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"end_portal_frame_side.png")), std::wstring(L"end_portal_frame"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe });
-	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"spawner.png")), std::wstring(L"spawner"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource, experienceDrop(15, 43));
+	blockList[identifier] = new block((blockID)identifier, 0.7, 0.7, standardBlockWeightPerCubicMeter, loadRailsTexture(blockTextureFolder / L"activator_rail.png"), std::wstring(L"activator_rail"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dead_bush.png")), std::wstring(L"dead_bush"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withSwordOrShears }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"nether_portal.png"), std::wstring(L"nether_portal"), stepStone, stepStone, stepStone, breakGlass, digStone, noLightFilter, { withPickaxe }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"short_grass.png")), std::wstring(L"short_grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(entityTextureFolder / L"end_portal.png"), std::wstring(L"end_portal"), stepStone, stepStone, stepStone, breakGlass, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willNotCollide, 0, 0, false, false, brightLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"fern.png")), std::wstring(L"fern"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"end_portal_frame_side.png"), std::wstring(L"end_portal_frame"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe });
 	identifier++;
-	blockList[identifier] = new doubleBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, tallGrassTopTexture, std::wstring(L"tall_grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"tall_grass_bottom.png")), tallGrassTopTexture, cveci2(0, 1));
+	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"spawner.png"), std::wstring(L"spawner"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource, experienceDrop(15, 43));
 	identifier++;
-	blockList[identifier] = new doubleBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, largeFernTopTexture, std::wstring(L"large_fern"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"large_fern_bottom.png")), largeFernTopTexture, cveci2(0, 1));
+
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"dead_bush.png"), std::wstring(L"dead_bush"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withSwordOrShears }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"short_grass.png"), std::wstring(L"short_grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	identifier++;
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"fern.png"), std::wstring(L"fern"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true);
+	identifier++;
+	blockList[identifier] = new doubleBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, tallGrassTopTexture, std::wstring(L"tall_grass"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true), loadTextureFromResourcePack(blockTextureFolder / L"tall_grass_bottom.png"), tallGrassTopTexture, cveci2(0, 1));
+	identifier++;
+	blockList[identifier] = new doubleBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, largeFernTopTexture, std::wstring(L"large_fern"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willNotCollide, 60, 100, true), loadTextureFromResourcePack(blockTextureFolder / L"large_fern_bottom.png"), largeFernTopTexture, cveci2(0, 1));
 	identifier++;
 
 	for (int i = 0; i < netherTreeTypeCount; i++)
@@ -2214,7 +2192,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"vine.png")), std::wstring(L"vine"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withSwordOrShears }, ironHarvestTier, collisionTypeID::willNotCollide, 15, 15, true);
+	blockList[identifier] = new block((blockID)identifier, 0.2, 0.2, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"vine.png"), std::wstring(L"vine"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withSwordOrShears }, ironHarvestTier, collisionTypeID::willNotCollide, 15, 15, true);
 	identifier++;
 
 	for (int i = 0; i < (int)netherVineTypeID::count; i++)
@@ -2296,27 +2274,27 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"campfire.png")), std::wstring(L"campfire"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"campfire.png"), std::wstring(L"campfire"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"soul_campfire.png")), std::wstring(L"soul_campfire"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(itemTextureFolder / L"soul_campfire.png"), std::wstring(L"soul_campfire"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"end_rod.png")), std::wstring(L"end_rod"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"end_rod.png"), std::wstring(L"end_rod"), stepWood, stepWood, stepWood, digWood, digWood, noLightFilter, { withHand }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, brightLightSource);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_plant.png")), std::wstring(L"chorus_plant"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"chorus_plant.png"), std::wstring(L"chorus_plant"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	resolutionTexture* chorusFlowerTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower.png"));
-	blockList[identifier] = new cropBlock(block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, chorusFlowerTexture, std::wstring(L"chorus_flower"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop), 6, std::vector<resolutionTexture*>({ chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"chorus_flower_dead.png")) }), 1);
+	resolutionTexture* chorusFlowerTexture = loadTextureFromResourcePack(blockTextureFolder / L"chorus_flower.png");
+	blockList[identifier] = new cropBlock(block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, chorusFlowerTexture, std::wstring(L"chorus_flower"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop), 6, std::vector<resolutionTexture*>({ chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, chorusFlowerTexture, loadTextureFromResourcePack(blockTextureFolder / L"chorus_flower_dead.png") }), 1);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"cactus_side.png")), std::wstring(L"cactus"), stepCloth, stepCloth, stepCloth, stepCloth, stepCloth, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 0.4, 0.4, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"cactus_side.png"), std::wstring(L"cactus"), stepCloth, stepCloth, stepCloth, stepCloth, stepCloth, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"sugar_cane.png")), std::wstring(L"sugar_cane"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"sugar_cane.png"), std::wstring(L"sugar_cane"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
-	blockList[identifier] = new connectedBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"kelp_plant.png")), std::wstring(L"kelp"), stepWetGrass, stepWetGrass, digWetGrass, stepWetGrass, digWetGrass, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"kelp.png")), cveci2(0, 1));
+	blockList[identifier] = new connectedBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"kelp_plant.png"), std::wstring(L"kelp"), stepWetGrass, stepWetGrass, digWetGrass, stepWetGrass, digWetGrass, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide), loadTextureFromResourcePack(blockTextureFolder / L"kelp.png"), cveci2(0, 1));
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dried_kelp_side.png")), std::wstring(L"dried_kelp_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willNotCollide);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"dried_kelp_side.png"), std::wstring(L"dried_kelp_block"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, { withHoe }, noHarvestTier, collisionTypeID::willNotCollide);
 	identifier++;
-	// blockList[identifier] = new block((blockID)id, 0, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"white_bed.png")), std::wstring(L"sugar_cane"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, {withHand}, new itemDrop((itemID)id),noToolTier, collisionTypeID::willNotCollide)); id++;
+	// blockList[identifier] = new block((blockID)id, 0, loadTextureFromResourcePack(blockTextureFolder / L"white_bed.png"), std::wstring(L"sugar_cane"), stepGrass, stepGrass, stepGrass, digGrass, digGrass, lightFiltering, {withHand}, new itemDrop((itemID)id),noToolTier, collisionTypeID::willNotCollide)); id++;
 
 	wstringContainer cropNames = wstringContainer({ std::wstring(L"wheat"), std::wstring(L"carrots"), std::wstring(L"potatoes"), std::wstring(L"beetroots"), std::wstring(L"nether_wart") });
 	cint cropsToAdd = 5;
@@ -2366,15 +2344,15 @@ static void loadBlocks()
 			linkedGrowthStageTextures.push_back(growthStageTextures[growthStageTextureIndexes[i][stageIndex]]);
 		}
 
-		std::shared_ptr<soundCollection> breakSound = identifier == (int)blockID::nether_wart ? breakNetherWart : breakCrop;
-		std::shared_ptr<soundCollection> stepSound = identifier == (int)blockID::nether_wart ? stepNetherWart : stepGrass;
+		std::shared_ptr<audioCollection> breakSound = identifier == (int)blockID::nether_wart ? breakNetherWart : breakCrop;
+		std::shared_ptr<audioCollection> stepSound = identifier == (int)blockID::nether_wart ? stepNetherWart : stepGrass;
 
 		blockList[identifier] = new cropBlock(block((blockID)identifier, 0, 0, standardBlockWeightPerCubicMeter, growthStageTextures[growthStageTextureIndexes[i][0]], cropNames[i], stepSound, stepSound, stepSound, breakSound, breakSound, lightFiltering, { withHand }, noHarvestTier, collisionTypeID::willNotCollide), growthStageCount[i], linkedGrowthStageTextures, chanceToGrow[i]);
 		identifier++;
 	}
-	blockList[blockID::wheat]->tex = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"wheat.png"));
+	blockList[blockID::wheat]->tex = loadTextureFromResourcePack(itemTextureFolder / L"wheat.png");
 
-	blockList[blockID::nether_wart]->tex = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"nether_wart.png"));
+	blockList[blockID::nether_wart]->tex = loadTextureFromResourcePack(itemTextureFolder / L"nether_wart.png");
 
 	cint sweetBerryBushGrowthStageCount = 4;
 	std::vector<resolutionTexture*> sweetBerriesGrowthStageTextures = loadGrowthStageTextures(std::wstring(L"sweet_berry_bush"), { 0ULL, 1ULL, 2ULL, 3ULL });
@@ -2400,12 +2378,12 @@ static void loadBlocks()
 		blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / (stemPlantNames[i] + std::wstring(L"_side.png"))), stemPlantNames[i], stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollideTop);
 		identifier++;
 	}
-	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"carved_pumpkin.png")), std::wstring(L"carved_pumpkin"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollide);
+	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"carved_pumpkin.png"), std::wstring(L"carved_pumpkin"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollide);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"jack_o_lantern.png")), std::wstring(L"jack_o_lantern"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, moodyLightSource);
+	blockList[identifier] = new block((blockID)identifier, 1, 1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"jack_o_lantern.png"), std::wstring(L"jack_o_lantern"), stepWood, stepWood, stepWood, digWood, digWood, lightFiltering, { withAxe }, noHarvestTier, collisionTypeID::willCollide, 0, 0, false, false, moodyLightSource);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"soul_soil.png")), std::wstring(L"soul_soil"), stepSoulSoil, stepSoulSoil, stepSoulSoil, breakSoulSoil, breakSoulSoil, lightBlocking, { withShovel });
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"soul_soil.png"), std::wstring(L"soul_soil"), stepSoulSoil, stepSoulSoil, stepSoulSoil, breakSoulSoil, breakSoulSoil, lightBlocking, { withShovel });
 	identifier++;
 
 	for (int i = 0; i < (int)colorID::count; i++)
@@ -2422,7 +2400,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"soul_sand.png")), std::wstring(L"soul_sand"), stepSoulSand, stepSoulSand, stepSoulSand, breakSoulSand, breakSoulSand, lightBlocking, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.5, 0.5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"soul_sand.png"), std::wstring(L"soul_sand"), stepSoulSand, stepSoulSand, stepSoulSand, breakSoulSand, breakSoulSand, lightBlocking, { withShovel }, noHarvestTier);
 	identifier++;
 	const wstringContainer sandTypeNames = {
 		std::wstring(L"sand"),
@@ -2433,7 +2411,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"gravel.png")), std::wstring(L"gravel"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
+	blockList[identifier] = new block((blockID)identifier, 0.6, 0.6, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"gravel.png"), std::wstring(L"gravel"), stepGravel, stepGravel, stepGravel, digGravel, digGravel, sunlightPermeable, { withShovel }, noHarvestTier);
 	identifier++;
 	// ores
 
@@ -2468,7 +2446,7 @@ static void loadBlocks()
 		}
 	}
 	// collisionTypeID::willCollide so you can close the door before you and zombies can'T hit you
-	blockList[identifier] = new block((blockID)identifier, 5.0, 5.0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_trapdoor.png")), std::wstring(L"iron_trapdoor"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide);
+	blockList[identifier] = new block((blockID)identifier, 5.0, 5.0, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"iron_trapdoor.png"), std::wstring(L"iron_trapdoor"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide);
 	identifier++;
 	for (int i = 0; i < woodTypeCount; i++)
 	{
@@ -2478,8 +2456,8 @@ static void loadBlocks()
 
 	// collisionTypeID::willCollide so you can close the door before you and zombies can'T hit you
 	blockList[identifier] = new doubleBlock(block((blockID)identifier, 5.0, 5, standardBlockWeightPerCubicMeter,
-		loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_door.png")), std::wstring(L"iron_door"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide),
-		loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_bottom.png")), loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_door_top.png")), veci2(0, 1));
+		loadTextureFromResourcePack(itemTextureFolder / L"iron_door.png"), std::wstring(L"iron_door"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollide),
+		loadTextureFromResourcePack(blockTextureFolder / L"iron_door_bottom.png"), loadTextureFromResourcePack(blockTextureFolder / L"iron_door_top.png"), veci2(0, 1));
 	identifier++;
 	for (int i = 0; i < woodTypeCount; i++)
 	{
@@ -2490,7 +2468,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"iron_bars.png")), std::wstring(L"iron_bars"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, 5, 5, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"iron_bars.png"), std::wstring(L"iron_bars"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
 
 	// to get the planks textures
@@ -2512,7 +2490,7 @@ static void loadBlocks()
 		identifier++;
 	}
 
-	resolutionTexture* netherBrickFenceTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"nether_bricks.png"));
+	resolutionTexture* netherBrickFenceTexture = loadTextureFromResourcePack(blockTextureFolder / L"nether_bricks.png");
 
 	blockList[identifier] = new block((blockID)identifier, 2, 6, standardBlockWeightPerCubicMeter, netherBrickFenceTexture, std::wstring(L"nether_brick_fence"), stepNetherBrick, stepNetherBrick, stepNetherBrick, digNetherBrick, digNetherBrick, lightFiltering, { withPickaxe }, woodHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
@@ -2520,11 +2498,11 @@ static void loadBlocks()
 	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadDragonEggTexture(), std::wstring(L"dragon_egg"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop, 0, 0, false, false, glowingLightSource);
 	identifier++;
 
-	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"jigsaw_side.png")), std::wstring(L"jigsaw"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"jigsaw_side.png"), std::wstring(L"jigsaw"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"structure_block.png")), std::wstring(L"structure_block"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"structure_block.png"), std::wstring(L"structure_block"), stepStone, stepStone, stepStone, digStone, digStone, lightFiltering, { withPickaxe }, noHarvestTier, collisionTypeID::willCollideTop);
 	identifier++;
-	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"bedrock.png")), std::wstring(L"bedrock"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withHand }, noHarvestTier, collisionTypeID::willCollide);
+	blockList[identifier] = new block((blockID)identifier, -1, -1, standardBlockWeightPerCubicMeter, loadTextureFromResourcePack(blockTextureFolder / L"bedrock.png"), std::wstring(L"bedrock"), stepStone, stepStone, stepStone, digStone, digStone, lightBlocking, { withHand }, noHarvestTier, collisionTypeID::willCollide);
 	identifier++;
 
 	blockList.update();
@@ -2585,99 +2563,99 @@ static void loadItems()
 	}
 
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"stick"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"stick.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"stick"), loadTextureFromResourcePack(itemTextureFolder / L"stick.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"charcoal"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"charcoal.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"charcoal"), loadTextureFromResourcePack(itemTextureFolder / L"charcoal.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clay_ball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"clay_ball.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clay_ball"), loadTextureFromResourcePack(itemTextureFolder / L"clay_ball.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"leather"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"leather.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"leather"), loadTextureFromResourcePack(itemTextureFolder / L"leather.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"paper"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"paper.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"paper"), loadTextureFromResourcePack(itemTextureFolder / L"paper.png"));
 	identifier++;
 
 	constexpr int bookEnchantability = 10;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"book.png")), noHarvestTier, withHand, 1, 1, 64, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"book"), loadTextureFromResourcePack(itemTextureFolder / L"book.png"), noHarvestTier, withHand, 1, 1, 64, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"enchanted_book"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"enchanted_book.png")), noHarvestTier, withHand, 1, 1, 1, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"enchanted_book"), loadTextureFromResourcePack(itemTextureFolder / L"enchanted_book.png"), noHarvestTier, withHand, 1, 1, 1, false, noArmorTier, noArmorType, bookEnchantments, bookEnchantability);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"blaze_rod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"blaze_rod.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"blaze_rod"), loadTextureFromResourcePack(itemTextureFolder / L"blaze_rod.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"blaze_powder"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"blaze_powder.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"blaze_powder"), loadTextureFromResourcePack(itemTextureFolder / L"blaze_powder.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"gunpowder"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"gunpowder.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"gunpowder"), loadTextureFromResourcePack(itemTextureFolder / L"gunpowder.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ghast_tear"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ghast_tear.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ghast_tear"), loadTextureFromResourcePack(itemTextureFolder / L"ghast_tear.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"magma_cream"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"magma_cream.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"magma_cream"), loadTextureFromResourcePack(itemTextureFolder / L"magma_cream.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"flint.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint"), loadTextureFromResourcePack(itemTextureFolder / L"flint.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"feather"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"feather.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"feather"), loadTextureFromResourcePack(itemTextureFolder / L"feather.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"string"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"string.png")));
-	identifier++;
-
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"arrow"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"arrow.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"string"), loadTextureFromResourcePack(itemTextureFolder / L"string.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"brick"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"brick.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nether_brick"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"nether_brick.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clock"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"clock_00.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fermented_spider_eye"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"fermented_spider_eye.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glowstone_dust"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"glowstone_dust.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"heart_of_the_sea"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"heart_of_the_sea.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"honeycomb"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"honeycomb.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ink_sac"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ink_sac.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nautilus_shell"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"nautilus_shell.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nether_star"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"nether_star.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"netherite_ingot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"netherite_ingot.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"netherite_scrap"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"netherite_scrap.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"phantom_membrane"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"phantom_membrane.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"popped_chorus_fruit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"popped_chorus_fruit.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"prismarine_crystals"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"prismarine_crystals.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"prismarine_shard"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"prismarine_shard.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_hide"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit_hide.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_foot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit_foot.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"scute"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"scute.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shulker_shell"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"shulker_shell.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"slime_ball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"slime_ball.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"firework_star"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"firework_star.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"firework_rocket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"firework_rocket.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"arrow"), loadTextureFromResourcePack(itemTextureFolder / L"arrow.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glass_bottle"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"glass_bottle.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"brick"), loadTextureFromResourcePack(itemTextureFolder / L"brick.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"honey_bottle"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"honey_bottle.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nether_brick"), loadTextureFromResourcePack(itemTextureFolder / L"nether_brick.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"experience_bottle"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"experience_bottle.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"clock"), loadTextureFromResourcePack(itemTextureFolder / L"clock_00.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dragon_breath"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"dragon_breath.png")), noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fermented_spider_eye"), loadTextureFromResourcePack(itemTextureFolder / L"fermented_spider_eye.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glowstone_dust"), loadTextureFromResourcePack(itemTextureFolder / L"glowstone_dust.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"heart_of_the_sea"), loadTextureFromResourcePack(itemTextureFolder / L"heart_of_the_sea.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"honeycomb"), loadTextureFromResourcePack(itemTextureFolder / L"honeycomb.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ink_sac"), loadTextureFromResourcePack(itemTextureFolder / L"ink_sac.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nautilus_shell"), loadTextureFromResourcePack(itemTextureFolder / L"nautilus_shell.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"nether_star"), loadTextureFromResourcePack(itemTextureFolder / L"nether_star.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"netherite_ingot"), loadTextureFromResourcePack(itemTextureFolder / L"netherite_ingot.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"netherite_scrap"), loadTextureFromResourcePack(itemTextureFolder / L"netherite_scrap.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"phantom_membrane"), loadTextureFromResourcePack(itemTextureFolder / L"phantom_membrane.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"popped_chorus_fruit"), loadTextureFromResourcePack(itemTextureFolder / L"popped_chorus_fruit.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"prismarine_crystals"), loadTextureFromResourcePack(itemTextureFolder / L"prismarine_crystals.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"prismarine_shard"), loadTextureFromResourcePack(itemTextureFolder / L"prismarine_shard.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_hide"), loadTextureFromResourcePack(itemTextureFolder / L"rabbit_hide.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_foot"), loadTextureFromResourcePack(itemTextureFolder / L"rabbit_foot.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"scute"), loadTextureFromResourcePack(itemTextureFolder / L"scute.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shulker_shell"), loadTextureFromResourcePack(itemTextureFolder / L"shulker_shell.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"slime_ball"), loadTextureFromResourcePack(itemTextureFolder / L"slime_ball.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"firework_star"), loadTextureFromResourcePack(itemTextureFolder / L"firework_star.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"firework_rocket"), loadTextureFromResourcePack(itemTextureFolder / L"firework_rocket.png"));
 	identifier++;
 
-	auto potionTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"potion.png"));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glass_bottle"), loadTextureFromResourcePack(itemTextureFolder / L"glass_bottle.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"honey_bottle"), loadTextureFromResourcePack(itemTextureFolder / L"honey_bottle.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"experience_bottle"), loadTextureFromResourcePack(itemTextureFolder / L"experience_bottle.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dragon_breath"), loadTextureFromResourcePack(itemTextureFolder / L"dragon_breath.png"), noHarvestTier, withHand, 1, 1, 1);
+	identifier++;
+
+	auto potionTexture = loadTextureFromResourcePack(itemTextureFolder / L"potion.png");
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"awkward_potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mundane_potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
@@ -2686,129 +2664,129 @@ static void loadItems()
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"potion"), potionTexture, noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"splash_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"splash_potion.png")), noHarvestTier, withHand, 1, 1, 1);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"splash_potion"), loadTextureFromResourcePack(itemTextureFolder / L"splash_potion.png"), noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lingering_potion"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lingering_potion.png")), noHarvestTier, withHand, 1, 1, 1);
-	identifier++;
-
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bow"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bow.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"egg"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"egg.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fishing_rod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"fishing_rod.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"snowball"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"snowball.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_pearl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ender_pearl.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_eye"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"ender_eye.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lingering_potion"), loadTextureFromResourcePack(itemTextureFolder / L"lingering_potion.png"), noHarvestTier, withHand, 1, 1, 1);
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"end_crystal"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"end_crystal.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bow"), loadTextureFromResourcePack(itemTextureFolder / L"bow.png"), noHarvestTier, withHand, 1.0, 1.0, 1, true);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"egg"), loadTextureFromResourcePack(itemTextureFolder / L"egg.png"), noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"fishing_rod"), loadTextureFromResourcePack(itemTextureFolder / L"fishing_rod.png"), noHarvestTier, withHand, 1.0, 1.0, 1);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"snowball"), loadTextureFromResourcePack(itemTextureFolder / L"snowball.png"), noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_pearl"), loadTextureFromResourcePack(itemTextureFolder / L"ender_pearl.png"), noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"ender_eye"), loadTextureFromResourcePack(itemTextureFolder / L"ender_eye.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"wheat_seeds"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"wheat_seeds.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"carrot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"carrot.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"potato"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"potato.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_seeds"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beetroot_seeds.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"end_crystal"), loadTextureFromResourcePack(itemTextureFolder / L"end_crystal.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"melon_seeds"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"melon_seeds.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"wheat_seeds"), loadTextureFromResourcePack(itemTextureFolder / L"wheat_seeds.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"pumpkin_seeds"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"pumpkin_seeds.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"carrot"), loadTextureFromResourcePack(itemTextureFolder / L"carrot.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glistering_melon_slice"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"glistering_melon_slice.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"potato"), loadTextureFromResourcePack(itemTextureFolder / L"potato.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"melon_slice"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"melon_slice.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"poisonous_potato"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"poisonous_potato.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_seeds"), loadTextureFromResourcePack(itemTextureFolder / L"beetroot_seeds.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"sweet_berries"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"sweet_berries.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"melon_seeds"), loadTextureFromResourcePack(itemTextureFolder / L"melon_seeds.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chorus_fruit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"chorus_fruit.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"pumpkin_seeds"), loadTextureFromResourcePack(itemTextureFolder / L"pumpkin_seeds.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dried_kelp"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"dried_kelp.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"glistering_melon_slice"), loadTextureFromResourcePack(itemTextureFolder / L"glistering_melon_slice.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"apple"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"apple.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"melon_slice"), loadTextureFromResourcePack(itemTextureFolder / L"melon_slice.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_soup"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beetroot_soup.png")), noHarvestTier, withHand, 0.0, INFINITY, 1);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"baked_potato"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"baked_potato.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rotten_flesh"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rotten_flesh.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_carrot"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_carrot.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"porkchop.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_porkchop"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_porkchop.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"beef.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_beef"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_beef.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"mutton.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_mutton"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_mutton.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"chicken.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_chicken"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_chicken.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit.png")));
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_rabbit"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_rabbit.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"poisonous_potato"), loadTextureFromResourcePack(itemTextureFolder / L"poisonous_potato.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cod.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"sweet_berries"), loadTextureFromResourcePack(itemTextureFolder / L"sweet_berries.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_cod"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_cod.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chorus_fruit"), loadTextureFromResourcePack(itemTextureFolder / L"chorus_fruit.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"salmon"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"salmon.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"dried_kelp"), loadTextureFromResourcePack(itemTextureFolder / L"dried_kelp.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_salmon"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"cooked_salmon.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"apple"), loadTextureFromResourcePack(itemTextureFolder / L"apple.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"tropical_fish"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"tropical_fish.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beetroot_soup"), loadTextureFromResourcePack(itemTextureFolder / L"beetroot_soup.png"), noHarvestTier, withHand, 0.0, INFINITY, 1);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"pufferfish"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"pufferfish.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"baked_potato"), loadTextureFromResourcePack(itemTextureFolder / L"baked_potato.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"spider_eye"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spider_eye.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rotten_flesh"), loadTextureFromResourcePack(itemTextureFolder / L"rotten_flesh.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bread"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bread.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_carrot"), loadTextureFromResourcePack(itemTextureFolder / L"golden_carrot.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"porkchop"), loadTextureFromResourcePack(itemTextureFolder / L"porkchop.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_porkchop"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_porkchop.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"beef"), loadTextureFromResourcePack(itemTextureFolder / L"beef.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_beef"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_beef.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mutton"), loadTextureFromResourcePack(itemTextureFolder / L"mutton.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_mutton"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_mutton.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"chicken"), loadTextureFromResourcePack(itemTextureFolder / L"chicken.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_chicken"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_chicken.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit"), loadTextureFromResourcePack(itemTextureFolder / L"rabbit.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_rabbit"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_rabbit.png"));
 	identifier++;
 
-	resolutionTexture* goldenAppleTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"golden_apple.png"));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cod"), loadTextureFromResourcePack(itemTextureFolder / L"cod.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_cod"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_cod.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"salmon"), loadTextureFromResourcePack(itemTextureFolder / L"salmon.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"cooked_salmon"), loadTextureFromResourcePack(itemTextureFolder / L"cooked_salmon.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"tropical_fish"), loadTextureFromResourcePack(itemTextureFolder / L"tropical_fish.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"pufferfish"), loadTextureFromResourcePack(itemTextureFolder / L"pufferfish.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"spider_eye"), loadTextureFromResourcePack(itemTextureFolder / L"spider_eye.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bread"), loadTextureFromResourcePack(itemTextureFolder / L"bread.png"));
+	identifier++;
+
+	resolutionTexture* goldenAppleTexture = loadTextureFromResourcePack(itemTextureFolder / L"golden_apple.png");
 
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"golden_apple"), goldenAppleTexture);
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"enchanted_golden_apple"), goldenAppleTexture);
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mushroom_stew"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"mushroom_stew.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"mushroom_stew"), loadTextureFromResourcePack(itemTextureFolder / L"mushroom_stew.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_stew"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"rabbit_stew.png")));
-	identifier++;
-
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bowl"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bowl.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 0x10);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"water_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"water_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lava_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"lava_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"milk_bucket"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"milk_bucket.png")), noHarvestTier, withHand, 1.0, 1.0, 1);
-	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint_and_steel"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"flint_and_steel.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(normalEnchantments));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"rabbit_stew"), loadTextureFromResourcePack(itemTextureFolder / L"rabbit_stew.png"));
 	identifier++;
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bone"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bone.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bowl"), loadTextureFromResourcePack(itemTextureFolder / L"bowl.png"), noHarvestTier, withHand, 1.0, 1.0, 0x10);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bone_meal"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"bone_meal.png")));
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bucket"), loadTextureFromResourcePack(itemTextureFolder / L"bucket.png"), noHarvestTier, withHand, 1.0, 1.0, 0x10);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"water_bucket"), loadTextureFromResourcePack(itemTextureFolder / L"water_bucket.png"), noHarvestTier, withHand, 1.0, 1.0, 1);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"lava_bucket"), loadTextureFromResourcePack(itemTextureFolder / L"lava_bucket.png"), noHarvestTier, withHand, 1.0, 1.0, 1);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"milk_bucket"), loadTextureFromResourcePack(itemTextureFolder / L"milk_bucket.png"), noHarvestTier, withHand, 1.0, 1.0, 1);
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"flint_and_steel"), loadTextureFromResourcePack(itemTextureFolder / L"flint_and_steel.png"), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(normalEnchantments));
+	identifier++;
+
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bone"), loadTextureFromResourcePack(itemTextureFolder / L"bone.png"));
+	identifier++;
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"bone_meal"), loadTextureFromResourcePack(itemTextureFolder / L"bone_meal.png"));
 	identifier++;
 
 	for (int i = 0; i < oreBlockTypeCount - 2; i++)
@@ -2825,15 +2803,15 @@ static void loadItems()
 		itemList[identifier] = new itemData((itemID)identifier, oreItemName, loadTextureFromResourcePack(itemTextureFolder / (oreItemName + std::wstring(L".png"))));
 		identifier++;
 	}
-	itemList[identifier] = new itemData((itemID)identifier, L"quartz", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"quartz.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"quartz", loadTextureFromResourcePack(itemTextureFolder / L"quartz.png"));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, L"gold_ingot", loadTextureFromResourcePack(itemTextureFolder / L"gold_ingot.png"));
 	identifier++;
 	itemList[identifier] = new itemData((itemID)identifier, L"iron_ingot", loadTextureFromResourcePack(itemTextureFolder / L"iron_ingot.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, L"gold_nugget", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"gold_nugget.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"gold_nugget", loadTextureFromResourcePack(itemTextureFolder / L"gold_nugget.png"));
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, L"iron_nugget", loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"iron_nugget.png")));
+	itemList[identifier] = new itemData((itemID)identifier, L"iron_nugget", loadTextureFromResourcePack(itemTextureFolder / L"iron_nugget.png"));
 	identifier++;
 
 	// spawn eggs will be added after the entity list is added
@@ -2886,17 +2864,17 @@ static void loadItems()
 			std::wstring toolTypeName = toolTypeNames[toolTypeIndex];
 			cfp attackSpeed = toolTypeIndex == (withHoe - 1) ? hoeAttackSpeeds[toolTierIndex] : toolTypeIndex == (withAxe - 1) ? axeAttackSpeeds[toolTierIndex]
 				: attackSpeeds[toolTypeIndex];
-				cfp attackDamage = toolTypeIndex == (withHoe - 1) ? 1 : toolTypeIndex == (withAxe - 1) ? axeAttackDamageList[toolTierIndex]
-					: baseAttackDamageList[toolTypeIndex] + tierAttackDamageList[toolTierIndex];
-					std::wstring toolName = toolTierName + toolTypeName;
-					itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
-					identifier++;
+			cfp attackDamage = toolTypeIndex == (withHoe - 1) ? 1 : toolTypeIndex == (withAxe - 1) ? axeAttackDamageList[toolTierIndex]
+				: baseAttackDamageList[toolTypeIndex] + tierAttackDamageList[toolTierIndex];
+			std::wstring toolName = toolTierName + toolTypeName;
+			itemList[identifier] = new itemData((itemID)identifier, toolName, loadTextureFromResourcePack(itemTextureFolder / (toolName + std::wstring(L".png"))), (harvestTierID)(toolTierIndex + 1), harvestTypeID(toolTypeIndex + 1), attackDamage, attackSpeed, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(toolTypeEnchantments[toolTypeIndex]), toolEnchantability[toolTierIndex]);
+			identifier++;
 		}
 	}
 
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shears"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"shears.png")), ironHarvestTier, withSwordOrShears, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(shearsEnchantments), 14);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"shears"), loadTextureFromResourcePack(itemTextureFolder / L"shears.png"), ironHarvestTier, withSwordOrShears, 1.0, 1.0, 1, true, noArmorTier, noArmorType, std::vector<enchantmentID>(shearsEnchantments), 14);
 	identifier++;
-	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"elytra"), loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"elytra.png")), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, chestplateArmorType, std::vector<enchantmentID>(normalEnchantments), 15);
+	itemList[identifier] = new itemData((itemID)identifier, std::wstring(L"elytra"), loadTextureFromResourcePack(itemTextureFolder / L"elytra.png"), noHarvestTier, withHand, 1.0, 1.0, 1, true, noArmorTier, chestplateArmorType, std::vector<enchantmentID>(normalEnchantments), 15);
 	identifier++;
 
 	// add armor
@@ -2930,7 +2908,7 @@ static void loadItems()
 		}
 		armorTextures[armorTierIndex] = loadTextureFromResourcePack(armorTextureFolder / (armorMaterialNames[armorTierIndex] + std::wstring(L"_layer_1.png")));
 		armorLegTextures[armorTierIndex] = armorTierIndex > 0 ? loadTextureFromResourcePack(armorTextureFolder / (armorMaterialNames[armorTierIndex] + std::wstring(L"_layer_2.png"))) : nullptr;
-		armorEquipSound[armorTierIndex] = armorTierIndex ? std::make_shared<soundCollection>(itemSoundFolder / L"armor" / (L"equip_" + armorSoundNames[armorTierIndex])) : equipSound;
+		armorEquipSound[armorTierIndex] = armorTierIndex ? std::make_shared<audioCollection>(itemSoundFolder / L"armor" / (L"equip_" + armorSoundNames[armorTierIndex]), AudioType::sound) : equipSound;
 	}
 
 	resolutionTexture* leatherArmorTexture = armorTextures[leatherArmorTier - 1];
@@ -2947,28 +2925,30 @@ static void loadEntityData()
 	// add mob data
 	entityDataList = idList<entityData*, entityID>(fastList<entityData*>());
 	int currentEntityID = 0;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"human"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTexture(skinFolder / L"current.png", humanSkinSize), nullptr, nullptr, std::make_shared<soundCollection>(generalSoundFolder / L"damage" / L"hit"), nullptr, humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::green], 4.0, 1.0, new experienceDrop(), humanFlyingSpeed));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"human"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTexture(skinFolder / L"current.png", humanSkinSize), nullptr, nullptr, std::make_shared<audioCollection>(generalSoundFolder / L"damage" / L"hit", AudioType::sound), nullptr, humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::green], 4.0, 1.0, new experienceDrop(), humanFlyingSpeed));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"skeleton"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"skeleton.png"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"skeleton"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"skeleton.png"), std::make_shared<audioCollection>(mobSoundFolder / L"skeleton" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"skeleton" / L"say", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"skeleton" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"skeleton" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"stray"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"stray.png"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"stray" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::blue], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"stray"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"stray.png"), std::make_shared<audioCollection>(mobSoundFolder / L"stray" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"stray" / L"idle", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"stray" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"stray" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::blue], rgbColorValues[(int)colorID::gray], 1.5, 5, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"bogged"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"bogged.png"), std::make_shared<soundCollection>(mobSoundFolder / L"skeleton" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"ambient"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"bogged" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lime], rgbColorValues[(int)colorID::green], 1.5, 5, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"bogged"), maxhumanhealth, humanHitbox, skeletonVolume, skeletonWeight), loadTextureFromResourcePack(entityTextureFolder / L"skeleton" / L"bogged.png"), std::make_shared<audioCollection>(mobSoundFolder / L"skeleton" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"bogged" / L"ambient", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"bogged" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"bogged" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lime], rgbColorValues[(int)colorID::green], 1.5, 5, new experienceDrop(5, 5)));
 	currentEntityID++;
 
-	std::shared_ptr<soundCollection> zombieStep = std::make_shared<soundCollection>(mobSoundFolder / L"zombie" / L"step");
+	std::shared_ptr<audioCollection> zombieStep = std::make_shared<audioCollection>(mobSoundFolder / L"zombie" / L"step", AudioType::sound);
 
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"husk"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"husk.png"), std::make_shared<soundCollection>(mobSoundFolder / L"husk" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"husk" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"husk" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"husk" / L"death"), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"husk"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"husk.png"), std::make_shared<audioCollection>(mobSoundFolder / L"husk" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"husk" / L"idle", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"husk" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"husk" / L"death", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"drowned"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"drowned.png"), std::make_shared<soundCollection>(mobSoundFolder / L"drowned" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"drowned" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"drowned" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"drowned" / L"death"), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"drowned"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"drowned.png"), std::make_shared<audioCollection>(mobSoundFolder / L"drowned" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"drowned" / L"idle", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"drowned" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"drowned" / L"death", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombie_villager"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"zombie_villager.png"), zombieStep, std::make_shared<soundCollection>(mobSoundFolder / L"zombie_villager" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"zombie_villager" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"zombie_villager" / L"death"), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombie_villager"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"zombie_villager.png"), zombieStep, std::make_shared<audioCollection>(mobSoundFolder / L"zombie_villager" / L"say", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombie_villager" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombie_villager" / L"death", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombie"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"zombie.png"), zombieStep, std::make_shared<soundCollection>(mobSoundFolder / L"zombie" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"zombie" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"zombie" / L"death"), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombie"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"zombie" / L"zombie.png"), zombieStep, std::make_shared<audioCollection>(mobSoundFolder / L"zombie" / L"say", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombie" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombie" / L"death", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::lightBlue], rgbColorValues[(int)colorID::green], 1.5, 3, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombified_piglin"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"piglin" / L"zombified_piglin.png"), zombieStep, std::make_shared<soundCollection>(mobSoundFolder / L"zombified_piglin" / L"zpig"), std::make_shared<soundCollection>(mobSoundFolder / L"zombified_piglin" / L"zpighurt"), std::make_shared<soundCollection>(mobSoundFolder / L"zombified_piglin" / L"zpigdeath"), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::brown], 1.5, 3, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"zombified_piglin"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"piglin" / L"zombified_piglin.png"), zombieStep, std::make_shared<audioCollection>(mobSoundFolder / L"zombified_piglin" / L"zpig", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombified_piglin" / L"zpighurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"zombified_piglin" / L"zpigdeath", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::brown], 1.5, 3, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"enderman"), 40, endermanHitbox, 0.1, 100), loadTextureFromResourcePack(entityTextureFolder / L"enderman" / L"enderman.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"idle"), std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"hit"), std::make_shared<soundCollection>(mobSoundFolder / L"endermen" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(endermanLegSize.y, maxEndermanLegAngle), rgbColorValues[(int)colorID::black], rgbColorValues[(int)colorID::purple], 1.5, 7, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"villager"), maxhumanhealth, humanHitbox, humanVolume, humanWeight), loadTextureFromResourcePack(entityTextureFolder / L"villager" / L"villager.png"), nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"idle", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"hit", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"villager" / L"death", AudioType::sound), 1.0, getLegSwingSynchronizer(humanLegSize.y), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::pink]));
+	currentEntityID++;
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"enderman"), 40, endermanHitbox, 0.1, 100), loadTextureFromResourcePack(entityTextureFolder / L"enderman" / L"enderman.png"), nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"idle", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"hit", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"endermen" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(endermanLegSize.y, maxEndermanLegAngle), rgbColorValues[(int)colorID::black], rgbColorValues[(int)colorID::purple], 1.5, 7, new experienceDrop(5, 5)));
 	currentEntityID++;
 
 	resolutionTexture* unEditedSlimeTexture = loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"slime.png");
@@ -2983,43 +2963,43 @@ static void loadEntityData()
 	currentEntityID++;
 	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"magma_cube"), 0, crectangle2()), loadTextureFromResourcePack(entityTextureFolder / L"slime" / L"magmacube.png"), nullptr, nullptr, nullptr, nullptr, humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::yellow], 2, 0, new experienceDrop(1, 3)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"creeper"), 20, creeperHitbox, humanVolume, 160), loadTextureFromResourcePack(entityTextureFolder / L"creeper" / L"creeper.png"), nullptr, nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"creeper" / L"say"), std::make_shared<soundCollection>(mobSoundFolder / L"creeper" / L"death"), 2, getLegSwingSynchronizer(creeperLegSize.y), rgbColorValues[(int)colorID::green], rgbColorValues[(int)colorID::black], 0, 0, new experienceDrop(5, 5)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"creeper"), 20, creeperHitbox, humanVolume, 160), loadTextureFromResourcePack(entityTextureFolder / L"creeper" / L"creeper.png"), nullptr, nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"creeper" / L"say", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"creeper" / L"death", AudioType::sound), 2, getLegSwingSynchronizer(creeperLegSize.y), rgbColorValues[(int)colorID::green], rgbColorValues[(int)colorID::black], 0, 0, new experienceDrop(5, 5)));
 	currentEntityID++;
-	std::shared_ptr<soundCollection> oink = std::make_shared<soundCollection>(mobSoundFolder / L"pig" / L"say");
+	std::shared_ptr<audioCollection> oink = std::make_shared<audioCollection>(mobSoundFolder / L"pig" / L"say", AudioType::sound);
 
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"wolf"), 10, relativeWolfHitbox, 0.029, 30), loadTextureFromResourcePack(entityTextureFolder / L"wolf" / L"wolf.png"), std::make_shared<soundCollection>(mobSoundFolder / L"wolf" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"wolf" / L"bark"), std::make_shared<soundCollection>(mobSoundFolder / L"wolf" / L"hurt"), std::make_shared<soundCollection>(mobSoundFolder / L"wolf" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(wolfLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::brown], 0.5, 4, new experienceDrop(1, 3)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"wolf"), 10, relativeWolfHitbox, 0.029, 30), loadTextureFromResourcePack(entityTextureFolder / L"wolf" / L"wolf.png"), std::make_shared<audioCollection>(mobSoundFolder / L"wolf" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"wolf" / L"bark", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"wolf" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"wolf" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(wolfLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::brown], 0.5, 4, new experienceDrop(1, 3)));
 	currentEntityID++;
 
 	// weights of natural animals, not domesticated animals
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"pig"), 10, crectangle2(-pigHitboxSize.x * 0.5, 0, pigHitboxSize.x, pigHitboxSize.y), 0.25, 250), loadTextureFromResourcePack(entityTextureFolder / L"pig" / L"pig.png"), std::make_shared<soundCollection>(mobSoundFolder / L"pig" / L"step"), oink, oink, std::make_shared<soundCollection>(mobSoundFolder / L"pig" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(pigLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::red], 1.0, 1.0, new experienceDrop(1, 3)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"pig"), 10, crectangle2(-pigHitboxSize.x * 0.5, 0, pigHitboxSize.x, pigHitboxSize.y), 0.25, 250), loadTextureFromResourcePack(entityTextureFolder / L"pig" / L"pig.png"), std::make_shared<audioCollection>(mobSoundFolder / L"pig" / L"step", AudioType::sound), oink, oink, std::make_shared<audioCollection>(mobSoundFolder / L"pig" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(pigLegSize.y), rgbColorValues[(int)colorID::pink], rgbColorValues[(int)colorID::red], 1.0, 1.0, new experienceDrop(1, 3)));
 	currentEntityID++;
-	std::shared_ptr<soundCollection> cowHurt = std::make_shared<soundCollection>(mobSoundFolder / L"cow" / L"hurt");
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"cow"), 10, crectangle2(-cowHitboxSize.x * 0.5, 0, cowHitboxSize.x, cowHitboxSize.y), 0.2, 200), loadTextureFromResourcePack(entityTextureFolder / L"cow" / L"cow.png"), std::make_shared<soundCollection>(mobSoundFolder / L"cow" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"cow" / L"say"), cowHurt, cowHurt, humanWalkingSpeed, getLegSwingSynchronizer(cowLegSize.y), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::gray], 1.0, 1.0, new experienceDrop(1, 3)));
+	std::shared_ptr<audioCollection> cowHurt = std::make_shared<audioCollection>(mobSoundFolder / L"cow" / L"hurt", AudioType::sound);
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"cow"), 10, crectangle2(-cowHitboxSize.x * 0.5, 0, cowHitboxSize.x, cowHitboxSize.y), 0.2, 200), loadTextureFromResourcePack(entityTextureFolder / L"cow" / L"cow.png"), std::make_shared<audioCollection>(mobSoundFolder / L"cow" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"cow" / L"say", AudioType::sound), cowHurt, cowHurt, humanWalkingSpeed, getLegSwingSynchronizer(cowLegSize.y), rgbColorValues[(int)colorID::brown], rgbColorValues[(int)colorID::gray], 1.0, 1.0, new experienceDrop(1, 3)));
 	currentEntityID++;
-	std::shared_ptr<soundCollection> baa = std::make_shared<soundCollection>(mobSoundFolder / L"sheep" / L"say");
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"sheep"), 8, crectangle2(-sheepHitboxSize.x * 0.5, 0, sheepHitboxSize.x, sheepHitboxSize.y), 0.07, 70), loadTextureFromResourcePack(entityTextureFolder / L"sheep" / L"sheep.png"), std::make_shared<soundCollection>(mobSoundFolder / L"sheep" / L"step"), baa, baa, baa, humanWalkingSpeed, getLegSwingSynchronizer(sheepLegSize.y), rgbColorValues[(int)colorID::white], rgbColorValues[(int)colorID::pink], 1.0, 1.0, new experienceDrop(1, 3)));
+	std::shared_ptr<audioCollection> baa = std::make_shared<audioCollection>(mobSoundFolder / L"sheep" / L"say", AudioType::sound);
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"sheep"), 8, crectangle2(-sheepHitboxSize.x * 0.5, 0, sheepHitboxSize.x, sheepHitboxSize.y), 0.07, 70), loadTextureFromResourcePack(entityTextureFolder / L"sheep" / L"sheep.png"), std::make_shared<audioCollection>(mobSoundFolder / L"sheep" / L"step", AudioType::sound), baa, baa, baa, humanWalkingSpeed, getLegSwingSynchronizer(sheepLegSize.y), rgbColorValues[(int)colorID::white], rgbColorValues[(int)colorID::pink], 1.0, 1.0, new experienceDrop(1, 3)));
 	currentEntityID++;
-	std::shared_ptr<soundCollection> chickenHurt = std::make_shared<soundCollection>(mobSoundFolder / L"chicken" / L"hurt");
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"chicken"), 4, crectangle2(-chickenHitboxSize.x * 0.5, 0, chickenHitboxSize.x, chickenHitboxSize.y), 0.01, 10), loadTextureFromResourcePack(entityTextureFolder / L"chicken.png"), std::make_shared<soundCollection>(mobSoundFolder / L"chicken" / L"step"), std::make_shared<soundCollection>(mobSoundFolder / L"chicken" / L"say"), chickenHurt, chickenHurt, humanWalkingSpeed, getLegSwingSynchronizer(chickenUpperLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::red], 1.0, 1.0, new experienceDrop(1, 3)));
-	currentEntityID++;
-
-	std::shared_ptr<soundCollection> fishHurt = std::make_shared<soundCollection>(entitySoundFolder / L"fish" / L"hurt");
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"cod"), 3, relativeCodHitbox, 0.015, 15), loadTextureFromResourcePack(entityTextureFolder / L"fish" / L"cod.png"), std::make_shared<soundCollection>(entitySoundFolder / L"fish" / L"flop"), std::make_shared<soundCollection>(entitySoundFolder / L"fish" / L"swim"), fishHurt, fishHurt, humanWalkingSpeed, getLegSwingSynchronizer(chickenUpperLegSize.y), rgbColorValues[(int)colorID::yellow], rgbColorValues[(int)colorID::brown], 1.0, 1.0, new experienceDrop(1, 3)));
+	std::shared_ptr<audioCollection> chickenHurt = std::make_shared<audioCollection>(mobSoundFolder / L"chicken" / L"hurt", AudioType::sound);
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"chicken"), 4, crectangle2(-chickenHitboxSize.x * 0.5, 0, chickenHitboxSize.x, chickenHitboxSize.y), 0.01, 10), loadTextureFromResourcePack(entityTextureFolder / L"chicken.png"), std::make_shared<audioCollection>(mobSoundFolder / L"chicken" / L"step", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"chicken" / L"say", AudioType::sound), chickenHurt, chickenHurt, humanWalkingSpeed, getLegSwingSynchronizer(chickenUpperLegSize.y), rgbColorValues[(int)colorID::lightGray], rgbColorValues[(int)colorID::red], 1.0, 1.0, new experienceDrop(1, 3)));
 	currentEntityID++;
 
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"shulker"), 30, shulkerRelativeHitbox, 1, 50), loadTextureFromResourcePack(entityTextureFolder / L"shulker" / L"shulker.png"), nullptr, std::make_shared<soundCollection>(entitySoundFolder / L"shulker" / L"ambient"), std::make_shared<soundCollection>(entitySoundFolder / L"shulker" / L"hurt"), std::make_shared<soundCollection>(entitySoundFolder / L"shulker" / L"death"), 0, getLegSwingSynchronizer(0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::black], 1.0, 1.0, new experienceDrop(5, 5)));
+	std::shared_ptr<audioCollection> fishHurt = std::make_shared<audioCollection>(entitySoundFolder / L"fish" / L"hurt", AudioType::sound);
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"cod"), 3, relativeCodHitbox, 0.015, 15), loadTextureFromResourcePack(entityTextureFolder / L"fish" / L"cod.png"), std::make_shared<audioCollection>(entitySoundFolder / L"fish" / L"flop", AudioType::sound), std::make_shared<audioCollection>(entitySoundFolder / L"fish" / L"swim", AudioType::sound), fishHurt, fishHurt, humanWalkingSpeed, getLegSwingSynchronizer(chickenUpperLegSize.y), rgbColorValues[(int)colorID::yellow], rgbColorValues[(int)colorID::brown], 1.0, 1.0, new experienceDrop(1, 3)));
 	currentEntityID++;
 
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"blaze"), 20, blazeHitbox, 0.04, 300), loadTextureFromResourcePack(entityTextureFolder / L"blaze.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"blaze" / L"breathe"), std::make_shared<soundCollection>(mobSoundFolder / L"blaze" / L"hit"), std::make_shared<soundCollection>(mobSoundFolder / L"blaze" / L"death"), humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::yellow], rgbColorValues[(int)colorID::green], 1.5, 6, new experienceDrop(10, 10)));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"shulker"), 30, shulkerRelativeHitbox, 1, 50), loadTextureFromResourcePack(entityTextureFolder / L"shulker" / L"shulker.png"), nullptr, std::make_shared<audioCollection>(entitySoundFolder / L"shulker" / L"ambient", AudioType::sound), std::make_shared<audioCollection>(entitySoundFolder / L"shulker" / L"hurt", AudioType::sound), std::make_shared<audioCollection>(entitySoundFolder / L"shulker" / L"death", AudioType::sound), 0, getLegSwingSynchronizer(0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::black], 1.0, 1.0, new experienceDrop(5, 5)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ghast"), 10, ghastHitbox, ghastHitboxSize.volume() * ghastHitboxSize.x, 150), loadTextureFromResourcePack(entityTextureFolder / L"ghast" / L"ghast.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"moan"), std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"scream"), std::make_shared<soundCollection>(mobSoundFolder / L"ghast" / L"death"), ghastFlyingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::white], rgbColorValues[(int)colorID::gray], 0, 0, new experienceDrop(5, 5)));
+
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"blaze"), 20, blazeHitbox, 0.04, 300), loadTextureFromResourcePack(entityTextureFolder / L"blaze.png"), nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"blaze" / L"breathe", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"blaze" / L"hit", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"blaze" / L"death", AudioType::sound), humanWalkingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::yellow], rgbColorValues[(int)colorID::green], 1.5, 6, new experienceDrop(10, 10)));
 	currentEntityID++;
-	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ender_dragon"), 200, enderDragonHitbox, enderDragonVolume, enderDragonWeight), loadTextureFromResourcePack(entityTextureFolder / L"enderdragon" / L"dragon.png"), nullptr, std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"growl"), std::make_shared<soundCollection>(mobSoundFolder / L"enderdragon" / L"hit"), nullptr, enderDragonFlyingSpeed, waveShaper(0, 0, 0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::blue], INFINITY, enderDragonHeadAttackDamage));
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ghast"), 10, ghastHitbox, ghastHitboxSize.volume() * ghastHitboxSize.x, 150), loadTextureFromResourcePack(entityTextureFolder / L"ghast" / L"ghast.png"), nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"ghast" / L"moan", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"ghast" / L"scream", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"ghast" / L"death", AudioType::sound), ghastFlyingSpeed, getLegSwingSynchronizer(0, 0), rgbColorValues[(int)colorID::white], rgbColorValues[(int)colorID::gray], 0, 0, new experienceDrop(5, 5)));
+	currentEntityID++;
+	entityDataList.push_back(new mobData(entityData((entityID)currentEntityID, std::wstring(L"ender_dragon"), 200, enderDragonHitbox, enderDragonVolume, enderDragonWeight), loadTextureFromResourcePack(entityTextureFolder / L"enderdragon" / L"dragon.png"), nullptr, std::make_shared<audioCollection>(mobSoundFolder / L"enderdragon" / L"growl", AudioType::sound), std::make_shared<audioCollection>(mobSoundFolder / L"enderdragon" / L"hit", AudioType::sound), nullptr, enderDragonFlyingSpeed, waveShaper(0, 0, 0), rgbColorValues[(int)colorID::purple], rgbColorValues[(int)colorID::blue], INFINITY, enderDragonHeadAttackDamage));
 	currentEntityID++;
 	entityDataList.push_back(new entityData((entityID)currentEntityID, std::wstring(L"boat"), 4, crectangle2(boatHitboxSize.x * -0.5, 0, boatHitboxSize.x, boatHitboxSize.y), math::squared(boatHitboxSize.x) * boatHitboxSize.y));
 	currentEntityID++;
 
-	resolutionTexture* unEditedMinecartTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"minecart.png"));
+	resolutionTexture* unEditedMinecartTexture = loadTextureFromResourcePack(entityTextureFolder / L"minecart.png");
 	auto minecartEditedTexture = new resolutionTexture(texture(vect2<fsize_t>(minecartEditedTextureRect.size)), minecartEditedTextureRect.size);
 	fillTransformedBrushRectangle(minecartBottomTextureRect, cvec2(), *unEditedMinecartTexture, *minecartEditedTexture);
 	fillTransformedBrushRectangle(minecartTopTextureRect, cvec2(0, minecartBottomTextureRect.size.y), *unEditedMinecartTexture, *minecartEditedTexture);
@@ -3052,7 +3032,7 @@ static void loadEntityData()
 	currentEntityID++;
 	entityDataList.push_back(new throwableData(entityData((entityID)currentEntityID, std::wstring(L"ender_eye"), INFINITY, crectangle2().expanded(0.25), throwableVolume, 5), itemList[itemID::ender_eye]->tex, 0));
 	currentEntityID++;
-	entityDataList.push_back(new throwableData(entityData((entityID)currentEntityID, std::wstring(L"fishing_hook"), INFINITY, crectangle2().expanded(0.25), throwableVolume, 5), loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"fishing_hook.png")), fishingHookThrowPower));
+	entityDataList.push_back(new throwableData(entityData((entityID)currentEntityID, std::wstring(L"fishing_hook"), INFINITY, crectangle2().expanded(0.25), throwableVolume, 5), loadTextureFromResourcePack(entityTextureFolder / L"fishing_hook.png"), fishingHookThrowPower));
 	currentEntityID++;
 	entityDataList.push_back(new throwableData(entityData((entityID)currentEntityID, std::wstring(L"arrow"), INFINITY, relativeArrowHitbox, throwableVolume, 5), loadTextureFromResourcePack(entityTextureFolder / L"projectiles" / L"arrow.png"), arrowPower));
 	currentEntityID++;
@@ -3092,7 +3072,7 @@ void loadResourcePacks()
 	biomeTexture = loadTextureFromResourcePack(overworldDataFolder / L"biomes.png");
 	tempMapTexture = loadTextureFromResourcePack(overworldDataFolder / L"temperatures.png");
 
-	experienceTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"experience_orb.png"));
+	experienceTexture = loadTextureFromResourcePack(entityTextureFolder / L"experience_orb.png");
 
 	// gui
 	currentMinecraftFontFamily = new fontFamily(loadTextureFromResourcePack(guiTextureFolder / L"ascii shadow.png"));
@@ -3100,31 +3080,31 @@ void loadResourcePacks()
 
 	mainMenuBackgroundTexture = loadTextureFromResourcePack(guiTextureFolder / L"title" / L"background" / L"2d.png");
 
-	//barsTexture = loadTextureFromResourcePack(guiTextureFolder / std::wstring(L"bars.png"));
+	//barsTexture = loadTextureFromResourcePack(guiTextureFolder / L"bars.png");
 
 	chatButtonTexture = loadTextureFromResourcePack(buttonTextureFolder / L"chat.png");
 	settingsButtonTexture = loadTextureFromResourcePack(buttonTextureFolder / L"settings.png");
 	inventoryButtonTexture = loadTextureFromResourcePack(buttonTextureFolder / L"inventory.png");
 
-	grassOverlay = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grass_block_side_overlay.png"));
-	snowyGrassBlockTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"grass_block_snow.png"));
+	grassOverlay = loadTextureFromResourcePack(blockTextureFolder / L"grass_block_side_overlay.png");
+	snowyGrassBlockTexture = loadTextureFromResourcePack(blockTextureFolder / L"grass_block_snow.png");
 	woolOverlay = loadTextureFromResourcePack(entityTextureFolder / L"sheep" / L"sheep_fur.png");
-	endPortalFrameEyeTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"end_portal_frame_eye.png"));
-	endSkyTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"end_sky.png"));
-	endCrystalTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"end_crystal/end_crystal.png"));
-	endCrystalBeamTexture = loadTextureFromResourcePack(entityTextureFolder / std::wstring(L"end_crystal/end_crystal_beam.png"));
-	fireChargeTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"fire_charge.png"));
-	dirtTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"dirt.png"));
-	potionOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"potion_overlay.png"));
-	rainTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"rain.png"));
-	snowTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"snow.png"));
-	sunTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"sun.png"));
-	moonPhasesTexture = loadTextureFromResourcePack(environmentTextureFolder / std::wstring(L"moon_phases.png"));
-	brewingStandBaseTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brewing_stand_base.png"));
-	brewingStandTopTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"brewing_stand.png"));
-	enchantedItemTexture = loadTextureFromResourcePack(miscellaneousTextureFolder / std::wstring(L"enchanted_glint_item.png"));
-	unLitRedstoneTorchTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_torch_off.png"));
-	redstoneLampOnTexture = loadTextureFromResourcePack(blockTextureFolder / std::wstring(L"redstone_lamp_on.png"));
+	endPortalFrameEyeTexture = loadTextureFromResourcePack(blockTextureFolder / L"end_portal_frame_eye.png");
+	endSkyTexture = loadTextureFromResourcePack(environmentTextureFolder / L"end_sky.png");
+	endCrystalTexture = loadTextureFromResourcePack(entityTextureFolder / L"end_crystal/end_crystal.png");
+	endCrystalBeamTexture = loadTextureFromResourcePack(entityTextureFolder / L"end_crystal/end_crystal_beam.png");
+	fireChargeTexture = loadTextureFromResourcePack(itemTextureFolder / L"fire_charge.png");
+	dirtTexture = loadTextureFromResourcePack(blockTextureFolder / L"dirt.png");
+	potionOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / L"potion_overlay.png");
+	rainTexture = loadTextureFromResourcePack(environmentTextureFolder / L"rain.png");
+	snowTexture = loadTextureFromResourcePack(environmentTextureFolder / L"snow.png");
+	sunTexture = loadTextureFromResourcePack(environmentTextureFolder / L"sun.png");
+	moonPhasesTexture = loadTextureFromResourcePack(environmentTextureFolder / L"moon_phases.png");
+	brewingStandBaseTexture = loadTextureFromResourcePack(blockTextureFolder / L"brewing_stand_base.png");
+	brewingStandTopTexture = loadTextureFromResourcePack(blockTextureFolder / L"brewing_stand.png");
+	enchantedItemTexture = loadTextureFromResourcePack(miscellaneousTextureFolder / L"enchanted_glint_item.png");
+	unLitRedstoneTorchTexture = loadTextureFromResourcePack(blockTextureFolder / L"redstone_torch_off.png");
+	redstoneLampOnTexture = loadTextureFromResourcePack(blockTextureFolder / L"redstone_lamp_on.png");
 
 	const wstringContainer& furnaceNames{ std::wstring(L"furnace"), std::wstring(L"blast_furnace"), std::wstring(L"smoker") };
 
@@ -3161,7 +3141,7 @@ void loadResourcePacks()
 	{
 		itemList[(int)blockID::bed + i]->maxStackSize = 1;
 	}
-	itemList[(int)blockID::kelp]->tex = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"kelp.png"));
+	itemList[(int)blockID::kelp]->tex = loadTextureFromResourcePack(itemTextureFolder / L"kelp.png");
 	// add leave textures
 	// color the texture
 	for (int i = 0; i < normalTreeTypeCount; i++)
@@ -3208,11 +3188,11 @@ void loadResourcePacks()
 
 	loadEntityData();
 
-	resolutionTexture* spawnEggTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg.png"));
-	resolutionTexture* spawnEggOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / std::wstring(L"spawn_egg_overlay.png"));
+	resolutionTexture* spawnEggTexture = loadTextureFromResourcePack(itemTextureFolder / L"spawn_egg.png");
+	resolutionTexture* spawnEggOverlayTexture = loadTextureFromResourcePack(itemTextureFolder / L"spawn_egg_overlay.png");
 	for (int i = 0; i < mobTypeCount; i++)
 	{
-		entityID id = mobList[i];
+		entityID id = (entityID)i;
 		mobData* data = (mobData*)entityDataList[(int)id];
 
 		auto currentSpawnEggTexture = new resolutionTexture(texture(cvect2<fsize_t>(blockTextureSize)), cvec2(blockTextureSize));
@@ -3232,6 +3212,7 @@ void loadResourcePacks()
 	loadTags();
 	loadLootTables();
 	loadRecipes();
+	readTrades();
 
 	// add loot tables
 	// for (const auto &fileIterator : stdFileSystem::directory_iterator(blockLootTablesFolder))
@@ -3243,11 +3224,11 @@ void loadResourcePacks()
 
 	dimensionDataList = idList<dimensionData*, dimensionID>(fastList<dimensionData*>((int)dimensionID::count));
 	int currentDimensionID = 0;
-	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"overworld"), loadTextureFromResourcePack(lightMapFolder / std::wstring(L"world0.png")), true);
+	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"overworld"), loadTextureFromResourcePack(lightMapFolder / L"world0.png"), true);
 	currentDimensionID++;
-	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"nether"), loadTextureFromResourcePack(lightMapFolder / std::wstring(L"world-1.png")));
+	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"nether"), loadTextureFromResourcePack(lightMapFolder / L"world-1.png"));
 	currentDimensionID++;
-	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"end"), loadTextureFromResourcePack(lightMapFolder / std::wstring(L"world1.png")));
+	dimensionDataList[currentDimensionID] = new dimensionData(std::wstring(L"end"), loadTextureFromResourcePack(lightMapFolder / L"world1.png"));
 	currentDimensionID++;
 
 	idConverter::writeIDsToFile();
@@ -3308,7 +3289,7 @@ fp getItemWeakness(const itemID& identifier)
 		}
 	}
 }
-std::shared_ptr<soundCollection> getEquipSound(const itemID& identifier)
+std::shared_ptr<audioCollection> getEquipSound(const itemID& identifier)
 {
 	if (isMaterialArmor(identifier))
 	{

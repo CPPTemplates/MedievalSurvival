@@ -44,6 +44,7 @@ const stdPath spritesTextureFolder = guiTextureFolder / L"sprites";
 const stdPath containerSpritesFolder = spritesTextureFolder / L"container";
 const stdPath hudTextureFolder = spritesTextureFolder / L"hud";
 const stdPath heartTextureFolder = hudTextureFolder / L"heart";
+const stdPath widgetTextureFolder = spritesTextureFolder / L"widget";
 
 //sounds
 const stdPath generalSoundFolder = assetsFolder / L"sounds";

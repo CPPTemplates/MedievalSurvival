@@ -9,9 +9,10 @@
 #include "stackDivider.h"
 #include <resourceLoader.h>
 #include <itemData.h>
+#include <TextureLoader.h>
 
 furnaceSlotContainer::furnaceSlotContainer() {
-	uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"furnace.png"));
+	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"furnace.png");
 	containers.push_back(furnaceFuelSlot = new uiSlotContainer(cveci2(56, 97), nullptr));
 	containers.push_back(furnaceInputSlot = new uiSlotContainer(cveci2(56, 133), nullptr));
 	//hotbar and inventory will be linked up
@@ -24,20 +25,20 @@ bool furnaceSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
 	return furnaceInputSlot->addToEqualStacks(s, emptySlot) || furnaceFuelSlot->addToEqualStacks(s, emptySlot);
 }
 
-void furnaceSlotContainer::drawExtraData(cmat3x3& transform, const texture& renderTarget) {
+void furnaceSlotContainer::drawExtraData(cmat3x3& transform, const gameRenderData& targetData) {
 	//draw fire and progress bar
 	//draw fire
 	if (selectedFurnaceData->ticksFuelBurned) {
 		fp burnProgress =
 			selectedFurnaceData->ticksFuelBurned / (fp)selectedFurnaceData->ticksFuelToBurn;
-		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"furnace" / L"lit_progress.png"], crectanglei2(0, 0, 14, (int)(14 * (1.0 - burnProgress))), veci2(56, 116), transform, renderTarget);
+		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"furnace" / L"lit_progress.png"], crectanglei2(0, 0, 14, (int)(14 * (1.0 - burnProgress))), veci2(56, 116), transform, targetData);
 	}
 	//draw progress bar
 	if (selectedFurnaceData->ticksCooked) {
 		fp cookProgress = selectedFurnaceData->ticksCooked /
 			(fp)selectedFurnaceData->currentRecipe->cookingTime;
 		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"furnace" / L"burn_progress.png"], crectanglei2(0, 0, (int)(24 * cookProgress), 16),
-			veci2(79, 115), transform, renderTarget);
+			veci2(79, 115), transform, targetData);
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "filesystem/jsonReader.h"
 #include <filesystem/textfile.h>
 #include "folderList.h"
+#include <resourceLoader.h>
 
 particleTypeData::particleTypeData(const std::wstring& name) : INamable(name), textures(std::vector<resolutionTexture*>())
 {

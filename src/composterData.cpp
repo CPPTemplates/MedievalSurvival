@@ -3,5 +3,5 @@
 
 void composterData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(L"compostLevel", fillLevel); 
+	serializeNBTValue(s, L"compostLevel", fillLevel); 
 }

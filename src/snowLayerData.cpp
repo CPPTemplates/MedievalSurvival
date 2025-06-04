@@ -10,5 +10,5 @@ void snowLayerData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
 	fallingBlockData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"layer thickness"), layerThickness);
+	serializeNBTValue(s, std::wstring(L"layer thickness"), layerThickness);
 }

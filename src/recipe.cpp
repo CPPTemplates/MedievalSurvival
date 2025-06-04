@@ -6,6 +6,7 @@
 #include "furnaceRecipe.h"
 #include "itemData.h"
 #include "include/optimization/handleError.h"
+#include <MinecraftJSONReader.h>
 
 std::vector<recipe*> craftingRecipes = std::vector<recipe*>();
 
@@ -131,35 +132,20 @@ void readRecipe(const jsonContainer& recipeDescription)
 	//check if the result is valid
 	const jsonContainer& resultContainer = recipeDescription.children[recipeDescription.getChildIndex(std::wstring(L"result"))];
 
-	//a layer deeper or not?
-	const std::wstring resultItemName = resultContainer[L"id"].children[0].value;
-
-	const itemID& resultItemIndex = itemList.getIDByName(resultItemName);
-	if ((int)resultItemIndex == -1)
+	if (readItemStack(resultContainer, resultingRecipe->result))
 	{
+		if (recipeType == std::wstring(L"minecraft:smelting"))
+		{
+			furnaceRecipes.push_back((furnaceRecipe*)resultingRecipe);
+		}
+		else
+		{
+			craftingRecipes.push_back(resultingRecipe);
+		}
+	}
+	else {
 
 		delete resultingRecipe;
-		return;
-	}
-	resultingRecipe->result.stackItemID = resultItemIndex;
-
-	if (resultContainer.children.size() > 1)
-	{
-		//count
-		resultingRecipe->result.count = std::stoi(resultContainer[L"count"].children[0].value);
-	}
-	else
-	{
-		resultingRecipe->result.count = 1;
-	}
-	resultingRecipe->result.data = createItemTag(resultingRecipe->result.stackItemID);
-	if (recipeType == std::wstring(L"minecraft:smelting"))
-	{
-		furnaceRecipes.push_back((furnaceRecipe*)resultingRecipe);
-	}
-	else
-	{
-		craftingRecipes.push_back(resultingRecipe);
 	}
 }
 void substractOneOfEachSlot(rectangularSlotContainer* container)

@@ -47,8 +47,8 @@ void creeper::render(const gameRenderData& targetData) const
 void creeper::serializeMembers(nbtSerializer& s)
 {
 	fourLeggedMob::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"powered"), powered);
-	s.serializeMembers(std::wstring(L"explosion strength"), explosionStrength);
-	s.serializeMembers(std::wstring(L"ticks until fuse"), ticksUntilFuse);
-	s.serializeMembers(std::wstring(L"ignited"), ignited);
+	serializeNBTValue(s, std::wstring(L"powered"), powered);
+	serializeNBTValue(s, std::wstring(L"explosion strength"), explosionStrength);
+	serializeNBTValue(s, std::wstring(L"ticks until fuse"), ticksUntilFuse);
+	serializeNBTValue(s, std::wstring(L"ignited"), ignited);
 }

@@ -28,7 +28,7 @@
 #include "itemData.h"
 #include "snowLayerData.h"
 #include "boat.h"
-#include "mobList.h"
+
 #include "spawnerData.h"
 #include "endPortalFrameData.h"
 #include "sheep.h"
@@ -103,7 +103,7 @@
 #include "nbt/nbtSerializable.h"
 #include "gameRenderData.h"
 #include "smithingTableSlotContainer.h"
-#include "soundCollection.h"
+#include "audioCollection.h"
 #include "statusEffect.h"
 #include "statusEffectID.h"
 #include "treeItemTypeID.h"
@@ -114,6 +114,9 @@
 #include "gameTime.h"
 #include "iconParticle.h"
 #include "StartSoundPacket.h"
+#include "tradingSlotContainerUI.h"
+#include <Villager.h>
+
 //std::shared_ptr<audio2d> currentWindSound;
 
 void human::tick()
@@ -178,6 +181,18 @@ void human::tick()
 					((endCrystal*)selectedEntity)->explode();
 					goto rightClickUsed;
 				}
+				else if (selectedEntity->entityType == entityID::villager) {
+					tradingSlots->selectedVillagerUUID = selectedEntity->identifier;
+					Villager* selectedVillager = (Villager*)selectedEntity;
+					if (isEmployed(selectedVillager->profession)) {
+						tradingSlots->linkUp(screen.inventoryUI);
+						selectedVillager->playSoundAtHead(villagerHaggleSound);
+						goto rightClickUsed;
+					}
+					else {
+						selectedVillager->playSoundAtHead(villagerNoSound);
+					}
+				}
 			}
 			// check for interactable block
 			blockID selectedBlockID = selectedBlockContainer->getBlockID(selectedBlockPosition);
@@ -189,24 +204,24 @@ void human::tick()
 				case blockID::crafting_table:
 				{
 					// interact with crafting table
-					screen.inventoryUI->linkUp(craftingTableSlots);
+					craftingTableSlots->linkUp(screen.inventoryUI);
 					break;
 				}
 				case blockID::smithing_table:
 				{
 					// interact with crafting table
-					screen.inventoryUI->linkUp(smithingTableSlots);
+					smithingTableSlots->linkUp(screen.inventoryUI);
 					break;
 				}
 				case blockID::anvil:
 				{
 					// interact with crafting table
-					screen.inventoryUI->linkUp(anvilSlots);
+					anvilSlots->linkUp(screen.inventoryUI);
 					break;
 				}
 				case blockID::brewing_stand:
 				{
-					screen.inventoryUI->linkUp(brewingStandSlots);
+					brewingStandSlots->linkUp(screen.inventoryUI);
 					brewingstandData* selectedBrewingStandData = (brewingstandData*)selectedBlockData;
 					brewingStandSlots->selectedBrewingStandData = selectedBrewingStandData;
 					brewingStandSlots->blazePowderSlot->linkedContainer = selectedBrewingStandData->blazePowderSlot;
@@ -220,7 +235,7 @@ void human::tick()
 				case blockID::enchanting_table:
 				{
 					// interact with enchanting table
-					screen.inventoryUI->linkUp(enchantmentSlots);
+					enchantmentSlots->linkUp(screen.inventoryUI);
 					break;
 				}
 				case blockID::structure_block:
@@ -241,7 +256,7 @@ void human::tick()
 				{
 					if (isDispenser(selectedBlockID))
 					{
-						screen.inventoryUI->linkUp(dispenserSlots);
+						dispenserSlots->linkUp(screen.inventoryUI);
 						// link containers
 						dispenserData* selectedDispenserData = dynamic_cast<dispenserData*>(selectedBlockData);
 						dispenserSlots->selectedDispenserData = selectedDispenserData;
@@ -250,7 +265,7 @@ void human::tick()
 					else if (isFurnace(selectedBlockID))
 					{
 						// interact with furnace
-						screen.inventoryUI->linkUp(furnaceSlots);
+						furnaceSlots->linkUp(screen.inventoryUI);
 						// link containers
 						furnaceData* selectedFurnaceData = (furnaceData*)selectedBlockData;
 						furnaceSlots->selectedFurnaceData = selectedFurnaceData;
@@ -261,7 +276,7 @@ void human::tick()
 					}
 					else if (hasChestData(selectedBlockID))
 					{
-						screen.inventoryUI->linkUp(chestSlots);
+						chestSlots->linkUp(screen.inventoryUI);
 						// link containers
 						chestData* selectedChestData = (chestData*)selectedBlockData;
 						selectedChestData->generateChestLoot();
@@ -277,13 +292,8 @@ void human::tick()
 				}
 				break;
 				}
-				if (!hasCustomGUI(selectedBlockID))
-				{
-					screen.focusChild(screen.inventoryUI);
-				}
 				selectedContainerContainer = selectedBlockContainer;
 				selectedContainerPosition = selectedBlockPosition;
-				screen.focusedChild->visible = true;
 				goto rightClickUsed;
 			}
 			else
@@ -355,6 +365,7 @@ void human::tick()
 					{
 						// remove music disc from jukebox
 						addStackOrDrop(toJukeBoxData->recordSlot->slots[0]);
+						toJukeBoxData->stopMusic(selectedBlockContainer, selectedBlockPosition);
 
 						//handler->stopAudio(toJukeBoxData->musicPlaying);
 
@@ -468,19 +479,19 @@ void human::serializeMembers(nbtSerializer& s)
 	inventorySlots->serialize(s, std::wstring(L"inventory slots"));
 	leftHandSlot->serialize(s, std::wstring(L"left hand slot"));
 
-	s.serializeMembers(std::wstring(L"experience"), experience);
-	s.serializeMembers(std::wstring(L"score"), score);
-	s.serializeMembers(std::wstring(L"food level"), foodlevel);
-	s.serializeMembers(std::wstring(L"food exhaustion level"), foodExhaustionlevel);
-	s.serializeMembers(std::wstring(L"food saturation level"), foodsaturationlevel);
-	s.serializeMembers(std::wstring(L"food tick timer"), foodticktimer);
-	s.serializeMembers(std::wstring(L"food animation ticks"), foodAnimationTime);
-	s.serializeMembers(std::wstring(L"right hand slot index"), rightHandSlotIndex);
+	serializeNBTValue(s, std::wstring(L"experience"), experience);
+	serializeNBTValue(s, std::wstring(L"score"), score);
+	serializeNBTValue(s, std::wstring(L"food level"), foodlevel);
+	serializeNBTValue(s, std::wstring(L"food exhaustion level"), foodExhaustionlevel);
+	serializeNBTValue(s, std::wstring(L"food saturation level"), foodsaturationlevel);
+	serializeNBTValue(s, std::wstring(L"food tick timer"), foodticktimer);
+	serializeNBTValue(s, std::wstring(L"food animation ticks"), foodAnimationTime);
+	serializeNBTValue(s, std::wstring(L"right hand slot index"), rightHandSlotIndex);
 	updateHeldItem();
-	s.serializeMembers(std::wstring(L"gamemode"), currentGameMode);
-	s.serializeMembers(std::wstring(L"has seen credits"), seenCredits);
-	s.serializeMembers(std::wstring(L"spectator speed"), spectatorSpeed);
-	s.serializeMembers(std::wstring(L"visible range"), visibleRangeXWalk);
+	serializeNBTValue(s, std::wstring(L"gamemode"), currentGameMode);
+	serializeNBTValue(s, std::wstring(L"has seen credits"), seenCredits);
+	serializeNBTValue(s, std::wstring(L"spectator speed"), spectatorSpeed);
+	serializeNBTValue(s, std::wstring(L"visible range"), visibleRangeXWalk);
 }
 
 bool human::serialize(cbool& write)
@@ -703,7 +714,7 @@ bool human::canSleep() const
 human::human(gameControl& screen, const std::wstring& name) : humanoid(entityID::human), INamable(name),
 screen(screen)
 {
-	initializeBodyParts(humanHeadTextureRect, humanBodyTextureRect, humanLeftLegTextureRect, humanRightLegTextureRect, humanLeftArmTextureRect, humanRightArmTextureRect);
+	initializeBodyParts(humanHeadTextureRect, humanBodyTextureRect, humanLeftLegTextureRect, humanRightLegTextureRect, humanLeftArmTextureRect, humanRightArmTextureRect, humanPixelSize);
 	hotbarSlots = new rectangularSlotContainer(cveci2(StandardInventoryColumnCount, 1));
 	leftHandSlot = new rectangularSlotContainer(cveci2(1));
 	inventorySlots = new rectangularSlotContainer(cveci2(StandardInventoryColumnCount, StandardInventoryRowCount));
@@ -720,6 +731,7 @@ screen(screen)
 	enchantmentSlots = new enchantingTableSlotContainer();
 	dispenserSlots = new dispenserSlotContainer();
 	humanSlots = new humanSlotContainerUI();
+	tradingSlots = new TradingSlotContainerUI();
 	linkUpInventories();
 	tasks = new playerControlledAI(this);
 	//point to 1st slot
@@ -918,7 +930,7 @@ void human::onItemRightClick(itemStack& stackIn)
 	{
 		if (wantsToStartUsing)
 		{
-			const entityID mobToSpawn = mobList[(int)stackIn.stackItemID - (int)itemID::spawn_egg];
+			const entityID mobToSpawn = getMobFromSpawnEgg(stackIn.stackItemID);
 			if (selectedBlock == blockID::spawner)
 			{
 				dynamic_cast<spawnerData*>(selectedBlockContainer->getBlockData(selectedBlockPosition))->entityToSpawn = mobToSpawn;
@@ -1276,7 +1288,7 @@ void human::onItemRightClick(itemStack& stackIn)
 		if (((foodAnimationTime % slurpInterval) == 0) || (foodAnimationTime >= drinkAnimationTicks))
 		{
 			// slurp
-			std::shared_ptr<soundCollection> soundToPlay = ((stackIn.stackItemID == itemID::honey_bottle) || (stackIn.stackItemID == itemID::thick_potion)) ? honeyDrinkingSound : drinkingSound;
+			std::shared_ptr<audioCollection> soundToPlay = ((stackIn.stackItemID == itemID::honey_bottle) || (stackIn.stackItemID == itemID::thick_potion)) ? honeyDrinkingSound : drinkingSound;
 			soundToPlay->playRandomSound(dimensionIn, getHeadPosition());
 		}
 		if (foodAnimationTime >= drinkAnimationTicks)
@@ -1329,7 +1341,7 @@ void human::linkUpInventories() const
 {
 	// link all containers up
 	const std::vector<inventory*> inventories =
-	{ humanSlots, craftingTableSlots, smithingTableSlots, anvilSlots, furnaceSlots, chestSlots, enchantmentSlots, brewingStandSlots, dispenserSlots };
+	{ humanSlots, craftingTableSlots, smithingTableSlots, anvilSlots, furnaceSlots, chestSlots, enchantmentSlots, brewingStandSlots, dispenserSlots, tradingSlots };
 
 	for (inventory* const& inventoryToLinkUp : inventories)
 	{

@@ -207,6 +207,7 @@
     <ClCompile Include="src\AttachedSound.cpp" />
     <ClCompile Include="src\attachmentDirectionData.cpp" />
     <ClCompile Include="src\attackOnCollideAI.cpp" />
+    <ClCompile Include="src\AudioCollection.cpp" />
     <ClCompile Include="src\avoidEntityAI.cpp" />
     <ClCompile Include="src\badLands.cpp" />
     <ClCompile Include="src\bambooData.cpp" />
@@ -392,8 +393,7 @@
     <ClCompile Include="src\include\network\compressedPacket.cpp" />
     <ClCompile Include="src\include\optimization\handleError.cpp" />
     <ClCompile Include="src\include\sound\audio2d.cpp" />
-    <ClCompile Include="src\include\sound\music2d.cpp" />
-    <ClCompile Include="src\include\sound\sound2d.cpp" />
+    <ClCompile Include="src\include\sound\audioSource.cpp" />
     <ClCompile Include="src\include\sound\soundHandler2D.cpp" />
     <ClCompile Include="src\incompatibleEnchantments.cpp" />
     <ClCompile Include="src\inputData.cpp" />
@@ -431,7 +431,6 @@
     <ClCompile Include="src\mushroomData.cpp" />
     <ClCompile Include="src\mushroomFeature.cpp" />
     <ClCompile Include="src\mushroomFields.cpp" />
-    <ClCompile Include="src\musicCollection.cpp" />
     <ClCompile Include="src\musicList.cpp" />
     <ClCompile Include="src\musicManager.cpp" />
     <ClCompile Include="src\nbt\nbtCompound.cpp" />
@@ -505,7 +504,6 @@
     <ClCompile Include="src\snowLayerData.cpp" />
     <ClCompile Include="src\snowyTundra.cpp" />
     <ClCompile Include="src\soulSandValley.cpp" />
-    <ClCompile Include="src\soundCollection.cpp" />
     <ClCompile Include="src\soundList.cpp" />
     <ClCompile Include="src\soundPacket.cpp" />
     <ClCompile Include="src\soundSettingsForm.cpp" />
@@ -540,6 +538,7 @@
     <ClCompile Include="src\teleportOnDamageAI.cpp" />
     <ClCompile Include="src\teleportToAttachAI.cpp" />
     <ClCompile Include="src\textureList.cpp" />
+    <ClCompile Include="src\TextureLoader.cpp" />
     <ClCompile Include="src\textureParticle.cpp" />
     <ClCompile Include="src\theEnd.cpp" />
     <ClCompile Include="src\throwable.cpp" />
@@ -548,6 +547,8 @@
     <ClCompile Include="src\tnt.cpp" />
     <ClCompile Include="src\tntData.cpp" />
     <ClCompile Include="src\toolDropCondition.cpp" />
+    <ClCompile Include="src\Trades.cpp" />
+    <ClCompile Include="src\tradingSlotContainerUI.cpp" />
     <ClCompile Include="src\trapDoorData.cpp" />
     <ClCompile Include="src\treeFeature.cpp" />
     <ClCompile Include="src\uiSlotContainer.cpp" />
@@ -556,9 +557,14 @@
     <ClCompile Include="src\uniformChoiceDrop.cpp" />
     <ClCompile Include="src\upsideDownData.cpp" />
     <ClCompile Include="src\videoSettingsForm.cpp" />
+    <ClCompile Include="src\Villager.cpp" />
+    <ClCompile Include="src\VillagerLevel.cpp" />
+    <ClCompile Include="src\VillagerLevelData.cpp" />
+    <ClCompile Include="src\VillagerProfessionData.cpp" />
     <ClCompile Include="src\wanderAI.cpp" />
     <ClCompile Include="src\warpedForest.cpp" />
     <ClCompile Include="src\wolf.cpp" />
+    <ClCompile Include="src\workAI.cpp" />
     <ClCompile Include="src\world.cpp" />
     <ClCompile Include="src\worldCreator.cpp" />
     <ClCompile Include="src\worldSelector.cpp" />
@@ -915,10 +921,11 @@
     <ClInclude Include="src\include\optimization\optimization.h" />
     <ClInclude Include="src\include\optimization\stableTickLoop.h" />
     <ClInclude Include="src\include\sound\audio2d.h" />
-    <ClInclude Include="src\include\sound\music2d.h" />
-    <ClInclude Include="src\include\sound\sound2d.h" />
+    <ClInclude Include="src\include\sound\AudioSource.h" />
+    <ClInclude Include="src\include\sound\AudioType.h" />
     <ClInclude Include="src\include\sound\soundHandler2D.h" />
     <ClInclude Include="src\include\type\conversion.h" />
+    <ClInclude Include="src\include\type\EnumTricks.h" />
     <ClInclude Include="src\include\type\types.h" />
     <ClInclude Include="src\include\windowsIncluder.h" />
     <ClInclude Include="src\incompatibleEnchantments.h" />
@@ -955,10 +962,10 @@
     <ClInclude Include="src\mainMenu.h" />
     <ClInclude Include="src\minecart.h" />
     <ClInclude Include="src\minecraftFont.h" />
+    <ClInclude Include="src\MinecraftJSONReader.h" />
     <ClInclude Include="src\mob.h" />
     <ClInclude Include="src\mobDamageSource.h" />
     <ClInclude Include="src\mobData.h" />
-    <ClInclude Include="src\mobList.h" />
     <ClInclude Include="src\mountains.h" />
     <ClInclude Include="src\movableBlockContainer.h" />
     <ClInclude Include="src\mushroomColorData.h" />
@@ -966,7 +973,6 @@
     <ClInclude Include="src\mushroomData.h" />
     <ClInclude Include="src\mushroomFeature.h" />
     <ClInclude Include="src\mushroomFields.h" />
-    <ClInclude Include="src\musicCollection.h" />
     <ClInclude Include="src\musicList.h" />
     <ClInclude Include="src\musicManager.h" />
     <ClInclude Include="src\nbtData.h" />
@@ -1022,6 +1028,7 @@
     <ClInclude Include="src\pollenData.h" />
     <ClInclude Include="src\potionData.h" />
     <ClInclude Include="src\pressurePlateData.h" />
+    <ClInclude Include="src\ProfessionID.h" />
     <ClInclude Include="src\recipe.h" />
     <ClInclude Include="src\rectangularSlotContainer.h" />
     <ClInclude Include="src\rectParticle.h" />
@@ -1068,7 +1075,6 @@
     <ClInclude Include="src\snowyTundra.h" />
     <ClInclude Include="src\socketContainer.h" />
     <ClInclude Include="src\soulSandValley.h" />
-    <ClInclude Include="src\soundCollection.h" />
     <ClInclude Include="src\soundList.h" />
     <ClInclude Include="src\soundPacket.h" />
     <ClInclude Include="src\SoundReference.h" />
@@ -1105,6 +1111,7 @@
     <ClInclude Include="src\teleportOnDamageAI.h" />
     <ClInclude Include="src\teleportToAttachAI.h" />
     <ClInclude Include="src\textureList.h" />
+    <ClInclude Include="src\TextureLoader.h" />
     <ClInclude Include="src\textureParticle.h" />
     <ClInclude Include="src\theEnd.h" />
     <ClInclude Include="src\throwable.h" />
@@ -1114,6 +1121,8 @@
     <ClInclude Include="src\tntData.h" />
     <ClInclude Include="src\toolDropCondition.h" />
     <ClInclude Include="src\toolTypeID.h" />
+    <ClInclude Include="src\Trades.h" />
+    <ClInclude Include="src\tradingSlotContainerUI.h" />
     <ClInclude Include="src\trapDoorData.h" />
     <ClInclude Include="src\treeFeature.h" />
     <ClInclude Include="src\treeItemTypeID.h" />
@@ -1123,11 +1132,16 @@
     <ClInclude Include="src\uniformChoiceDrop.h" />
     <ClInclude Include="src\upsideDownData.h" />
     <ClInclude Include="src\videoSettingsForm.h" />
+    <ClInclude Include="src\Villager.h" />
+    <ClInclude Include="src\VillagerLevel.h" />
+    <ClInclude Include="src\VillagerLevelData.h" />
+    <ClInclude Include="src\VillagerProfessionData.h" />
     <ClInclude Include="src\wanderAI.h" />
     <ClInclude Include="src\warpedForest.h" />
     <ClInclude Include="src\wolf.h" />
     <ClInclude Include="src\woodTypeData.h" />
     <ClInclude Include="src\woodtypeID.h" />
+    <ClInclude Include="src\workAI.h" />
     <ClInclude Include="src\world.h" />
     <ClInclude Include="src\worldCreator.h" />
     <ClInclude Include="src\worldSelector.h" />

@@ -5,7 +5,7 @@
 void enchantment::serializeMembers(nbtSerializer& s)
 {
 	idConverter::serializeID(s, std::wstring(L"id"), identifier, s.converter ? &s.converter->enchantmentIDConverter : nullptr);
-	s.serializeMembers(std::wstring(L"power"), power);
+	serializeNBTValue(s, std::wstring(L"power"), power);
 }
 
 std::wstring enchantment::toWString() const

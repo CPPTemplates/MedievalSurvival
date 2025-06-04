@@ -9,7 +9,7 @@
 #include "math/wave/waveShaper.h"
 #include "math/timemath.h"
 #include "idAnalysis.h"
-#include "soundCollection.h"
+#include "audioCollection.h"
 #include "mobDamageSource.h"
 #include "end.h"
 #include "structure.h"

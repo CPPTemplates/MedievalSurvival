@@ -26,6 +26,6 @@ void fireBallAI::shootFireBall(const entity* shootFireBallAt) const
 
 void fireBallAI::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"fireball type"), fireBallType);
+	serializeNBTValue(s, std::wstring(L"fireball type"), fireBallType);
 	serializeNBTValue(s, std::wstring(L"target"), target);
 }

@@ -9,14 +9,14 @@
 
 bool SoundPacket::serialize(nbtSerializer& s)
 {
-	s.serializeMembers(L"type", type);
+	serializeNBTValue(s, L"type", type);
 	return serializeNBTValue(s, L"id", id);
 }
 
 SoundPacket* getPacket(nbtSerializer& s)
 {
 	SoundPacketType type;
-	s.serializeMembers(L"type", type);
+	serializeNBTValue(s, L"type", type);
 	SoundPacket* r;
 	uuid id;
 	serializeNBTValue(s, L"id", id);

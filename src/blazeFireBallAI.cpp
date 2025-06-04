@@ -59,6 +59,6 @@ void blazeFireBallAI::updateTask()
 void blazeFireBallAI::serializeMembers(nbtSerializer& s)
 {
 	fireBallAI::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"fireball cooldown"), fireBallCoolDown);
-	s.serializeMembers(std::wstring(L"fireballs left"), fireBallsLeft);
+	serializeNBTValue(s, std::wstring(L"fireball cooldown"), fireBallCoolDown);
+	serializeNBTValue(s, std::wstring(L"fireballs left"), fireBallsLeft);
 }

@@ -50,7 +50,7 @@ struct nbtDataArray :nbtData
 	{
 		delete data;
 	}
-	inline bool serializeMembers(cbool& write, void* value, int& size)
+	inline bool serializeValue(cbool& write, void* value, int& size)
 	{
 		if (write)
 		{

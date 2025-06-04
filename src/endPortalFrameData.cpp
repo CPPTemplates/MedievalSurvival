@@ -4,5 +4,5 @@ void endPortalFrameData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
 	facingData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"has eye"), hasEye);
+	serializeNBTValue(s, std::wstring(L"has eye"), hasEye);
 }

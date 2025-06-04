@@ -35,5 +35,5 @@ veci2 getOtherPartRelativeLocation(const blockID& id, cbool& isPart0, const dire
 }
 void doubleBlockData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"is part 0"), isPart0);
+	serializeNBTValue(s, std::wstring(L"is part 0"), isPart0);
 }

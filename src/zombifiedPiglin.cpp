@@ -13,7 +13,7 @@ zombifiedPiglin::zombifiedPiglin() :humanoid(entityID::zombiefied_piglin)
 	new wanderAI(this),
 		});
 
-	initializeBodyParts(zombieHeadTextureRect, zombieBodyTextureRect, zombieLeftLegTextureRect, zombieRightLegTextureRect, zombieLeftArmTextureRect, zombieRightArmTextureRect, zombiePixelSize);
+	initializeBodyParts(zombieHeadTextureRect, zombieBodyTextureRect, zombieLeftLegTextureRect, zombieRightLegTextureRect, zombieLeftArmTextureRect, zombieRightArmTextureRect, humanoidPixelSize);
 	itemHolding = new itemStack(getMaterialTool(toolTypeID::sword, harvestTierID::goldHarvestTier), 1);
 }
 

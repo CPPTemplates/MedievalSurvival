@@ -1,7 +1,7 @@
 #pragma once
 #include "filesystem/filemanager.h"
 #include "globalFunctions.h"
-struct nbtSerializer;
+#include "nbtSerializer.h"
 struct nbtSerializable
 {
 	//ONLY CALL THIS FUNCTION IF YOU ARE SURE THERE ARE NOT TWO OF THOSE IN YOUR COMPOUND!
@@ -22,4 +22,16 @@ inline T nbtSerializable::clone()
 	T clonedObject = T();
 	clone(clonedObject);
 	return clonedObject;
+}
+template<typename T>
+concept nbtSerializableConcept = std::derived_from<T, nbtSerializable>;
+template< nbtSerializableConcept T>
+bool serializeNBTValue(nbtSerializer& s, const std::wstring& memberName, T& value) {
+
+	if (s.push(memberName)) {
+		value.serializeMembers(s);
+		s.pop();
+		return true;
+	}
+	return false;
 }

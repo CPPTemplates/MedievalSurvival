@@ -11,7 +11,7 @@
 #include "entityData.h"
 #include "entity.h"
 #include "block.h"
-#include "mobList.h"
+
 #include "nbt/nbtSerializer.h"
 #include "constants/vectorConstants.h"
 dispenserData::dispenserData(const directionID& directionFacing) :facingData(directionFacing)
@@ -37,7 +37,7 @@ void dispenserData::serializeMembers(nbtSerializer& s)
 	blockData::serializeMembers(s);
 	facingData::serializeMembers(s);
 	slots->serialize(s, std::wstring(L"slots"));
-	s.serializeMembers(std::wstring(L"was powered"), wasPowered);
+	serializeNBTValue(s, std::wstring(L"was powered"), wasPowered);
 }
 
 bool dispenserData::tick(tickableBlockContainer* containerIn, cveci2& position)
@@ -126,7 +126,7 @@ bool dispenserData::dispenseItem(const itemStack& stack, tickableBlockContainer*
 	}
 	else if (isSpawnEgg(stack.stackItemID))
 	{
-		const entityID mobToSpawn = mobList[(int)stack.stackItemID - (int)itemID::spawn_egg];
+		const entityID mobToSpawn = getMobFromSpawnEgg(stack.stackItemID);
 		if (containerIn->getBlockID(adjacentBlockPosition) == blockID::spawner)
 		{
 			dynamic_cast<spawnerData*>(containerIn->getBlockData(adjacentBlockPosition))->entityToSpawn = mobToSpawn;

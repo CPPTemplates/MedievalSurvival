@@ -8,7 +8,7 @@ sugarCaneData::sugarCaneData()
 void sugarCaneData::randomTick(tickableBlockContainer *containerIn, cveci2 &position)
 {
 	cint maxSugarCaneHeight = 4;
-	if (containerIn->getBlockID(position + cveci2(0, -1)) != blockID::sand)
+	if (!isValidBottomblock(blockID::sugar_cane, containerIn->getBlockID(position + cveci2(0, -1))))
 	{
 		return;
 	}

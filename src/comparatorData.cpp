@@ -5,7 +5,7 @@
 void comparatorData::serializeMembers(nbtSerializer& s)
 {
 	inputData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"substraction mode"), substractionMode);
+	serializeNBTValue(s, std::wstring(L"substraction mode"), substractionMode);
 }
 
 bool comparatorData::tick(tickableBlockContainer* containerIn, cveci2& position)

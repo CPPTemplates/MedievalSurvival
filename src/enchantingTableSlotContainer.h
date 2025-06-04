@@ -9,7 +9,7 @@ struct enchantingTableSlotContainer :inventory
 	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~enchantingTableSlotContainer() override;
 	virtual void mouseDown(cveci2& pixelPosition, cmb& button, stackDivider& divider) override;
-	virtual void drawExtraData(cmat3x3& transform, const texture& renderTarget) override;
+	virtual void drawExtraData(cmat3x3& transform, const gameRenderData& targetData) override;
 	bool hasEnchantableItem() const;
 	virtual bool canAddStack(uiSlotContainer* containerToAddTo, itemStack& s) override;
 	ull enchantmentSeed = 0;

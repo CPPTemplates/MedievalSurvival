@@ -4,7 +4,7 @@
 void redstoneTorchData::serializeMembers(nbtSerializer& s)
 {
 	attachmentDirectionData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"last attached block power level"), lastAttachedBlockPowerLevel);
+	serializeNBTValue(s, std::wstring(L"last attached block power level"), lastAttachedBlockPowerLevel);
 }
 
 bool redstoneTorchData::tick(tickableBlockContainer* containerIn, cveci2& position)

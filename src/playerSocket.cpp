@@ -61,12 +61,12 @@ playerSocket::playerSocket(sf::TcpSocket* socket)
 	uuid playerUUID;
 	serializeNBTValue(inNBTSerializer, L"uuid", playerUUID);
 	std::wstring playerName;
-	inNBTSerializer.serializeMembers(L"name", playerName);
+	serializeNBTValue(inNBTSerializer, L"name", playerName);
 	screen->player = player = new human(*screen, playerName);
 	player->setInitialPosition(currentWorld->dimensions[(int)currentWorld->worldSpawnDimension], vec2());
 
 	std::wstring clientOSName;
-	inNBTSerializer.serializeMembers(L"OS", clientOSName);
+	serializeNBTValue(inNBTSerializer, L"OS", clientOSName);
 	if (clientOSName == L"Android")
 	{
 		screen->addTouchInput();
@@ -149,13 +149,13 @@ void renderAsync(playerSocket* socket)
 
 	// always serialize. the target client may be on android or need an on-screen keyboard in another way
 	bool wantsTextInput = socket->screen->wantsTextInput();
-	outSerializer->serializeMembers(L"wantsTextInput", wantsTextInput);
+	serializeNBTValue(*outSerializer, L"wantsTextInput", wantsTextInput);
 
-	outSerializer->serializeMembers(L"paste", socket->screen->wantsClipboardInput);
+	serializeNBTValue(*outSerializer, L"paste", socket->screen->wantsClipboardInput);
 	socket->screen->wantsClipboardInput = false;
 	if (socket->screen->copyToClipboard.length())
 	{
-		outSerializer->serializeMembers(L"copy", socket->screen->copyToClipboard);
+		serializeNBTValue(*outSerializer, L"copy", socket->screen->copyToClipboard);
 		socket->screen->copyToClipboard.clear();
 	}
 	fp hearingRange2D = getHearingRange2D(socket->screen->visibleRange.x);
@@ -176,7 +176,7 @@ void renderAsync(playerSocket* socket)
 			if (outSerializer->push())
 			{
 				data->serialize(*outSerializer);
-				delete data;
+				//we don't have to delete the data, as it's a shared ptr
 				outSerializer->pop();
 			}
 		}
@@ -231,7 +231,7 @@ void renderAsync(playerSocket* socket)
 			socket->screen->addClientInput(socket->screen->mostRecentInput);
 			socket->screen->processInput();
 			std::wstring clientClipboardText;
-			if (currentNBTSerializer.serializeMembers(L"clipboard", clientClipboardText))
+			if (serializeNBTValue(currentNBTSerializer, L"clipboard", clientClipboardText))
 			{
 				socket->screen->paste(clientClipboardText);
 			}

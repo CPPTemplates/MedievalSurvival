@@ -7,5 +7,5 @@ directionID attachmentDirectionData::getAttachmentDirection(tickableBlockContain
 
 void attachmentDirectionData::serializeMembers(nbtSerializer &s)
 {
-	s.serializeMembers(std::wstring(L"attachment direction"), attachmentDirection);
+	serializeNBTValue(s, std::wstring(L"attachment direction"), attachmentDirection);
 }

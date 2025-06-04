@@ -103,14 +103,26 @@
     <Filter Include="Source Files\Server\Collision">
       <UniqueIdentifier>{a29960ac-b3b2-4795-a60d-56363dcb3d03}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sound">
-      <UniqueIdentifier>{59472691-a617-4e5a-bacc-c988ea635a05}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Server\Form">
       <UniqueIdentifier>{1ad7cf84-78a7-4e7c-9504-c467c96ecc6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Sound\Music">
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{59472691-a617-4e5a-bacc-c988ea635a05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio\Music">
       <UniqueIdentifier>{fecce564-9484-4f1c-939f-ec69aed253a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio\Sound">
+      <UniqueIdentifier>{479abe6e-6bd5-4c10-af31-6cb55a593b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Server\Entity\Mob">
+      <UniqueIdentifier>{91c87927-b528-4297-af2b-f3eea8091df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Server\Entity\Mob\Villager">
+      <UniqueIdentifier>{d4457af0-f25f-4a9e-9e10-39a3c945b0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Server\ResourceLoader">
+      <UniqueIdentifier>{3a296ef2-132a-49a9-8568-db9724496990}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -219,9 +231,6 @@
     <ClCompile Include="src\include\application\control\form\messageBox.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="src\include\sound\music2d.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
     <ClCompile Include="src\include\application\control\pictureBox.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
@@ -238,9 +247,6 @@
       <Filter>Source Files\include</Filter>
     </ClCompile>
     <ClCompile Include="src\include\math\sound\sound.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
-    <ClCompile Include="src\include\sound\sound2d.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
     <ClCompile Include="src\include\sound\soundHandler2D.cpp">
@@ -345,13 +351,7 @@
     <ClCompile Include="src\renderBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resourceLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\resourcePack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ridableEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\settings.cpp">
@@ -376,9 +376,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\textureParticle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\iconParticle.cpp">
@@ -696,25 +693,7 @@
     <ClCompile Include="src\arrow.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="src\blaze.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="src\boat.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\breedableMob.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\chicken.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cod.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cow.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\creeper.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\egg.cpp">
@@ -727,12 +706,6 @@
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\endCrystal.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enderDragon.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\enderman.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\enderPearl.cpp">
@@ -762,55 +735,19 @@
     <ClCompile Include="src\forest.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="src\fourLeggedMob.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ghast.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="src\ghastFireBall.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\hollowRidableEntity.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="src\human.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\humanoid.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\magmaCube.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="src\minecart.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mob.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\particle.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="src\pig.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\passiveMob.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="src\piston.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sheep.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shulker.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\skeleton.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\slime.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\smallFireBall.cpp">
@@ -823,15 +760,6 @@
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\tnt.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wolf.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zombie.cpp">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zombifiedPiglin.cpp">
       <Filter>Source Files\Server\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\animatedParticleData.cpp">
@@ -1131,12 +1059,6 @@
     <ClCompile Include="src\HitboxSound.cpp">
       <Filter>Source Files\Server\AttachedSound</Filter>
     </ClCompile>
-    <ClCompile Include="src\soundCollection.cpp">
-      <Filter>Source Files\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="src\soundList.cpp">
-      <Filter>Source Files\Sound</Filter>
-    </ClCompile>
     <ClCompile Include="src\StartSoundPacket.cpp">
       <Filter>Source Files\Server\Packet</Filter>
     </ClCompile>
@@ -1149,14 +1071,11 @@
     <ClCompile Include="src\BodyPartSound.cpp">
       <Filter>Source Files\Server\AttachedSound</Filter>
     </ClCompile>
-    <ClCompile Include="src\musicCollection.cpp">
-      <Filter>Source Files\Sound\Music</Filter>
-    </ClCompile>
     <ClCompile Include="src\musicList.cpp">
-      <Filter>Source Files\Sound\Music</Filter>
+      <Filter>Source Files\Audio\Music</Filter>
     </ClCompile>
     <ClCompile Include="src\musicManager.cpp">
-      <Filter>Source Files\Sound\Music</Filter>
+      <Filter>Source Files\Audio\Music</Filter>
     </ClCompile>
     <ClCompile Include="src\connectedBlock.cpp">
       <Filter>Source Files\Server\TypeData</Filter>
@@ -1226,6 +1145,117 @@
     </ClCompile>
     <ClCompile Include="src\saveFileControl.cpp">
       <Filter>Source Files\client\Form</Filter>
+    </ClCompile>
+    <ClCompile Include="src\soundList.cpp">
+      <Filter>Source Files\Audio\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioCollection.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\sound\audioSource.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\blaze.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\breedableMob.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\chicken.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cod.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cow.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\creeper.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enderDragon.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\enderman.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fourLeggedMob.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ghast.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\human.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\humanoid.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\magmaCube.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mob.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\passiveMob.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pig.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sheep.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shulker.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skeleton.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\slime.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wolf.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zombie.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zombifiedPiglin.cpp">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world.cpp">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ridableEntity.cpp">
+      <Filter>Source Files\Server\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Villager.cpp">
+      <Filter>Source Files\Server\Entity\Mob\Villager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VillagerLevelData.cpp">
+      <Filter>Source Files\Server\TypeData</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VillagerProfessionData.cpp">
+      <Filter>Source Files\Server\TypeData</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VillagerLevel.cpp">
+      <Filter>Source Files\Server\ID</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resourceLoader.cpp">
+      <Filter>Source Files\Server\ResourceLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureLoader.cpp">
+      <Filter>Source Files\Server\ResourceLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tradingSlotContainerUI.cpp">
+      <Filter>Source Files\Server\SlotContainer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Trades.cpp">
+      <Filter>Source Files\Server\Entity\Mob\Villager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\workAI.cpp">
+      <Filter>Source Files\Server\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1655,12 +1685,6 @@
     <ClInclude Include="src\include\sound\audio2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\sound\music2d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\sound\sound2d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\include\sound\soundHandler2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1681,9 +1705,6 @@
     </ClInclude>
     <ClInclude Include="src\stdafx.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\audioCollection.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\benchMark.h">
       <Filter>Source Files</Filter>
@@ -1808,9 +1829,6 @@
     <ClInclude Include="src\mobDamageSource.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\mobList.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\movableBlockContainer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1832,13 +1850,7 @@
     <ClInclude Include="src\renderBrush.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resourceLoader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\resourcePack.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ridableEntity.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\sandstoneColorID.h">
@@ -2270,25 +2282,7 @@
     <ClInclude Include="src\arrow.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="src\blaze.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\boat.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\breedableMob.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\chicken.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cod.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cow.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\creeper.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\egg.h">
@@ -2301,12 +2295,6 @@
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\endCrystal.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\enderDragon.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\enderman.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\enderPearl.h">
@@ -2336,58 +2324,19 @@
     <ClInclude Include="src\forest.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="src\fourLeggedMob.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fourLeggedPassiveMob.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ghast.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\ghastFireBall.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\hollowRidableEntity.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="src\human.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\humanoid.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\magmaCube.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\minecart.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\mob.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\particle.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="src\pig.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\passiveMob.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\piston.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\sheep.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shulker.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\skeleton.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\slime.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\smallFireBall.h">
@@ -2400,15 +2349,6 @@
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\tnt.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wolf.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zombie.h">
-      <Filter>Source Files\Server\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zombifiedPiglin.h">
       <Filter>Source Files\Server\Entity</Filter>
     </ClInclude>
     <ClInclude Include="src\animatedParticleData.h">
@@ -2813,23 +2753,14 @@
     <ClInclude Include="src\inventory.h">
       <Filter>Source Files\Server\SlotContainer</Filter>
     </ClInclude>
-    <ClInclude Include="src\soundCollection.h">
-      <Filter>Source Files\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="src\soundList.h">
-      <Filter>Source Files\Sound</Filter>
-    </ClInclude>
     <ClInclude Include="src\soundSettingsForm.h">
       <Filter>Source Files\Server\Form</Filter>
     </ClInclude>
     <ClInclude Include="src\musicManager.h">
-      <Filter>Source Files\Sound\Music</Filter>
-    </ClInclude>
-    <ClInclude Include="src\musicCollection.h">
-      <Filter>Source Files\Sound\Music</Filter>
+      <Filter>Source Files\Audio\Music</Filter>
     </ClInclude>
     <ClInclude Include="src\musicList.h">
-      <Filter>Source Files\Sound\Music</Filter>
+      <Filter>Source Files\Audio\Music</Filter>
     </ClInclude>
     <ClInclude Include="src\connectedBlock.h">
       <Filter>Source Files\Server\TypeData</Filter>
@@ -2932,6 +2863,129 @@
     </ClInclude>
     <ClInclude Include="src\saveFileControl.h">
       <Filter>Source Files\client\Form</Filter>
+    </ClInclude>
+    <ClInclude Include="src\audioCollection.h">
+      <Filter>Source Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soundList.h">
+      <Filter>Source Files\Audio\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\sound\AudioType.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\sound\AudioSource.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\type\EnumTricks.h">
+      <Filter>Source Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\blaze.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\breedableMob.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\chicken.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cod.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cow.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\creeper.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enderDragon.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enderman.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fourLeggedMob.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fourLeggedPassiveMob.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ghast.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\human.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\humanoid.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\magmaCube.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mob.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\passiveMob.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pig.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sheep.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shulker.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skeleton.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\slime.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wolf.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zombie.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zombifiedPiglin.h">
+      <Filter>Source Files\Server\Entity\Mob</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ridableEntity.h">
+      <Filter>Source Files\Server\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tradingSlotContainerUI.h">
+      <Filter>Source Files\Server\SlotContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Villager.h">
+      <Filter>Source Files\Server\Entity\Mob\Villager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Trades.h">
+      <Filter>Source Files\Server\Entity\Mob\Villager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ProfessionID.h">
+      <Filter>Source Files\Server\ID</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VillagerLevel.h">
+      <Filter>Source Files\Server\ID</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VillagerLevelData.h">
+      <Filter>Source Files\Server\TypeData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VillagerProfessionData.h">
+      <Filter>Source Files\Server\TypeData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MinecraftJSONReader.h">
+      <Filter>Source Files\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resourceLoader.h">
+      <Filter>Source Files\Server\ResourceLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextureLoader.h">
+      <Filter>Source Files\Server\ResourceLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\workAI.h">
+      <Filter>Source Files\Server\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

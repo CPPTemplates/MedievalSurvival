@@ -2,5 +2,5 @@
 #include "nbt/nbtSerializer.h"
 void durabilityData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"durability"), durability);
+	serializeNBTValue(s, std::wstring(L"durability"), durability);
 }

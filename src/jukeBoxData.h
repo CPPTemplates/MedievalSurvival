@@ -4,8 +4,6 @@
 
 struct jukeBoxData : blockData
 {
-	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position) override;
-
 	rectangularSlotContainer* recordSlot = nullptr;
 	uuid musicPlaying = uuid();
 
@@ -14,4 +12,5 @@ struct jukeBoxData : blockData
 	virtual void serializeMembers(nbtSerializer& s) override;
 	virtual ~jukeBoxData() override;
 	void playMusic(tickableBlockContainer* containerIn, cveci2& position);
+	void stopMusic(tickableBlockContainer* containerIn, cveci2& position);
 };

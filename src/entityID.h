@@ -2,6 +2,8 @@
 #include "particleID.h"
 enum class entityID :int
 {
+	//first come all the mobs
+	//humanoids
 	human,
 	skeleton,
 	stray,
@@ -11,14 +13,19 @@ enum class entityID :int
 	zombie_villager,
 	zombie,
 	zombiefied_piglin,
-	enderman,
+	villager,
+	enderman, 
+	HumanoidCount,
+	//slime like
 
-	slime,
+	slime = HumanoidCount,
 	magma_cube,
+
 	creeper,
 
 	wolf,
 
+	//passive
 	pig,
 	cow,
 	sheep,
@@ -28,11 +35,14 @@ enum class entityID :int
 
 	shulker,
 
+	//flying
 	blaze,
 	ghast,
-	ender_dragon,
+	//boss
+	ender_dragon, 
+	MobTypeCount,
 
-	boat,
+	boat = MobTypeCount,
 	minecart,
 
 	item,
@@ -59,6 +69,8 @@ enum class entityID :int
 	firework_rocket,
 	pollen,
 
-	count,
+	EntityTypeCount, count = EntityTypeCount,
 };
-constexpr int mobTypeCount = (int)entityID::ender_dragon + 1;
+
+constexpr int mobTypeCount = (int)entityID::MobTypeCount;
+constexpr int humanoidTypeCount = (int)entityID::HumanoidCount;

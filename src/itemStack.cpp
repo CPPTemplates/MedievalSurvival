@@ -360,7 +360,7 @@ void itemStack::serializeMembers(nbtSerializer& s)
 {
 	if (s.write)
 	{
-		s.serializeMembers(std::wstring(L"item id"), stackItemID);
+		serializeNBTValue(s, std::wstring(L"item id"), stackItemID);
 	}
 	else
 	{
@@ -371,7 +371,7 @@ void itemStack::serializeMembers(nbtSerializer& s)
 	}
 	if ((int)stackItemID) // only store additional data of filled slots
 	{
-		s.serializeMembers(std::wstring(L"amount"), count);
+		serializeNBTValue(s, std::wstring(L"amount"), count);
 		if (s.push<nbtDataTag::tagList>(std::wstring(L"enchantments")))
 		{
 			if (s.write)

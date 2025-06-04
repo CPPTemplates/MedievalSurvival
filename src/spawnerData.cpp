@@ -12,6 +12,6 @@ void spawnerData::randomTick(tickableBlockContainer* containerIn, cveci2& positi
 void spawnerData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"spawn cooldown"), spawnCoolDown);
+	serializeNBTValue(s, std::wstring(L"spawn cooldown"), spawnCoolDown);
 	idConverter::serializeID(s, std::wstring(L"mob type"), entityToSpawn, s.converter ? &s.converter->entityIDConverter : nullptr);
 }

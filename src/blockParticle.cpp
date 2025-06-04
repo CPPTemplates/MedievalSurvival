@@ -5,7 +5,7 @@
 void blockParticle::serializeMembers(nbtSerializer& s)
 {
 	rectParticle::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"brush block id"), brushBlockID);
+	serializeNBTValue(s, std::wstring(L"brush block id"), brushBlockID);
 }
 
 const resolutionTexture& blockParticle::getTexture() const

@@ -78,7 +78,7 @@ void soundHandler2d::update()
 
 	cmicroseconds currentTime = getmicroseconds();
 	currentlyPlayIngAudio.update();
-	// below the minimal volume, sounds will cut out
+	// below the minimal volume, sounds will cut out. cannot be 0 because attenuation would have to be infinite
 	cfp& minimalVolume = 0.05f;
 	cfp& headSize = getHeadRadius(earPosition.z); // the distance between the head and the screen is normally 3 * the size of the head
 
@@ -87,11 +87,12 @@ void soundHandler2d::update()
 
 	// when distance <= minDistance, you will hear the sound at the maximum volume
 	// choose closestDistance if you want sources at the closest point on screen to be fully heard
-	cfp& minDistance = headSize;
+	cfp& minDistance = closestDistance;
 
 	cfp& attenuation = getAttenuation(minDistance, hearingRange3d, minimalVolume);
 	cfp& volumeFactorAtMinDistance = getVolumeFactor(minDistance, attenuation, closestDistance);
-	cfp& volumeMultiplier = 100.0f / volumeFactorAtMinDistance;
+	cfp& volumeFactorAtMaxDistance = getVolumeFactor(minDistance, attenuation, hearingRange3d);
+	cfp& volumeMultiplier = 100.0f;// / volumeFactorAtMinDistance;
 
 	sf::Listener::setGlobalVolume((float)globalVolume * 100.0f);
 
@@ -191,116 +192,10 @@ void soundHandler2d::update()
 
 soundHandler2d::soundHandler2d()
 {
-	//   // ALCcontext *context = alcGetCurrentContext();
-	//   // ALCdevice *device = alcGetContextsDevice(context);
-	//   // ALCboolean hrtf;
-//   
-	//   // if (alcIsExtensionPresent(device, "ALC_SOFT_HRTF"))
-	//   //{
-	//   //     ALCint attr[] = {ALC_HRTF_SOFT, ALC_TRUE, 0};
-	//   //     context = alcCreateContext(device, attr);
-	//   // }
-	//   //  Retrieve the current OpenAL context and device
-	//   ALCdevice *device;
-	//   ALCcontext *context;
-	//   // ALCint hrtf;
-	//   // const ALCchar *name;
-//   
-	//   device = alcOpenDevice(NULL); // Open default device
-	//   // if (!device) {
-	//   //
-	//   //     //fprintf(stderr, "Unable to open default device\n");
-	//   //     return;
-	//   // }
-//   
-	//   // Check if HRTF extension is available
-	//   if (alcIsExtensionPresent(device, "ALC_SOFT_HRTF"))
-	//   {
-	//       ALCint attr[3] = {ALC_HRTF_SOFT, ALC_TRUE, 0};
-	//       context = alcCreateContext(device, attr);
-	//   }
-	//   else
-	//   {
-	//       // fprintf(stderr, "HRTF extension not available\n");
-	//       // hrtf is not available; SFML itself will create the audio device for us
-	//       alcCloseDevice(device);
-	//       return;
-	//   }
-//   
-	//   // if (!context) {
-	//   //     fprintf(stderr, "Unable to create context\n");
-	//   //     alcCloseDevice(device);
-	//   //     return -1;
-	//   // }
-//   
-	//   alcMakeContextCurrent(context);
-//   
-	//   ALCint num_hrtf;
-	//   /* Enumerate available HRTFs, and reset the device using one. */
-	//   alcGetIntegerv(device, ALC_NUM_HRTF_SPECIFIERS_SOFT, 1, &num_hrtf);
-	//   // if(!num_hrtf)
-	//   //     printf("No HRTFs found\n");
-	//   // else
-	//   //{
-	//   //     ALCint attr[5];
-	//   //     ALCint index = -1;
-	//   //     ALCint i;
-	//   //
-	//   //    printf("Available HRTFs:\n");
-	//   //    for(i = 0;i < num_hrtf;i++)
-	//   //    {
-	//   //        const ALCchar *name = alcGetStringiSOFT(device, ALC_HRTF_SPECIFIER_SOFT, i);
-	//   //        printf("    %d: %s\n", i, name);
-	//   //
-	//   //        /* Check if this is the HRTF the user requested. */
-	//   //        if(hrtfname && strcmp(name, hrtfname) == 0)
-	//   //            index = i;
-	//   //    }
-	//   //
-	//   //    i = 0;
-	//   //    attr[i++] = ALC_HRTF_SOFT;
-	//   //    attr[i++] = ALC_TRUE;
-	//   //    if(index == -1)
-	//   //    {
-	//   //        if(hrtfname)
-	//   //            printf("HRTF \"%s\" not found\n", hrtfname);
-	//   //        printf("Using default HRTF...\n");
-	//   //    }
-	//   //    else
-	//   //    {
-	//   //        printf("Selecting HRTF %d...\n", index);
-	//   //        attr[i++] = ALC_HRTF_ID_SOFT;
-	//   //        attr[i++] = index;
-	//   //    }
-	//   //    attr[i] = 0;
-	//   //
-	//   //    if(!alcResetDeviceSOFT(device, attr))
-	//   //        printf("Failed to reset device: %s\n", alcGetString(device, alcGetError(device)));
-	//   //}
-//   
-	//   // Check if HRTF is enabled
-	//   // alcGetIntegerv(device, ALC_HRTF_SOFT, 1, &hrtf);
-	//   // if (hrtf) {
-	//   //    //printf("HRTF is enabled\n");
-	//   //    //name = alcGetString(device, ALC_HRTF_STATUS_SOFT);
-	//   //    //printf("HRTF status: %s\n", name);
-	//   //} else {
-	//   //    //printf("HRTF is not enabled\n");
-	//   //}
-	//   // Enable HRTF if available
-	//   // ALCint hrtf;
-	//   // alcGetIntegerv(device, alc_ste, 1, &hrtf);
-	//   // if (hrtf == ALC_FALSE) {
-	//   //    alcResetDeviceSOFT(device, nullptr);
-	//   //    std::cerr << "HRTF not supported, continuing without it." << std::endl;
-	//   //} else {
-	//   //    std::cout << "HRTF supported and enabled." << std::endl;
-	//   //}
 }
 
 void soundHandler2d::playAudio(const std::shared_ptr<audio2d>& audioToPlay)
 {
-
 	currentlyPlayIngAudio.push_back(audioToPlay);
 }
 
@@ -337,7 +232,8 @@ void soundHandler2d::visualize(const texture& renderTarget)
 			c = colorPalette::red;
 		}
 		cfp& blobradius = audio->volume * maxBlobRadius;
-		auto mixer = colorMixer(solidColorBrush(color(c, color::quarterMaxValue)), renderTarget);
+		auto solidBrush = solidColorBrush(color(c, color::quarterMaxValue));
+		auto mixer = colorMixer(solidBrush, renderTarget);
 		if (audio->isSpatial)
 		{
 			cvec2& screenPos = worldToScreen.multPointMatrix(drawSideView ? vec2(audio->pos.x, 0) : audio->pos);

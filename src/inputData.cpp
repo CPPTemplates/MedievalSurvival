@@ -27,6 +27,6 @@ void inputData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
 	facingData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"last power level behind"), (int&)lastPowerLevelBehind);
-	s.serializeMembers(std::wstring(L"last power level below"), (int&)lastPowerLevelBelow);
+	serializeNBTValue(s, std::wstring(L"last power level behind"), (int&)lastPowerLevelBehind);
+	serializeNBTValue(s, std::wstring(L"last power level below"), (int&)lastPowerLevelBelow);
 }

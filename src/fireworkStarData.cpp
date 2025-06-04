@@ -5,8 +5,8 @@
 #include "nbt/serializeVector.h"
 void fireWorkStarData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"flicker"), flicker);
-	s.serializeMembers(std::wstring(L"trail"), trail);
+	serializeNBTValue(s, std::wstring(L"flicker"), flicker);
+	serializeNBTValue(s, std::wstring(L"trail"), trail);
 	idConverter::serializeID(s, std::wstring(L"shape"), shape, s.converter ? &s.converter->fireworkShapeIDConverter : nullptr);
 	serializeNBTValue(s, std::wstring(L"colors"), colors);
 	serializeNBTValue(s, std::wstring(L"fade colors"), fadeColors);

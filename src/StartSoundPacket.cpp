@@ -7,10 +7,10 @@
 bool StartSoundPacket::serialize(nbtSerializer& s)
 {
 	serializeNBTValue(s, L"position", position);
-	s.serializeMembers(L"key", key);
-	s.serializeMembers(L"sound index", soundIndex);
-	s.serializeMembers(L"volume", volume);
-	s.serializeMembers(L"pitch", pitch);
-	s.serializeMembers(L"shouldLoop", shouldLoop);
+	serializeNBTValue(s, L"key", key);
+	serializeNBTValue(s, L"sound index", soundIndex);
+	serializeNBTValue(s, L"volume", volume);
+	serializeNBTValue(s, L"pitch", pitch);
+	serializeNBTValue(s, L"shouldLoop", shouldLoop);
 	return SoundPacket::serialize(s);
 }

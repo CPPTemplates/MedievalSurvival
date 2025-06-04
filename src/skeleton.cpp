@@ -14,7 +14,7 @@ skeleton::skeleton(const entityID &entityType) : humanoid(entityType)
 								   new wanderAI(this),
 							   });
 
-	initializeBodyParts(skeletonHeadTextureRect, skeletonBodyTextureRect, skeletonLeftLegTextureRect, skeletonRightLegTextureRect, skeletonLeftArmTextureRect, skeletonRightArmTextureRect, skeletonPixelSize);
+	initializeBodyParts(skeletonHeadTextureRect, skeletonBodyTextureRect, skeletonLeftLegTextureRect, skeletonRightLegTextureRect, skeletonLeftArmTextureRect, skeletonRightArmTextureRect);
 	mainBodyPart->hasTransparency = true;
 	itemHolding = new itemStack(itemID::bow, 1);
 }

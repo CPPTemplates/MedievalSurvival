@@ -7,5 +7,5 @@ void breedableMob::tick()
 
 void breedableMob::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"age"), age);
+	serializeNBTValue(s, std::wstring(L"age"), age);
 }

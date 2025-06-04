@@ -75,7 +75,7 @@ void chicken::updateBodyParts() const
 void chicken::serializeMembers(nbtSerializer &s)
 {
 	mob::serializeMembers(s);
-	s.serializeMembers(L"time until next egg", timeUntilNextEgg);
+	serializeNBTValue(s, L"time until next egg", timeUntilNextEgg);
 }
 
 fp chicken::getGravityForce() const

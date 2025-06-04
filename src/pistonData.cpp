@@ -186,8 +186,8 @@ void pistonData::serializeMembers(nbtSerializer& s)
 {
 	facingData::serializeMembers(s);
 	doubleBlockData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"last power level behind"), lastPowerLevelBehind);
-	s.serializeMembers(std::wstring(L"push progress"), pushProgress);
+	serializeNBTValue(s, std::wstring(L"last power level behind"), lastPowerLevelBehind);
+	serializeNBTValue(s, std::wstring(L"push progress"), pushProgress);
 	serializeNBTValue(s, std::wstring(L"blocks moving"), blocksMoving);
 }
 void pistonData::onBlockRemove(tickableBlockContainer* containerIn, cveci2& position)

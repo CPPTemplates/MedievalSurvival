@@ -40,6 +40,6 @@ bool repeaterData::tick(tickableBlockContainer* containerIn, cveci2& position)
 void repeaterData::serializeMembers(nbtSerializer& s)
 {
 	inputData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"delay array index"), delayArrayIndex);
+	serializeNBTValue(s, std::wstring(L"delay array index"), delayArrayIndex);
 	s.serializeArray(std::wstring(L"delayed powerlevels"), delayedPowerLevels, delayedPowerLevelArraySize);
 }

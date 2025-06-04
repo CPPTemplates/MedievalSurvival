@@ -1,6 +1,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <memory>
 #include <fstream>
+#include <math/mathFunctions.h>
 #pragma once
 
 inline std::size_t getStreamSize(std::istream& stream){

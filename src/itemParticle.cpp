@@ -9,6 +9,6 @@ const resolutionTexture& itemParticle::getTexture() const
 
 void itemParticle::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"brush item id"), brushItemID);
+	serializeNBTValue(s, std::wstring(L"brush item id"), brushItemID);
 	rectParticle::serializeMembers(s);
 }

@@ -28,9 +28,9 @@ void chestData::serializeMembers(nbtSerializer& s)
 	blockData::serializeMembers(s);
 	((nbtSerializable*)slots)->serialize(s, std::wstring(L"chest slots"));
 
-	if ((s.write ? (lootTableName != std::wstring()) : true) && s.serializeMembers(std::wstring(L"loot table name"), lootTableName))
+	if ((s.write ? (lootTableName != std::wstring()) : true) && serializeNBTValue(s, std::wstring(L"loot table name"), lootTableName))
 	{
-		s.serializeMembers(std::wstring(L"loot table seed"), lootTableSeed);
+		serializeNBTValue(s, std::wstring(L"loot table seed"), lootTableSeed);
 	}
 }
 

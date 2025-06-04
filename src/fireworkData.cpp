@@ -3,6 +3,6 @@
 #include "nbt/serializeList.h"
 void fireWorkData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"flight duration"), flightDuration);
-	serializeListOfSerializables(s, std::wstring(L"firework stars"), fireworkStars);
+	serializeNBTValue(s, std::wstring(L"flight duration"), flightDuration);
+	serializeNBTValue(s, std::wstring(L"firework stars"), (nbtSerializable&)fireworkStars);
 }

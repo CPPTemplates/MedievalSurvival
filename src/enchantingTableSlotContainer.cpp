@@ -13,13 +13,14 @@
 #include "inventoryForm.h"
 #include "application/theme.h"
 #include <resourceLoader.h>
+#include <TextureLoader.h>
 
 constexpr veci2 enchantmentOptionSize = cveci2(108, 19);
 constexpr veci2 enchantmentBottomOptionPos = cveci2(60, 95);
 
 enchantingTableSlotContainer::enchantingTableSlotContainer()
 {
-	uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"enchanting_table.png"));
+	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"enchanting_table.png");
 	containers.push_back(lapisSlot = new uiSlotContainer(cveci2(35, 103), new rectangularSlotContainer(cveci2(1))));
 	containers.push_back(enchantmentSlot = new uiSlotContainer(cveci2(15, 103), new rectangularSlotContainer(cveci2(1))));
 	//hotbar and inventory will be linked up
@@ -91,7 +92,7 @@ void enchantingTableSlotContainer::mouseDown(cveci2& pixelPosition, cmb& button,
 	}
 }
 
-void enchantingTableSlotContainer::drawExtraData(cmat3x3& transform, const texture& renderTarget)
+void enchantingTableSlotContainer::drawExtraData(cmat3x3& transform, const gameRenderData& targetData)
 {
 	veci2 optionPosition = cveci2(enchantmentBottomOptionPos + cveci2(0, enchantmentOptionSize.y * (enchantmentOptionCount - 1)));
 	if (hasEnchantableItem())
@@ -103,15 +104,15 @@ void enchantingTableSlotContainer::drawExtraData(cmat3x3& transform, const textu
 			cbool available = isAvailable(i);
 			rectanglei2 textRect = rectanglei2(optionPosition, enchantmentOptionSize);
 			const resolutionTexture& backgroundTexture = globalLoader[containerSpritesFolder / L"enchanting_table" / (available ? L"enchantment_slot.png" : L"enchantment_slot_disabled.png")];
-			inventory::drawExtraData(backgroundTexture, textRect.pos0, transform, renderTarget);
+			inventory::drawExtraData(backgroundTexture, textRect.pos0, transform, targetData);
 			textRect.x += textRect.h;//substract the 'lapis square'
 			textRect.w -= textRect.h;
 			const resolutionTexture& xpTexture = globalLoader[containerSpritesFolder / L"enchanting_table" / (L"level_" + std::to_wstring(i + 1) + (available ? L"" : L"_disabled") + L".png")];
-			inventory::drawExtraData(xpTexture, optionPosition, transform, renderTarget);
+			inventory::drawExtraData(xpTexture, optionPosition, transform, targetData);
 
 			textRect.expand(-defaultTheme().borderSize);
 			std::wstring enchantmentName = enchantmentOptions[i][0].toWString();
-			defaultTheme().font->DrawString(enchantmentName, transform.multRectMatrix((crectangle2)textRect), renderTarget);
+			defaultTheme().font->DrawString(enchantmentName, transform.multRectMatrix((crectangle2)textRect), targetData.renderTarget);
 		}
 	}
 }

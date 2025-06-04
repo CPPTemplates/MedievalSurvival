@@ -76,6 +76,7 @@
 #include "resourceLoader.h"
 #include "StartSoundPacket.h"
 #include <soundList.h>
+#include <TextureLoader.h>
 
 constexpr rectangle2 crosshairTextureRect = crectangle2(0, 0, 15, 15);
 constexpr rectangle2 iconTextureRect = rectangle2(0, 0, 9, 9);
@@ -246,7 +247,7 @@ void gameControl::addSounds()
 
 		windSoundVolume = math::lerp(windSoundVolume, speedToVolume.getValue(windSpeed), 0.2);
 		windSoundPitch = math::lerp(windSoundPitch, speedToPitch.getValue(windSpeed), 0.2);
-		UpdateSoundPacket* updatePacket = new UpdateSoundPacket(windSoundID);
+		const auto& updatePacket = std::make_shared < UpdateSoundPacket>(windSoundID);
 		updatePacket->newVolume = windSoundVolume;
 		updatePacket->newPitch = windSoundPitch;
 		soundPacketsToSend.push_back(updatePacket);
@@ -254,7 +255,7 @@ void gameControl::addSounds()
 	else {
 		//create wind sound
 		windSoundID = randomUUID(currentRandom);
-		soundPacketsToSend.push_back(new StartSoundPacket(windSoundID, std::nullopt, windSound->key, 0, 1, 1, true));
+		soundPacketsToSend.push_back(std::make_shared<StartSoundPacket>(windSoundID, std::nullopt, windSound->key, 0, 1, 1, true));
 	}
 }
 
@@ -1308,7 +1309,7 @@ void gameControl::switchInventoryGUI()
 		inventoryUI->visible = true;
 		if (inventoryUI->visible)
 		{
-			inventoryUI->linkUp(player->humanSlots);
+			player->humanSlots->linkUp(inventoryUI);
 			focusChild(inventoryUI);
 		}
 	}
@@ -1355,9 +1356,9 @@ void gameControl::serializeMusicPreference(nbtSerializer& serializer)
 {
 	if (serializer.push(L"music"))
 	{
-		const auto& prefer = [&serializer](std::shared_ptr<musicCollection> music)
+		const auto& prefer = [&serializer](std::shared_ptr<audioCollection> music)
 			{
-				serializer.serializeMembers(L"prefer", music->key);
+				serializeNBTValue(serializer, L"prefer", music->key);
 			};
 		bool boatInWater;
 		entity* entityRidingOn = player->dimensionIn->findUUID(player->position,
@@ -1378,7 +1379,7 @@ void gameControl::serializeMusicPreference(nbtSerializer& serializer)
 		cbool inEnd = player->dimensionIn->identifier == dimensionID::end;
 		if (inEnd && ((end*)currentWorld->dimensions[(int)dimensionID::end])->dragonAlive)
 		{
-			serializer.serializeMembers(L"replace", bossMusic->key);
+			serializeNBTValue(serializer, L"replace", bossMusic->key);
 			// replaceMusic(bossMusic);
 		}
 		else

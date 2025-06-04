@@ -8,47 +8,47 @@ constexpr void serializeEventData(sf::Event& event, nbtSerializer& s) {
 	//copy event data to content
 	eventType content = s.write ? *event.getIf<eventType>() : eventType();
 	if constexpr (std::is_same_v<eventType, sf::Event::TouchBegan>) {
-		s.serializeMembers(L"x", content.position.x);
-		s.serializeMembers(L"y", content.position.y);
-		s.serializeMembers(L"finger", content.finger);
+		serializeNBTValue(s, L"x", content.position.x);
+		serializeNBTValue(s, L"y", content.position.y);
+		serializeNBTValue(s, L"finger", content.finger);
 	}
 	else if constexpr (std::is_same_v<eventType, sf::Event::MouseButtonPressed> || std::is_same_v<eventType, sf::Event::MouseButtonReleased>) {
-		s.serializeMembers(L"x", content.position.x);
-		s.serializeMembers(L"y", content.position.y);
-		s.serializeMembers(L"button", content.button);
+		serializeNBTValue(s, L"x", content.position.x);
+		serializeNBTValue(s, L"y", content.position.y);
+		serializeNBTValue(s, L"button", content.button);
 	}
 	else if constexpr (std::is_same_v<eventType, sf::Event::MouseMoved>) {
-		s.serializeMembers(L"x", content.position.x);
-		s.serializeMembers(L"y", content.position.y);
+		serializeNBTValue(s, L"x", content.position.x);
+		serializeNBTValue(s, L"y", content.position.y);
 	}
 
 	else if constexpr (std::is_same_v<eventType, sf::Event::KeyPressed> || std::is_same_v<eventType, sf::Event::KeyReleased>) {
 		//we don'T need to serialize the scan code, that is the local key code.
 		//when reading this data on another device, the result would be completely different.
-		s.serializeMembers(L"alt", content.alt);
-		s.serializeMembers(L"control", content.control);
-		s.serializeMembers(L"shift", content.shift);
-		s.serializeMembers(L"code", content.code);
+		serializeNBTValue(s, L"alt", content.alt);
+		serializeNBTValue(s, L"control", content.control);
+		serializeNBTValue(s, L"shift", content.shift);
+		serializeNBTValue(s, L"code", content.code);
 	}
 
 	else if constexpr (std::is_same_v<eventType, sf::Event::SensorChanged>) {
-		s.serializeMembers(L"x", content.value.x);
-		s.serializeMembers(L"y", content.value.y);
-		s.serializeMembers(L"z", content.value.z);
+		serializeNBTValue(s, L"x", content.value.x);
+		serializeNBTValue(s, L"y", content.value.y);
+		serializeNBTValue(s, L"z", content.value.z);
 	}
 	else if constexpr (std::is_same_v<eventType, sf::Event::MouseWheelScrolled>) {
-		s.serializeMembers(L"x", content.position.x);
-		s.serializeMembers(L"y", content.position.y);
-		s.serializeMembers(L"delta", content.delta);
-		s.serializeMembers(L"wheel", content.wheel);
+		serializeNBTValue(s, L"x", content.position.x);
+		serializeNBTValue(s, L"y", content.position.y);
+		serializeNBTValue(s, L"delta", content.delta);
+		serializeNBTValue(s, L"wheel", content.wheel);
 	}
 	else if constexpr (std::is_same_v<eventType, sf::Event::TextEntered>) {
 
-		s.serializeMembers(L"unicode", content.unicode);
+		serializeNBTValue(s, L"unicode", content.unicode);
 	}
 	else if constexpr (std::is_same_v<eventType, sf::Event::Resized>) {
-		s.serializeMembers(L"width", content.size.x);
-		s.serializeMembers(L"height", content.size.y);
+		serializeNBTValue(s, L"width", content.size.x);
+		serializeNBTValue(s, L"height", content.size.y);
 	}
 	if (!s.write) {
 		//copy content to event data
@@ -60,7 +60,7 @@ inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
 {
 	if (s.push(L"events")) {
 		size_t size = input.eventHistory.size();
-		s.serializeMembers(L"size", size);
+		serializeNBTValue(s, L"size", size);
 		if (!s.write)
 		{
 			//don'T resize to target size, because we might not be able to serialize all events
@@ -92,7 +92,7 @@ inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
 			if (typeName != L"Unknown" && s.push(std::to_wstring(i)))
 			{
 
-				s.serializeMembers(std::wstring(L"type"), typeName);
+				serializeNBTValue(s, std::wstring(L"type"), typeName);
 
 				if (typeName == L"TouchMoved")				serializeEventData<sf::Event::TouchMoved>(currentEvent, s);
 				else if (typeName == L"TouchBegan")			serializeEventData<sf::Event::TouchBegan>(currentEvent, s);
@@ -124,7 +124,7 @@ inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
 		s.serializeArray(L"clicked", (sbyte*)input.clicked, (size_t)sf::Mouse::ButtonCount);
 		s.serializeArray(L"released", (sbyte*)input.clickReleased, (size_t)sf::Mouse::ButtonCount);
 		s.serializeArray(L"holding", (sbyte*)input.holding, (size_t)sf::Mouse::ButtonCount);
-		s.serializeMembers(L"scrolldelta", input.scrollDelta);
+		serializeNBTValue(s, L"scrolldelta", input.scrollDelta);
 		s.pop();
 	}
 	// s.serialize(keyDownHistory);
@@ -135,7 +135,7 @@ inline bool serializeClientInput(clientInput& input, nbtSerializer& s)
 		serializeNBTValue(s, L"holding", input.keysHolding);
 		s.pop();
 	}
-	s.serializeMembers(L"text entered", input.textEntered);
+	serializeNBTValue(s, L"text entered", input.textEntered);
 
 	return true;
 }

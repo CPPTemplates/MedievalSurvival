@@ -6,7 +6,7 @@
 
 void serverDataList::serializeMembers(nbtSerializer& s)
 {
-	serializeListOfSerializables(s, L"servers", servers);
+	serializeNBTValue(s, L"servers", servers);
 }
 
 bool serverDataList::serialize(cbool& write)

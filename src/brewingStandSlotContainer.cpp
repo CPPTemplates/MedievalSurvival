@@ -5,9 +5,10 @@
 #include "dimension.h"
 #include "stackDivider.h"
 #include <resourceLoader.h>
+#include <TextureLoader.h>
 brewingStandSlotContainer::brewingStandSlotContainer()
 {
-	uiTexture = loadTextureFromResourcePack(containerTextureFolder / std::wstring(L"brewing_stand.png"));
+	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"brewing_stand.png");
 	containers.push_back(blazePowderSlot = new uiSlotContainer(cveci2(17, 133), nullptr));
 	containers.push_back(ingredientSlot = new uiSlotContainer(cveci2(79, 133), nullptr));
 	containers.push_back(potionSlots[0] = new uiSlotContainer(cveci2(56, 99), nullptr));
@@ -45,7 +46,7 @@ bool brewingStandSlotContainer::addToEqualStacks(itemStack& s, itemStack*& empty
 	}
 }
 
-void brewingStandSlotContainer::drawExtraData(cmat3x3& transform, const texture& renderTarget)
+void brewingStandSlotContainer::drawExtraData(cmat3x3& transform, const gameRenderData& targetData)
 {
 	//draw fire and progress bar
 	//draw fire
@@ -54,13 +55,13 @@ void brewingStandSlotContainer::drawExtraData(cmat3x3& transform, const texture&
 		cfp& brewProgress = selectedBrewingStandData->ticksBrewed / (fp)brewingBatchTime;
 		cint& brewTextureHeight = 27;
 		cint& brewTexturePart = (int)(brewTextureHeight * brewProgress);
-		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"brew_progress.png"], crectanglei2(0, brewTextureHeight - brewTexturePart, 33, brewTexturePart), veci2(97, 121 + (brewTextureHeight - brewTexturePart)), transform, renderTarget);
+		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"brew_progress.png"], crectanglei2(0, brewTextureHeight - brewTexturePart, 33, brewTexturePart), veci2(97, 121 + (brewTextureHeight - brewTexturePart)), transform, targetData);
 	}
 	//draw progress bar
 	if (selectedBrewingStandData->fuelLeft)
 	{
 		cfp& partLeft = selectedBrewingStandData->fuelLeft / (fp)blazePowderBrewingBatchCount;
-		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"fuel_length.png"], crectanglei2(0, 0, (int)(18 * partLeft), 4), veci2(60, 118), transform, renderTarget);
+		inventory::drawExtraData(globalLoader[containerSpritesFolder / L"brewing_stand" / L"fuel_length.png"], crectanglei2(0, 0, (int)(18 * partLeft), 4), veci2(60, 118), transform, targetData);
 	}
 }
 

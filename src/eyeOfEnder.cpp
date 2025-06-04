@@ -70,7 +70,7 @@ void eyeOfEnder::tick()
 void eyeOfEnder::serializeMembers(nbtSerializer& s)
 {
 	//the stronghold direction will be calculated
-	s.serializeMembers(std::wstring(L"ticks to float"), floatTicksLeft);
+	serializeNBTValue(s, std::wstring(L"ticks to float"), floatTicksLeft);
 }
 
 vec2 eyeOfEnder::applyNaturalForces(cvec2& speed) const

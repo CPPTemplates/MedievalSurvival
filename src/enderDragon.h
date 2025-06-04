@@ -2,7 +2,7 @@
 #include "math/rectangle/rectangletn.h"
 #include "mob.h"
 #include "dragonPhase.h"
-#include "soundCollection.h"
+#include "audioCollection.h"
 #include "folderList.h"
 
 //ender dragon
@@ -93,7 +93,7 @@ constexpr rectangle2 endCrystalBeamTextureRect = crectangle2(0, 0, 0x10, 0x100);
 constexpr fp endCrystalBeamPixelSize = endCrystalHealRange / (fp)endCrystalBeamTextureRect.size.getY();
 constexpr fp endCrystalBeamWidth = endCrystalBeamTextureRect.size.getX() * endCrystalBeamPixelSize;
 extern resolutionTexture* endCrystalBeamTexture;
-extern std::shared_ptr<soundCollection> enderDragonWingsSound;
+extern std::shared_ptr<audioCollection> enderDragonWingsSound;
 
 //https://sueburke.site/2020/02/06/how-much-does-a-dragon-weigh/#:~:text=A%20dragon%2030%20feet%20long,wingspan%20would%20weigh%20100%20pounds.
 constexpr fp gooseLength = 1;

@@ -131,7 +131,7 @@ bool structure::serialize(const stdPath& path, cbool& write) {
 		if (write) {
 			for (entity* e : entities) {
 				if (s.push<nbtDataTag::tagCompound>()) {
-					s.serializeMembers(std::wstring(L"entity id"), e->entityType);
+					serializeNBTValue(s, std::wstring(L"entity id"), e->entityType);
 					serializeNBTValue(s, std::wstring(L"position"), e->position);
 					e->serializeMembers(s);
 					s.pop();

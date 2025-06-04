@@ -7,7 +7,7 @@
 void playerData::serializeMembers(nbtSerializer& s)
 {
 	serializeNBTValue(s, L"uuid", id);
-	s.serializeMembers(L"name", name);
+	serializeNBTValue(s, L"name", name);
 }
 
 bool playerData::serialize(cbool& write)

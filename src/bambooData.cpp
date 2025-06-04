@@ -3,6 +3,6 @@
 void bambooData::serializeMembers(nbtSerializer& s)
 {
 	ageData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"leaves size"), leavesSize);
-	s.serializeMembers(std::wstring(L"stalk thickness"), stalkThickness);
+	serializeNBTValue(s, std::wstring(L"leaves size"), leavesSize);
+	serializeNBTValue(s, std::wstring(L"stalk thickness"), stalkThickness);
 }

@@ -24,6 +24,6 @@ bool buttonData::tick(tickableBlockContainer* containerIn, cveci2& position)
 void buttonData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"ticks to press"), ticksToPress);
+	serializeNBTValue(s, std::wstring(L"ticks to press"), ticksToPress);
 	attachmentDirectionData::serializeMembers(s);
 }

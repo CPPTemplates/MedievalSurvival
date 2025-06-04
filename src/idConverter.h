@@ -52,11 +52,11 @@ struct idConverter
 	{
 		if (s.write)
 		{
-			return s.serializeMembers(memberName, (int&)value);
+			return serializeNBTValue(s, memberName, (int&)value);
 		}
 		else
 		{
-			if (s.serializeMembers(memberName, (int&)value))
+			if (serializeNBTValue(s, memberName, (int&)value))
 			{
 				if ((!converter) || convertID<idType>(value, *converter))
 				{
@@ -78,7 +78,7 @@ struct idConverter
 			{
 				std::wstring name;
 				//*serializedIDList[i]
-				s.serializeMembers(std::wstring(), name);
+				serializeNBTValue(s, std::wstring(), name);
 				conversionList[i] = dataList.getIDByName(name);
 			}
 			s.pop();
@@ -96,7 +96,7 @@ struct idConverter
 		{
 			for (fsize_t i = 0; i < dataList.size; i++)
 			{
-				s.serializeMembers(std::wstring(), dataList[i]->name);
+				serializeNBTValue(s, std::wstring(), dataList[i]->name);
 			}
 			s.pop();
 		}

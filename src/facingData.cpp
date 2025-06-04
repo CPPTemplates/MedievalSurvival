@@ -2,5 +2,5 @@
 #include "nbt/nbtSerializer.h"
 void facingData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"facing"), directionFacing);
+	serializeNBTValue(s, std::wstring(L"facing"), directionFacing);
 }

@@ -561,11 +561,11 @@ humanoid::~humanoid()
 void humanoid::serializeMembers(nbtSerializer& s)
 {
 	mob::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"selected block damage"), selectedBlockDamage);
-	s.serializeMembers(std::wstring(L"time waiting to dig"), timeWaitingToDig);
-	s.serializeMembers(std::wstring(L"digging"), digging);
-	s.serializeMembers(std::wstring(L"sleeping"), sleeping);
-	s.serializeMembers(std::wstring(L"climbing"), climbing);
+	serializeNBTValue(s, std::wstring(L"selected block damage"), selectedBlockDamage);
+	serializeNBTValue(s, std::wstring(L"time waiting to dig"), timeWaitingToDig);
+	serializeNBTValue(s, std::wstring(L"digging"), digging);
+	serializeNBTValue(s, std::wstring(L"sleeping"), sleeping);
+	serializeNBTValue(s, std::wstring(L"climbing"), climbing);
 	armorSlots->serialize(s, std::wstring(L"armor slots"));
 }
 void humanoid::tick()
@@ -744,7 +744,7 @@ bool humanoid::placeBlock(blockID blockToPlace)
 		if (is_in(blockToPlace, blockID::cactus, blockID::sugar_cane))
 		{
 			const blockID& blockBelow = selectedBlockContainer->getBlockID(adjacentBlockPosition + cveci2(0, -1));
-			if (!is_in(blockBelow, blockID::sand, blockToPlace) && (blockToPlace != blockID::sugar_cane || !is_in(blockBelow, blockID::dirt, blockID::grass_block)))return false;
+			if (!isValidBottomblock(blockToPlace, blockBelow))return false;
 		}
 		else if (blockToPlace == blockID::kelp)
 		{

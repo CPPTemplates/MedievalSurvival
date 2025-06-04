@@ -89,8 +89,8 @@ void boat::onDeath()
 void boat::serializeMembers(nbtSerializer& s)
 {
 	ridableEntity::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"paddle rotations"), paddleRotations);
-	s.serializeMembers(std::wstring(L"boat type"), boatType);
+	serializeNBTValue(s, std::wstring(L"paddle rotations"), paddleRotations);
+	serializeNBTValue(s, std::wstring(L"boat type"), boatType);
 }
 
 vec2 boat::getRelativeSeatPosition(csize_t& seatIndex) const

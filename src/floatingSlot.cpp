@@ -48,6 +48,6 @@ floatingSlot::~floatingSlot()
 void floatingSlot::serializeMembers(nbtSerializer& s)
 {
 	entity::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"ticks floating"), ticksAvailable);
+	serializeNBTValue(s, std::wstring(L"ticks floating"), ticksAvailable);
 	stack.serialize(s, std::wstring(L"item"));
 }

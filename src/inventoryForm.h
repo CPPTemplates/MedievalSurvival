@@ -13,7 +13,6 @@ struct inventoryForm : form
 	inventory* inventoryToDisplay = nullptr;
 	inventoryForm();
 
-	virtual void linkUp(inventory* newInventoryToDisplay);
 	virtual void unLink();
 	virtual void mouseDown(cveci2& position, cmb& button) override;
 	virtual void mouseMove(cveci2& position, cmb& button) override;

@@ -1,15 +1,16 @@
 #pragma once
 #include <memory>
-#include "musicCollection.h"
-extern std::shared_ptr<musicCollection> overWorldBackgroundMusic;
-extern std::shared_ptr<musicCollection> netherMusic;
-extern std::shared_ptr<musicCollection> endMusic;
-extern std::shared_ptr<musicCollection> bossMusic;
-extern std::shared_ptr<musicCollection> creditsMusic;
-extern std::shared_ptr<musicCollection> mainMenuBackgroundMusic;
-extern std::shared_ptr<musicCollection> waterMusic;
-extern std::shared_ptr<musicCollection> creativeModeMusic;
-extern std::shared_ptr<musicCollection> crimsonForestMusic;
-extern std::shared_ptr<musicCollection> netherWastesMusic;
-extern std::shared_ptr<musicCollection> soulSandValleyMusic;
-extern std::shared_ptr<musicCollection> recordsMusic;
+#include "audioCollection.h"
+#include "itemID.h"
+extern std::shared_ptr<audioCollection> overWorldBackgroundMusic;
+extern std::shared_ptr<audioCollection> netherMusic;
+extern std::shared_ptr<audioCollection> endMusic;
+extern std::shared_ptr<audioCollection> bossMusic;
+extern std::shared_ptr<audioCollection> creditsMusic;
+extern std::shared_ptr<audioCollection> mainMenuBackgroundMusic;
+extern std::shared_ptr<audioCollection> waterMusic;
+extern std::shared_ptr<audioCollection> creativeModeMusic;
+extern std::shared_ptr<audioCollection> crimsonForestMusic;
+extern std::shared_ptr<audioCollection> netherWastesMusic;
+extern std::shared_ptr<audioCollection> soulSandValleyMusic;
+extern std::shared_ptr<audioCollection> recordsMusic[musicDiscTypeCount];

@@ -8,5 +8,5 @@ bool angerAI::shouldExecute()
 void angerAI::serializeMembers(nbtSerializer& s)
 {
 	targetAI::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"ticks angry"), ticksAngry);
+	serializeNBTValue(s, std::wstring(L"ticks angry"), ticksAngry);
 }

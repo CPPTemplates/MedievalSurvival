@@ -237,8 +237,8 @@ brewingstandData::~brewingstandData() {
 
 void brewingstandData::serializeMembers(nbtSerializer &s) {
     blockData::serializeMembers(s);
-    s.serializeMembers(std::wstring(L"fuel left"), fuelLeft);
-    s.serializeMembers(std::wstring(L"ticks brewed"), ticksBrewed);
+    serializeNBTValue(s, std::wstring(L"fuel left"), fuelLeft);
+    serializeNBTValue(s, std::wstring(L"ticks brewed"), ticksBrewed);
     blazePowderSlot->serialize(s, std::wstring(L"input slot"));
     ingredientSlot->serialize(s, std::wstring(L"output slot"));
     if (s.push<nbtDataTag::tagList>(std::wstring(L"potion slots"))) {

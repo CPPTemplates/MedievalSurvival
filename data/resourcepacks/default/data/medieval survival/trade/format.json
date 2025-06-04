@@ -1,0 +1,41 @@
+{
+	"profession": "example",
+	"slots": {
+		"novice": {
+			"trades": [
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:coal",
+							"count": 15
+						}
+					],
+					"given": {
+						"id": "minecraft:emerald",
+						"count": 1
+					},
+					"stock": 16,
+					"multiplier": 0.05,
+					"xp": 2
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 5
+						}
+					],
+					"given": {
+						"id": "minecraft:iron_helmet",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 1
+				}
+			]
+		}
+	}
+}

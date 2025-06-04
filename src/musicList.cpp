@@ -1,14 +1,15 @@
-#include "musicCollection.h"
+#include "audioCollection.h"
 #include <memory>
-std::shared_ptr<musicCollection> overWorldBackgroundMusic = nullptr;
-std::shared_ptr<musicCollection> netherMusic = nullptr;
-std::shared_ptr<musicCollection> endMusic = nullptr;
-std::shared_ptr<musicCollection> bossMusic = nullptr;
-std::shared_ptr<musicCollection> creditsMusic = nullptr;
-std::shared_ptr<musicCollection> mainMenuBackgroundMusic = nullptr;
-std::shared_ptr<musicCollection> waterMusic = nullptr;
-std::shared_ptr<musicCollection> creativeModeMusic = nullptr;
-std::shared_ptr<musicCollection> crimsonForestMusic = nullptr;
-std::shared_ptr<musicCollection> netherWastesMusic = nullptr;
-std::shared_ptr<musicCollection> soulSandValleyMusic = nullptr;
-std::shared_ptr<musicCollection> recordsMusic = nullptr;
+#include <itemID.h>
+std::shared_ptr<audioCollection> overWorldBackgroundMusic = nullptr;
+std::shared_ptr<audioCollection> netherMusic = nullptr;
+std::shared_ptr<audioCollection> endMusic = nullptr;
+std::shared_ptr<audioCollection> bossMusic = nullptr;
+std::shared_ptr<audioCollection> creditsMusic = nullptr;
+std::shared_ptr<audioCollection> mainMenuBackgroundMusic = nullptr;
+std::shared_ptr<audioCollection> waterMusic = nullptr;
+std::shared_ptr<audioCollection> creativeModeMusic = nullptr;
+std::shared_ptr<audioCollection> crimsonForestMusic = nullptr;
+std::shared_ptr<audioCollection> netherWastesMusic = nullptr;
+std::shared_ptr<audioCollection> soulSandValleyMusic = nullptr;
+std::shared_ptr<audioCollection> recordsMusic[musicDiscTypeCount]{};

@@ -2,6 +2,7 @@
 #include "human.h"
 #include "stackDivider.h"
 #include "gameControl.h"
+#include "inventoryForm.h"
 
 void inventory::clickedOnItem(cmb& button, stackDivider& divider,
 	uiSlotContainer* selectedSlotContainer, veci2 selectedSlot)
@@ -49,17 +50,17 @@ void inventory::clickedOnItem(cmb& button, stackDivider& divider,
 	// }
 }
 
-void inventory::drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const texture& renderTarget) const
+void inventory::drawExtraData(const resolutionTexture& sprite, cveci2& position, cmat3x3& transform, const gameRenderData& targetData) const
 {
-	drawExtraData(sprite, crectangle2(sprite.getClientRect()), position, transform, renderTarget);
+	drawExtraData(sprite, crectangle2(sprite.getClientRect()), position, transform, targetData);
 }
 
-void inventory::drawExtraData(const resolutionTexture& sprite, crectangle2& textureRect, cvec2& position, cmat3x3& transform, const texture& renderTarget) const
+void inventory::drawExtraData(const resolutionTexture& sprite, crectangle2& textureRect, cvec2& position, cmat3x3& transform, const gameRenderData& targetData) const
 {
-	fillTransparentRectangle(textureRect, mat3x3::cross(transform, mat3x3::translate(cvec2(position))), sprite, renderTarget);
+	fillTransparentRectangle(textureRect, mat3x3::cross(transform, mat3x3::translate(cvec2(position))), sprite, targetData.renderTarget);
 }
 
-void inventory::drawExtraData(cmat3x3& transform, const texture& renderTarget)
+void inventory::drawExtraData(cmat3x3& transform, const gameRenderData& targetData)
 {
 }
 
@@ -125,6 +126,15 @@ bool inventory::addStack(uiSlotContainer* containerToAddTo, itemStack& s)
 		return containerToAddTo->addStack(s);
 	}
 	return false;
+}
+
+void inventory::linkUp(inventoryForm* form)
+{
+	form->inventoryToDisplay = this;
+	linkedPlayer = ((gameControl*)form->parent)->player;
+	form->updateScale();
+	((gameControl*)form->parent)->focusChild(form);
+	form->visible = true;
 }
 
 uiSlotContainer* inventory::getSlotContainer(cveci2& mousePositionPixels, veci2& slotPosition)

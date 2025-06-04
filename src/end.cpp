@@ -91,14 +91,14 @@ void end::generateStructures(chunk& generateIn)
 
 void end::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"dragon alive"), dragonAlive);
-	s.serializeMembers(std::wstring(L"exit portal level"), exitPortalLevel);
+	serializeNBTValue(s, std::wstring(L"dragon alive"), dragonAlive);
+	serializeNBTValue(s, std::wstring(L"exit portal level"), exitPortalLevel);
 
 	if (s.push<nbtDataTag::tagList>(std::wstring(L"obsidian pillar levels")))
 	{
 		for (size_t i = 0; i < obsidianPillarCount; i++)
 		{
-			s.serializeMembers(std::wstring(), obsidianPillarLevel[i]);
+			serializeNBTValue(s, std::wstring(), obsidianPillarLevel[i]);
 		}
 		s.pop();
 	}

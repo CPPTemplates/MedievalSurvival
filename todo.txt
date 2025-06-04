@@ -10,9 +10,16 @@ you pick a double stack, even when clicking once with right mouse button
 make textures load only when used
 
 prio:
+playingsoundcount is negative
 
 hovering over item in inventory + q = drop
 
+add stone cutter for mason
+add sound loader
+make mobs target multiple entity types
+add enum operators for itemID
+enum iterators
+load block models from json files
 shift double click: move all items of a type to another inventory
 add berry bushes and berries
 add climbing (more important because 2d)
@@ -51,6 +58,9 @@ feather falling should reduce falling speed
 dogs hit you back instantly when you crit kill them
 use biome.json files to determine spawn chances and music
 add ambient sounds using biome.json https://minecraft.fandom.com/wiki/Ambience
+
+compilation speed:
+move all functions from audio2d to .cpp
 
 nights seem to be very long when sleeping
 rails are invisible

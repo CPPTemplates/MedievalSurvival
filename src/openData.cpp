@@ -3,5 +3,5 @@
 void openData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"is open"), isOpen);
+	serializeNBTValue(s, std::wstring(L"is open"), isOpen);
 }

@@ -20,7 +20,7 @@ bool noteBlockData::tick(tickableBlockContainer* containerIn, cveci2& position)
 void noteBlockData::serializeMembers(nbtSerializer& s)
 {
 	lastPowerLevelData::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"note"), note);
+	serializeNBTValue(s, std::wstring(L"note"), note);
 }
 
 void noteBlockData::playNote(tickableBlockContainer* containerIn, cveci2& position)
@@ -29,5 +29,5 @@ void noteBlockData::playNote(tickableBlockContainer* containerIn, cveci2& positi
 
 	const noteTypeID& idToPlay = getNote(blockBelow);
 
-	noteSounds->playSound((int)idToPlay, containerIn, cvec2(position) + 0.5, 1, getNotePitch(note - octaveNoteCount));
+	noteSounds[(int)idToPlay]->playRandomSound(containerIn, cvec2(position) + 0.5, 1, getNotePitch(note - octaveNoteCount));
 }

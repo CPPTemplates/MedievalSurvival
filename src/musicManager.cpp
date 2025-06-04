@@ -2,9 +2,9 @@
 #include "musicManager.h"
 #include "musicList.h"
 #include "sound/soundHandler2D.h"
-std::shared_ptr<music2d> currentlyPlayingMusic = nullptr;
-const musicCollection *currentlyPlayingCollection = nullptr;
-void updateMusic(const musicCollection *const &musicIfFinished)
+std::shared_ptr<audio2d> currentlyPlayingMusic = nullptr;
+const audioCollection *currentlyPlayingCollection = nullptr;
+void updateMusic(const audioCollection *const &musicIfFinished)
 {
 	if (!currentlyPlayingMusic || (currentlyPlayingMusic->audioLoaded() && currentlyPlayingMusic->getStatus() == sf::SoundSource::Status::Stopped) || !settings::soundSettings::playMusic)
 	{
@@ -24,7 +24,7 @@ void stopMusic()
 		currentlyPlayingMusic = nullptr;
 	}
 }
-void replaceMusic(const musicCollection *const &newMusic)
+void replaceMusic(const audioCollection *const &newMusic)
 {
 	if (newMusic != currentlyPlayingCollection)
 	{
@@ -32,8 +32,8 @@ void replaceMusic(const musicCollection *const &newMusic)
 		playMusic(newMusic);
 	}
 }
-void playMusic(const musicCollection *const &newMusic)
+void playMusic(const audioCollection *const &newMusic)
 {
 	currentlyPlayingCollection = newMusic;
-	currentlyPlayingMusic = newMusic->playRandomAudio();
+	currentlyPlayingMusic = newMusic->playRandomAudioToClient();
 }

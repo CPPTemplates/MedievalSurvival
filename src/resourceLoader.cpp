@@ -23,35 +23,11 @@ std::vector<stdPath> resourcePackPaths =
 	// resourcePackFolder / L"4thful",};
 };
 
-resourceLoader globalLoader = resourceLoader(resourcePackPaths);
 
-const resolutionTexture& resourceLoader::getResource(const stdPath& relativePath)
-{
-	if (loadedTextures.contains(relativePath))
-		return *loadedTextures[relativePath];
-	const auto &locations = getResourceLocations(relativePath);
-	csize_t& locationCount = locations.size();
-	if (locationCount == 0)
-	{
-		handleError(relativePath.wstring() + std::wstring(L" not found in any of the resource packs. working directory: ") + workingDirectory.wstring());
-	}
-	csize_t &lastLocation = locationCount - 1;
-	cveci2 &size = getImageSize(locations[0]); // the base size of the image will be the one of the lowest resource pack: the minecraft texture folder or the "default" resource pack.
-
-	resolutionTexture *const &tex = loadTexture(locations[lastLocation], size);
-	loadedTextures[relativePath] = tex;
-	return *tex;
-}
-
-resolutionTexture *resourceLoader::loadTexture(const stdPath &path, cvec2 &defaultSize)
-{
-	return new resolutionTexture(texture(path, true), defaultSize);
-}
-
-std::vector<stdPath> resourceLoader::getResourceLocations(const stdPath &relativePath) const
+std::vector<stdPath> getResourceLocations(const stdPath& relativePath)
 {
 	std::vector<stdPath> foundLocations = std::vector<stdPath>();
-	for (const stdPath &resourcePackPath : resourcePackPaths)
+	for (const stdPath& resourcePackPath : resourcePackPaths)
 	{
 		const stdPath currentPath = resourcePackPath / relativePath;
 		if (std::filesystem::exists(currentPath))
@@ -61,10 +37,9 @@ std::vector<stdPath> resourceLoader::getResourceLocations(const stdPath &relativ
 	}
 	return foundLocations;
 }
-
-bool resourceLoader::getLastResourceLocation(const stdPath &relativePath, stdPath &result) const
+bool getLastResourceLocation(const stdPath& relativePath, stdPath& result)
 {
-	const auto &locations = getResourceLocations(relativePath);
+	const auto& locations = getResourceLocations(relativePath);
 
 	if (locations.size())
 	{
@@ -72,12 +47,4 @@ bool resourceLoader::getLastResourceLocation(const stdPath &relativePath, stdPat
 	}
 	// handleCrash(relativePath.wstring() + std::wstring(L" not found in any of the resource packs. working directory: ") + workingDirectory.wstring());
 	return locations.size();
-}
-
-resourceLoader::~resourceLoader()
-{
-	//delete all loaded textures
-	for (const auto& item : loadedTextures) {
-		delete item.second;
-	}
 }

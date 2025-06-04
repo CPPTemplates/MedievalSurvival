@@ -609,8 +609,7 @@ constexpr bool isFallingBlock(const blockID& identifier) noexcept
 
 constexpr bool isMob(const entityID& entityType)
 {
-	return isPassiveMob(entityType) || isHostileMob(entityType) || (entityType == entityID::wolf) ||
-		(entityType == entityID::human);
+	return (int)entityType < mobTypeCount;
 }
 
 constexpr bool canHit(const entityID& entityType)
@@ -1009,11 +1008,16 @@ constexpr blockID getBlockToSpread(const blockID& identifier) noexcept
 		: identifier;
 }
 
+//returns true if normal blocks like saplings and sugarcane can grow on this
+constexpr bool isSoilBlock(const blockID& block) {
+	return is_in(block, blockID::podzol, blockID::dirt, blockID::farmland, blockID::grass_block, blockID::bonebed_dirt);
+}
+
 constexpr bool canSpreadOn(const blockID& identifier, const blockID& spreadOn) noexcept
 {
 	return isNylium(identifier) ? (spreadOn == blockID::netherrack) : isGrassBlock(identifier) ? (spreadOn == blockID::dirt)
 		: isFungus(identifier) ? (spreadOn == (blockID)((int)blockID::crimson_nylium + ((int)getWoodType(identifier) - (int)woodTypeID::crimson)))
-		: isSapling(identifier) ? ((spreadOn == blockID::dirt) || (spreadOn == blockID::grass_block) || (spreadOn == blockID::podzol))
+		: isSapling(identifier) ? isSoilBlock(spreadOn)
 		: (spreadOn == blockID::grass_block);
 }
 
@@ -1320,6 +1324,26 @@ constexpr bool isBreedItem(const entityID& mobType, const itemID& itemType) {
 		return false;
 		break;
 	}
+}
+
+constexpr bool isValidBottomblock(const blockID& block, const blockID& blockBelow) {
+	switch (block)
+	{
+	case blockID::sugar_cane:
+		return blockBelow == blockID::sand || isSoilBlock(blockBelow);
+	case blockID::cactus:
+		return blockBelow == blockID::sand;
+	default:
+		return false;
+	}
+}
+
+constexpr entityID getMobFromSpawnEgg(const itemID& itemType) {
+	return (entityID)((int)itemType - (int)itemID::spawn_egg);
+}
+
+constexpr itemID getSpawnEggFromMob(const entityID& entityType) {
+	return (itemID)((int)entityType + (int)itemID::spawn_egg);
 }
 
 constexpr bool isIconParticle(const particleID& particleType) {

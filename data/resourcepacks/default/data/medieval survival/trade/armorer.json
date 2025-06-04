@@ -1,0 +1,337 @@
+{
+	"profession": "armorer",
+	"slots": {
+		"novice": {
+			"trades": [
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:coal",
+							"count": 15
+						}
+					],
+					"given": {
+						"id": "minecraft:emerald",
+						"count": 1
+					},
+					"stock": 16,
+					"multiplier": 0.05,
+					"xp": 2
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 5
+						}
+					],
+					"given": {
+						"id": "minecraft:iron_helmet",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 1
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 9
+						}
+					],
+					"given": {
+						"id": "minecraft:iron_chestplate",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 1
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 7
+						}
+					],
+					"given": {
+						"id": "minecraft:iron_leggings",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 1
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 4
+						}
+					],
+					"given": {
+						"id": "minecraft:iron_boots",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 1
+				}
+			]
+		},
+		"apprentice": {
+			"trades": [
+				{
+					"probability": 0.5,
+					"wanted": [
+						{
+							"id": "minecraft:iron_ingot",
+							"count": 4
+						}
+					],
+					"given": {
+						"id": "minecraft:emerald",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.05,
+					"xp": 10
+				},
+				{
+					"probability": 0.5,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 36
+						}
+					],
+					"given": {
+						"id": "minecraft:bell",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 5
+				},
+				{
+					"probability": 0.5,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 3
+						}
+					],
+					"given": {
+						"id": "minecraft:chainmail_leggings",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 5
+				},
+				{
+					"probability": 0.5,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 1
+						}
+					],
+					"given": {
+						"id": "minecraft:chainmail_boots",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 5
+				}
+			]
+		},
+		"journeyman": {
+			"trades": [
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:lava_bucket",
+							"count": 1
+						}
+					],
+					"given": {
+						"id": "minecraft:emerald",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.05,
+					"xp": 20
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:diamond",
+							"count": 1
+						}
+					],
+					"given": {
+						"id": "minecraft:emerald",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.05,
+					"xp": 20
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 1
+						}
+					],
+					"given": {
+						"id": "minecraft:chainmail_helmet",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 10
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 4
+						}
+					],
+					"given": {
+						"id": "minecraft:chainmail_chestplate",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 10
+				},
+				{
+					"probability": 0.4,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": 5
+						}
+					],
+					"given": {
+						"id": "minecraft:shield",
+						"count": 1
+					},
+					"stock": 12,
+					"multiplier": 0.2,
+					"xp": 10
+				}
+			]
+		},
+		"expert": {
+			"trades": [
+				{
+					"probability": 1.0,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": {
+								"min": 19,
+								"max": 33
+							}
+						}
+					],
+					"given": {
+						"id": "minecraft:diamond_leggings",
+						"count": 1
+					},
+					"functions": [
+						"enchant"
+					],
+					"stock": 3,
+					"multiplier": 0.2,
+					"xp": 15
+				},
+				{
+					"probability": 1.0,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": {
+								"min": 13,
+								"max": 27
+							}
+						}
+					],
+					"given": {
+						"id": "minecraft:diamond_boots",
+						"count": 1
+					},
+					"functions": [
+						"enchant"
+					],
+					"stock": 3,
+					"multiplier": 0.2,
+					"xp": 15
+				}
+			]
+		},
+		"master": {
+			"trades": [
+				{
+					"probability": 1.0,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": {
+								"min": 13,
+								"max": 27
+							}
+						}
+					],
+					"given": {
+						"id": "minecraft:diamond_helmet",
+						"count": 1
+					},
+					"functions": [
+						"enchant"
+					],
+					"stock": 3,
+					"multiplier": 0.2,
+					"xp": 30
+				},
+				{
+					"probability": 1.0,
+					"wanted": [
+						{
+							"id": "minecraft:emerald",
+							"count": {
+								"min": 21,
+								"max": 35
+							}
+						}
+					],
+					"given": {
+						"id": "minecraft:diamond_chestplate",
+						"count": 1
+					},
+					"functions": [
+						"enchant"
+					],
+					"stock": 3,
+					"multiplier": 0.2,
+					"xp": 30
+				}
+			]
+		}
+	}
+}

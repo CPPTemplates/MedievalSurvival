@@ -55,6 +55,7 @@
 #include "rectangularSlotContainer.h"
 #include "EntityAI.h"
 #include "AttachedSound.h"
+#include <Linkable.h>
 
 constexpr veci2 endBlockSpawningOn = cveci2(mainEndIslandMaxRadius / 2, 0);
 constexpr vec2 endSpawningLocation = cvec2(endBlockSpawningOn.getX() + 0.5, endBlockSpawningOn.getY() + 1 + math::fpepsilon);
@@ -691,11 +692,11 @@ void entity::respawn()
 	teleportTo(currentWorld->dimensions[(int)currentWorld->worldSpawnDimension], currentWorld->worldSpawnPoint, false);
 	health = getMaxHealth();
 	fireTicks = 0;
-
 }
 
 entity::~entity()
 {
+	unRegisterLinkable(identifier);
 	if (tasks)
 	{
 		delete tasks;
@@ -943,11 +944,11 @@ void entity::serializeMembers(nbtSerializer& s)
 		dimensionID newDimensionID = newDimension->identifier;
 		if (s.write)
 		{
-			s.serializeMembers(std::wstring(L"new dimension"), newDimensionID);
+			serializeNBTValue(s, std::wstring(L"new dimension"), newDimensionID);
 		}
 		else
 		{
-			if (s.serializeMembers(std::wstring(L"new dimension"), newDimensionID))
+			if (serializeNBTValue(s, std::wstring(L"new dimension"), newDimensionID))
 			{
 				newDimension = currentWorld->dimensions[(int)newDimensionID];
 			}
@@ -993,19 +994,19 @@ void entity::serializeMembers(nbtSerializer& s)
 	}
 
 	serializeNBTValue(s, std::wstring(L"identifier"), identifier);
-	s.serializeMembers(std::wstring(L"ticks standing in portal"), portalTicks);
-	s.serializeMembers(std::wstring(L"portal cooldown"), portalCoolDown);
+	serializeNBTValue(s, std::wstring(L"ticks standing in portal"), portalTicks);
+	serializeNBTValue(s, std::wstring(L"portal cooldown"), portalCoolDown);
 	serializeNBTValue(s, std::wstring(L"new position"), newPosition);
 	serializeNBTValue(s, std::wstring(L"speed"), speed);
-	s.serializeMembers(std::wstring(L"fire ticks"), fireTicks);
-	s.serializeMembers(std::wstring(L"immunity frame count"), immunityFrameCount);
-	s.serializeMembers(std::wstring(L"last hit damage"), lastHitDamage);
-	s.serializeMembers(std::wstring(L"health"), health);
-	s.serializeMembers(std::wstring(L"fluid area"), fluidArea);
-	s.serializeMembers(std::wstring(L"in cobweb"), inCobweb);
-	s.serializeMembers(std::wstring(L"sneaking"), sneaking);
-	s.serializeMembers(std::wstring(L"onGround"), onGround);
-	s.serializeMembers(std::wstring(L"collision type"), collisionCheckLevel);
+	serializeNBTValue(s, std::wstring(L"fire ticks"), fireTicks);
+	serializeNBTValue(s, std::wstring(L"immunity frame count"), immunityFrameCount);
+	serializeNBTValue(s, std::wstring(L"last hit damage"), lastHitDamage);
+	serializeNBTValue(s, std::wstring(L"health"), health);
+	serializeNBTValue(s, std::wstring(L"fluid area"), fluidArea);
+	serializeNBTValue(s, std::wstring(L"in cobweb"), inCobweb);
+	serializeNBTValue(s, std::wstring(L"sneaking"), sneaking);
+	serializeNBTValue(s, std::wstring(L"onGround"), onGround);
+	serializeNBTValue(s, std::wstring(L"collision type"), collisionCheckLevel);
 	serializeNBTValue(s, std::wstring(L"relative hitbox"), relativeHitbox);
 }
 
@@ -1065,6 +1066,7 @@ fp entity::getMaxHealth() const
 
 void entity::addToWorld()
 {
+	registerLinkable(identifier, this);
 	// when serializing an entity, uuids will be wasted, but whatever.
 	chunk* chunkToAddTo = dimensionIn->loadChunkIfNotLoaded(getChunkCoordinates(position), chunkLoadLevel::worldGenerationLoaded);
 
@@ -1164,7 +1166,7 @@ entity* fitEntity(const entityID& entityType, tickableBlockContainer* containerI
 }
 int getEntityIDByName(const std::wstring& name)
 {
-	for (int i = 0; i < (int)entityID::count; i++)
+	for (int i = 0; i < (int)entityID::EntityTypeCount; i++)
 	{
 		if (entityDataList[i]->name == name)
 		{

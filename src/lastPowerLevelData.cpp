@@ -9,5 +9,5 @@ bool lastPowerLevelData::tick(tickableBlockContainer* containerIn, cveci2& posit
 
 void lastPowerLevelData::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"last power level"), (int&)lastPowerLevel);
+	serializeNBTValue(s, std::wstring(L"last power level"), (int&)lastPowerLevel);
 }

@@ -55,5 +55,5 @@ void ghastFireBallAI::updateTask()
 void ghastFireBallAI::serializeMembers(nbtSerializer& s)
 {
 	fireBallAI::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"fireball ticks"), fireBallTicks);
+	serializeNBTValue(s, std::wstring(L"fireball ticks"), fireBallTicks);
 }

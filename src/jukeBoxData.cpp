@@ -1,19 +1,10 @@
 #include "jukeBoxData.h"
 #include "musicList.h"
 #include "nbt/nbtSerializer.h"
-bool jukeBoxData::tick(tickableBlockContainer* containerIn, cveci2& position)
-{
-	return false;
-}
-
 void jukeBoxData::onBlockRemove(tickableBlockContainer* containerIn, cveci2& position)
 {
+	stopMusic(containerIn, position);
 	recordSlot->dropContent(containerIn, cvec2(position) + 0.5);
-	stop
-	//if (musicPlaying.get())
-	//{
-	//	handler->stopAudio(musicPlaying);
-	//}
 }
 
 void jukeBoxData::serializeMembers(nbtSerializer& s)
@@ -55,5 +46,11 @@ jukeBoxData::~jukeBoxData()
 
 void jukeBoxData::playMusic(tickableBlockContainer* containerIn, cveci2& position)
 {
-	//musicPlaying = recordsMusic->playAudio((int)recordSlot->slots[0].stackItemID - (int)itemID::music_disc, containerIn, cvec2(position) + 0.5);
+	musicPlaying = recordsMusic[(int)recordSlot->slots[0].stackItemID - (int)itemID::music_disc]->playRandomSound(containerIn, cvec2(position) + 0.5);
+}
+
+void jukeBoxData::stopMusic(tickableBlockContainer* containerIn, cveci2& position)
+{
+	audioCollection::stopSound(containerIn, StopSoundPacket(musicPlaying));
+	musicPlaying = uuid();
 }

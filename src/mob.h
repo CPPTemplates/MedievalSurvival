@@ -1,7 +1,7 @@
 #pragma once
 #include "entity.h"
 #include "math/bodypart2d.h"
-struct soundCollection;
+struct audioCollection;
 struct BodyPartSound;
 struct mob :public entity
 {
@@ -49,7 +49,7 @@ struct mob :public entity
 
 	virtual int getDefencePoints() const;
 	virtual void tick() override;
-	BodyPartSound* playSoundAtHead(std::shared_ptr<soundCollection> collection);
+	BodyPartSound* playSoundAtHead(std::shared_ptr<audioCollection> collection);
 
 	virtual void onDeath() override;
 	virtual bool addDamageSource(cfp& damage, std::shared_ptr<damageSource> source) override;

@@ -173,7 +173,7 @@ void fluidData::serializeMembers(nbtSerializer& s)
 {
 	blockData::serializeMembers(s);
 	fluidLevel serializedFluidLevel = currentFluidLevel;
-	s.serializeMembers(std::wstring(L"fluid level"), serializedFluidLevel);
+	serializeNBTValue(s, std::wstring(L"fluid level"), serializedFluidLevel);
 
 	if ((!s.write) && (serializedFluidLevel > 0) && (serializedFluidLevel <= maxFluidLevel))
 	{

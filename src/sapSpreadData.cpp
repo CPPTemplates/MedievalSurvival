@@ -3,7 +3,7 @@
 #include "nbt/nbtSerializer.h"
 void sapSpreadData::serializeMembers(nbtSerializer &s)
 {
-	s.serializeMembers(std::wstring(L"sap level"), sapLevel);
+	serializeNBTValue(s, std::wstring(L"sap level"), sapLevel);
 }
 
 void sapSpreadData::randomTick(tickableBlockContainer *containerIn, cveci2 &position)

@@ -171,7 +171,7 @@ mobData::~mobData()
 {
 	delete experienceWhenKilled;
 }
-mobData::mobData(const entityData &data, resolutionTexture *skin, std::shared_ptr<soundCollection> walkSound, std::shared_ptr<soundCollection> ambientSound, std::shared_ptr<soundCollection> hurtSound, std::shared_ptr<soundCollection> deathSound, cfp &walkingSpeed, const waveShaper &legSwingSynchronizer, const color &spawnEggColor, const color &spawnEggOverlayColor, cfp &attackSpeed, cfp &attackDamage, experienceDrop *experienceWhenKilled, cfp &flyingSpeed) : entityData(data),
+mobData::mobData(const entityData &data, resolutionTexture *skin, std::shared_ptr<audioCollection> walkSound, std::shared_ptr<audioCollection> ambientSound, std::shared_ptr<audioCollection> hurtSound, std::shared_ptr<audioCollection> deathSound, cfp &walkingSpeed, const waveShaper &legSwingSynchronizer, const color &spawnEggColor, const color &spawnEggOverlayColor, cfp &attackSpeed, cfp &attackDamage, experienceDrop *experienceWhenKilled, cfp &flyingSpeed) : entityData(data),
 																																																																																																																			   walkingSpeed(walkingSpeed), flyingSpeed(flyingSpeed ? flyingSpeed : walkingSpeed), attackSpeed(attackSpeed), attackDamage(attackDamage),
 																																																																																																																			   ambientSound(ambientSound), hurtSound(hurtSound), deathSound(deathSound), stepSound(walkSound),
 																																																																																																																			   skin(skin), legSwingSynchronizer(legSwingSynchronizer),

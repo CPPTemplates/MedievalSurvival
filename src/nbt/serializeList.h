@@ -46,27 +46,3 @@ inline bool serializeNBTValue(nbtSerializer &s, const std::wstring &memberName, 
     }
     return false;
 }
-
-template <typename T>
-inline bool serializeListOfSerializables(nbtSerializer &s, const std::wstring &memberName, std::vector<T> &value)
-{
-    if (s.push<nbtDataTag::tagList>(memberName))
-    {
-        if (!s.write)
-        {
-            value = std::vector<T>(s.getChildren().size());
-        }
-        //size_t i = 0;
-        for (T &it : value)
-        {
-            if (s.push())
-            {
-                it.serializeMembers(s);
-                s.pop();
-            }
-        }
-        s.pop();
-        return true;
-    }
-    return false;
-}

@@ -101,6 +101,6 @@ void experienceOrb::render(const gameRenderData& targetData) const
 void experienceOrb::serializeMembers(nbtSerializer& s)
 {
 	entity::serializeMembers(s);
-	s.serializeMembers(std::wstring(L"value"), value);
-	s.serializeMembers(std::wstring(L"ticks floating"), ticksFloating);
+	serializeNBTValue(s, std::wstring(L"value"), value);
+	serializeNBTValue(s, std::wstring(L"ticks floating"), ticksFloating);
 }

@@ -33,7 +33,7 @@ void taskList::execute()
 
 void taskList::serializeMembers(nbtSerializer& s)
 {
-	s.serializeMembers(std::wstring(L"executing task index"), executingTaskIndex);
+	serializeNBTValue(s, std::wstring(L"executing task index"), executingTaskIndex);
 	if (s.push<nbtDataTag::tagCompound>(std::wstring(L"tasks")))
 	{
 		//won'T mess up that much when tasks are shuffeled
