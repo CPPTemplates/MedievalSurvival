@@ -10,6 +10,8 @@ struct Villager : public humanoid {
 	//each player can cure a villager once
 	std::vector<uuid> curedBy = std::vector<uuid>();
 
+	uuid workStation = uuid();
+
 	int tradingExperience = 0;
 	void serializeMembers(nbtSerializer& s) override;
 	VillagerLevel getLevel() const;

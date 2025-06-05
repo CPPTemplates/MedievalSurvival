@@ -70,6 +70,7 @@ struct tickableBlockContainer : blockContainer, IDestructable
 	bool fillNetherPortal(cveci2& position);
 
 	virtual void setBlockWithData(cveci2& position, const blockID& block, blockData* const& data, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded) override;
+	virtual void setBlockData(cveci2& position, blockData* const& data, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded) override;
 
 	void openDoorType(cveci2& position, cbool& open);
 
@@ -81,6 +82,9 @@ struct tickableBlockContainer : blockContainer, IDestructable
 	}
 
 	~tickableBlockContainer();
+	void destroyBlockData(const array2d<blockData*> blockDataArray);
+	void moveTileToContainer(cveci2& sourcePosition, tickableBlockContainer& destinationContainer, cveci2& destinationPosition);
+	void serializeBlocks(nbtSerializer& s, const array2d<blockID>& blockIDArray, const array2d<blockData*>& blockDataArray, const array2d<powerLevel>& powerLevelArray, const veci2& arrayPosition);
 };
 
 lightLevel getSpreadedLightLevel(const lightLevel& spreadFrom, const lightLevel& decayStrength, const lightLevel& filterStrength) noexcept;

@@ -38,7 +38,7 @@ void* movableBlockContainer::getArrayValuePointerUnsafe(cveci2& position, const 
 		throw "";
 	}
 
-	csize_t& arrayIndex = movedPosition.x + movedPosition.y * blockIDArray.size.x;
+	cint& arrayIndex = movedPosition.x + movedPosition.y * blockIDArray.size.x;
 	switch (dataType)
 	{
 	case arrayDataType::blockIDType:
@@ -101,18 +101,12 @@ void movableBlockContainer::serializeMembers(nbtSerializer& s)
 				blockDataArray = array2d<blockData*>(size);
 				powerLevelArray = array2d<powerLevel>(size);
 			}
-			serializeBlocks(s, blockIDArray, blockDataArray, powerLevelArray);
+			serializeBlocks(s, blockIDArray, blockDataArray, powerLevelArray, veci2());
 		}
 	}
 }
 
 movableBlockContainer::~movableBlockContainer()
 {
-	for (fsize_t i = 0; i < blockDataArray.size.volume(); i++)
-	{
-		if (blockDataArray.baseArray[i])
-		{
-			delete blockDataArray.baseArray[i];
-		}
-	}
+	destroyBlockData(blockDataArray);
 }

@@ -267,7 +267,7 @@ void human::tick()
 						// interact with furnace
 						furnaceSlots->linkUp(screen.inventoryUI);
 						// link containers
-						furnaceData* selectedFurnaceData = (furnaceData*)selectedBlockData;
+						furnaceData* selectedFurnaceData = dynamic_cast<furnaceData*>(selectedBlockData);
 						furnaceSlots->selectedFurnaceData = selectedFurnaceData;
 
 						furnaceSlots->furnaceInputSlot->linkedContainer = selectedFurnaceData->inputSlot;

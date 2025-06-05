@@ -59,6 +59,7 @@
 #include "leavesData.h"
 #include <ProfessionID.h>
 #include "LinkableBlockData.h"
+#include "blastFurnaceData.h"
 blockData* createBlockData(const blockID& block)
 {
 	if (block == blockID::spawner)
@@ -181,6 +182,9 @@ blockData* createBlockData(const blockID& block)
 	}
 	else if (isFurnace(block))
 	{
+		if (block == blockID::blast_furnace) {
+			return new blastFurnaceData();
+		}
 		return new furnaceData();
 	}
 	else if (isStemPlant(block))
@@ -306,4 +310,13 @@ void blockData::serializeMembers(nbtSerializer& s)
 {
 	//position will be serialized in the chunk::serialize functions
 	//some blocks do not store block data, but use it for random ticks or normal ticks
+}
+
+void blockData::addToWorld(tickableBlockContainer* containerIn, cveci2& position)
+{
+
+}
+
+void blockData::removeFromWorld(tickableBlockContainer* containerIn, cveci2& position)
+{
 }

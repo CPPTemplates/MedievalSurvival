@@ -28,6 +28,7 @@ void Villager::serializeMembers(nbtSerializer& s)
 	serializeNBTValue(s, L"profession", profession);
 	serializeNBTValue(s, L"trades", trades);
 	serializeNBTValue(s, L"cured by", curedBy);
+	serializeNBTValue(s, L"workstation", workStation);
 }
 
 VillagerLevel Villager::getLevel() const

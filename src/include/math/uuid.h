@@ -68,3 +68,13 @@ struct uuid
 		return ss.str();
 	}
 };
+// 1) Provide a std::hash<uuid> specialization:
+namespace std {
+	template<>
+	struct hash<uuid> {
+		size_t operator()(const uuid& u) const noexcept {
+			//just combine the first two integers. when a UUID is truly random, this shouldn't matter.
+			return u.idInts[0] + u.idInts[1] * 0x100000000;
+		}
+	};
+}

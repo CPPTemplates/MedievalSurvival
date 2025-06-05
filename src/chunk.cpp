@@ -261,7 +261,7 @@ void chunk::generateStructures()
 
 void chunk::serializeMembers(nbtSerializer& s)
 {
-	serializeBlocks(s, blockIDArray, blockDataArray, powerLevels);
+	dimensionIn->serializeBlocks(s, blockIDArray, blockDataArray, powerLevels, worldPos);
 
 	s.serializeArray(std::wstring(L"internal sunlight levels"), internalSunLightLevels.baseArray,
 		chunkArraySize);
@@ -615,13 +615,7 @@ chunk::~chunk()
 {
 	if (blockDataArray.size.x)
 	{
-		for (fsize_t index = 0; index < chunkSize.x * chunkSize.y; index++)
-		{
-			if (blockDataArray.baseArray[index])
-			{
-				delete blockDataArray.baseArray[index];
-			}
-		}
+		dimensionIn->destroyBlockData(blockDataArray);
 		for (fsize_t i = 0; i < entityList.size; i++)
 		{
 			delete entityList[i];

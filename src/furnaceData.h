@@ -1,7 +1,7 @@
 #pragma once
 #include "blockData.h"
 #include "furnaceRecipe.h"
-struct furnaceData :blockData
+struct furnaceData : virtual blockData
 {
 	furnaceData();
 	rectangularSlotContainer* inputSlot = nullptr;

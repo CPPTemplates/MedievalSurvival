@@ -124,6 +124,9 @@
     <Filter Include="Source Files\Server\ResourceLoader">
       <UniqueIdentifier>{3a296ef2-132a-49a9-8568-db9724496990}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Server\Link">
+      <UniqueIdentifier>{caa244e6-3b1d-4cf1-9655-f8ad2f0c5c27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -289,9 +292,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\damageSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dimension.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\enchantment.cpp">
@@ -1257,6 +1257,18 @@
     <ClCompile Include="src\workAI.cpp">
       <Filter>Source Files\Server\AI</Filter>
     </ClCompile>
+    <ClCompile Include="src\dimension.cpp">
+      <Filter>Source Files\Server\Dimension</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Linkable.cpp">
+      <Filter>Source Files\Server\Link</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LinkableBlockData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\blastFurnaceData.cpp">
+      <Filter>Source Files\Server\BlockData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\application\control\form\fileDialog.h">
@@ -1731,12 +1743,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\damageSource.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\damageType.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dimension.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\dragonBeamBrush.h">
@@ -2986,6 +2992,21 @@
     </ClInclude>
     <ClInclude Include="src\workAI.h">
       <Filter>Source Files\Server\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dimension.h">
+      <Filter>Source Files\Server\Dimension</Filter>
+    </ClInclude>
+    <ClInclude Include="src\damageType.h">
+      <Filter>Source Files\Server\ID</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Linkable.h">
+      <Filter>Source Files\Server\Link</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkableBlockData.h">
+      <Filter>Source Files\Server\BlockData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\blastFurnaceData.h">
+      <Filter>Source Files\Server\BlockData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

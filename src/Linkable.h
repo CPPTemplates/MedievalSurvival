@@ -2,7 +2,7 @@
 #include <set>
 #include "nbt/nbtSerializable.h"
 #pragma once
-extern std::map<uuid, void*> links{};
+extern std::unordered_map<uuid, void*> links;
 inline void registerLinkable(const uuid& identifier, void* pointer) {
 	links.insert({ identifier, pointer });
 }

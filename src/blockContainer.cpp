@@ -667,18 +667,7 @@ bool blockContainer::fitExpandingHitbox(crectangle2 &relativeHitbox, crectangle2
 		return false;
 	}
 }
-void blockContainer::moveTileToContainer(cveci2 &sourcePosition, blockContainer &destinationContainer, cveci2 &destinationPosition)
-{
-	// not removing the block directly after copy, because a double block will be wholly removed
-	// not calling onblockremove to avoid deletion
-	destinationContainer.setArrayValue<blockID>(destinationPosition, getArrayValue<blockID>(sourcePosition, arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded), arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded);
-	destinationContainer.setArrayValue<blockData *>(destinationPosition, getArrayValue<blockData *>(sourcePosition, arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded), arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded);
-	destinationContainer.setArrayValue<powerLevel>(destinationPosition, getArrayValue<powerLevel>(sourcePosition, (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded), (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded);
 
-	setArrayValue<blockID>(sourcePosition, blockID::air, arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded);
-	setArrayValue<blockData *>(sourcePosition, nullptr, arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded);
-	setArrayValue<powerLevel>(sourcePosition, 0, (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded);
-}
 void blockContainer::addPool(cveci2 &pos, const blockID &block, cint &maxPoolSize)
 {
 	addPool(pos, block, maxPoolSize, [this](cveci2 &pos, cveci2 &relativeCheckDirection)
@@ -815,67 +804,4 @@ vecb2 blockContainer::railTopConnection(cveci2 &pos)
 
 	// can'T be both a top connection
 	return (topConnection.x && topConnection.y) ? vecb2() : topConnection;
-}
-
-void serializeBlocks(nbtSerializer &s, const array2d<blockID> &blockIDArray, const array2d<blockData *> &blockDataArray, const array2d<powerLevel> &powerLevelArray)
-{
-	if (s.serializeArray<int>(std::wstring(L"blocks"), (int *)blockIDArray.baseArray, (int)blockIDArray.size.volume()) && s.converter)
-	{
-		s.converter->convertArray((blockID *&)blockIDArray.baseArray, blockIDArray.size.volume(), s.converter->itemIDConverter);
-	}
-	s.serializeArray(std::wstring(L"power levels"), powerLevelArray.baseArray, (int)powerLevelArray.size.volume());
-	if (s.push<nbtDataTag::tagList>(std::wstring(L"block data array")))
-	{
-		if (s.write)
-		{
-			auto it = blockDataArray.begin();
-			for (fsize_t relativeY = 0; relativeY < blockDataArray.size.y; relativeY++)
-			{
-				for (fsize_t relativeX = 0; relativeX < blockDataArray.size.x; relativeX++, it++)
-				{
-					if (*it)
-					{
-						if (s.push<nbtDataTag::tagCompound>())
-						{
-							veci2 position = veci2(relativeX, relativeY);
-							serializeNBTValue(s, std::wstring(L"position"), position);
-
-							(*it)->serializeMembers(s);
-							s.pop();
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			// create block data for all blocks
-			// necessary so files converted to newer versions with more block data have block data generated
-			for (fsize_t i = 0; i < blockDataArray.size.volume(); i++)
-			{
-				blockDataArray.baseArray[i] = createBlockData(blockIDArray.baseArray[i]);
-			}
-
-			// block data
-			// count amount of data
-			const std::vector<nbtData *> serializedBlockDataList = s.getChildren();
-
-			for (nbtData *data : serializedBlockDataList)
-			{
-				if (s.push(data))
-				{
-					veci2 position;
-					serializeNBTValue(s, std::wstring(L"position"), position);
-					blockData *data = blockDataArray.getValue(position);
-
-					if (data)
-					{
-						data->serializeMembers(s);
-					}
-					s.pop();
-				}
-			}
-		}
-		s.pop();
-	}
 }

@@ -42,7 +42,7 @@ struct blockContainer
 	bool replaceBlock(cint& x, cint& y, const blockID& block, const std::vector<blockID>& replaceList, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
 	bool replaceBlock(cveci2& pos, const blockID& block, const std::vector<blockID>& replaceList, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
 
-	void setBlockData(cveci2& position, blockData* const& data, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
+	virtual void setBlockData(cveci2& position, blockData* const& data, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
 	void setInternalSunLightLevel(cveci2& position, lightLevel const& level, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
 	void setBlockLightLevel(cveci2& position, lightLevel const& level, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
 	void setPowerLevel(cveci2& position, powerLevel const& level, const chunkLoadLevel& minimalLoadLevel = chunkLoadLevel::worldGenerationLoaded);
@@ -75,7 +75,6 @@ struct blockContainer
 	bool fitExpandingHitbox(crectangle2& relativeHitbox, cvec2& positionToExpandFrom, vec2& hitboxPosition);
 	bool fitExpandingHitbox(crectangle2& relativeHitbox, crectangle2& checkArea, cvec2& positionToExpandFrom, vec2& hitboxPosition);
 
-	void moveTileToContainer(cveci2& sourcePosition, blockContainer& destinationContainer, cveci2& destinationPosition);
 
 	template<typename T>
 	T getArrayValue(cveci2& position, const arrayDataType& dataType, const chunkLoadLevel& minimalLoadLevel);
@@ -210,4 +209,3 @@ inline void blockContainer::addPool(cveci2& pos, const blockID& block, cint& max
 		}
 	}
 }
-void serializeBlocks(nbtSerializer& s, const array2d<blockID>& blockIDArray, const array2d<blockData*>& blockDataArray, const array2d<powerLevel>& powerLevelArray);

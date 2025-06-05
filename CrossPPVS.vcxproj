@@ -218,6 +218,7 @@
     <ClCompile Include="src\binomialWithBonusCountDistribution.cpp" />
     <ClCompile Include="src\biomeData.cpp" />
     <ClCompile Include="src\biomeGenerator.cpp" />
+    <ClCompile Include="src\blastFurnaceData.cpp" />
     <ClCompile Include="src\blaze.cpp" />
     <ClCompile Include="src\blazeFireBallAI.cpp" />
     <ClCompile Include="src\block.cpp" />
@@ -415,6 +416,8 @@
     <ClCompile Include="src\lastPowerLevelData.cpp" />
     <ClCompile Include="src\leavesData.cpp" />
     <ClCompile Include="src\lightLevel.cpp" />
+    <ClCompile Include="src\Linkable.cpp" />
+    <ClCompile Include="src\LinkableBlockData.cpp" />
     <ClCompile Include="src\lootTable.cpp" />
     <ClCompile Include="src\loveModeAI.cpp" />
     <ClCompile Include="src\lureAI.cpp" />
@@ -575,6 +578,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AttachedSound.h" />
+    <ClInclude Include="src\blastFurnaceData.h" />
     <ClInclude Include="src\BodyPartSound.h" />
     <ClInclude Include="src\HitboxSound.h" />
     <ClInclude Include="src\accountEditor.h" />
@@ -954,6 +958,8 @@
     <ClInclude Include="src\leverData.h" />
     <ClInclude Include="src\lightLevel.h" />
     <ClInclude Include="src\lightLevelID.h" />
+    <ClInclude Include="src\Linkable.h" />
+    <ClInclude Include="src\LinkableBlockData.h" />
     <ClInclude Include="src\lootTable.h" />
     <ClInclude Include="src\loveModeAI.h" />
     <ClInclude Include="src\lureAI.h" />

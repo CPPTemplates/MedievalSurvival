@@ -7,10 +7,14 @@ struct blockData : itemTag
 	bool ticked = false;
 	blockData() {}
 	//returns if it still needs to be ticked
-	virtual bool tick(tickableBlockContainer* containerIn, cveci2& position);
-	virtual void randomTick(tickableBlockContainer* containerIn, cveci2& position);
+	virtual bool tick(struct tickableBlockContainer* containerIn, cveci2& position);
+	virtual void randomTick(struct tickableBlockContainer* containerIn, cveci2& position);
 	//called when the block is for example destroyed by a tnt or broken by a player
-	virtual void onBlockRemove(tickableBlockContainer* containerIn, cveci2& position);
+	virtual void onBlockRemove(struct tickableBlockContainer* containerIn, cveci2& position);
 	virtual void serializeMembers(nbtSerializer& s) override;
+	//called when a block is given a place in a container
+	virtual void addToWorld(struct tickableBlockContainer* containerIn, cveci2& position);
+	//called when a block is removed from a container or when a container invalidates
+	virtual void removeFromWorld(struct tickableBlockContainer* containerIn, cveci2& position);
 };
 blockData* createBlockData(const blockID& block);

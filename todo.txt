@@ -14,6 +14,7 @@ playingsoundcount is negative
 
 hovering over item in inventory + q = drop
 
+mobs shouldn't stand for like 20 seconds
 add stone cutter for mason
 add sound loader
 make mobs target multiple entity types

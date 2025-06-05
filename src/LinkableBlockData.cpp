@@ -8,17 +8,16 @@ LinkableBlockData::LinkableBlockData()
 {
 	identifier = randomUUID(currentRandom);
 }
-
-void LinkableBlockData::onBlockRemove(tickableBlockContainer* containerIn, cveci2& position)
-{
-	unRegisterLinkable(identifier);
-}
-
-void LinkableBlockData::onBlockAdd(tickableBlockContainer* containerIn, cveci2& position)
+void LinkableBlockData::addToWorld(tickableBlockContainer* containerIn, cveci2& position)
 {
 	registerLinkable(identifier, this);
 	this->containerIn = containerIn;
 	this->position = position;
+}
+
+void LinkableBlockData::removeFromWorld(tickableBlockContainer* containerIn, cveci2& position)
+{
+	unRegisterLinkable(identifier);
 }
 
 void LinkableBlockData::serializeMembers(nbtSerializer& s)
@@ -28,4 +27,5 @@ void LinkableBlockData::serializeMembers(nbtSerializer& s)
 
 LinkableBlockData::~LinkableBlockData()
 {
+	unRegisterLinkable(identifier);
 }

@@ -23,6 +23,7 @@ struct chunk :IDestructable, nbtSerializable
 {
 	//position
 	veci2 chunkCoordinates = veci2();
+	//the position of the block at 0,0 in this chunk
 	veci2 worldPos = veci2();
 	dimension* dimensionIn = nullptr;
 

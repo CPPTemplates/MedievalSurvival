@@ -42,6 +42,8 @@
 #include "dimension.h"
 #include <math/raycast.h>
 #include "dimensionData.h"
+#include "nbt/serializeVector.h"
+#include "idConverter.h"
 
 constexpr int decayStrength[(size_t)levelID::count][directionCount2D]
 {
@@ -106,6 +108,15 @@ void tickableBlockContainer::setBlockWithData(cveci2& position, const blockID& b
 	}
 	addLevelUpdatePosition(position);
 
+}
+void tickableBlockContainer::setBlockData(cveci2& position, blockData* const& data, const chunkLoadLevel& minimalLoadLevel)
+{
+	blockData* ptr = getArrayValue<blockData*>(position, arrayDataType::blockDataType, minimalLoadLevel);
+	if (ptr)
+		ptr->removeFromWorld(this, position);
+	if (data)
+		data->addToWorld(this, position);
+	setArrayValue(position, data, arrayDataType::blockDataType, minimalLoadLevel);
 }
 void tickableBlockContainer::addUpdatePosition(cveci2& position)
 {
@@ -545,6 +556,16 @@ tickableBlockContainer::~tickableBlockContainer()
 		parentContainer->removeChildContainer(this);
 	}
 }
+void tickableBlockContainer::destroyBlockData(const array2d<blockData*> blockDataArray)
+{
+	for (blockData*& ptr : blockDataArray) {
+		if (ptr) {
+			csize_t& index = &ptr - blockDataArray.begin();
+			ptr->removeFromWorld(this, (veci2)multiDimensionalIndex(index, blockDataArray.size));
+			delete ptr;
+		}
+	}
+}
 lightLevel tickableBlockContainer::getMaximumInternalLightLevel(cveci2& pos)
 {
 	const lightLevel internalSunLight = getInternalSunLightLevel(pos);
@@ -869,4 +890,83 @@ void tickableBlockContainer::reCalculateLevels()
 lightLevel getSpreadedLightLevel(const lightLevel& spreadFrom, const lightLevel& decayStrength, const lightLevel& filterStrength) noexcept
 {
 	return math::maximum(spreadFrom - decayStrength - filterStrength, 0);
+}
+void tickableBlockContainer::moveTileToContainer(cveci2& sourcePosition, tickableBlockContainer& destinationContainer, cveci2& destinationPosition)
+{
+	// not removing the block directly after copy, because a double block will be wholly removed
+	// not calling onblockremove to avoid deletion
+	blockData* sourceBlockData = getArrayValue<blockData*>(sourcePosition, arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded);
+	sourceBlockData->removeFromWorld(this, sourcePosition);
+	destinationContainer.setArrayValue<blockID>(destinationPosition, getArrayValue<blockID>(sourcePosition, arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded), arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded);
+	destinationContainer.setArrayValue<blockData*>(destinationPosition, sourceBlockData, arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded);
+	destinationContainer.setArrayValue<powerLevel>(destinationPosition, getArrayValue<powerLevel>(sourcePosition, (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded), (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded);
+
+	setArrayValue<blockID>(sourcePosition, blockID::air, arrayDataType::blockIDType, chunkLoadLevel::worldGenerationLoaded);
+	setArrayValue<blockData*>(sourcePosition, nullptr, arrayDataType::blockDataType, chunkLoadLevel::worldGenerationLoaded);
+	setArrayValue<powerLevel>(sourcePosition, 0, (arrayDataType)((int)arrayDataType::levelType + (int)levelID::powerLevel), chunkLoadLevel::worldGenerationLoaded);
+	sourceBlockData->addToWorld(&destinationContainer, destinationPosition);
+}
+
+void tickableBlockContainer::serializeBlocks(nbtSerializer& s, const array2d<blockID>& blockIDArray, const array2d<blockData*>& blockDataArray, const array2d<powerLevel>& powerLevelArray, const veci2& arrayPosition)
+{
+	if (s.serializeArray<int>(std::wstring(L"blocks"), (int*)blockIDArray.baseArray, (int)blockIDArray.size.volume()) && s.converter)
+	{
+		s.converter->convertArray((blockID*&)blockIDArray.baseArray, blockIDArray.size.volume(), s.converter->itemIDConverter);
+	}
+	s.serializeArray(std::wstring(L"power levels"), powerLevelArray.baseArray, (int)powerLevelArray.size.volume());
+	if (s.push<nbtDataTag::tagList>(std::wstring(L"block data array")))
+	{
+		if (s.write)
+		{
+			auto it = blockDataArray.begin();
+			for (fsize_t relativeY = 0; relativeY < blockDataArray.size.y; relativeY++)
+			{
+				for (fsize_t relativeX = 0; relativeX < blockDataArray.size.x; relativeX++, it++)
+				{
+					if (*it)
+					{
+						if (s.push<nbtDataTag::tagCompound>())
+						{
+							veci2 position = veci2(relativeX, relativeY);
+							serializeNBTValue(s, std::wstring(L"position"), position);
+
+							(*it)->serializeMembers(s);
+							s.pop();
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			// create block data for all blocks
+			// necessary so files converted to newer versions with more block data have block data generated
+			for (fsize_t i = 0; i < blockDataArray.size.volume(); i++)
+			{
+				blockDataArray.baseArray[i] = createBlockData(blockIDArray.baseArray[i]);
+			}
+
+			// block data
+			// count amount of data
+			const std::vector<nbtData*> serializedBlockDataList = s.getChildren();
+
+			for (nbtData* data : serializedBlockDataList)
+			{
+				if (s.push(data))
+				{
+					veci2 position;
+					serializeNBTValue(s, std::wstring(L"position"), position);
+					blockData* data = blockDataArray.getValue(position);
+
+					if (data)
+					{
+						data->serializeMembers(s);
+						data->addToWorld(this, arrayPosition + position);
+					}
+					s.pop();
+				}
+			}
+		}
+		s.pop();
+	}
 }

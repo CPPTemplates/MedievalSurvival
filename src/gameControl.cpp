@@ -77,6 +77,7 @@
 #include "StartSoundPacket.h"
 #include <soundList.h>
 #include <TextureLoader.h>
+#include <Linkable.h>
 
 constexpr rectangle2 crosshairTextureRect = crectangle2(0, 0, 15, 15);
 constexpr rectangle2 iconTextureRect = rectangle2(0, 0, 9, 9);
@@ -145,6 +146,8 @@ void gameControl::render(cveci2& position, const texture& renderTarget)
 		text += std::wstring(L"selected light level:\tinternal sunlight:") + std::to_wstring(player->selectedBlockContainer->getInternalSunLightLevel(player->selectedBlockPosition)) +
 			std::wstring(L"\tblock light:") + std::to_wstring(player->selectedBlockContainer->getBlockLightLevel(player->selectedBlockPosition)) +
 			std::wstring(L"\tpower level:") + std::to_wstring(player->selectedBlockContainer->getPowerLevel(player->selectedBlockPosition)) + std::wstring(L"\n");
+
+		text += L"linkables:\t" + std::to_wstring(links.size()) + L"\n";
 
 		if (player->dimensionIn->identifier == dimensionID::overworld)
 		{
