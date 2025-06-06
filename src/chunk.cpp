@@ -46,6 +46,7 @@
 #include "nbt/serializeVector.h"
 #include "include/filesystem/fileFunctions.h"
 #include "rectangularSlotContainer.h"
+#include "Linkable.h"
 
 bool chunk::inBounds(cveci2& position) const
 {
@@ -345,6 +346,7 @@ void chunk::serializeMembers(nbtSerializer& s)
 								{
 									e->identifier = randomUUID(currentRandom);
 								}
+								registerLinkable(e->identifier, e);
 								entityList.push_back(e);
 
 								// TODO: add players in through separate files

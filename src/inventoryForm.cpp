@@ -20,7 +20,7 @@ void inventoryForm::unLink()
         (inventoryToDisplay == (inventory*)currentPlayer->anvilSlots))
     {
         // drop items the crafting table holds
-        for (uiSlotContainer *container : ((craftableSlotContainer *)inventoryToDisplay)->craftingInputContainers)
+        for (uiSlotContainer *container : ((craftableSlotContainer *)inventoryToDisplay)->inputContainers)
         {
             container->linkedContainer->transfer(currentPlayer, currentPlayer->dimensionIn,
                                                  currentPlayer->position);

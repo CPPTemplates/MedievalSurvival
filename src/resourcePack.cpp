@@ -3018,7 +3018,7 @@ static void loadEntityData()
 		currentEntityID++;
 	}
 
-	cfp arrowPower = 0x30;
+	cfp arrowPower = 0x40;
 	cfp throwPower = 0x30;
 	cfp fishingHookThrowPower = 0xc;
 

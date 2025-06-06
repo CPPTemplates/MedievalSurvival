@@ -5,7 +5,7 @@
 #include "stackDivider.h"
 void craftableSlotContainer::substractCraftingIngredients()
 {
-	for (uiSlotContainer* container : craftingInputContainers)
+	for (uiSlotContainer* container : inputContainers)
 	{
 		substractOneOfEachSlot(container->linkedContainer);
 	}
@@ -14,28 +14,28 @@ void craftableSlotContainer::substractCraftingIngredients()
 void craftableSlotContainer::recalculateOutputSlot()
 {
 	human* currentHuman = (human*)linkedPlayer;
-	itemStack newRecipeResult = calculateRecipeResult();
+	itemStack newRecipeResult = calculateOutput();
 	if (currentRecipeResult.count && (!currentRecipeResult.compare(newRecipeResult)))
 	{
 		//the player still has some items left from the last crafting session
-		int outputCount = craftingOutputSlot->linkedContainer->slots[0].count;
+		int outputCount = outputSlot->linkedContainer->slots[0].count;
 		if (outputCount < currentRecipeResult.count)
 		{
-			craftingOutputSlot->linkedContainer->transfer((human*)linkedPlayer, linkedPlayer->dimensionIn, currentHuman->getDropPosition());
+			outputSlot->linkedContainer->transfer((human*)linkedPlayer, linkedPlayer->dimensionIn, currentHuman->getDropPosition());
 		}
 	}
 	currentRecipeResult.clearData();
-	craftingOutputSlot->linkedContainer->clearData();
+	outputSlot->linkedContainer->clearData();
 
 	currentRecipeResult = newRecipeResult;
 
 	//update result slot
-	craftingOutputSlot->linkedContainer->slots[0] = currentRecipeResult.count ? currentRecipeResult : itemStack();
+	outputSlot->linkedContainer->slots[0] = currentRecipeResult.count ? currentRecipeResult : itemStack();
 }
 
 void craftableSlotContainer::clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot)
 {
-	if (selectedSlotContainer == craftingOutputSlot)
+	if (selectedSlotContainer == outputSlot)
 	{
 		if (currentRecipeResult.count && divider.divideOver.size() == 0)
 		{
@@ -62,7 +62,7 @@ void craftableSlotContainer::clickedOnItem(cmb& button, stackDivider& divider, u
 	{
 		inventory::clickedOnItem(button, divider, selectedSlotContainer, selectedSlot);
         //when dragging items across different slot containers, the result of a the recipe may also change. but
-		if (std::find(craftingInputContainers.begin(), craftingInputContainers.end(), selectedSlotContainer) != craftingInputContainers.end())
+		if (std::find(inputContainers.begin(), inputContainers.end(), selectedSlotContainer) != inputContainers.end())
 		{
 			recalculateOutputSlot();
 		}

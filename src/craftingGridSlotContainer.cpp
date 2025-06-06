@@ -1,6 +1,6 @@
 #include "craftingGridSlotContainer.h"
 #include "recipe.h"
-itemStack craftingGridSlotContainer::calculateRecipeResult()
+itemStack craftingGridSlotContainer::calculateOutput()
 {
 	//recalculate crafting recipe
 	recipe* newRecipe = findRecipe(craftingRecipes, craftingSlots->linkedContainer);//getCraftingRecipe(craftingSlots->linkedContainer);
@@ -10,5 +10,5 @@ itemStack craftingGridSlotContainer::calculateRecipeResult()
 craftingGridSlotContainer::craftingGridSlotContainer(uiSlotContainer* craftingSlots)
 {
 	this->craftingSlots = craftingSlots;
-	craftingInputContainers = { craftingSlots };
+	inputContainers = { craftingSlots };
 }

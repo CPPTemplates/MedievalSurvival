@@ -3,6 +3,6 @@
 struct craftingGridSlotContainer : craftableSlotContainer
 {
 	uiSlotContainer* craftingSlots = nullptr;
-	virtual itemStack calculateRecipeResult() override;
+	virtual itemStack calculateOutput() override;
 	craftingGridSlotContainer(uiSlotContainer* craftingSlots);
 };

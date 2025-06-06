@@ -7,6 +7,6 @@ struct anvilSlotContainer : craftableSlotContainer
 	anvilSlotContainer();
 	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~anvilSlotContainer() override;
-	virtual itemStack calculateRecipeResult() override;
+	virtual itemStack calculateOutput() override;
 	virtual void substractCraftingIngredients() override;
 };

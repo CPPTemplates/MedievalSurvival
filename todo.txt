@@ -14,6 +14,13 @@ playingsoundcount is negative
 
 hovering over item in inventory + q = drop
 
+dragon not perching
+bow not shooting far enough
+knockback drags you with the dragon
+hoger spawnen in de end
+item ids are converting to the wrong items
+change IDs when serializing but still have linkables linked
+piston pushing block upwards instantly not actually pushing
 mobs shouldn't stand for like 20 seconds
 add stone cutter for mason
 add sound loader

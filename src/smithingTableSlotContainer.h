@@ -7,7 +7,7 @@ struct smithingTableSlotContainer : craftableSlotContainer
 	smithingTableSlotContainer();
 	virtual bool addToEqualStacks(itemStack& s, itemStack*& emptySlot) override;
 	virtual ~smithingTableSlotContainer() override;
-	virtual itemStack calculateRecipeResult() override;
+	virtual itemStack calculateOutput() override;
 	bool canAddStack(uiSlotContainer* containerToAddTo, itemStack& s) override;
 	void substractCraftingIngredients() override;
 };

@@ -26,12 +26,12 @@ anvilSlotContainer::anvilSlotContainer()
 {
 	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"anvil.png");
 
-	craftingInputContainers.push_back(new uiSlotContainer(cveci2(27, 103), new rectangularSlotContainer(cveci2(1))));
-	craftingInputContainers.push_back(new uiSlotContainer(cveci2(76, 103), new rectangularSlotContainer(cveci2(1))));
+	inputContainers.push_back(new uiSlotContainer(cveci2(27, 103), new rectangularSlotContainer(cveci2(1))));
+	inputContainers.push_back(new uiSlotContainer(cveci2(76, 103), new rectangularSlotContainer(cveci2(1))));
 
-	containers.push_back(craftingOutputSlot = new uiSlotContainer(cveci2(134, 103), new rectangularSlotContainer(cveci2(1))));
-	containers.push_back(craftingInputContainers[0]);
-	containers.push_back(craftingInputContainers[1]);
+	containers.push_back(outputSlot = new uiSlotContainer(cveci2(134, 103), new rectangularSlotContainer(cveci2(1))));
+	containers.push_back(inputContainers[0]);
+	containers.push_back(inputContainers[1]);
 
 	//hotbar and inventory will be linked up
 	containers.push_back(hotbarSlots);
@@ -47,17 +47,17 @@ anvilSlotContainer::~anvilSlotContainer()
 {
 	delete inventorySlots;
 	delete hotbarSlots;
-	delete craftingOutputSlot;
-	delete craftingInputContainers[0];
-	delete craftingInputContainers[1];
+	delete outputSlot;
+	delete inputContainers[0];
+	delete inputContainers[1];
 }
 
-itemStack anvilSlotContainer::calculateRecipeResult()
+itemStack anvilSlotContainer::calculateOutput()
 {
 	const itemStack inputStacks[2] =
 	{
-		craftingInputContainers[0]->linkedContainer->slots[0],
-		craftingInputContainers[1]->linkedContainer->slots[0]
+		inputContainers[0]->linkedContainer->slots[0],
+		inputContainers[1]->linkedContainer->slots[0]
 	};
 
 	itemsUsed = 1;
@@ -130,7 +130,7 @@ itemStack anvilSlotContainer::calculateRecipeResult()
 
 void anvilSlotContainer::substractCraftingIngredients()
 {
-	craftingInputContainers[0]->linkedContainer->slots[0].add(-1);
-	craftingInputContainers[1]->linkedContainer->slots[0].add(-itemsUsed);
+	inputContainers[0]->linkedContainer->slots[0].add(-1);
+	inputContainers[1]->linkedContainer->slots[0].add(-itemsUsed);
 	anvilUseSound->playRandomSound(linkedPlayer->selectedContainerContainer, vec2(linkedPlayer->selectedContainerPosition) + vec2(0.5, 1));
 }

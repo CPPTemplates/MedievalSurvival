@@ -5,7 +5,7 @@ craftingTableSlotContainer::craftingTableSlotContainer() : craftingGridSlotConta
 {
 	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"crafting_table.png");
 	containers.push_back(craftingSlots);
-	containers.push_back(craftingOutputSlot = new uiSlotContainer(cveci2(125, 115), new rectangularSlotContainer(cveci2(1))));
+	containers.push_back(outputSlot = new uiSlotContainer(cveci2(125, 115), new rectangularSlotContainer(cveci2(1))));
 	//hotbar and inventory will be linked up
 	containers.push_back(hotbarSlots);
 	containers.push_back(inventorySlots);
@@ -23,5 +23,5 @@ craftingTableSlotContainer::~craftingTableSlotContainer()
 
 	delete craftingSlots;
 
-	delete craftingOutputSlot;
+	delete outputSlot;
 }

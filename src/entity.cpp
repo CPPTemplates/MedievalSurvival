@@ -1115,6 +1115,7 @@ vec2 entity::applyNaturalForces(cvec2& speed) const
 			newSpeed *= fluidFrictionMultiplier;
 		}
 
+		//walking mobs should always have ground force applied but arrows shouldn't
 		newSpeed = applyGroundForce(newSpeed);
 		newSpeed *= airFrictionMultiplier;
 

@@ -13,7 +13,7 @@ humanSlotContainerUI::humanSlotContainerUI() : craftingGridSlotContainer(new uiS
 	containers.push_back(inventorySlots = new uiSlotContainer(cveci2(0x8, 30)));
 	containers.push_back(leftHandSlot = new uiSlotContainer(cveci2(77, 87)));
 	containers.push_back(craftingSlots);
-	containers.push_back(craftingOutputSlot = new uiSlotContainer(cveci2(154, 122), new rectangularSlotContainer(cveci2(1))));
+	containers.push_back(outputSlot = new uiSlotContainer(cveci2(154, 122), new rectangularSlotContainer(cveci2(1))));
 }
 
 void humanSlotContainerUI::clickedOnItem(cmb& button, stackDivider& divider, uiSlotContainer* selectedSlotContainer, veci2 selectedSlot)

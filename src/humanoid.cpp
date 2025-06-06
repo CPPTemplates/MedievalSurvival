@@ -498,7 +498,7 @@ void humanoid::launchItem(const itemID& itemType)
 		if (itemType == itemID::arrow)
 		{
 			throwPower *= math::minimum(bowAnimationTime * secondsPerTick, (fp)1);
-			throwPower *= (1 + itemHolding->getEnchantmentLevel(enchantmentID::power));
+			throwPower *= (1 + itemHolding->getEnchantmentLevel(enchantmentID::power) / 5.0);
 		}//speed *=
 
 		e->speed = speed + differenceNormalized * throwPower;

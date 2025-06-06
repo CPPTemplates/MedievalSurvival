@@ -30,13 +30,14 @@ struct idConverter
 		cint index = (int)converter[(int)valueToConvert];
 		if (index != -1)
 		{
-			if constexpr (std::is_same<idType, blockID>::value || std::is_same<idType, itemID>::value)
-			{
-				if (index >= blockIDCount)
-				{
-					return false;
-				}
-			}
+			//this check ruined my armor because it checked if it was more than the amount of block IDs. it should always be a normal value ;-;
+			//if constexpr (std::is_same<idType, blockID>::value || std::is_same<idType, itemID>::value)
+			//{
+			//	if (index >= itemID::count)
+			//	{
+			//		return false;
+			//	}
+			//}
 
 			valueToConvert = (idType)index;
 			return true;

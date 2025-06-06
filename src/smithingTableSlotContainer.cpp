@@ -12,14 +12,14 @@ smithingTableSlotContainer::smithingTableSlotContainer()
 	uiTexture = loadTextureFromResourcePack(containerTextureFolder / L"smithing.png");
 	containers.push_back(smithingInputSlot = new uiSlotContainer(cveci2(27, 103), new rectangularSlotContainer(cveci2(1))));
 	containers.push_back(netheriteIngotSlot = new uiSlotContainer(cveci2(76, 103), new rectangularSlotContainer(cveci2(1))));
-	containers.push_back(craftingOutputSlot = new uiSlotContainer(cveci2(134, 103), new rectangularSlotContainer(cveci2(1))));
+	containers.push_back(outputSlot = new uiSlotContainer(cveci2(134, 103), new rectangularSlotContainer(cveci2(1))));
 
 	//hotbar and inventory will be linked up
 	containers.push_back(hotbarSlots);
 	containers.push_back(inventorySlots);
 
-	craftingInputContainers.push_back(smithingInputSlot);
-	craftingInputContainers.push_back(netheriteIngotSlot);
+	inputContainers.push_back(smithingInputSlot);
+	inputContainers.push_back(netheriteIngotSlot);
 }
 
 bool smithingTableSlotContainer::addToEqualStacks(itemStack& s, itemStack*& emptySlot)
@@ -44,10 +44,10 @@ smithingTableSlotContainer::~smithingTableSlotContainer()
 
 	delete netheriteIngotSlot;
 
-	delete craftingOutputSlot;
+	delete outputSlot;
 }
 
-itemStack smithingTableSlotContainer::calculateRecipeResult()
+itemStack smithingTableSlotContainer::calculateOutput()
 {
 	const itemStack& inputSlot = smithingInputSlot->linkedContainer->slots[0];
 

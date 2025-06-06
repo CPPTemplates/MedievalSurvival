@@ -8,5 +8,6 @@ struct Trade: nbtSerializable {
 	fp multiplier = 0.02;
 	int maxItemsInstock = 12;
 	int itemsInStock = 12;
+	int villagerXP = 1;
 	virtual void serializeMembers(nbtSerializer& s) override;
 };
