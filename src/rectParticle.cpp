@@ -9,6 +9,9 @@ void rectParticle::serializeMembers(nbtSerializer& s)
 
 void rectParticle::render(const gameRenderData& targetData) const
 {
-	cmat3x3& transForm = mat3x3::combine({ mat3x3::fromRectToRect(brushRect,calculateHitBox()),targetData.worldToRenderTargetTransform });
+	cmat3x3& transForm = mat3x3::combine({
+		targetData.worldToRenderTargetTransform,
+		mat3x3::fromRectToRect(brushRect,calculateHitBox()),
+		});
 	fillTransparentRectangle(brushRect, transForm, getTexture(), targetData.renderTarget);
 }

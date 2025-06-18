@@ -1,0 +1,135 @@
+{
+  "profession": "butcher",
+  "slots": {
+    "novice": {
+      "trades": [
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:raw_chicken", "count": 14 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 2
+        },
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:raw_rabbit", "count": 4 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 2
+        },
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:raw_porkchop", "count": 7 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 2
+        },
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:emerald", "count": 1 }
+          ],
+          "given": { "id": "minecraft:rabbit_stew", "count": 1 },
+          "stock": 12,
+          "multiplier": 0.05,
+          "xp": 1
+        }
+      ]
+    },
+    "apprentice": {
+      "trades": [
+        {
+          "probability": 0.67,
+          "wanted": [
+            { "id": "minecraft:coal", "count": 15 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 2
+        },
+        {
+          "probability": 0.67,
+          "wanted": [
+            { "id": "minecraft:emerald", "count": 1 }
+          ],
+          "given": { "id": "minecraft:cooked_porkchop", "count": 5 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 5
+        },
+        {
+          "probability": 0.67,
+          "wanted": [
+            { "id": "minecraft:emerald", "count": 1 }
+          ],
+          "given": { "id": "minecraft:cooked_chicken", "count": 8 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 5
+        }
+      ]
+    },
+    "journeyman": {
+      "trades": [
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:raw_beef", "count": 10 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 20
+        },
+        {
+          "probability": 0.5,
+          "wanted": [
+            { "id": "minecraft:raw_mutton", "count": 7 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 16,
+          "multiplier": 0.05,
+          "xp": 20
+        }
+      ]
+    },
+    "expert": {
+      "trades": [
+        {
+          "probability": 1.0,
+          "wanted": [
+            { "id": "minecraft:dried_kelp_block", "count": 10 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 12,
+          "multiplier": 0.05,
+          "xp": 30
+        }
+      ]
+    },
+    "master": {
+      "trades": [
+        {
+          "probability": 1.0,
+          "wanted": [
+            { "id": "minecraft:sweet_berries", "count": 10 }
+          ],
+          "given": { "id": "minecraft:emerald", "count": 1 },
+          "stock": 12,
+          "multiplier": 0.05,
+          "xp": 30
+        }
+      ]
+    }
+  }
+}

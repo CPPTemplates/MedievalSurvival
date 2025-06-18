@@ -207,7 +207,12 @@ void humanoid::render(const gameRenderData& targetData) const
 		//get right arm transform
 		mat3x3 rightArmTransform = mat3x3::cross(mainBodyPart->applied, rightArm->applied);
 
-		itemTransform = mat3x3::combine({ itemTransform, moveToHand ,rightArmTransform, targetData.worldToRenderTargetTransform });//, });
+		itemTransform = mat3x3::combine({
+			targetData.worldToRenderTargetTransform,
+			rightArmTransform,
+			moveToHand ,
+			itemTransform,
+			});//, });
 		//first rescaled, then transformed to the body, then to the right arm
 
 		//transform rectangle
@@ -271,7 +276,11 @@ void humanoid::render(const gameRenderData& targetData) const
 
 					renderBodyPart(b, armTransform, targetData);
 				}
-				cmat3x3 armorTransform = mat3x3::combine({ mat3x3::fromRectToRect((crectangle2)textureRect, crectangle2(-b->rotationCenter, b->size).expanded(armorExpansion)),b->getCumulativeTransform() ,targetData.worldToRenderTargetTransform });
+				cmat3x3 armorTransform = mat3x3::combine({
+					targetData.worldToRenderTargetTransform,
+					b->getCumulativeTransform() ,
+					mat3x3::fromRectToRect((crectangle2)textureRect, crectangle2(-b->rotationCenter, b->size).expanded(armorExpansion)),
+					});
 				//expand 0.1f
 				//const mat3x3 armorTransform = mat
 				fillTransparentRectangle((crectangle2)textureRect, armorTransform, tex, targetData.renderTarget);

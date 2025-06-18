@@ -209,10 +209,10 @@ void enderDragon::render(const gameRenderData& targetData) const
 			cfp& beamLength = difference.length();
 
 			mat3x3 beamTransform = mat3x3::combine({
-				mat3x3::fromRectToRect(crectangle2(endCrystalBeamTextureRect), crectangle2(endCrystalBeamWidth * -0.5, 0, endCrystalBeamWidth, beamLength)),
-				mat3x3::rotate(beamRotation),
+				targetData.worldToRenderTargetTransform,
 				mat3x3::translate(endCrystal->position),
-				targetData.worldToRenderTargetTransform
+				mat3x3::rotate(beamRotation),
+				mat3x3::fromRectToRect(crectangle2(endCrystalBeamTextureRect), crectangle2(endCrystalBeamWidth * -0.5, 0, endCrystalBeamWidth, beamLength)),
 				});
 			fillTransparentRectangle(crectangle2(endCrystalBeamTextureRect), beamTransform, *endCrystalBeamTexture, targetData.renderTarget);
 		}

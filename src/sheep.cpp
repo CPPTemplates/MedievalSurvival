@@ -110,7 +110,11 @@ void sheep::render(const gameRenderData& targetData) const
 			bodyPart2D* b = parts[i];
 			crectanglei2 textureRect = textureRects[drawIndex];
 
-			cmat3x3 woolTransform = mat3x3::combine({ mat3x3::fromRectToRect((crectangle2)textureRect, bodyPartRects[drawIndex].expanded(armorExpansion)),b->getCumulativeTransform() ,targetData.worldToRenderTargetTransform });
+			cmat3x3 woolTransform = mat3x3::combine({
+				targetData.worldToRenderTargetTransform,
+				b->getCumulativeTransform() ,
+				mat3x3::fromRectToRect((crectangle2)textureRect, bodyPartRects[drawIndex].expanded(armorExpansion)),
+				});
 			//expand 0.1f
 			//const mat3x3 armorTransform = mat
 			fillTransparentRectangle((crectangle2)textureRect, woolTransform, woolBrush, targetData.renderTarget);
